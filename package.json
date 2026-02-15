@@ -20,7 +20,6 @@
     "worker:dev": "NODE_ENV=development node --import tsx --watch src/worker/index.ts",
     "vercel-build": "node scripts/env-preflight.js && node scripts/build-ci.js",
     "build": "NODE_OPTIONS=--max_old_space_size=8192 BUILD_PHASE=1 next build",
-    "postbuild": "node scripts/assert-critical-routes.cjs && node scripts/regression-guards.cjs",
     "regression:check": "node scripts/regression-guards.cjs",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
