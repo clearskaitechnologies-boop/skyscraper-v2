@@ -54,6 +54,18 @@ const isPublicRoute = createRouteMatcher([
   "/landing(.*)",
   "/marketing(.*)",
   "/pricing(.*)",
+  "/contact(.*)",
+  "/about(.*)",
+  "/features(.*)",
+  "/story(.*)",
+  "/security(.*)",
+  "/terms(.*)",
+  "/privacy(.*)",
+  "/status(.*)",
+  "/coming-soon(.*)",
+  "/skaistack(.*)",
+  "/investor(.*)",
+  "/network(.*)",
   // "/claims" is NOT public - it requires auth for the workspace!
   // Use /claims-legacy for the public demo page instead
   "/claims-legacy", // Public demo claims page (read-only)
