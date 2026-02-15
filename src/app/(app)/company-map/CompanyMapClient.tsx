@@ -17,9 +17,7 @@ export default function CompanyMapClient({ locations }: { locations: PropertyLoc
     // Check if we already loaded the script
     if (mapInitialized || !mapContainer.current) return;
 
-    const token =
-      process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
-      "";
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || null;
 
     if (!token) {
       console.warn("Mapbox token not configured");

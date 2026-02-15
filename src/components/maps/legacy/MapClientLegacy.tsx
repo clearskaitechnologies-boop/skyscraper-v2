@@ -2,9 +2,9 @@
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import mapboxgl from "mapbox-gl";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import { getMapboxToken,logMapboxDebugContext } from "@/lib/debug/mapboxDebug";
+import { getMapboxToken, logMapboxDebugContext } from "@/lib/debug/mapboxDebug";
 
 export default function MapClient() {
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -15,11 +15,8 @@ export default function MapClient() {
   useEffect(() => {
     logMapboxDebugContext("MapClient mount");
 
-    // Get token with hardcoded fallback for production reliability
-    const token =
-      getMapboxToken() ||
-      process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
-      "";
+    // Get token from environment
+    const token = getMapboxToken() || process.env.NEXT_PUBLIC_MAPBOX_TOKEN || null;
 
     if (!token) {
       setError("Mapbox token not configured");

@@ -27,9 +27,8 @@ export default function MapboxMap({ properties }: MapboxMapProps) {
       propertyCount: properties.length,
     });
 
-    // ALWAYS use hardcoded token for reliability - Phase 1 Rule: Never fail silently
-    const token =
-      "";
+    // Use token from environment
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || null;
 
     if (!token) {
       console.error("[MapboxMap] No token available");

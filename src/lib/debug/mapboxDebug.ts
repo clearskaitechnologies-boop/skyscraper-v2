@@ -22,16 +22,12 @@ export function logMapboxDebugContext(context: string) {
  * Works on both client and server side
  */
 export function getMapboxToken(): string | null {
-  const fallbackToken =
-    "";
-
   // Client-side: Check window.ENV or direct env access
   if (typeof window !== "undefined") {
     const token =
       (window as any).ENV?.NEXT_PUBLIC_MAPBOX_TOKEN ??
       process.env.NEXT_PUBLIC_MAPBOX_TOKEN ??
       process.env.MAPBOX_API_KEY ??
-      fallbackToken ??
       null;
     if (!token) {
       console.warn(

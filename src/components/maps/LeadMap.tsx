@@ -6,9 +6,7 @@ export default function LeadMap({ lat, lng }: { lat: number; lng: number }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!ref.current) return;
-    mapboxgl.accessToken =
-      process.env.NEXT_PUBLIC_MAPBOX_TOKEN ||
-      "";
+    mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || "";
     const map = new mapboxgl.Map({
       container: ref.current,
       style: "mapbox://styles/mapbox/streets-v12",
