@@ -44,33 +44,52 @@ export async function POST(req: NextRequest) {
         won: "completed",
       };
 
-      const newStatus = stageToStatus[stage] || stage;
+      const stageToLifecycle: Record<string, string> = {
+        new: "INTAKE",
+        qualified: "ACTIVE",
+        proposal: "ACTIVE",
+        negotiation: "ACTIVE",
+        won: "CLOSED",
+      };
 
-      await prisma.claims.update({
+      const newStatus = stageToStatus[stage] || stage;
+      const newLifecycle = stageToLifecycle[stage] || "ACTIVE";
+
+      const updated = await prisma.claims.update({
         where: { id: claimId },
         data: {
           status: newStatus,
-          lifecycle_stage: stage === "won" ? "CLOSED" : stage === "new" ? "INTAKE" : "ACTIVE",
+          lifecycle_stage: newLifecycle,
           updatedAt: new Date(),
         },
+        select: { id: true, status: true, lifecycle_stage: true, updatedAt: true },
       });
 
-      return NextResponse.json({ success: true, stage, status: newStatus });
+      return NextResponse.json({
+        success: true,
+        stage,
+        status: updated.status,
+        lifecycle_stage: updated.lifecycle_stage,
+      });
     }
 
     // Handle lead moves
     if (leadId) {
-      await prisma.leads.update({
+      const updated = await prisma.leads.update({
         where: { id: leadId },
         data: { stage, updatedAt: new Date() },
+        select: { id: true, stage: true, updatedAt: true },
       });
 
-      return NextResponse.json({ success: true, stage });
+      return NextResponse.json({ success: true, stage: updated.stage });
     }
 
     return NextResponse.json({ error: "claimId or leadId required" }, { status: 400 });
   } catch (error) {
     console.error("[PIPELINE_MOVE]", error);
-    return NextResponse.json({ error: "Failed to move job" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to move job: " + (error instanceof Error ? error.message : String(error)) },
+      { status: 500 }
+    );
   }
 }
