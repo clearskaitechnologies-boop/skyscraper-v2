@@ -28,7 +28,7 @@ function SignInForm() {
       routing="path"
       path="/sign-in"
       signUpUrl={signUpUrl}
-      forceRedirectUrl={redirectUrl}
+      redirectUrl={redirectUrl}
       appearance={{
         elements: {
           rootBox: "w-full mx-auto",
