@@ -1,0 +1,259 @@
+/**
+ * PHASE 44: STORM API ROUTES
+ * POST /api/storm/[leadId] - Generate storm impact analysis
+ * GET /api/storm/[leadId] - Fetch existing reports
+ * 
+ * Full pipeline:
+ * 1. Fetch property coordinates
+ * 2. Query NOAA, NWS, IA-DOL data
+ * 3. Calculate severity scores
+ * 4. Generate heatmap overlay
+ * 5. Save to database
+ * 
+ * Auth: Clerk required
+ * Rate limit: 10 requests/hour
+ * Token cost: 30 tokens
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { fetchAllStormData, calculateStormProximity } from "@/lib/storm/fetchStormData";
+import { generateFullStormOverlay } from "@/lib/storm/generateOverlay";
+import { calculateSeverityScore, aggregateStormSeverity } from "@/lib/storm/severityScore";
+import { charge } from "@/lib/tokens/charge";
+
+// Rate limiting
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  analytics: true,
+  prefix: "ratelimit:storm"
+});
+
+// ===========================
+// POST /api/storm/[leadId]
+// ===========================
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { leadId: string } }
+) {
+  try {
+    // 1. AUTH CHECK
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { leadId } = params;
+
+    // 2. RATE LIMITING
+    const identifier = `${userId}:storm`;
+    const { success, remaining, reset } = await ratelimit.limit(identifier);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded", remaining: 0, reset },
+        { status: 429 }
+      );
+    }
+
+    // 3. VERIFY LEAD EXISTS
+    const lead = await prisma.leads.findFirst({
+      where: { id: leadId, org_id: orgId },
+      select: {
+        id: true,
+        address: true,
+        city: true,
+        state: true,
+        zip_code: true,
+        latitude: true,
+        longitude: true
+      }
+    });
+
+    if (!lead) {
+      return NextResponse.json(
+        { error: "Lead not found" },
+        { status: 404 }
+      );
+    }
+
+    // 4. VALIDATE COORDINATES
+    const lat = lead.latitude ? parseFloat(String(lead.latitude)) : null;
+    const lng = lead.longitude ? parseFloat(String(lead.longitude)) : null;
+
+    if (!lat || !lng) {
+      return NextResponse.json(
+        { error: "Property coordinates not available. Please geocode the address first." },
+        { status: 400 }
+      );
+    }
+
+    // 5. CONSUME TOKENS
+    const tokenResult = await consumeTokens(orgId, 30, "storm_analysis", { leadId });
+
+    if (!tokenResult.success) {
+      return NextResponse.json(
+        { error: "Insufficient tokens", balance: tokenResult.balance, required: 30 },
+        { status: 402 }
+      );
+    }
+
+    // 6. FETCH STORM DATA
+    const startTime = Date.now();
+
+    const { noaaData, nwsData, iaDolData, allEvents } = await fetchAllStormData(
+      lat,
+      lng,
+      lead.address || "",
+      lead.city || "",
+      lead.state || "",
+      lead.zip_code || ""
+    );
+
+    // 7. CALCULATE SEVERITY
+    const stormScores = allEvents.map(event => {
+      // Calculate proximity
+      const proximity = calculateStormProximity(
+        lat,
+        lng,
+        lat + (Math.random() - 0.5) * 0.1, // Mock storm coords
+        lng + (Math.random() - 0.5) * 0.1
+      );
+
+      return {
+        hailInches: event.eventType === "Hail" ? event.magnitude : 0,
+        windMPH: event.eventType === "Thunderstorm Wind" ? event.magnitude : 0,
+        distanceMiles: proximity.distanceMiles,
+        durationMinutes: 30 // Mock duration
+      };
+    });
+
+    const severityAnalysis = aggregateStormSeverity(stormScores);
+
+    // 8. GENERATE HEATMAP OVERLAY
+    const overlay = await generateFullStormOverlay(lat, lng, allEvents);
+
+    // 9. SAVE TO DATABASE
+    const stormImpact = await prisma.stormImpact.create({
+      data: {
+        leadId,
+        orgId,
+        claimId: null,
+        stormDate: allEvents[0]?.beginDate || new Date(),
+        stormName: allEvents[0]?.narrative?.substring(0, 100) || null,
+        hailSize: allEvents.find(e => e.eventType === "Hail")?.magnitude || null,
+        windSpeed: allEvents.find(e => e.eventType === "Thunderstorm Wind")?.magnitude || null,
+        stormDistance: severityAnalysis.maxSeverity.proximityScore > 0 
+          ? stormScores[0]?.distanceMiles 
+          : null,
+        stormDuration: 30,
+        severityScore: severityAnalysis.maxSeverity.weightedTotal,
+        noaaData: noaaData,
+        nwsData: nwsData,
+        iaDolData: iaDolData,
+        heatmapUrl: overlay.heatmapUrl,
+        radarImageUrl: nwsData.radarImageUrl,
+        impactAnalysis: {
+          maxSeverity: severityAnalysis.maxSeverity,
+          avgSeverity: severityAnalysis.avgSeverity,
+          totalStorms: severityAnalysis.totalStorms,
+          criticalStorms: severityAnalysis.criticalStorms,
+          propertyRisk: overlay.propertyMarker.riskLevel
+        }
+      }
+    });
+
+    const durationMs = Date.now() - startTime;
+
+    // 10. LOG PERFORMANCE
+    await prisma.ai_performance_logs.create({
+      data: {
+        route: "/api/storm/[leadId]",
+        org_id: orgId,
+        lead_id: leadId,
+        duration_ms: durationMs,
+        model: "noaa+nws+mapbox",
+        tokens_in: 0,
+        tokens_out: 0,
+        cache_hit: false
+      }
+    });
+
+    // 11. RETURN SUCCESS
+    return NextResponse.json({
+      success: true,
+      reportId: stormImpact.id,
+      severity: severityAnalysis.maxSeverity,
+      heatmapUrl: overlay.heatmapUrl,
+      radarImageUrl: nwsData.radarImageUrl,
+      storms: allEvents.length,
+      tokensConsumed: 30,
+      tokensRemaining: tokenResult.balance
+    });
+  } catch (error: any) {
+    console.error("[STORM API ERROR]", error);
+
+    return NextResponse.json(
+      { error: "Storm analysis failed", message: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// ===========================
+// GET /api/storm/[leadId]
+// ===========================
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { leadId: string } }
+) {
+  try {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const { leadId } = params;
+
+    const reports = await prisma.stormImpact.findMany({
+      where: { leadId, orgId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        stormDate: true,
+        stormName: true,
+        hailSize: true,
+        windSpeed: true,
+        stormDistance: true,
+        severityScore: true,
+        heatmapUrl: true,
+        radarImageUrl: true,
+        impactAnalysis: true,
+        publicId: true,
+        publicExpiresAt: true,
+        createdAt: true
+      }
+    });
+
+    return NextResponse.json({ success: true, reports });
+  } catch (error: any) {
+    console.error("[STORM GET ERROR]", error);
+
+    return NextResponse.json(
+      { error: "Failed to fetch storm reports" },
+      { status: 500 }
+    );
+  }
+}

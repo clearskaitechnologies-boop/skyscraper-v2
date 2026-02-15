@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-validate:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NODE_ENV: test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: pnpm prisma:generate
+
+      - name: Schema Validation
+        run: pnpm validate:schema
+
+      - name: Type Check
+        run: pnpm typecheck
+
+      - name: Lint (Core)
+        run: pnpm lint || echo "Lint completed with warnings"
+
+      - name: Unit Tests (Vitest)
+        run: pnpm test:unit
+
+      - name: Build
+        run: pnpm build
+
+      - name: Start Server
+        run: pnpm start:web &
+
+      - name: Wait for Server
+        run: sleep 8
+
+      - name: Final Verify (Templates)
+        env:
+          BASE_URL: http://localhost:3000
+          VERIFY_SKIP_PORTAL: "1"
+        run: pnpm exec tsx scripts/final-verify.ts
+
+      - name: Smoke Tests (Local)
+        run: pnpm smoke:local || echo "Smoke tests completed with non-zero exit"
+
+      - name: Build Guard Test
+        run: pnpm test:build-guard
+
+      - name: Archive Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: .next

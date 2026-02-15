@@ -1,0 +1,28 @@
+// GET /api/rbac/me
+// Returns current user's role and permissions
+
+import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+import { getRoleContext } from "@/lib/rbac";
+
+export async function GET() {
+  try {
+    const { userId, orgId } = await auth();
+
+    if (!userId || !orgId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const context = await getRoleContext();
+
+    return NextResponse.json({
+      role: context.role,
+      permissions: context.permissions,
+      hierarchy: context.hierarchy,
+    });
+  } catch (error: any) {
+    console.error("[API] RBAC me error:", error);
+    return NextResponse.json({ error: error.message || "Failed to fetch role" }, { status: 500 });
+  }
+}

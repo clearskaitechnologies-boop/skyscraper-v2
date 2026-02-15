@@ -1,0 +1,321 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { Calendar, Mail, Settings as SettingsIcon, Shield, User } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
+import { PageSectionCard } from "@/components/layout/PageSectionCard";
+import { DemoModeToggle } from "@/components/settings/DemoModeToggle";
+import prisma from "@/lib/prisma";
+import { safeOrgContext } from "@/lib/safeOrgContext";
+import { panelGhost, textMuted } from "@/lib/theme";
+import { isDemoWorkspaceReady } from "@/lib/workspace/demoWorkspaceReady";
+
+import { SettingsForm } from "./_components/SettingsForm";
+
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+export const metadata = {
+  title: "Settings | SkaiScraper",
+  description: "Configure your workspace, profile, and notification preferences.",
+};
+
+function MembershipMissing() {
+  return (
+    <div className="mx-auto max-w-3xl space-y-6 px-4 py-12">
+      <div className="rounded-xl border border-[color:var(--border)] bg-[var(--surface-1)] p-8 shadow">
+        <h1 className="mb-3 text-2xl font-bold">Initialize Organization Settings</h1>
+        <p className="mb-6 text-sm text-slate-700 dark:text-slate-300">
+          No organization membership detected. Complete onboarding to access settings and
+          configuration options.
+        </p>
+        <div className="flex gap-3">
+          <Link
+            href="/onboarding/start"
+            className="rounded bg-[var(--primary)] px-5 py-2 font-medium text-white"
+          >
+            🚀 Start Onboarding
+          </Link>
+          <Link href="/dashboard" className="rounded border border-[color:var(--border)] px-5 py-2">
+            ← Dashboard
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+function ErrorCard({ message }: { message: string }) {
+  return (
+    <div className="mx-auto max-w-xl space-y-6 px-4 py-12">
+      <div className="rounded-xl border border-red-500/40 bg-red-50 p-8 shadow dark:bg-red-950">
+        <h1 className="mb-3 text-2xl font-bold text-red-700 dark:text-red-200">
+          ⚠️ Settings Unavailable
+        </h1>
+        <p className="mb-6 text-sm text-red-600 dark:text-red-300">{message}</p>
+        <div className="flex gap-3">
+          <Link href="/dashboard" className="rounded border border-[color:var(--border)] px-5 py-2">
+            ← Dashboard
+          </Link>
+          <Link
+            href="/onboarding/start"
+            className="rounded bg-[var(--primary)] px-5 py-2 font-medium text-white"
+          >
+            Onboarding
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default async function Settings() {
+  const orgCtx = await safeOrgContext();
+  const organizationId = orgCtx.orgId || null;
+  const userId = orgCtx.userId;
+  console.info("[SettingsPage] orgContext", { status: orgCtx.status, organizationId, userId });
+
+  // Demo mode: allow access if org exists
+  const demoReady = isDemoWorkspaceReady({ hasOrganization: !!organizationId });
+
+  if (orgCtx.status === "unauthenticated") {
+    redirect("/sign-in");
+  }
+  // In demo mode, bypass org context errors
+  if (orgCtx.status === "error" && !demoReady) {
+    return <ErrorCard message="Organization context unavailable." />;
+  }
+
+  // Fetch demo mode status if we have an org
+  let orgDemo: { demoMode: boolean | null; demoSeededAt: Date | null } | null = null;
+  if (organizationId) {
+    try {
+      orgDemo = await prisma.org.findUnique({
+        where: { id: organizationId },
+        select: { demoMode: true, demoSeededAt: true },
+      });
+    } catch (error) {
+      console.error("[SettingsPage] Failed to fetch org demo status:", error);
+    }
+  }
+
+  // Fetch Clerk user info for the account card
+  const clerkUser = await currentUser();
+  const userEmail = clerkUser?.emailAddresses?.[0]?.emailAddress ?? "—";
+  const userPhone = clerkUser?.phoneNumbers?.[0]?.phoneNumber ?? null;
+  const userAvatar = clerkUser?.imageUrl ?? null;
+
+  // Fetch org name for the settings form
+  let orgName = "";
+  if (organizationId) {
+    try {
+      const orgData = await prisma.org.findUnique({
+        where: { id: organizationId },
+        select: { name: true },
+      });
+      orgName = orgData?.name ?? "";
+    } catch (error) {
+      console.error("[SettingsPage] Failed to fetch org name:", error);
+    }
+  }
+  const userFullName =
+    `${clerkUser?.firstName ?? ""} ${clerkUser?.lastName ?? ""}`.trim() || "User";
+  const userCreated = clerkUser?.createdAt
+    ? new Date(clerkUser.createdAt).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : "—";
+
+  return (
+    <PageContainer maxWidth="7xl">
+      <PageHero
+        section="settings"
+        title="Settings"
+        subtitle="Configure account, organization, and system preferences"
+        icon={<SettingsIcon className="h-5 w-5" />}
+      />
+
+      <div className="grid gap-6">
+        {/* ─── Clerk Account Info ─── */}
+        <PageSectionCard title="Your Account">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+            {/* Avatar */}
+            <div className="flex-shrink-0">
+              {userAvatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={userAvatar}
+                  alt={userFullName}
+                  className="h-20 w-20 rounded-2xl border-2 border-slate-200 object-cover shadow-md dark:border-slate-700"
+                />
+              ) : (
+                <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-2xl font-bold text-white shadow-md">
+                  {userFullName[0]?.toUpperCase() ?? "U"}
+                </div>
+              )}
+            </div>
+
+            {/* Details */}
+            <div className="flex-1 space-y-3">
+              <div>
+                <h3 className="text-lg font-semibold text-[color:var(--text)]">{userFullName}</h3>
+                {clerkUser?.username && (
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
+                    @{clerkUser.username}
+                  </p>
+                )}
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <Mail className="h-4 w-4 text-blue-500" />
+                  <span className="text-[color:var(--text)]">{userEmail}</span>
+                </div>
+                {userPhone && (
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-blue-500" />
+                    <span className="text-[color:var(--text)]">{userPhone}</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="h-4 w-4 text-emerald-500" />
+                  <span className="text-slate-600 dark:text-slate-300">
+                    Member since {userCreated}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <Shield className="h-4 w-4 text-amber-500" />
+                  <span className="text-slate-600 dark:text-slate-300">
+                    Clerk ID:{" "}
+                    <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs dark:bg-slate-800">
+                      {userId?.slice(0, 12)}…
+                    </code>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </PageSectionCard>
+
+        <PageSectionCard title="Account Settings">
+          <div className="space-y-4">
+            <SettingsForm
+              initialDisplayName={userFullName}
+              initialOrgName={orgName}
+              initialTimezone="US/Mountain"
+              initialNotifications={{
+                emailNotifications: true,
+                leadAlerts: true,
+                weeklySummary: false,
+              }}
+            />
+          </div>
+        </PageSectionCard>
+
+        {/* Demo Mode Section - Always visible if org exists */}
+        {organizationId && (
+          <PageSectionCard title="Demo Data">
+            <p className="mb-4 text-sm text-slate-700 dark:text-slate-300">
+              Toggle demo mode to populate your workspace with sample data (John Smith, Jane Smith,
+              Bob Smith) for testing and exploration.
+            </p>
+            <DemoModeToggle
+              orgId={organizationId}
+              demoMode={orgDemo?.demoMode ?? true}
+              demoSeededAt={orgDemo?.demoSeededAt?.toISOString() ?? null}
+            />
+          </PageSectionCard>
+        )}
+
+        {/* Notifications - Handled by SettingsForm above */}
+
+        {/* Organization Settings - Handled by SettingsForm above */}
+
+        <PageSectionCard title="Quick Links">
+          <div className="grid gap-4 md:grid-cols-2">
+            <Link
+              href="/settings/billing"
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-[color:var(--text)]">
+                  💳 Billing & Subscription
+                </div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">
+                  Manage your plan and payment methods
+                </div>
+              </div>
+            </Link>
+            <Link
+              href="/teams"
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-[color:var(--text)]">👥 Team Members</div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">
+                  Invite and manage team seats
+                </div>
+              </div>
+            </Link>
+            <Link
+              href="/settings/company-documents"
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-[color:var(--text)]">📄 Company Documents</div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">
+                  Upload W9, insurance, and licenses
+                </div>
+              </div>
+            </Link>
+            <Link
+              href="/trades/profile"
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-[color:var(--text)]">🔧 Trades Profile</div>
+                <div className="text-sm text-slate-700 dark:text-slate-300">
+                  Set up your contractor profile
+                </div>
+              </div>
+            </Link>
+          </div>
+        </PageSectionCard>
+
+        <PageSectionCard title="Data & Privacy">
+          <div className="space-y-4">
+            <div
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-[color:var(--text)]">Export My Data</div>
+                <div className={`text-sm ${textMuted}`}>
+                  Download a copy of your claims and reports
+                </div>
+              </div>
+              <button className="rounded-lg border-2 border-[color:var(--border)] px-4 py-2 font-medium text-[color:var(--text)] transition-all hover:border-[color:var(--primary)] hover:bg-[var(--primary-weak)]">
+                Request Export
+              </button>
+            </div>
+            <div
+              className={`flex items-center justify-between rounded-lg ${panelGhost} p-4 transition-colors hover:bg-[var(--surface-1)]`}
+            >
+              <div>
+                <div className="font-medium text-red-600 dark:text-red-400">Delete Account</div>
+                <div className={`text-sm ${textMuted}`}>
+                  Permanently delete your account and all data
+                </div>
+              </div>
+              <button className="rounded-lg border-2 border-red-300 px-4 py-2 font-medium text-red-600 transition-all hover:border-red-500 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950">
+                Delete
+              </button>
+            </div>
+          </div>
+        </PageSectionCard>
+      </div>
+    </PageContainer>
+  );
+}

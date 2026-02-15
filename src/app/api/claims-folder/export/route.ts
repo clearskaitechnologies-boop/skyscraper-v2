@@ -1,0 +1,183 @@
+/**
+ * Claims Folder Export API
+ * POST /api/claims-folder/export
+ * Exports a claims folder to PDF, ZIP, or Xactimate ESX format
+ */
+
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+import { z } from "zod";
+
+import { assembleClaimFolder } from "@/lib/claims-folder/folderAssembler";
+import type { ClaimFolder, FolderSection } from "@/lib/claims-folder/folderSchema";
+import { FOLDER_SECTIONS } from "@/lib/claims-folder/folderSchema";
+import { generatePDFDocument, renderPDFBytes } from "@/lib/claims-folder/pdfBundler";
+
+const ExportRequestSchema = z.object({
+  claimId: z.string().min(1),
+  format: z.enum(["pdf", "zip", "esx", "docx"]),
+  sections: z.array(z.enum(FOLDER_SECTIONS as unknown as [string, ...string[]])).optional(),
+});
+
+export async function POST(request: NextRequest) {
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const body = await request.json();
+
+    // Validate request
+    const parsed = ExportRequestSchema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { success: false, error: "Invalid request", details: parsed.error.issues },
+        { status: 400 }
+      );
+    }
+
+    const { claimId, format, sections } = parsed.data;
+
+    // Assemble the folder data
+    const result = await assembleClaimFolder({ claimId });
+
+    if (!result.success || !result.folder) {
+      return NextResponse.json(
+        { success: false, error: "Failed to assemble claim folder", details: result.errors },
+        { status: 400 }
+      );
+    }
+
+    const folder: ClaimFolder = result.folder;
+
+    // Determine which sections to include
+    const includeSections: FolderSection[] = sections
+      ? (sections as FolderSection[])
+      : (FOLDER_SECTIONS as unknown as FolderSection[]);
+
+    switch (format) {
+      case "pdf": {
+        // Generate PDF document
+        const pdfDoc = generatePDFDocument(folder, includeSections);
+        const pdfBytes = await renderPDFBytes(pdfDoc);
+
+        return new NextResponse(Buffer.from(pdfBytes), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="claim-${claimId}-package.pdf"`,
+            "Content-Length": String(pdfBytes.length),
+          },
+        });
+      }
+
+      case "zip": {
+        // For ZIP, we'd bundle multiple files
+        // Using text format as placeholder - would use actual zip library
+        const zipContent = JSON.stringify(
+          {
+            claim: claimId,
+            folder,
+            sections: includeSections,
+            generatedAt: new Date().toISOString(),
+          },
+          null,
+          2
+        );
+        const zipBytes = new TextEncoder().encode(zipContent);
+
+        return new NextResponse(zipBytes, {
+          status: 200,
+          headers: {
+            "Content-Type": "application/zip",
+            "Content-Disposition": `attachment; filename="claim-${claimId}-package.zip"`,
+            "Content-Length": String(zipBytes.length),
+          },
+        });
+      }
+
+      case "esx": {
+        // Xactimate ESX format - XML-based
+        const esxContent = generateXactimateESX(folder);
+        const esxBytes = new TextEncoder().encode(esxContent);
+
+        return new NextResponse(esxBytes, {
+          status: 200,
+          headers: {
+            "Content-Type": "application/xml",
+            "Content-Disposition": `attachment; filename="claim-${claimId}.esx"`,
+            "Content-Length": String(esxBytes.length),
+          },
+        });
+      }
+
+      case "docx":
+        return NextResponse.json(
+          { success: false, error: "DOCX export coming soon" },
+          { status: 501 }
+        );
+
+      default:
+        return NextResponse.json(
+          { success: false, error: "Unsupported export format" },
+          { status: 400 }
+        );
+    }
+  } catch (error) {
+    console.error("Error in claims folder export:", error);
+    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+  }
+}
+
+// Generate Xactimate-compatible ESX format
+function generateXactimateESX(folder: ClaimFolder): string {
+  const cover = folder.coverSheet;
+  const scope = folder.scopePricing;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<ESX version="1.0">
+  <Header>
+    <ExportDate>${new Date().toISOString()}</ExportDate>
+    <ExportSource>SkaiScraper Claims Documentation System</ExportSource>
+  </Header>
+  <Claim>
+    <ClaimNumber>${cover?.claimNumber || ""}</ClaimNumber>
+    <PolicyNumber>${cover?.policyNumber || ""}</PolicyNumber>
+    <DateOfLoss>${cover?.dateOfLoss || ""}</DateOfLoss>
+    <Insured>
+      <Name>${cover?.insured_name || cover?.policyholderName || ""}</Name>
+      <Address>${cover?.propertyAddress || ""}</Address>
+    </Insured>
+    <Carrier>
+      <Name>${cover?.carrier || ""}</Name>
+    </Carrier>
+  </Claim>
+  <Estimate>
+    <TotalRCV>${scope?.grandTotal || 0}</TotalRCV>
+    <TotalACV>${scope?.subtotal || 0}</TotalACV>
+    <Depreciation>${scope?.overheadAndProfit?.amount || 0}</Depreciation>
+    <Deductible>${scope?.permitFees || 0}</Deductible>
+    <LineItems>
+${
+  scope?.lineItems
+    ?.map(
+      (item) => `      <Item>
+        <Description>${item.description}</Description>
+        <Quantity>${item.quantity}</Quantity>
+        <Unit>${item.unit}</Unit>
+        <UnitPrice>${item.unitPrice || 0}</UnitPrice>
+        <Total>${item.total || 0}</Total>
+      </Item>`
+    )
+    .join("\n") || ""
+}
+    </LineItems>
+  </Estimate>
+  <Documentation>
+    <Photos>${folder.photos?.length || 0}</Photos>
+    <WeatherVerified>${folder.sectionStatus?.weatherCauseOfLoss === "complete"}</WeatherVerified>
+    <CodeCompliance>${folder.sectionStatus?.codeCompliance === "complete"}</CodeCompliance>
+  </Documentation>
+</ESX>`;
+}

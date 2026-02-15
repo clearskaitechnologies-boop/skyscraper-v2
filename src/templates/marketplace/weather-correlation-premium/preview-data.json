@@ -1,0 +1,58 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#10b981",
+    "secondaryColor": "#059669",
+    "phone": "(555) 123-4567",
+    "email": ""
+  },
+  "claim": { "claimNumber": "CLM-2024-000456", "dateOfLoss": "April 3, 2024" },
+  "property": { "address": "5678 Oak Avenue, Dallas, TX 75201" },
+  "content": {
+    "eventType": "Severe Hailstorm",
+    "eventDateTime": "April 3, 2024 - 2:15 PM CST",
+    "duration": "45 minutes",
+    "severity": "High",
+    "severityBadge": "danger",
+    "maxWindSpeed": "65 mph",
+    "maxHailSize": "2.0 inches (Golf Ball)",
+    "precipitation": "1.2 inches",
+    "temperature": "72°F",
+    "timeline": [
+      {
+        "time": "2:15 PM",
+        "event": "Storm Arrival",
+        "intensity": "Light Rain",
+        "notes": "Initial cell formation"
+      },
+      {
+        "time": "2:30 PM",
+        "event": "Hail Begins",
+        "intensity": "1.0 inch",
+        "notes": "Radar confirms"
+      },
+      {
+        "time": "2:45 PM",
+        "event": "Peak Intensity",
+        "intensity": "2.0 inch + 65mph winds",
+        "notes": "Maximum damage window"
+      },
+      {
+        "time": "3:00 PM",
+        "event": "Storm Departure",
+        "intensity": "Light Rain",
+        "notes": "Cell moving northeast"
+      }
+    ],
+    "conclusion": "Weather event CONFIRMED at property location",
+    "conclusionDetail": "NOAA radar data, METAR reports, and storm spotter networks all confirm a severe hailstorm with 2-inch hail and damaging winds passed directly over the property address between 2:15 PM and 3:00 PM on April 3, 2024. The timing and severity of the weather event strongly supports the homeowner's claim of storm damage.",
+    "sources": [
+      "NOAA National Weather Service",
+      "NEXRAD Radar Data (KDFW)",
+      "METAR Surface Reports (KDAL)",
+      "Storm Prediction Center Archive",
+      "CoCoRaHS Precipitation Network"
+    ]
+  }
+}

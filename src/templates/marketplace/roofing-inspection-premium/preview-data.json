@@ -1,0 +1,135 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#0ea5e9",
+    "secondaryColor": "#3b82f6",
+    "phone": "",
+    "email": "",
+    "website": ""
+  },
+  "claim": {
+    "claimNumber": "",
+    "dateOfLoss": "",
+    "lossType": "",
+    "adjusterId": ""
+  },
+  "property": {
+    "address": "",
+    "yearBuilt": "",
+    "city": "",
+    "state": "",
+    "zip": ""
+  },
+  "content": {
+    "roofType": "Architectural Shingles",
+    "roofAge": "15 years",
+    "roofSquareFootage": "2,850",
+    "weatherEvent": "Severe Hailstorm (1.5\" diameter)",
+    "inspectionMethod": "Drone + Ground Inspection",
+    "severity": "Moderate",
+    "severityBadge": "warning",
+    "affectedArea": "Entire roof surface, concentrated on west slope",
+    "primaryDamage": "Impact damage to shingles, granule loss, mat exposure",
+    "recommendation": "Full roof replacement recommended",
+    "findings": [
+      {
+        "component": "Shingles",
+        "condition": "Compromised",
+        "damageType": "Hail Impact",
+        "severity": "Moderate",
+        "severityBadge": "warning",
+        "action": "Replace"
+      },
+      {
+        "component": "Ridge Vents",
+        "condition": "Damaged",
+        "damageType": "Wind Impact",
+        "severity": "Minor",
+        "severityBadge": "success",
+        "action": "Replace"
+      },
+      {
+        "component": "Gutters",
+        "condition": "Dented",
+        "damageType": "Hail Impact",
+        "severity": "Minor",
+        "severityBadge": "success",
+        "action": "Repair"
+      },
+      {
+        "component": "Flashing",
+        "condition": "Intact",
+        "damageType": "None",
+        "severity": "None",
+        "severityBadge": "success",
+        "action": "Monitor"
+      },
+      {
+        "component": "Underlayment",
+        "condition": "Unknown",
+        "damageType": "Potential",
+        "severity": "Unknown",
+        "severityBadge": "warning",
+        "action": "Assess during removal"
+      }
+    ],
+    "photos": [
+      {
+        "url": "https://placehold.co/400x300/0ea5e9/white?text=Hail+Damage+1",
+        "caption": "West slope - Multiple impact points visible"
+      },
+      {
+        "url": "https://placehold.co/400x300/0ea5e9/white?text=Granule+Loss",
+        "caption": "Close-up of granule loss and mat exposure"
+      },
+      {
+        "url": "https://placehold.co/400x300/0ea5e9/white?text=Ridge+Vent",
+        "caption": "Damaged ridge vent requiring replacement"
+      },
+      {
+        "url": "https://placehold.co/400x300/0ea5e9/white?text=Gutter+Dent",
+        "caption": "Gutter showing hail impact dents"
+      }
+    ],
+    "notes": "Inspection conducted using DJI Mavic 3 Enterprise drone with 4K camera and ground verification. Weather conditions: Clear skies, 68°F. All measurements taken using Eagleview aerial reports and verified on-site. Homeowner present during inspection and expressed concern about leak potential.",
+    "immediateActions": [
+      "Arrange emergency tarp if active leaks develop",
+      "Document all damage with detailed photos",
+      "Submit comprehensive estimate to carrier within 48 hours",
+      "Schedule follow-up inspection after first rainfall"
+    ],
+    "longTermActions": [
+      "Complete full roof replacement within 60 days",
+      "Consider impact-resistant shingles for future protection",
+      "Inspect attic for water intrusion after next storm",
+      "Update property insurance with proof of mitigation"
+    ],
+    "scopeItems": [
+      {
+        "item": "Architectural Shingles (Class 4)",
+        "quantity": "30",
+        "unit": "Squares",
+        "notes": "Full tear-off and replacement"
+      },
+      {
+        "item": "Ridge Vents",
+        "quantity": "45",
+        "unit": "LF",
+        "notes": "Replace all damaged sections"
+      },
+      {
+        "item": "Drip Edge",
+        "quantity": "180",
+        "unit": "LF",
+        "notes": "New installation per code"
+      },
+      {
+        "item": "Ice & Water Shield",
+        "quantity": "10",
+        "unit": "Rolls",
+        "notes": "Valleys and eaves"
+      }
+    ]
+  }
+}

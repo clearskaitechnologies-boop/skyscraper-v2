@@ -1,0 +1,23 @@
+{
+  "slug": "contractor-estimate-premium",
+  "title": "Contractor Estimate Premium",
+  "category": "Estimates",
+  "version": "1.0.0",
+  "assets": {
+    "previewPdf": "/templates/contractor-estimate-premium/preview.pdf",
+    "thumbnail": "/templates/contractor-estimate-premium/thumbnail.png"
+  },
+  "schemaVersion": "report-schema-v1",
+  "sections": [
+    "CompanyBranding",
+    "ClientAndClaim",
+    "AssignedEmployee",
+    "ReportPurposeAndSummary",
+    "DamageFindings",
+    "PhotoSummary",
+    "WeatherVerification",
+    "ScopeAndLineItems",
+    "Recommendations",
+    "Appendix"
+  ]
+}

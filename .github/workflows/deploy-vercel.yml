@@ -1,0 +1,67 @@
+name: Deploy to Vercel (Prod) + Health Check
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: vercel-deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      # Deploy from source with cache clear (fixes manifest errors)
+      - name: Vercel Deploy (Prod, from source)
+        id: deploy
+        run: |
+          npx vercel pull --yes --environment=production --token="$VERCEL_TOKEN"
+          URL=$(npx vercel --prod --force --token="$VERCEL_TOKEN")
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Echo Production URL
+        run: |
+          echo "Production URL: ${{ steps.deploy.outputs.url }}"
+
+      # Post-deploy health checks (soft-fail only if endpoint is truly down)
+      - name: Health Check /live
+        run: |
+          curl -fsS "${{ steps.deploy.outputs.url }}/api/health/live" | jq .
+
+      - name: Health Check /ready
+        run: |
+          curl -fsS "${{ steps.deploy.outputs.url }}/api/health/ready" | jq .
+
+      # Optional: gate failures (uncomment to fail workflow if not ok)
+      # - name: Assert Health OK
+      #   run: |
+      #     LIVE_STATUS=$(curl -fsS "${{ steps.deploy.outputs.url }}/api/health/live" | jq -r '.status')
+      #     READY_STATUS=$(curl -fsS "${{ steps.deploy.outputs.url }}/api/health/ready" | jq -r '.status')
+      #     if [ "$LIVE_STATUS" != "ok" ] || [ "$READY_STATUS" != "ready" ]; then
+      #       echo "Health check failed"
+      #       exit 1
+      #     fi

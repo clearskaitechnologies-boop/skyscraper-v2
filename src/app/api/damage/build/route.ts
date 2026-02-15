@@ -1,0 +1,131 @@
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import { runDamageBuilder } from "@/lib/ai/damage";
+import { getDelegate } from "@/lib/db/modelAliases";
+import prisma from "@/lib/prisma";
+
+// Types for request/response payload
+type DamageBuildRequest = {
+  claimId?: string | null;
+  leadId?: string | null;
+  photos: {
+    url: string;
+    id?: string;
+    label?: string;
+    tags?: string[];
+  }[];
+  hoverData?: unknown;
+  carrierEstimateText?: string | null;
+  notesText?: string | null;
+};
+
+/**
+ * POST /api/damage/build
+ * AI-powered damage assessment builder
+ * Analyzes photos and data to generate damage findings
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const { userId, orgId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = (await req.json()) as DamageBuildRequest;
+
+    if (!body || !Array.isArray(body.photos) || body.photos.length === 0) {
+      return NextResponse.json(
+        { error: "At least one photo is required." },
+        { status: 400 }
+      );
+    }
+
+    console.log("[Damage Builder] Starting analysis for user:", userId);
+    console.log("[Damage Builder] Input:", {
+      claimId: body.claimId,
+      leadId: body.leadId,
+      photoCount: body.photos.length,
+      hasHoverData: !!body.hoverData
+    });
+
+    // Call AI engine to analyze damage
+    const aiResult = await runDamageBuilder({
+      claimId: body.claimId ?? null,
+      leadId: body.leadId ?? null,
+      orgId: orgId ?? null,
+      userId,
+      photos: body.photos,
+      hoverData: body.hoverData ?? null,
+      carrierEstimateText: body.carrierEstimateText ?? null,
+      notesText: body.notesText ?? null,
+    });
+
+    // aiResult includes:
+    // {
+    //   peril: "hail" | "wind" | ...,
+    //   confidence: number,
+    //   summary: string,
+    //   findings: DamageFindingInput[],
+    // }
+
+    const damageAssessment = await getDelegate('damageAssessment').create({
+      data: {
+        orgId: orgId || "default",
+        claimId: body.claimId || undefined,
+        leadId: body.leadId || undefined,
+        createdById: userId,
+        primaryPeril: aiResult.peril,
+        confidence: aiResult.confidence,
+        summary: aiResult.summary,
+        metadata: {
+          ...aiResult.meta,
+          hoverData: aiResult.hoverData ?? body.hoverData ?? null,
+        } as any,
+      },
+    });
+
+    // Create findings tied to this assessment
+    let createdFindings: any[] = [];
+    
+    if (Array.isArray(aiResult.findings) && aiResult.findings.length > 0) {
+      createdFindings = await Promise.all(
+        aiResult.findings.map((f: any) =>
+          prisma.damage_findings.create({
+            data: {
+              id: crypto.randomUUID(),
+              damage_assessment_id: damageAssessment.id,
+              location_facet: f.location?.facet ?? null,
+              elevation: f.location?.elevation ?? null,
+              location_notes: f.location?.notes ?? f.location?.facet ?? null,
+              damage_type: f.damageType ?? "unknown",
+              material: f.material ?? null,
+              severity: f.severity ?? null,
+              peril_attribution: f.perilAttribution ?? null,
+              description: f.description ?? null,
+              recommended_action: f.recommendedAction ?? null,
+              suggested_line_items: f.suggestedLineItems ?? [],
+              updated_at: new Date(),
+            },
+          })
+        )
+      );
+    }
+
+    return NextResponse.json(
+      {
+        damageAssessmentId: damageAssessment.id,
+        assessment: damageAssessment,
+        findings: createdFindings,
+      },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("Error in /api/damage/build:", err);
+    return NextResponse.json(
+      { error: "Failed to build damage assessment." },
+      { status: 500 }
+    );
+  }
+}

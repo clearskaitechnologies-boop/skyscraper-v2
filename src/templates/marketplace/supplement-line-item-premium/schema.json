@@ -1,0 +1,11 @@
+{
+  "id": "supplement-line-item-premium",
+  "name": "Supplement Line Item Report",
+  "category": "estimate",
+  "description": "Professional supplement with itemized line items, pricing, and justifications. Perfect for carrier submissions.",
+  "version": "1.0.0",
+  "tags": ["supplement", "estimate", "line-items"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "estimatedPages": 2
+}

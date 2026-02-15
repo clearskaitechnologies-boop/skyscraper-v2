@@ -1,0 +1,245 @@
+/**
+ * POST /api/org/nuclear-reset
+ * ============================
+ *
+ * EMERGENCY ENDPOINT: Completely resets org state for current user.
+ *
+ * This endpoint:
+ * 1. Deletes ALL user_organizations rows for the user
+ * 2. Creates a fresh org
+ * 3. Creates a fresh membership
+ * 4. Seeds demo data
+ *
+ * Use this when normal repair doesn't work.
+ */
+
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export async function POST(): Promise<NextResponse> {
+  try {
+    const { userId, orgId: clerkOrgId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    const user = await currentUser();
+    const userName = user
+      ? [user.firstName, user.lastName].filter(Boolean).join(" ") || "User"
+      : "User";
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress || `${userId}@skaiscrape.com`;
+
+    console.log("[NUCLEAR RESET] Starting for user:", userId);
+
+    // STEP 1: Delete ALL existing memberships for this user
+    const deletedMemberships = await prisma.user_organizations.deleteMany({
+      where: { userId },
+    });
+    console.log("[NUCLEAR RESET] Deleted", deletedMemberships.count, "memberships");
+
+    // STEP 2: Create fresh org
+    const newOrgId = crypto.randomUUID();
+    const effectiveClerkOrgId = clerkOrgId || `personal_${userId.slice(-8)}_${Date.now()}`;
+
+    const org = await prisma.org.create({
+      data: {
+        id: newOrgId,
+        clerkOrgId: effectiveClerkOrgId,
+        name: `${userName}'s Organization`,
+        demoMode: true,
+        updatedAt: new Date(),
+      },
+    });
+    console.log("[NUCLEAR RESET] Created org:", org.id);
+
+    // STEP 3: Create membership
+    await prisma.user_organizations.create({
+      data: {
+        userId,
+        organizationId: org.id,
+        role: "ADMIN",
+      },
+    });
+    console.log("[NUCLEAR RESET] Created membership");
+
+    // STEP 4: Ensure user record exists and is linked
+    await prisma.users.upsert({
+      where: { clerkUserId: userId },
+      create: {
+        id: crypto.randomUUID(),
+        clerkUserId: userId,
+        email: userEmail,
+        name: userName,
+        orgId: org.id,
+      },
+      update: { orgId: org.id },
+    });
+    console.log("[NUCLEAR RESET] Linked user");
+
+    // STEP 5: Create BillingSettings
+    await prisma.billingSettings.create({
+      data: {
+        id: `billing_${org.id}`,
+        orgId: org.id,
+        updatedAt: new Date(),
+      },
+    });
+    console.log("[NUCLEAR RESET] Created BillingSettings");
+
+    // STEP 6: Create org_branding
+    try {
+      await prisma.$executeRaw`
+        INSERT INTO org_branding ("id", "orgId", "createdAt", "updatedAt")
+        VALUES (${crypto.randomUUID()}, ${org.id}, NOW(), NOW())
+        ON CONFLICT ("orgId") DO NOTHING
+      `;
+      console.log("[NUCLEAR RESET] Created org_branding");
+    } catch (e: any) {
+      console.warn("[NUCLEAR RESET] Branding skipped:", e.message);
+    }
+
+    // STEP 7: Seed demo data
+    try {
+      await seedDemoData(org.id);
+      console.log("[NUCLEAR RESET] Seeded demo data");
+    } catch (e: any) {
+      console.warn("[NUCLEAR RESET] Demo seed failed:", e.message);
+    }
+
+    // STEP 8: Update org to mark demo as seeded
+    await prisma.org.update({
+      where: { id: org.id },
+      data: { demoSeededAt: new Date() },
+    });
+
+    console.log("[NUCLEAR RESET] ✅ Complete. New orgId:", org.id);
+
+    return NextResponse.json({
+      ok: true,
+      orgId: org.id,
+      orgName: org.name,
+      message: "Account completely reset. Please refresh the page.",
+    });
+  } catch (error: any) {
+    console.error("[NUCLEAR RESET] Error:", error);
+    return NextResponse.json(
+      { ok: false, error: error.message || "Reset failed" },
+      { status: 500 }
+    );
+  }
+}
+
+async function seedDemoData(orgId: string) {
+  const short = orgId.slice(0, 8);
+  const now = new Date();
+
+  const ids = {
+    contactJohn: `demo-contact-john-${short}`,
+    propertyJohn: `demo-property-john-${short}`,
+    claimJohn: `demo-claim-john-${short}`,
+    claimNumber: `DEMO-${short}-001`,
+  };
+
+  // Create contact
+  await prisma.contacts.upsert({
+    where: { id: ids.contactJohn },
+    update: {},
+    create: {
+      id: ids.contactJohn,
+      orgId,
+      isDemo: true,
+      slug: `john-smith-${ids.contactJohn}`,
+      firstName: "John",
+      lastName: "Smith",
+      email: "john.smith@example.com",
+      phone: "(555) 123-4567",
+      street: "123 Main Street",
+      city: "Phoenix",
+      state: "AZ",
+      zipCode: "85001",
+      source: "demo",
+      createdAt: now,
+      updatedAt: now,
+    },
+  });
+
+  // Create property
+  await prisma.properties.upsert({
+    where: { id: ids.propertyJohn },
+    update: {},
+    create: {
+      id: ids.propertyJohn,
+      orgId,
+      isDemo: true,
+      street: "123 Main Street",
+      city: "Phoenix",
+      state: "AZ",
+      zipCode: "85001",
+      propertyType: "residential",
+      createdAt: now,
+      updatedAt: now,
+    } as any,
+  });
+
+  // Create claim (claims doesn't have contactId, only propertyId)
+  await prisma.claims.upsert({
+    where: { id: ids.claimJohn },
+    update: {},
+    create: {
+      id: ids.claimJohn,
+      orgId,
+      isDemo: true,
+      claimNumber: ids.claimNumber,
+      title: "Demo Insurance Claim - Hail Damage",
+      status: "in_progress",
+      damageType: "hail",
+      description: "Demo claim showing hail damage to residential property",
+      propertyId: ids.propertyJohn,
+      dateOfLoss: now,
+      createdAt: now,
+      updatedAt: now,
+    },
+  });
+
+  console.log("[seedDemoData] Created demo claim:", ids.claimJohn);
+}
+
+// Also add GET to check status
+export async function GET(): Promise<NextResponse> {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get all memberships for user
+    const memberships = await prisma.user_organizations.findMany({
+      where: { userId },
+      include: { Org: { select: { id: true, name: true } } },
+    });
+
+    const validMemberships = memberships.filter((m) => m.Org);
+    const orphanedMemberships = memberships.filter((m) => !m.Org);
+
+    return NextResponse.json({
+      userId,
+      totalMemberships: memberships.length,
+      validMemberships: validMemberships.length,
+      orphanedMemberships: orphanedMemberships.length,
+      memberships: memberships.map((m) => ({
+        id: m.id,
+        organizationId: m.organizationId,
+        orgExists: !!m.Org,
+        orgName: m.Org?.name || "DELETED",
+      })),
+    });
+  } catch (error: any) {
+    return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
+  }
+}

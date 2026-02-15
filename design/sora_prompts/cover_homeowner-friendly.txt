@@ -1,0 +1,7 @@
+Homeowner-Friendly Cover prompt (replace placeholders)
+
+Bright white cover, friendly tone.
+Center {LOGO_URL}. Title: "{CATEGORY_TITLE}". Subheadline: {CATEGORY_PURPOSE}.
+Large lifestyle home photo with small chip “Verified by {COMPANY_NAME}".
+Bottom bar in {SECONDARY} with {ACCENT} dots: "{COMPANY_NAME} • ROC {ROC_NUMBER} • {WEBSITE_URL} • {CONTACT_PHONE}".
+16:9, photo-real. Output: 1600×900 JPG.

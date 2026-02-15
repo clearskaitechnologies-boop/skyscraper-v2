@@ -1,0 +1,82 @@
+name: Playwright (legacy)
+
+on:
+  # DISABLED — consolidated into ci.yml
+  # push:
+  #   branches: [ main ]
+  # pull_request:
+  #   branches: [ main ]
+  workflow_dispatch: # manual only
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+
+      - name: Enable Corepack & Install PNPM
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
+
+      # Optional: Sentry release step removed due to lint restrictions on secret context.
+      # To enable manually, add a step with sentry-cli using repository secrets.
+
+      - name: Lint
+        run: pnpm lint || echo "Lint warnings ignored (no fail)"
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps
+
+      - name: Run Playwright Tests (UI & API)
+        run: |
+          # Secrets optional; AI tests skip if IDs/keys missing.
+          pnpm exec playwright test --reporter=line || exit 1
+
+      - name: Upload Test Artifacts (Screenshots & Trace)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-artifacts
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+
+  # Optional lighter job for PR quick feedback (no build, just typecheck + targeted smoke tests)
+  smoke:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: "pnpm"
+      - run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+      - run: pnpm install --frozen-lockfile
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit || echo "Type warnings"
+      - name: Targeted Smoke (claims + auth)
+        run: pnpm exec playwright test e2e/auth.spec.ts e2e/claims-pipeline.spec.ts --reporter=line

@@ -1,0 +1,91 @@
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import prisma from "@/lib/prisma";
+
+interface Params {
+  params: {
+    slug: string;
+  };
+}
+
+/**
+ * GET /api/network/clients/[slug]
+ * Returns a single client network by slug (public or authenticated)
+ */
+export async function GET(req: NextRequest, { params }: Params) {
+  const { slug } = params;
+
+  try {
+    const client = await prisma.client_networks.findUnique({
+      where: { slug },
+    });
+
+    if (!client) {
+      return NextResponse.json({ error: "Client network not found" }, { status: 404 });
+    }
+
+    const [contacts, activity] = await Promise.all([
+      prisma.client_contacts.findMany({
+        where: { clientNetworkId: client.id },
+        orderBy: { createdAt: "desc" },
+      }),
+      prisma.client_activity.findMany({
+        where: { clientNetworkId: client.id },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      }),
+    ]);
+
+    return NextResponse.json({ client: { ...client, contacts, activity } });
+  } catch (error) {
+    console.error(`[GET /api/network/clients/${slug}]`, error);
+    return NextResponse.json({ error: "Failed to fetch client network" }, { status: 500 });
+  }
+}
+
+/**
+ * PATCH /api/network/clients/[slug]
+ * Updates a client network (authenticated only)
+ */
+export async function PATCH(req: NextRequest, { params }: Params) {
+  const authData = await auth();
+  const { userId, orgId } = authData;
+  if (!userId || !orgId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { slug } = params;
+
+  try {
+    const body = await req.json();
+    const { name } = body;
+
+    const client = await prisma.client_networks.findUnique({
+      where: { slug },
+    });
+
+    if (!client) {
+      return NextResponse.json({ error: "Client network not found" }, { status: 404 });
+    }
+
+    if (client.orgId !== orgId) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
+    const updated = await prisma.client_networks.update({
+      where: { slug },
+      data: { name, updatedAt: new Date() },
+    });
+
+    const contacts = await prisma.client_contacts.findMany({
+      where: { clientNetworkId: updated.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json({ client: { ...updated, contacts } });
+  } catch (error) {
+    console.error(`[PATCH /api/network/clients/${slug}]`, error);
+    return NextResponse.json({ error: "Failed to update client network" }, { status: 500 });
+  }
+}

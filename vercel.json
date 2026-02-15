@@ -1,0 +1,74 @@
+{
+  "framework": "nextjs",
+  "devCommand": "pnpm run dev",
+  "outputDirectory": ".next",
+  "headers": [
+    {
+      "source": "/sign-in(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/client/sign-in(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "functions": {
+    "app/api/**/*.ts": {
+      "maxDuration": 60
+    },
+    "pages/api/**/*.ts": {
+      "maxDuration": 60
+    }
+  },
+  "regions": ["iad1"],
+  "installCommand": "pnpm install --frozen-lockfile --prod=false",
+  "buildCommand": "rm -rf node_modules/.prisma && npx prisma generate && NODE_OPTIONS='--max-old-space-size=8192' pnpm build",
+  "crons": [
+    {
+      "path": "/api/wallet/reset-monthly",
+      "schedule": "0 5 1 * *"
+    },
+    {
+      "path": "/api/weather/cron-daily",
+      "schedule": "0 9 * * *"
+    },
+    {
+      "path": "/api/cron/trials/sweep",
+      "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/email-retry",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/stripe-reconcile",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/user-columns",
+      "schedule": "0 8 * * *"
+    },
+    {
+      "path": "/api/cron/ai-insights",
+      "schedule": "0 0 * * 0"
+    },
+    {
+      "path": "/api/cron/process-batch-jobs",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/daily",
+      "schedule": "0 3 * * *"
+    }
+  ]
+}

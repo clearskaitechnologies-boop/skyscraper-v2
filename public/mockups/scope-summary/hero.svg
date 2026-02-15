@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Scope Summary Placeholder">
+  <style>
+    .bg{fill:#F8FAFC}.panel{fill:#fff;rx:16}
+    .title{fill:#0A1A2F;font:800 30px Inter,system-ui,sans-serif}
+    .label{fill:#475569;font:600 18px Inter,system-ui,sans-serif}
+    .muted{fill:#94a3b8;font:500 16px Inter,system-ui,sans-serif}
+    .div{fill:#E2E8F0}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="110">Scope Summary — your info auto-fills here</text>
+  <rect class="div" x="90" y="130" width="1420" height="2"></rect>
+  <text class="label" x="110" y="180">Roof Size (Squares)</text>
+  <text class="muted" x="110" y="210">Auto from measurements / AI</text>
+  <text class="label" x="500" y="180">Waste Factor</text>
+  <text class="muted" x="500" y="210">Starter/Ridge/Valley rules</text>
+  <text class="label" x="840" y="180">Steepness</text>
+  <text class="muted" x="840" y="210">Pitch &amp; access complexity</text>
+  <text class="label" x="1150" y="180">Ice &amp; Water</text>
+  <text class="muted" x="1150" y="210">Code-triggered coverage</text>
+  <rect class="div" x="90" y="240" width="1420" height="2"></rect>
+  <text class="label" x="110" y="290">Line-items: Materials + Labor</text>
+  <text class="muted" x="110" y="320">Generated per system + code + manufacturer</text>
+  <text class="label" x="110" y="380">Subtotal / Tax / O&amp;P</text>
+  <text class="muted" x="110" y="410">Carrier-ready math with transparency</text>
+</svg>

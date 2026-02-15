@@ -1,0 +1,27 @@
+/**
+ * Damage Builder - AI-powered damage analysis
+ * Stub file for legacy imports
+ */
+
+export interface ImageAnalysisResult {
+  damages: Array<{
+    type: string;
+    severity: string;
+    location: string;
+    confidence: number;
+  }>;
+  summary: string;
+}
+
+/**
+ * Analyze images for damage
+ * @deprecated Use runDamageBuilder from '@/lib/ai/damage' instead
+ */
+export async function analyzeImages(images: string[]): Promise<ImageAnalysisResult> {
+  console.warn('analyzeImages is deprecated - use runDamageBuilder from @/lib/ai/damage instead');
+  
+  return {
+    damages: [],
+    summary: 'Image analysis not available - please use the modern damage builder'
+  };
+}

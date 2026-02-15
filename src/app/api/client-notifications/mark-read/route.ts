@@ -1,0 +1,89 @@
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getClientFromAuth } from "@/lib/portal/getClientFromAuth";
+import prisma from "@/lib/prisma";
+
+export async function POST(req: NextRequest) {
+  try {
+    const client = await getClientFromAuth();
+    const { userId } = await auth();
+
+    if (!client && !userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { notificationId, markAllAsRead } = body;
+
+    if (markAllAsRead) {
+      // 1. Mark all ProjectNotifications read for this client's claims
+      if (client) {
+        const clientClaims = await prisma.claims.findMany({
+          where: { clientId: client.id },
+          select: { id: true },
+        });
+        const claimIds = clientClaims.map((c) => c.id);
+        if (claimIds.length > 0) {
+          await prisma.projectNotification.updateMany({
+            where: { claimId: { in: claimIds }, read: false },
+            data: { read: true, readAt: new Date() },
+          });
+        }
+      }
+
+      // 2. Mark all unread messages as read for this user
+      if (userId) {
+        const threads = await prisma.messageThread.findMany({
+          where: {
+            OR: [{ participants: { has: userId } }, ...(client ? [{ clientId: client.id }] : [])],
+          },
+          select: { id: true },
+        });
+        if (threads.length > 0) {
+          await prisma.message.updateMany({
+            where: {
+              threadId: { in: threads.map((t) => t.id) },
+              senderUserId: { not: userId },
+              read: false,
+            },
+            data: { read: true },
+          });
+        }
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    if (notificationId) {
+      // Handle message notifications (prefixed with msg-)
+      if (notificationId.startsWith("msg-")) {
+        const messageId = notificationId.replace("msg-", "");
+        try {
+          await prisma.message.update({
+            where: { id: messageId },
+            data: { read: true },
+          });
+        } catch {
+          // Message may not exist or already read
+        }
+        return NextResponse.json({ success: true });
+      }
+
+      // Handle ProjectNotification
+      try {
+        await prisma.projectNotification.update({
+          where: { id: notificationId },
+          data: { read: true, readAt: new Date() },
+        });
+      } catch {
+        // Notification may not exist
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

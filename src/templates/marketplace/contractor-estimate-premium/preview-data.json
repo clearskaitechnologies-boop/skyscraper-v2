@@ -1,0 +1,87 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#06b6d4",
+    "secondaryColor": "#0891b2",
+    "phone": "(555) 123-4567",
+    "email": ""
+  },
+  "claim": { "claimNumber": "CLM-2024-005678" },
+  "property": { "address": "7890 Birch Lane, Atlanta, GA 30301" },
+  "content": {
+    "contractorName": "Elite Roofing & Restoration, LLC",
+    "contractorLicense": "GA License #RC-98765",
+    "contractorPhone": "(555) 987-6543",
+    "estimateDate": "December 21, 2024",
+    "lineItems": [
+      {
+        "description": "Roof Tear-Off & Disposal (3-tab shingles)",
+        "quantity": "28",
+        "unit": "SQ",
+        "rate": "$150.00",
+        "amount": "$4,200.00"
+      },
+      {
+        "description": "Architectural Shingles - Class 4 Impact Resistant",
+        "quantity": "28",
+        "unit": "SQ",
+        "rate": "$425.00",
+        "amount": "$11,900.00"
+      },
+      {
+        "description": "Ice & Water Shield - Valleys & Eaves",
+        "quantity": "8",
+        "unit": "Rolls",
+        "rate": "$185.00",
+        "amount": "$1,480.00"
+      },
+      {
+        "description": "Drip Edge - Aluminum",
+        "quantity": "160",
+        "unit": "LF",
+        "rate": "$4.50",
+        "amount": "$720.00"
+      },
+      {
+        "description": "Ridge Vents",
+        "quantity": "40",
+        "unit": "LF",
+        "rate": "$12.00",
+        "amount": "$480.00"
+      },
+      {
+        "description": "Gutters - 6\" Seamless Aluminum",
+        "quantity": "120",
+        "unit": "LF",
+        "rate": "$18.50",
+        "amount": "$2,220.00"
+      },
+      {
+        "description": "Downspouts - 3x4 Aluminum",
+        "quantity": "60",
+        "unit": "LF",
+        "rate": "$12.00",
+        "amount": "$720.00"
+      },
+      {
+        "description": "Permit & Inspection Fees",
+        "quantity": "1",
+        "unit": "LS",
+        "rate": "$485.00",
+        "amount": "$485.00"
+      }
+    ],
+    "subtotal": "$22,205.00",
+    "taxRate": "8.9%",
+    "taxAmount": "$1,976.25",
+    "totalAmount": "$24,181.25",
+    "terms": [
+      "Valid for 30 days from estimate date",
+      "Payment: 50% deposit upon signing, 50% upon completion",
+      "Warranty: 10-year workmanship, manufacturer's lifetime material warranty",
+      "Completion time: 3-5 business days, weather permitting",
+      "All work performed per Georgia building codes"
+    ]
+  }
+}

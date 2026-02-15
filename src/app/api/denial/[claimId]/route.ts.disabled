@@ -1,0 +1,196 @@
+/**
+ * PHASE 45: DENIAL RESPONSE API
+ * POST /api/denial/[claimId] - Upload denial PDF and generate appeal
+ * GET /api/denial/[claimId] - Fetch existing responses
+ * 
+ * Auth: Clerk required
+ * Rate limit: 10 requests/hour
+ * Token cost: 40 tokens (AI-intensive)
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@clerk/nextjs/server";
+import { prisma } from "@/lib/prisma";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+import { extractDenialLetter } from "@/lib/denial/extractPdfText";
+import { generateFullAppeal } from "@/lib/denial/appealEngine";
+import { charge } from "@/lib/tokens/charge";
+
+const ratelimit = new Ratelimit({
+  redis: Redis.fromEnv(),
+  limiter: Ratelimit.slidingWindow(10, "1 h"),
+  prefix: "ratelimit:denial"
+});
+
+// ===========================
+// POST /api/denial/[claimId]
+// ===========================
+
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { claimId: string } }
+) {
+  try {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { claimId } = params;
+
+    // Rate limiting
+    const { success, remaining, reset } = await ratelimit.limit(`${userId}:denial`);
+    if (!success) {
+      return NextResponse.json(
+        { error: "Rate limit exceeded", remaining: 0, reset },
+        { status: 429 }
+      );
+    }
+
+    // Parse form data
+    const formData = await req.formData();
+    const pdfFile = formData.get("pdf") as File;
+    const tone = (formData.get("tone") as string) || "professional";
+
+    if (!pdfFile) {
+      return NextResponse.json({ error: "PDF file required" }, { status: 400 });
+    }
+
+    // Verify claim exists
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
+      select: {
+        id: true,
+        claimNumber: true,
+        propertyId: true,
+        title: true,
+        description: true,
+        exposure_cents: true
+      }
+    });
+
+    if (!claim) {
+      return NextResponse.json({ error: "Claim not found" }, { status: 404 });
+    }
+
+    // Get property details
+    const property = await prisma.properties.findUnique({
+      where: { id: claim.propertyId },
+      select: {
+        street: true,
+        city: true,
+        state: true,
+        zip: true
+      }
+    });
+
+    // Consume tokens
+    const tokenResult = await consumeTokens(orgId, 40, "denial_appeal", { claimId });
+    if (!tokenResult.success) {
+      return NextResponse.json(
+        { error: "Insufficient tokens", balance: tokenResult.balance, required: 40 },
+        { status: 402 }
+      );
+    }
+
+    // Convert file to buffer
+    const arrayBuffer = await pdfFile.arrayBuffer();
+    const pdfBuffer = Buffer.from(arrayBuffer);
+
+    // Extract denial letter
+    const extracted = await extractDenialLetter(pdfBuffer);
+
+    // Generate appeal
+    const appeal = await generateFullAppeal(
+      extracted.reasons,
+      {
+        claimNumber: claim.claimNumber,
+        propertyAddress: property ? `${property.street}, ${property.city}, ${property.state} ${property.zip}` : "Unknown",
+        lossDate: new Date(), // Would get from claim
+        damageType: claim.title || "Storm damage",
+        estimatedValue: claim.exposure_cents ? claim.exposure_cents / 100 : 0,
+        carrierName: extracted.carrierName
+      },
+      tone as any
+    );
+
+    // Upload PDF (mock)
+    const denialPdfUrl = `https://storage.example.com/denials/${claimId}-${Date.now()}.pdf`;
+
+    // Save to database
+    const denialResponse = await prisma.denialResponse.create({
+      data: {
+        leadId: "", // Would link to lead
+        orgId,
+        claimId,
+        denialPdfUrl,
+        extractedText: extracted.fullText,
+        denialReasons: extracted.reasons,
+        appealArguments: appeal.arguments,
+        legalCitations: appeal.arguments.flatMap(a => a.citations),
+        rebuttalPdf: null,
+        emailDraft: appeal.emailDraft,
+        tone,
+        status: "draft"
+      }
+    });
+
+    return NextResponse.json({
+      success: true,
+      responseId: denialResponse.id,
+      extractedReasons: extracted.reasons.length,
+      arguments: appeal.arguments.length,
+      estimatedSuccessRate: appeal.estimatedSuccessRate,
+      tokensConsumed: 40,
+      tokensRemaining: tokenResult.balance
+    });
+  } catch (error: any) {
+    console.error("[DENIAL API ERROR]", error);
+    return NextResponse.json(
+      { error: "Appeal generation failed", message: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// ===========================
+// GET /api/denial/[claimId]
+// ===========================
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { claimId: string } }
+) {
+  try {
+    const { userId, orgId } = await auth();
+    if (!userId || !orgId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { claimId } = params;
+
+    const responses = await prisma.denialResponse.findMany({
+      where: { claimId, orgId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        denialPdfUrl: true,
+        denialReasons: true,
+        appealArguments: true,
+        emailDraft: true,
+        tone: true,
+        status: true,
+        createdAt: true
+      }
+    });
+
+    return NextResponse.json({ success: true, responses });
+  } catch (error: any) {
+    console.error("[DENIAL GET ERROR]", error);
+    return NextResponse.json(
+      { error: "Failed to fetch denial responses" },
+      { status: 500 }
+    );
+  }
+}

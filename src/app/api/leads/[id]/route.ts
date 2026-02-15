@@ -1,0 +1,299 @@
+/**
+ * Individual Lead Management API
+ *
+ * GET    /api/leads/[id] - Get single lead details
+ * PATCH  /api/leads/[id] - Update lead
+ * DELETE /api/leads/[id] - Delete lead
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+
+import { compose, safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
+import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
+import prisma from "@/lib/prisma";
+
+// Prisma singleton imported from @/lib/db/prisma
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+/**
+ * GET /api/leads/[id] - Get single lead with full details
+ */
+const baseGET = async (request: NextRequest, { params }: { params: { id: string } }) => {
+  try {
+    await requirePermission("view_projects");
+    const { orgId } = await getCurrentUserPermissions();
+
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    const lead = await prisma.leads.findFirst({
+      where: {
+        id: params.id,
+        orgId,
+      },
+      include: {
+        contacts: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            company: true,
+            street: true,
+            city: true,
+            state: true,
+            zipCode: true,
+          },
+        },
+        activities: {
+          orderBy: { createdAt: "desc" },
+          take: 10,
+        },
+        users_leads_assignedToTousers: {
+          select: {
+            id: true,
+            email: true,
+            clerkUserId: true,
+          },
+        },
+      },
+    });
+
+    if (!lead) {
+      return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ lead });
+  } catch (error) {
+    console.error(`[GET /api/leads/${params.id}] Error:`, error);
+    return NextResponse.json({ error: "Failed to fetch lead" }, { status: 500 });
+  }
+};
+
+/**
+ * PATCH /api/leads/[id] - Update lead
+ */
+const basePATCH = async (request: NextRequest, { params }: { params: { id: string } }) => {
+  try {
+    await requirePermission("edit_projects");
+    const { orgId, userId } = await getCurrentUserPermissions();
+
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    // Verify lead exists and belongs to org
+    const existingLead = await prisma.leads.findFirst({
+      where: {
+        id: params.id,
+        orgId,
+      },
+    });
+
+    if (!existingLead) {
+      return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+    }
+
+    const body = await request.json();
+    const {
+      title,
+      description,
+      source,
+      value,
+      probability,
+      stage,
+      temperature,
+      assignedTo,
+      followUpDate,
+      jobCategory,
+      clientId,
+    } = body;
+
+    // Build update data
+    const updateData: any = {};
+    if (title !== undefined) updateData.title = title;
+    if (description !== undefined) updateData.description = description;
+    if (source !== undefined) updateData.source = source;
+    if (value !== undefined) updateData.value = value;
+    if (probability !== undefined) updateData.probability = probability;
+    if (stage !== undefined) updateData.stage = stage;
+    if (temperature !== undefined) updateData.temperature = temperature;
+    if (assignedTo !== undefined) updateData.assignedTo = assignedTo;
+    if (followUpDate !== undefined)
+      updateData.followUpDate = followUpDate ? new Date(followUpDate) : null;
+    if (jobCategory !== undefined) updateData.jobCategory = jobCategory;
+    if (clientId !== undefined) updateData.clientId = clientId;
+
+    // Track stage changes for activity logging
+    const stageChanged = stage && stage !== existingLead.stage;
+    const previousStage = existingLead.stage;
+
+    // Update the lead
+    const lead = await prisma.leads.update({
+      where: { id: params.id },
+      data: updateData,
+      include: {
+        contacts: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            company: true,
+          },
+        },
+      },
+    });
+
+    // Log activity if stage changed
+    if (stageChanged) {
+      try {
+        await prisma.activities.create({
+          data: {
+            id: crypto.randomUUID(),
+            orgId,
+            leadId: lead.id,
+            contactId: lead.contactId,
+            type: "lead_stage_changed",
+            title: "Lead Stage Changed",
+            description: `Lead "${lead.title}" moved from ${previousStage} to ${stage}`,
+            userId: userId || "system",
+            userName: "System",
+            metadata: {
+              previousStage,
+              newStage: stage,
+            },
+            updatedAt: new Date(),
+          },
+        });
+      } catch (activityError) {
+        console.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
+        // Don't fail the request
+      }
+    } else if (Object.keys(updateData).length > 0) {
+      // Log general update activity
+      try {
+        await prisma.activities.create({
+          data: {
+            id: crypto.randomUUID(),
+            orgId,
+            leadId: lead.id,
+            contactId: lead.contactId,
+            type: "lead_updated",
+            title: "Lead Updated",
+            description: `Lead "${lead.title}" was updated`,
+            userId: userId || "system",
+            userName: "System",
+            updatedAt: new Date(),
+          },
+        });
+      } catch (activityError) {
+        console.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
+      }
+    }
+
+    return NextResponse.json({ lead });
+  } catch (error) {
+    console.error(`[PATCH /api/leads/${params.id}] Error:`, error);
+
+    if (error instanceof Error) {
+      if (error.message.includes("Unique constraint")) {
+        return NextResponse.json(
+          { error: "A lead with this information already exists" },
+          { status: 409 }
+        );
+      }
+      return NextResponse.json(
+        { error: `Failed to update lead: ${error.message}` },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ error: "Failed to update lead" }, { status: 500 });
+  }
+};
+
+/**
+ * DELETE /api/leads/[id] - Delete lead (soft delete)
+ */
+const baseDELETE = async (request: NextRequest, { params }: { params: { id: string } }) => {
+  try {
+    await requirePermission("delete_projects");
+    const { orgId, userId } = await getCurrentUserPermissions();
+
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    // Verify lead exists and belongs to org
+    const lead = await prisma.leads.findFirst({
+      where: {
+        id: params.id,
+        orgId,
+      },
+    });
+
+    if (!lead) {
+      return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+    }
+
+    // Check if lead has been converted to a project
+    const hasProject = await prisma.projects.findFirst({
+      where: { leadId: lead.id },
+    });
+
+    if (hasProject) {
+      return NextResponse.json(
+        { error: "Cannot delete lead that has been converted to a project" },
+        { status: 400 }
+      );
+    }
+
+    // Soft delete by updating stage to "lost"
+    await prisma.leads.update({
+      where: { id: params.id },
+      data: {
+        stage: "lost",
+        closedAt: new Date(),
+      },
+    });
+
+    // Log activity
+    try {
+      await prisma.activities.create({
+        data: {
+          id: crypto.randomUUID(),
+          orgId,
+          leadId: lead.id,
+          contactId: lead.contactId,
+          type: "lead_deleted",
+          title: "Lead Deleted",
+          description: `Lead "${lead.title}" was marked as lost`,
+          userId: userId || "system",
+          userName: "System",
+          updatedAt: new Date(),
+        },
+      });
+    } catch (activityError) {
+      console.warn("[DELETE /api/leads/[id]] Failed to create activity:", activityError);
+    }
+
+    return NextResponse.json({
+      success: true,
+      description: "Lead deleted successfully",
+    });
+  } catch (error) {
+    console.error(`[DELETE /api/leads/${params.id}] Error:`, error);
+    return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
+  }
+};
+
+const wrap = compose(withSentryApi, withRateLimit, withOrgScope, safeAuth);
+export const GET = wrap(baseGET);
+export const PATCH = wrap(basePATCH);
+export const DELETE = wrap(baseDELETE);

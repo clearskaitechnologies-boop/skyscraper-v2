@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 920" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#059669"/>
+    </marker>
+    <marker id="orangeArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ea580c"/>
+    </marker>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0c4a6e"/>
+      <stop offset="50%" style="stop-color:#075985"/>
+      <stop offset="100%" style="stop-color:#0369a1"/>
+    </linearGradient>
+    <linearGradient id="stormGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#dc2626"/>
+      <stop offset="50%" style="stop-color:#ea580c"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="920" fill="#f0f9ff" rx="8"/>
+
+  <!-- Title Bar -->
+  <rect x="0" y="0" width="1200" height="60" fill="url(#skyGrad)" rx="0"/>
+  <text x="40" y="28" fill="#7dd3fc" font-size="12" font-weight="bold">PATENT FIGURE 8</text>
+  <text x="40" y="48" fill="white" font-size="20" font-weight="bold">Birds EyAi — Aerial Storm Intelligence to Pro Report Pipeline</text>
+  <text x="1180" y="48" text-anchor="end" fill="#7dd3fc" font-size="10">ClearSkai Technologies LLC / SkaiScraper Platform</text>
+
+  <!-- ===================== ROW 1: STORM EVENT TRIGGER ===================== -->
+  <rect x="50" y="75" width="1100" height="80" rx="10" fill="white" stroke="#dc2626" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="50" y="75" width="1100" height="30" rx="10" fill="url(#stormGrad)"/>
+  <rect x="50" y="90" width="1100" height="15" fill="url(#stormGrad)"/>
+  <text x="600" y="98" text-anchor="middle" fill="white" font-size="13" font-weight="bold">STAGE 0 — Storm Event Detection (Automated Trigger)</text>
+  <text x="100" y="130" fill="#991b1b" font-size="11">NOAA/NWS CAP alerts</text>
+  <text x="310" y="130" fill="#991b1b" font-size="11">Hail swath radar data</text>
+  <text x="530" y="130" fill="#991b1b" font-size="11">Wind speed thresholds</text>
+  <text x="750" y="130" fill="#991b1b" font-size="11">Geo-fenced regions</text>
+  <text x="960" y="130" fill="#991b1b" font-size="11">Automatic flight dispatch</text>
+  <text x="100" y="146" fill="#64748b" font-size="9">weatherAlerts.ts</text>
+  <text x="310" y="146" fill="#64748b" font-size="9">Iowa Mesonet + NEXRAD</text>
+  <text x="530" y="146" fill="#64748b" font-size="9">Visual Crossing hourly</text>
+  <text x="750" y="146" fill="#64748b" font-size="9">Mapbox GL boundaries</text>
+  <text x="960" y="146" fill="#64748b" font-size="9">Mission queue trigger</text>
+
+  <!-- Arrow -->
+  <line x1="600" y1="155" x2="600" y2="180" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== ROW 2: AERIAL DATA CAPTURE ===================== -->
+  <text x="600" y="198" text-anchor="middle" fill="#0c4a6e" font-size="14" font-weight="bold">STAGE 1 — Aerial Data Capture</text>
+
+  <!-- Drone -->
+  <rect x="50" y="210" width="260" height="160" rx="10" fill="white" stroke="#0ea5e9" stroke-width="2" filter="url(#shadow)"/>
+  <!-- Simple drone icon -->
+  <line x1="140" y1="240" x2="220" y2="240" stroke="#0ea5e9" stroke-width="3"/>
+  <circle cx="140" cy="240" r="12" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+  <circle cx="220" cy="240" r="12" fill="none" stroke="#0ea5e9" stroke-width="2"/>
+  <rect x="168" y="232" width="24" height="16" rx="3" fill="#0ea5e9"/>
+  <circle cx="180" cy="248" r="4" fill="#67e8f9"/>
+  <text x="180" y="275" text-anchor="middle" fill="#0c4a6e" font-size="13" font-weight="bold">Drone Fleet Capture</text>
+  <text x="180" y="292" text-anchor="middle" fill="#0369a1" font-size="10">Autonomous grid flight pattern</text>
+  <text x="180" y="307" text-anchor="middle" fill="#0369a1" font-size="10">4K RGB + Thermal imaging</text>
+  <text x="180" y="322" text-anchor="middle" fill="#0369a1" font-size="10">LiDAR point cloud (optional)</text>
+  <text x="180" y="337" text-anchor="middle" fill="#0369a1" font-size="10">GPS-tagged every frame</text>
+  <text x="180" y="355" text-anchor="middle" fill="#64748b" font-size="9">Covers 50-200 properties per flight</text>
+
+  <!-- Satellite -->
+  <rect x="340" y="210" width="260" height="160" rx="10" fill="white" stroke="#8b5cf6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="470" y="240" text-anchor="middle" fill="#8b5cf6" font-size="22">&#x1F6F0;</text>
+  <text x="470" y="275" text-anchor="middle" fill="#7c3aed" font-size="13" font-weight="bold">Satellite Imagery</text>
+  <text x="470" y="292" text-anchor="middle" fill="#5b21b6" font-size="10">Pre-storm vs. post-storm compare</text>
+  <text x="470" y="307" text-anchor="middle" fill="#5b21b6" font-size="10">Change detection algorithms</text>
+  <text x="470" y="322" text-anchor="middle" fill="#5b21b6" font-size="10">Neighborhood-wide coverage</text>
+  <text x="470" y="337" text-anchor="middle" fill="#5b21b6" font-size="10">Parcel boundary overlay</text>
+  <text x="470" y="355" text-anchor="middle" fill="#64748b" font-size="9">30cm resolution per pixel</text>
+
+  <!-- Existing photos -->
+  <rect x="630" y="210" width="260" height="160" rx="10" fill="white" stroke="#059669" stroke-width="2" filter="url(#shadow)"/>
+  <text x="760" y="240" text-anchor="middle" fill="#059669" font-size="22">&#x1F4F7;</text>
+  <text x="760" y="275" text-anchor="middle" fill="#059669" font-size="13" font-weight="bold">Street-Level Capture</text>
+  <text x="760" y="292" text-anchor="middle" fill="#065f46" font-size="10">Vehicle-mounted cameras</text>
+  <text x="760" y="307" text-anchor="middle" fill="#065f46" font-size="10">Siding, gutter, window damage</text>
+  <text x="760" y="322" text-anchor="middle" fill="#065f46" font-size="10">Address-matched automatically</text>
+  <text x="760" y="337" text-anchor="middle" fill="#065f46" font-size="10">Exterior elevation photos</text>
+  <text x="760" y="355" text-anchor="middle" fill="#64748b" font-size="9">Front + sides per property</text>
+
+  <!-- Weather context -->
+  <rect x="920" y="210" width="230" height="160" rx="10" fill="white" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1035" y="240" text-anchor="middle" fill="#d97706" font-size="22">&#x26C8;</text>
+  <text x="1035" y="275" text-anchor="middle" fill="#d97706" font-size="13" font-weight="bold">Weather Context</text>
+  <text x="1035" y="292" text-anchor="middle" fill="#92400e" font-size="10">5-provider DOL verification</text>
+  <text x="1035" y="307" text-anchor="middle" fill="#92400e" font-size="10">Hail size + wind speed</text>
+  <text x="1035" y="322" text-anchor="middle" fill="#92400e" font-size="10">Storm path overlay</text>
+  <text x="1035" y="337" text-anchor="middle" fill="#92400e" font-size="10">Per-address severity score</text>
+  <text x="1035" y="355" text-anchor="middle" fill="#64748b" font-size="9">Automated for every parcel</text>
+
+  <!-- Convergence arrows -->
+  <line x1="180" y1="370" x2="450" y2="405" stroke="#0ea5e9" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="470" y1="370" x2="530" y2="405" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="760" y1="370" x2="660" y2="405" stroke="#059669" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="1035" y1="370" x2="740" y2="405" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ===================== ROW 3: AI PROCESSING ===================== -->
+  <rect x="350" y="405" width="500" height="85" rx="10" fill="#0c4a6e" filter="url(#shadow)"/>
+  <text x="600" y="432" text-anchor="middle" fill="white" font-size="15" font-weight="bold">STAGE 2 — Birds EyAi Processing Engine</text>
+  <text x="600" y="452" text-anchor="middle" fill="#7dd3fc" font-size="10">GPT-4o Vision per-property analysis | Roof geometry extraction | Material classification</text>
+  <text x="600" y="468" text-anchor="middle" fill="#7dd3fc" font-size="10">BATF before/after generation | Severity scoring | Xactimate line items | Cost estimation</text>
+  <text x="600" y="482" text-anchor="middle" fill="#bae6fd" font-size="9">Batch processing: 50-200 properties per storm event | Token debit per property analyzed</text>
+
+  <line x1="600" y1="490" x2="600" y2="518" stroke="#0c4a6e" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ===================== ROW 4: PER-PROPERTY REPORT ===================== -->
+  <text x="600" y="535" text-anchor="middle" fill="#0c4a6e" font-size="14" font-weight="bold">STAGE 3 — Per-Property Comprehensive Damage Report</text>
+
+  <rect x="50" y="548" width="1100" height="120" rx="10" fill="white" stroke="#1e293b" stroke-width="2" filter="url(#shadow)"/>
+
+  <!-- Report sections -->
+  <rect x="68" y="558" width="155" height="45" rx="5" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="145" y="577" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="bold">Property Overview</text>
+  <text x="145" y="594" text-anchor="middle" fill="#3b82f6" font-size="8">Address, parcel, sq ft, year</text>
+
+  <rect x="232" y="558" width="155" height="45" rx="5" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <text x="309" y="577" text-anchor="middle" fill="#dc2626" font-size="9" font-weight="bold">Damage Assessment</text>
+  <text x="309" y="594" text-anchor="middle" fill="#991b1b" font-size="8">AI findings + severity score</text>
+
+  <rect x="396" y="558" width="155" height="45" rx="5" fill="#f0fdf4" stroke="#059669" stroke-width="1"/>
+  <text x="473" y="577" text-anchor="middle" fill="#059669" font-size="9" font-weight="bold">Weather Verification</text>
+  <text x="473" y="594" text-anchor="middle" fill="#065f46" font-size="8">DOL proof + hail/wind data</text>
+
+  <rect x="560" y="558" width="155" height="45" rx="5" fill="#fefce8" stroke="#d97706" stroke-width="1"/>
+  <text x="637" y="577" text-anchor="middle" fill="#d97706" font-size="9" font-weight="bold">Aerial Photos</text>
+  <text x="637" y="594" text-anchor="middle" fill="#92400e" font-size="8">Annotated drone imagery</text>
+
+  <rect x="724" y="558" width="155" height="45" rx="5" fill="#fdf2f8" stroke="#db2777" stroke-width="1"/>
+  <text x="801" y="577" text-anchor="middle" fill="#db2777" font-size="9" font-weight="bold">Cost Estimate</text>
+  <text x="801" y="594" text-anchor="middle" fill="#9d174d" font-size="8">Xactimate line items</text>
+
+  <rect x="888" y="558" width="155" height="45" rx="5" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1"/>
+  <text x="965" y="577" text-anchor="middle" fill="#7c3aed" font-size="9" font-weight="bold">Before / After</text>
+  <text x="965" y="594" text-anchor="middle" fill="#5b21b6" font-size="8">BATF visual comparison</text>
+
+  <!-- Bottom of report card -->
+  <rect x="68" y="612" width="975" height="45" rx="5" fill="#f1f5f9" stroke="#475569" stroke-width="1"/>
+  <text x="555" y="632" text-anchor="middle" fill="#1e293b" font-size="10" font-weight="bold">Report Package: Branded PDF (org logo/colors) + Interactive HTML + Photo Gallery + Xactimate ESX Export</text>
+  <text x="555" y="648" text-anchor="middle" fill="#475569" font-size="9">Each report = one FileAsset (versioned, R2-stored, signed URL access) | Token cost: 3-5 per property report</text>
+
+  <!-- Arrow to pro delivery -->
+  <line x1="600" y1="668" x2="600" y2="698" stroke="#ea580c" stroke-width="2.5" marker-end="url(#orangeArrow)"/>
+  <text x="620" y="690" fill="#ea580c" font-size="10" font-weight="bold">DELIVER</text>
+
+  <!-- ===================== ROW 5: PRO DELIVERY ===================== -->
+  <rect x="50" y="700" width="1100" height="195" rx="10" fill="white" stroke="#ea580c" stroke-width="2.5" filter="url(#shadow)"/>
+  <rect x="50" y="700" width="1100" height="35" rx="10" fill="#ea580c"/>
+  <rect x="50" y="720" width="1100" height="15" fill="#ea580c"/>
+  <text x="600" y="724" text-anchor="middle" fill="white" font-size="14" font-weight="bold">STAGE 4 — Pro Delivery: Storm Leads Sent to Roofing Contractors</text>
+
+  <!-- How pro gets it -->
+  <rect x="70" y="745" width="250" height="135" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="195" y="768" text-anchor="middle" fill="#ea580c" font-size="12" font-weight="bold">Push Notification</text>
+  <line x1="80" y1="775" x2="310" y2="775" stroke="#fed7aa" stroke-width="1"/>
+  <text x="195" y="793" text-anchor="middle" fill="#9a3412" font-size="10">"Storm hit your service area"</text>
+  <text x="195" y="810" text-anchor="middle" fill="#9a3412" font-size="10">"47 properties with damage"</text>
+  <text x="195" y="827" text-anchor="middle" fill="#9a3412" font-size="10">"View reports now"</text>
+  <text x="195" y="847" text-anchor="middle" fill="#9a3412" font-size="10">Email + SMS + In-App</text>
+  <text x="195" y="865" text-anchor="middle" fill="#ea580c" font-size="9" font-weight="bold">Geo-matched to pro's territory</text>
+
+  <rect x="340" y="745" width="250" height="135" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="465" y="768" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">Pro Dashboard View</text>
+  <line x1="350" y1="775" x2="580" y2="775" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="465" y="793" text-anchor="middle" fill="#1e40af" font-size="10">Storm event map (Mapbox GL)</text>
+  <text x="465" y="810" text-anchor="middle" fill="#1e40af" font-size="10">Property pins color-coded</text>
+  <text x="465" y="827" text-anchor="middle" fill="#1e40af" font-size="10">by damage severity</text>
+  <text x="465" y="847" text-anchor="middle" fill="#1e40af" font-size="10">Click property = full report</text>
+  <text x="465" y="865" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="bold">Claim-ready documentation</text>
+
+  <rect x="610" y="745" width="250" height="135" rx="8" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
+  <text x="735" y="768" text-anchor="middle" fill="#059669" font-size="12" font-weight="bold">One-Click Actions</text>
+  <line x1="620" y1="775" x2="850" y2="775" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="735" y="793" text-anchor="middle" fill="#065f46" font-size="10">Import to Claim Workspace</text>
+  <text x="735" y="810" text-anchor="middle" fill="#065f46" font-size="10">Generate carrier submission</text>
+  <text x="735" y="827" text-anchor="middle" fill="#065f46" font-size="10">Schedule homeowner contact</text>
+  <text x="735" y="847" text-anchor="middle" fill="#065f46" font-size="10">Share via Client Portal link</text>
+  <text x="735" y="865" text-anchor="middle" fill="#059669" font-size="9" font-weight="bold">Hours saved per property</text>
+
+  <rect x="880" y="745" width="250" height="135" rx="8" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text x="1005" y="768" text-anchor="middle" fill="#db2777" font-size="12" font-weight="bold">Revenue Model</text>
+  <line x1="890" y1="775" x2="1120" y2="775" stroke="#fbcfe8" stroke-width="1"/>
+  <text x="1005" y="793" text-anchor="middle" fill="#9d174d" font-size="10">Token-gated access per report</text>
+  <text x="1005" y="810" text-anchor="middle" fill="#9d174d" font-size="10">Storm pack bundles (50/100)</text>
+  <text x="1005" y="827" text-anchor="middle" fill="#9d174d" font-size="10">Subscription tier allotments</text>
+  <text x="1005" y="847" text-anchor="middle" fill="#9d174d" font-size="10">Enterprise unlimited access</text>
+  <text x="1005" y="865" text-anchor="middle" fill="#db2777" font-size="9" font-weight="bold">tokens_ledger: append-only</text>
+
+  <text x="600" y="915" text-anchor="middle" fill="#475569" font-size="10">SkaiScraper / Birds EyAi — ClearSkai Technologies LLC — Provisional Patent Reference — February 2026</text>
+</svg>

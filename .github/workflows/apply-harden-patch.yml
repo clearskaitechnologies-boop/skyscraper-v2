@@ -1,0 +1,34 @@
+name: Apply Harden Tokens + Worker Patch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-and-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply patch
+        run: |
+          if [ -f .github/patches/harden-tokens-upload-test.patch ]; then
+            git apply --index .github/patches/harden-tokens-upload-test.patch || (echo "git apply failed"; exit 1)
+            git add -A
+            git commit -m "chore: apply harden tokens & worker patch" || echo "nothing to commit"
+          else
+            echo "Patch file not found"
+            exit 1
+          fi
+
+      - name: Create Draft PR
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Apply harden tokens + worker patch
+          title: "chore(tokens+infra): Harden token handlers & worker test harness"
+          body-file: PR_BODY_HARDEN.md
+          draft: true
+          base: main

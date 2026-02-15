@@ -1,0 +1,46 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#ef4444",
+    "secondaryColor": "#dc2626",
+    "phone": "(555) 123-4567",
+    "email": ""
+  },
+  "claim": { "claimNumber": "CLM-2024-001122" },
+  "property": { "address": "2468 Elm Drive, Phoenix, AZ 85001" },
+  "content": {
+    "date": "December 21, 2024",
+    "recipientName": "Jane Doe",
+    "recipientTitle": "Senior Claims Examiner",
+    "carrierName": "ABC Insurance Company",
+    "carrierAddress": "123 Corporate Plaza, Suite 500, Phoenix, AZ 85012",
+    "openingParagraph": "We are writing in response to your denial letter dated December 15, 2024 regarding the above-referenced claim. After careful review of your findings, we respectfully disagree with several key points and wish to present additional evidence that supports full coverage under the policy.",
+    "disputePoints": [
+      {
+        "title": "Denial of roof replacement due to \"wear and tear\"",
+        "detail": "Our inspection clearly shows hail impact damage consistent with the April 3, 2024 storm. Granule loss patterns, mat exposure, and bruising are all classic indicators of acute storm damage, not gradual deterioration. Weather correlation report confirms 2-inch hail at property location."
+      },
+      {
+        "title": "Undervaluation of interior water damage",
+        "detail": "Your estimate assumes only surface repairs. Our scope documents structural damage to ceiling joists and insulation requiring replacement per building code. Attached engineering report confirms structural assessment."
+      },
+      {
+        "title": "Exclusion of code upgrade costs",
+        "detail": "Policy coverage includes \"ordinance or law\" coverage up to $50,000. Current code requires ice & water shield installation, upgraded ventilation, and impact-resistant materials. These are not optional upgrades but mandatory compliance items."
+      }
+    ],
+    "evidence": [
+      "Third-party engineering report (attached)",
+      "NOAA weather correlation data",
+      "Itemized contractor estimates from 3 licensed contractors",
+      "Photographs with metadata timestamps",
+      "Policy provisions highlighting ordinance/law coverage"
+    ],
+    "closingParagraph": "Based on the evidence presented, we request full reconsideration of this claim. We are prepared to arrange a joint inspection with your field adjuster and our engineer to review the damage in person. Please respond within 15 business days with your revised determination or a proposal for dispute resolution.",
+    "senderName": "John Smith",
+    "senderTitle": "Senior Public Adjuster, License #PA-12345",
+    "enclosures": "Engineering Report, Weather Data, Contractor Estimates, Photo Documentation",
+    "cc": "Policyholder: Sarah Johnson"
+  }
+}

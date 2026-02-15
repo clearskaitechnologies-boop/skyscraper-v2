@@ -1,0 +1,734 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* SkaiScraper™ Brand Design System - Light/Dark Theme */
+:root {
+  /* Layout */
+  --header-h: 64px;
+
+  /* Tailwind HSL Theme Variables - Light Mode */
+  --background: 216 20% 96%;
+  --foreground: 223 69% 12%;
+  --card: 0 0% 100%;
+  --card-foreground: 223 69% 12%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 223 69% 12%;
+  --primary: 223 69% 42%;
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 223 69% 52%;
+  --secondary: 220 15% 95%;
+  --secondary-foreground: 223 69% 32%;
+  --muted: 220 15% 95%;
+  --muted-foreground: 220 9% 46%;
+  --accent: 45 93% 63%;
+  --accent-foreground: 223 69% 12%;
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --ring: 223 69% 32%;
+  --radius: 0.75rem;
+
+  /* Legacy Theme Variables - Light Mode (Clean Landing Page Style) */
+  --bg: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #f1f3f6;
+  /* Newly added elevated surface */
+  --surface-3: #e8eef5;
+  --surface-glass: rgba(255, 255, 255, 0.9);
+  --border-bright: rgba(17, 124, 255, 0.3);
+  --text: #0f172a;
+  /* Legacy primary/accent retained but mapped to brand tokens */
+  --primary-light: #3daeff;
+  --primary-weak: rgba(17, 124, 255, 0.08);
+  --danger: #ef4444;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --glow: 0 0 20px rgba(17, 124, 255, 0.12);
+
+  /* Brand Colors */
+  /* Unified Brand Palette */
+  --color-primary: #0a1a2f; /* Primary Navy */
+  --color-accent: #117cff; /* Electric Blue */
+  --color-cta: #ffc838; /* CTA Yellow */
+  --color-gold: #ffc838; /* Legacy alias */
+  --color-bg-deep: #0f2238;
+  --color-bg-panel: #132b45;
+  --color-bg-light: #f5f7fa;
+  --color-text-primary: #e9eef5;
+  --color-text-muted: #93a8c2;
+  --color-success: #10b981; /* Success Green */
+  --color-warning: #f59e0b; /* Warning Orange */
+  --color-error: #ef4444; /* Error Red */
+
+  /* Neutral Palette - Light Mode */
+  --color-neutral-50: #fafbfc;
+  --color-neutral-100: #f0f4f9;
+  --color-neutral-200: #e1e8ed;
+  --color-neutral-300: #cbd5e0;
+  --color-neutral-400: #94a3b8;
+  --color-neutral-500: #64748b;
+  --color-neutral-600: #475569;
+  --color-neutral-700: #334155;
+  --color-neutral-800: #1e293b;
+  --color-neutral-900: #0f172a;
+
+  /* Spacing Scale (4px baseline) */
+  --spacing-1: 0.25rem; /* 4px */
+  --spacing-2: 0.5rem; /* 8px */
+  --spacing-3: 0.75rem; /* 12px */
+  --spacing-4: 1rem; /* 16px */
+  --spacing-5: 1.25rem; /* 20px */
+  --spacing-6: 1.5rem; /* 24px */
+  --spacing-7: 1.75rem; /* 28px */
+  --spacing-8: 2rem; /* 32px */
+  --spacing-10: 2.5rem; /* 40px */
+  --spacing-12: 3rem; /* 48px */
+  --spacing-16: 4rem; /* 64px */
+
+  /* Radius Scale */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 28px;
+
+  /* Shadow Tokens */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgba(20, 123, 255, 0.15);
+
+  /* Typography Scale */
+  --font-xs: 0.75rem; /* 12px */
+  --font-sm: 0.875rem; /* 14px */
+  --font-base: 1rem; /* 16px */
+  --font-md: 1.125rem; /* 18px */
+  --font-lg: 1.25rem; /* 20px */
+  --font-xl: 1.5rem; /* 24px */
+  --font-2xl: 2rem; /* 32px */
+  --font-3xl: 2.5rem; /* 40px */
+  --font-hero: clamp(2.5rem, 6vw, 3.75rem);
+
+  /* Motion & Easing */
+  --transition-fast: 120ms;
+  --transition: 200ms;
+  --transition-slow: 300ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark {
+  /* Tailwind HSL Theme Variables - Dark Mode */
+  --background: 223 69% 8%;
+  --foreground: 0 0% 98%;
+  --card: 223 69% 12%;
+  --card-foreground: 0 0% 98%;
+  --popover: 223 69% 12%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 223 69% 42%;
+  --primary-foreground: 0 0% 100%;
+  --primary-glow: 223 69% 52%;
+  --secondary: 223 50% 18%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 223 50% 18%;
+  --muted-foreground: 220 9% 65%;
+  --accent: 45 93% 63%;
+  --accent-foreground: 223 69% 12%;
+  --success: 142 76% 36%;
+  --success-foreground: 0 0% 100%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 0 0% 100%;
+  --destructive: 0 62% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 223 50% 18%;
+  --input: 223 50% 18%;
+  --ring: 223 69% 42%;
+
+  /* Legacy Theme Variables - Dark Mode (synced with Tailwind --background) */
+  --bg: hsl(223 69% 8%);
+  --surface-1: hsl(223 69% 12%);
+  --surface-2: hsl(223 50% 18%);
+  --surface-glass: rgba(10, 15, 30, 0.7);
+  --border-bright: rgba(0, 209, 255, 0.3);
+  --text: #e8eeff;
+  --primary-light: #3daeff;
+  --primary-weak: rgba(0, 209, 255, 0.16);
+  --danger: #ff5f5f;
+  --card-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  --glow: 0 0 20px rgba(0, 209, 255, 0.25);
+
+  /* Spacing System */
+  --spacing-xs: 0.25rem; /* 4px */
+  --spacing-sm: 0.5rem; /* 8px */
+  --spacing-md: 1rem; /* 16px */
+  --spacing-lg: 1.5rem; /* 24px */
+  --spacing-xl: 2rem; /* 32px */
+  --spacing-2xl: 3rem; /* 48px */
+  --spacing-3xl: 4rem; /* 64px */
+
+  /* Border Radius */
+  --radius-sm: 0.375rem; /* 6px */
+  --radius-md: 0.5rem; /* 8px */
+  --radius-lg: 0.75rem; /* 12px */
+  --radius-xl: 1rem; /* 16px */
+  --radius-2xl: 1.5rem; /* 24px */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-glow: 0 0 20px rgb(20 123 255 / 0.15);
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+html,
+body {
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+/* Global Animations & Focus States */
+a,
+button {
+  transition: all 0.25s ease;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Glass Effect */
+.glass {
+  @apply border border-white/20 bg-white/70 backdrop-blur-md;
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+/* Gradient Backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+.gradient-accent {
+  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-gold) 100%);
+}
+
+/* Accessibility - Focus Visible Styles */
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+} /* Typography Scale */
+@layer components {
+  .heading-hero {
+    @apply text-4xl font-bold leading-tight tracking-tight md:text-6xl;
+  }
+
+  .heading-1 {
+    @apply text-2xl font-bold leading-tight tracking-tight md:text-4xl;
+  }
+
+  .heading-2 {
+    @apply text-xl font-semibold leading-tight md:text-3xl;
+  }
+
+  .heading-3 {
+    @apply text-lg font-semibold leading-snug md:text-2xl;
+  }
+
+  .heading-4 {
+    @apply text-base font-semibold leading-snug md:text-xl;
+  }
+
+  .body-large {
+    @apply text-lg leading-relaxed md:text-xl;
+  }
+
+  .body-text {
+    @apply text-sm leading-6 md:text-base;
+  }
+
+  .body-small {
+    @apply text-xs leading-5 md:text-sm;
+  }
+
+  .caption-text {
+    @apply text-xs leading-4 text-neutral-500;
+  }
+
+  /* Enhanced Card Styles */
+  .card {
+    @apply rounded-2xl bg-white p-6 shadow-md;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  .card-glow {
+    @apply card-hover;
+    box-shadow: var(--shadow-lg), var(--shadow-glow);
+  }
+
+  .card-glass {
+    @apply glass rounded-2xl p-6 shadow-lg;
+  }
+
+  /* Container & Layout */
+  .container-padding {
+    @apply mx-auto max-w-7xl px-4 md:px-6 lg:px-8;
+  }
+
+  .section-spacing {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  .section-spacing-sm {
+    @apply py-8 md:py-12;
+  }
+
+  /* Focus States (WCAG AA compliant) */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2;
+  }
+
+  /* Layout Utilities */
+  .pt-header {
+    padding-top: var(--header-h);
+  }
+
+  .header-h {
+    height: var(--header-h);
+  }
+
+  /* Enhanced Button Variants */
+  .btn-primary {
+    @apply focus-ring rounded-xl bg-[#081A2F] px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:bg-[#0A1D35] hover:shadow-lg;
+  }
+
+  .btn-accent {
+    @apply focus-ring rounded-xl bg-[#147BFF] px-6 py-3 font-semibold text-white shadow-md transition-all duration-200 hover:bg-[#1266D9] hover:shadow-lg;
+  }
+
+  .btn-gold {
+    @apply focus-ring rounded-xl bg-[#F4B42A] px-6 py-3 font-semibold text-[#081A2F] shadow-md transition-all duration-200 hover:bg-[#E8A41E] hover:shadow-lg;
+  }
+
+  .btn-secondary {
+    @apply focus-ring rounded-xl border-2 border-neutral-200 bg-white px-6 py-3 font-semibold text-neutral-900 transition-all duration-200 hover:border-neutral-300 hover:bg-neutral-50;
+  }
+
+  .btn-ghost {
+    @apply focus-ring rounded-xl px-6 py-3 font-semibold text-neutral-700 transition-all duration-200 hover:bg-neutral-100;
+  }
+
+  .btn-lg {
+    @apply px-8 py-4 text-lg;
+  }
+
+  .btn-sm {
+    @apply px-4 py-2 text-sm;
+  }
+
+  /* Feature Grid */
+  .feature-grid {
+    @apply grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4;
+  }
+
+  /* Status Indicators */
+  .status-success {
+    @apply border-green-200 bg-green-50 text-green-700;
+  }
+
+  .status-warning {
+    @apply border-yellow-200 bg-yellow-50 text-yellow-700;
+  }
+
+  .status-error {
+    @apply border-red-200 bg-red-50 text-red-700;
+  }
+
+  .status-info {
+    @apply border-blue-200 bg-blue-50 text-blue-700;
+  }
+
+  /* Loading & Animation States */
+  .loading {
+    @apply animate-pulse;
+  }
+
+  .fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .slide-up {
+    animation: slideUp 0.6s ease-out;
+  }
+
+  /* ===== BUBBLE DESIGN SYSTEM ===== */
+
+  /* Modern Bubble Cards */
+  .card-bubble {
+    @apply rounded-2xl bg-white/70 shadow-md backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg;
+  }
+
+  .card-bubble-glass {
+    @apply rounded-2xl bg-white/60 shadow-lg backdrop-blur-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  .card-bubble-elevated {
+    @apply rounded-2xl bg-white leading-tight shadow-xl transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02] hover:shadow-2xl;
+    box-shadow:
+      0 8px 24px rgba(10, 26, 47, 0.12),
+      0 2px 8px rgba(10, 26, 47, 0.08);
+  }
+  /* Prevent text clipping inside elevated bubbles (long labels, large numbers) */
+  .card-bubble-elevated *,
+  .card-bubble *,
+  .panel-bubble * {
+    line-height: 1.2;
+  }
+
+  /* Glass Buttons */
+  .btn-glass {
+    @apply rounded-xl bg-gradient-to-tr from-slate-800 to-indigo-600 px-4 py-2 font-semibold text-white shadow transition-all duration-200 hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .btn-glass-accent {
+    @apply rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 px-4 py-2 font-semibold text-white shadow transition-all duration-200 hover:scale-[1.02] hover:shadow-lg;
+  }
+
+  .btn-glass-secondary {
+    @apply rounded-xl border border-white/30 bg-white/20 px-4 py-2 font-semibold text-slate-800 backdrop-blur-md transition-all duration-200 hover:scale-[1.02] hover:bg-white/30;
+  }
+
+  /* Bubble Panels */
+  .panel-bubble {
+    @apply rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white/80 to-slate-50/80 shadow-lg backdrop-blur-sm;
+  }
+
+  .panel-glass {
+    @apply rounded-2xl border border-white/20 bg-white/10 shadow-lg backdrop-blur-lg;
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+  }
+
+  /* Progress Bars with Glow */
+  .progress-bubble {
+    @apply overflow-hidden rounded-full bg-slate-200/50 shadow-inner;
+  }
+
+  .progress-bubble .progress-fill {
+    @apply h-full rounded-full bg-gradient-to-r from-blue-500 to-cyan-400 shadow-sm transition-all duration-500 ease-out;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.3);
+  }
+
+  /* Floating Elements */
+  .float-bubble {
+    @apply rounded-2xl border border-white/50 bg-white/90 shadow-lg backdrop-blur-md transition-all duration-300 hover:shadow-xl;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  /* Background Gradients */
+  .bg-bubble-gradient {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  }
+
+  .bg-glass-gradient {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  }
+}
+
+/* Custom Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-neutral-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-neutral-400);
+}
+
+/* ============================================
+   CLERK SIGN-IN FIX - Safety CSS
+   Ensures Clerk inputs are always visible
+   ============================================ */
+.cl-root * {
+  opacity: 1 !important;
+}
+
+.cl-component * {
+  color: inherit !important;
+}
+
+.cl-input,
+.cl-formFieldInput {
+  background: #fff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.cl-formButtonPrimary {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* =====================================
+   UI CONSISTENCY FIX
+   Standardize all cards, images, buttons
+   ===================================== */
+:root {
+  --card-radius: 20px;
+  --img-radius: 20px;
+  --btn-radius: 12px;
+  --brand: #117cff;
+  --brand-deep: #0a1a2f;
+  --accent: #ffc838;
+}
+
+.card,
+.shadcn-card,
+[data-ui="card"],
+[class*="card-"] {
+  border-radius: var(--card-radius) !important;
+}
+
+img,
+.image,
+.cc-thumb,
+.report-thumb,
+[class*="thumb"],
+[class*="preview"] {
+  border-radius: var(--img-radius) !important;
+  overflow: hidden;
+}
+
+button,
+.btn,
+[class*="btn-"] {
+  border-radius: var(--btn-radius) !important;
+}
+
+/* ===== BRAND IDENTITY FIXES ===== */
+
+/* Remove underline from brand links on hover */
+a:hover .brand-mark,
+a:has(.brand-mark):hover {
+  text-decoration: none !important;
+}
+
+/* Remove any duplicate brand titles after header */
+header + main h1:first-child:has-text("SkaiScraper"),
+header + main h2:first-child:has-text("SkaiScraper") {
+  display: none !important;
+}
+
+/* ===== NO SCROLLBAR UTILITY ===== */
+/* Hides scrollbars while maintaining scroll functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+@supports (scrollbar-width: none) {
+  .no-scrollbar {
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+/* ===== NEO PANELS & COMPONENTS ===== */
+/* Neo panels - themed glass containers */
+.panel {
+  background: var(--surface-1);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.panel-ghost {
+  background: var(--surface-2);
+  border-radius: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+/* Badge component - no letter cropping */
+.badge {
+  background: var(--primary-weak);
+  color: var(--primary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  line-height: 1.2;
+  word-break: normal;
+  overflow: visible;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Pills/Chips - prevent text truncation */
+.chip {
+  padding: 0.375rem 0.625rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  white-space: nowrap;
+  line-height: 1.2;
+  word-break: normal;
+  overflow: visible;
+}
+
+.chip > svg {
+  flex: 0 0 auto;
+}
+
+/* Ensure all rounded pill/bubble elements don't clip text */
+.rounded-full,
+.rounded-pill {
+  overflow: visible !important;
+  word-break: normal;
+}
+
+/* Fix for any badge-like elements */
+[class*="badge"],
+[class*="pill"],
+[class*="chip"],
+[class*="tag"] {
+  overflow: visible;
+  word-break: normal;
+  white-space: nowrap;
+}
+
+/* ============================================================================
+   FIELD APP UTILITIES
+   ============================================================================ */
+.field-btn {
+  @apply rounded-2xl border border-[var(--border)] bg-[var(--surface-2)] p-4 text-center font-medium text-[var(--text)] transition-colors hover:bg-[var(--surface-3)];
+}
+
+/* ============================================================================
+   DYNAMIC STYLING UTILITIES
+   These CSS classes use CSS custom properties for dynamic values.
+   This approach is preferred over inline styles for accessibility compliance.
+   ============================================================================ */
+
+/* Progress bar that uses --progress-width CSS variable */
+.progress-bar-dynamic {
+  width: var(--progress-width, 0%);
+}
+
+/* Dynamic background color using --dynamic-bg CSS variable */
+.bg-dynamic {
+  background-color: var(--dynamic-bg);
+}
+
+/* Dynamic text color using --dynamic-color CSS variable */
+.text-dynamic {
+  color: var(--dynamic-color);
+}
+
+/* Dynamic border color using --dynamic-border CSS variable */
+.border-dynamic {
+  border-color: var(--dynamic-border);
+}
+
+/* Dynamic background image using --dynamic-bg-image CSS variable */
+.bg-image-dynamic {
+  background-image: var(--dynamic-bg-image);
+  background-size: cover;
+  background-position: center;
+}
+
+/* Dynamic height using --dynamic-height CSS variable */
+.h-dynamic {
+  height: var(--dynamic-height);
+}
+
+/* Dynamic opacity using --dynamic-opacity CSS variable */
+.opacity-dynamic {
+  opacity: var(--dynamic-opacity);
+}
+
+/* Dynamic transform for image positioning */
+.transform-dynamic {
+  transform: var(--dynamic-transform);
+  transform-origin: top left;
+}
+/* cache bust 1768062747 */

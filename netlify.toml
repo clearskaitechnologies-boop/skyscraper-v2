@@ -1,0 +1,93 @@
+# ==========================================
+# SKAISCRAPER - NETLIFY CONFIGURATION
+# ==========================================
+
+[build]
+  command = "pnpm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--legacy-peer-deps"
+  # Netlify Pro: Use full 16GB RAM allocation
+  NODE_OPTIONS = "--max-old-space-size=14336"
+  # Disable telemetry to reduce overhead
+  NEXT_TELEMETRY_DISABLED = "1"
+  # Use all 8 CPUs on Pro tier
+  UV_THREADPOOL_SIZE = "8"
+
+# Next.js Runtime
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Redirects & Rewrites
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/_next/*"
+  to = "/_next/:splat"
+  status = 200
+
+# Force HTTPS
+[[redirects]]
+  from = "http://skaiscrape.com/*"
+  to = "https://www.skaiscrape.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.skaiscrape.com/*"
+  to = "https://www.skaiscrape.com/:splat"
+  status = 301
+  force = true
+
+# Apex to www redirect
+[[redirects]]
+  from = "https://skaiscrape.com/*"
+  to = "https://www.skaiscrape.com/:splat"
+  status = 301
+  force = true
+
+# Headers for security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/_next/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Functions config
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client"]
+
+# Context-specific settings
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+[context.deploy-preview]
+  environment = { NODE_ENV = "production" }
+
+[context.branch-deploy]
+  environment = { NODE_ENV = "production" }

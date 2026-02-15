@@ -1,0 +1,26 @@
+.project-board-content {
+  min-height: 500px;
+  max-height: calc(100vh - 250px);
+}
+
+.template-preview-modal-paper {
+  min-height: 11in;
+  width: 8.5in;
+}
+
+.template-preview-modal-header {
+  border-color: var(--template-primary-color, #117cff);
+  background-color: rgba(var(--template-primary-color-rgb, 17, 124, 255), 0.06);
+}
+
+.template-preview-modal-section-title {
+  color: var(--template-primary-color, #117cff);
+}
+
+.template-preview-modal-footer {
+  border-color: var(--template-primary-color, #117cff);
+}
+
+.loading-bar-progress {
+  width: var(--loading-bar-progress, 0%);
+}

@@ -1,0 +1,11 @@
+{
+  "id": "carrier-rebuttal-premium",
+  "name": "Carrier Rebuttal Letter",
+  "category": "legal",
+  "description": "Professional rebuttal letter for carrier denials or lowball settlements. Clear structure with dispute points and evidence.",
+  "version": "1.0.0",
+  "tags": ["rebuttal", "dispute", "carrier", "legal"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "estimatedPages": 2
+}

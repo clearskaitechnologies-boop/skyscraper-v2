@@ -1,0 +1,53 @@
+// src/app/client/[slug]/layout.tsx
+import Link from "next/link";
+import type { ReactNode } from "react";
+
+interface ClientLayoutProps {
+  children: ReactNode;
+  params: { slug: string };
+}
+
+export default function ClientLayout({ children, params }: ClientLayoutProps) {
+  const { slug } = params;
+  const basePath = `/client/${slug}`;
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="border-b bg-background/70 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <div className="space-y-1">
+            <div className="text-sm font-semibold">Your Client Network</div>
+            <div className="truncate text-xs text-muted-foreground">{slug}</div>
+          </div>
+          <nav className="flex gap-4 text-xs md:text-sm">
+            <Link href={basePath} className="transition-colors hover:text-primary">
+              Overview
+            </Link>
+            <Link href={`${basePath}/pros`} className="transition-colors hover:text-primary">
+              Pros
+            </Link>
+            <Link href={`${basePath}/projects`} className="transition-colors hover:text-primary">
+              Projects
+            </Link>
+            <Link href={`${basePath}/shared`} className="transition-colors hover:text-primary">
+              Shared
+            </Link>
+            <Link href={`${basePath}/documents`} className="transition-colors hover:text-primary">
+              Documents
+            </Link>
+            <Link href={`${basePath}/activity`} className="transition-colors hover:text-primary">
+              Activity
+            </Link>
+            <Link href={`${basePath}/request`} className="transition-colors hover:text-primary">
+              New Request
+            </Link>
+            <Link href={`${basePath}/profile`} className="transition-colors hover:text-primary">
+              Profile
+            </Link>
+          </nav>
+        </div>
+      </header>
+      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+    </div>
+  );
+}

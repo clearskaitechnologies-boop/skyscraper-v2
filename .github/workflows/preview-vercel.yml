@@ -1,0 +1,45 @@
+name: Preview Deploy (PR)
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      # Deploy preview from source (no prebuilt)
+      - name: Vercel Deploy (Preview, from source)
+        id: deploy
+        run: |
+          npx vercel pull --yes --environment=preview --token="$VERCEL_TOKEN"
+          URL=$(npx vercel --token="$VERCEL_TOKEN")
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Comment Preview URL
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: "🌐 Preview: ${{ steps.deploy.outputs.url }}"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,32 @@
+/* src/styles/ui-overrides.css
+ * Plain CSS fallback (no Tailwind @layer/@apply) to unblock build.
+ * Reintroduce Tailwind directives after global base/components/utilities are confirmed loaded. */
+
+.app-shell {
+  min-height: 100vh;
+  background-color: #0f172a; /* slate-950 */
+  color: #f8fafc; /* slate-50 */
+}
+
+.card-elevated {
+  border-radius: 1rem; /* approx rounded-2xl */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.btn-primary-soft {
+  padding: 0.5rem 1rem; /* px-4 py-2 */
+  border-radius: 0.5rem; /* rounded-lg */
+  font-weight: 500; /* font-medium */
+  background: #2563eb; /* blue-600 */
+  color: #ffffff;
+  transition: background .15s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary-soft:hover {
+  background: #1d4ed8; /* blue-700 */
+}

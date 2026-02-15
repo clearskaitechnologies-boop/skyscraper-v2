@@ -1,0 +1,45 @@
+"use client";
+
+import React from "react";
+
+import { AssistantProvider } from "@/components/assistant/AssistantProvider";
+import { AutoInitWrapper } from "@/components/AutoInitWrapper";
+import BrandingProvider from "@/components/BrandingProvider";
+import { LegalGate } from "@/components/legal/LegalGate";
+import { RouteGroupProvider } from "@/components/RouteGroupProvider";
+import { TokenGateProvider } from "@/components/TokenGate";
+import { usePresenceHeartbeat } from "@/hooks/usePresenceHeartbeat";
+import { PHProvider } from "@/lib/analytics.tsx";
+import { UserIdentityProvider } from "@/lib/identity/UserIdentityContext";
+
+export function AppProviders({
+  children,
+  orgId,
+  pendingLegal = [],
+}: {
+  children: React.ReactNode;
+  orgId: string;
+  pendingLegal?: any[];
+}) {
+  // Fire presence heartbeat on every page load + every 2 minutes
+  usePresenceHeartbeat();
+
+  return (
+    <RouteGroupProvider group="app">
+      <PHProvider>
+        <AutoInitWrapper>
+          {/* 🔐 UserIdentityProvider: Exposes isClient/isPro globally */}
+          <UserIdentityProvider>
+            <TokenGateProvider orgId={orgId}>
+              <BrandingProvider>
+                <AssistantProvider>
+                  <LegalGate initialPending={pendingLegal}>{children}</LegalGate>
+                </AssistantProvider>
+              </BrandingProvider>
+            </TokenGateProvider>
+          </UserIdentityProvider>
+        </AutoInitWrapper>
+      </PHProvider>
+    </RouteGroupProvider>
+  );
+}

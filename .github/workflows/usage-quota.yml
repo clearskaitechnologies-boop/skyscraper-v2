@@ -1,0 +1,39 @@
+name: Daily Token Usage Aggregation
+
+on:
+  schedule:
+    - cron: '15 2 * * *' # 02:15 UTC daily
+  workflow_dispatch: {}
+
+jobs:
+  aggregate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'pnpm'
+
+      - name: Enable Corepack & Install
+        run: |
+          corepack enable
+          corepack prepare pnpm@latest --activate
+          pnpm install --frozen-lockfile
+
+      - name: Aggregate Usage
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          pnpm exec ts-node scripts/aggregate_token_usage.ts || pnpm exec tsx scripts/aggregate_token_usage.ts || echo "Aggregation script missing"
+
+      - name: Upload Usage Artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: token-usage-latest
+          path: token-usage.json
+          if-no-files-found: ignore

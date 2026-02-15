@@ -1,0 +1,92 @@
+/**
+ * AI Skills API
+ *
+ * GET /api/ai/skills - Browse available AI capabilities
+ *
+ * Allows frontend to discover skills, filter by role/category,
+ * and present them in UI as sellable features.
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+
+import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+
+import {
+  AI_SKILLS,
+  type AISkill,
+  getSkillsByRole,
+  getSkillStats,
+  searchSkills,
+} from "@/lib/ai/skills-registry";
+
+async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
+  try {
+    const { userId } = ctx;
+
+    const { searchParams } = new URL(request.url);
+    const role = searchParams.get("role") as "Free" | "Pro" | "Admin" | null;
+    const category = searchParams.get("category") as AISkill["category"] | null;
+    const query = searchParams.get("query");
+    const stats = searchParams.get("stats") === "true";
+
+    // Return statistics
+    if (stats) {
+      return NextResponse.json({
+        success: true,
+        stats: getSkillStats(),
+      });
+    }
+
+    let skills = Object.values(AI_SKILLS);
+
+    // Filter by role
+    if (role) {
+      skills = getSkillsByRole(role);
+    }
+
+    // Filter by category
+    if (category) {
+      skills = skills.filter((skill) => skill.category === category);
+    }
+
+    // Search
+    if (query) {
+      skills = searchSkills(query);
+    }
+
+    return NextResponse.json({
+      success: true,
+      total: skills.length,
+      skills: skills.map((skill) => ({
+        id: skill.id,
+        name: skill.name,
+        description: skill.description,
+        category: skill.category,
+        roleAccess: skill.roleAccess,
+        estimatedTime: skill.estimatedTime,
+        confidence: skill.confidence,
+        tags: skill.tags,
+        // Optionally include full details
+        ...(searchParams.get("full") === "true" && {
+          detailedDescription: skill.detailedDescription,
+          idealInputs: skill.idealInputs,
+          requiredInputs: skill.requiredInputs,
+          outputs: skill.outputs,
+          exampleUseCase: skill.exampleUseCase,
+        }),
+      })),
+      filters: {
+        availableRoles: ["Free", "Pro", "Admin"],
+        availableCategories: ["damage", "workflow", "communication", "analysis", "estimation"],
+      },
+    });
+  } catch (error: any) {
+    console.error("[AI Skills] Error:", error);
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+  }
+}
+
+export const GET = withAiBilling(
+  createAiConfig("ai_skills", { costPerRequest: 10 }),
+  GET_INNER as any
+);

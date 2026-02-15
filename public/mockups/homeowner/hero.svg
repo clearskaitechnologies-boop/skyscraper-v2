@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Homeowner Impact Placeholder">
+  <style>
+    .bg{fill:#ffffff}.panel{fill:#F8FAFC;rx:18}
+    .title{fill:#0A1A2F;font:800 28px Inter,system-ui,sans-serif}
+    .muted{fill:#64748B;font:600 16px Inter,system-ui,sans-serif}
+    .chip{fill:#117CFF;rx:10}.chipT{fill:#fff;font:700 16px Inter,system-ui,sans-serif}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="120">Homeowner Impact Report</text>
+  <rect class="chip" x="90" y="150" width="220" height="36"></rect><text class="chipT" x="105" y="174">Leak Prevention</text>
+  <rect class="chip" x="320" y="150" width="260" height="36"></rect><text class="chipT" x="335" y="174">Energy Efficiency</text>
+  <rect class="chip" x="600" y="150" width="300" height="36"></rect><text class="chipT" x="615" y="174">Property Value Increase</text>
+  <text class="muted" x="90" y="220">Before/After • Storm Impact • Repairs Scheduled</text>
+</svg>

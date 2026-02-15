@@ -1,0 +1,230 @@
+
+<div class="cover">
+  <div class="coverCard">
+    <div class="row" style="align-items: flex-start;">
+      <div>
+        <div class="badge">Premium Blank Layout</div>
+        <div style="margin-top: 12px" class="h1">{{meta.title}}</div>
+        <div class="muted" style="margin-top: 6px">AI-ready placeholder layout (no customer data)</div>
+        {{#if meta.description}}
+          <div style="margin-top: 10px; font-size: 13px; line-height: 1.35; color: #334155;">{{meta.description}}</div>
+        {{/if}}
+        <div style="margin-top: 12px" class="pillRow">
+          <div class="pill">Category: {{meta.category}}</div>
+          <div class="pill">Required placeholders: {{meta.placeholdersRequired}}</div>
+          <div class="pill">Template: {{meta.templateSlug}}</div>
+        </div>
+      </div>
+      <div style="text-align:right" class="small muted">
+        <div>{{meta.generatedAt}}</div>
+        <div>{{#if claim.claimNumber}}Claim # {{claim.claimNumber}}{{/if}}</div>
+        <div>{{#if job.jobNumber}}Job # {{job.jobNumber}}{{/if}}</div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="grid2">
+      <div class="card">
+        <div class="h2">Property</div>
+        <div class="kv">
+          <div class="k">Address</div><div class="v">{{property.addressLine1}}</div>
+          <div class="k">City</div><div class="v">{{property.city}}</div>
+          <div class="k">State</div><div class="v">{{property.state}}</div>
+          <div class="k">Zip</div><div class="v">{{property.zip}}</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="h2">Inspector</div>
+        <div class="kv">
+          <div class="k">Name</div><div class="v">{{employee.fullName}}</div>
+          <div class="k">Title</div><div class="v">{{employee.title}}</div>
+          <div class="k">Phone</div><div class="v">{{employee.phone}}</div>
+          <div class="k">Email</div><div class="v">{{employee.email}}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hr"></div>
+
+    <div class="card">
+      <div class="h2">Executive Summary (AI fills)</div>
+      <div class="v" style="min-height: 120px">{{notes.executiveSummary}}</div>
+    </div>
+  </div>
+</div>
+
+<div class="page">
+<div class="row" style="align-items: center; margin-bottom: 10px;">
+  <div style="display:flex; gap: 10px; align-items: center;">
+    {{#if org.logoUrl}}
+      <div style="width: 46px; height: 46px; border: 1px solid #e2e8f0; border-radius: 10px; display:flex; align-items:center; justify-content:center; overflow:hidden;">
+        <img src="{{org.logoUrl}}" alt="Logo" style="max-width: 100%; max-height: 100%;" />
+      </div>
+    {{else}}
+      <div style="width: 46px; height: 46px; border: 1px dashed #cbd5e1; border-radius: 10px; display:flex; align-items:center; justify-content:center; color:#94a3b8; font-weight:800;">LOGO</div>
+    {{/if}}
+    <div>
+      <div style="font-weight:800">{{org.name}}</div>
+      <div class="muted small">{{org.phone}} {{#if org.email}}• {{org.email}}{{/if}} {{#if org.website}}• {{org.website}}{{/if}}</div>
+    </div>
+  </div>
+
+  <div class="small muted" style="text-align:right">
+    <div>Template: {{meta.templateSlug}}</div>
+    <div>Generated: {{meta.generatedAt}}</div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom: 12px;">
+  <div class="pageTitle">How this template works</div>
+  <div class="muted small" style="margin-top: 6px;">Preview mode uses neutral placeholders. Real org + claim + photos are injected when generating from a real claim/job.</div>
+  <div class="hr"></div>
+  <ul class="list">
+    <li><strong>Always verify</strong> loss date, carrier/policy, and address before sending.</li>
+    <li><strong>Attach evidence</strong> photos, weather report, and any estimate/scope artifacts.</li>
+    <li><strong>AI fills</strong> executive summary + recommendations + next steps from your inputs.</li>
+  </ul>
+</div>
+
+<div class="card">
+  <div class="h2">Property / Claim / Job Details</div>
+  <div class="grid2">
+    <div class="kv">
+      <div class="k">Client</div><div class="v">{{client.fullName}}</div>
+      <div class="k">Client Phone</div><div class="v">{{client.phone}}</div>
+      <div class="k">Client Email</div><div class="v">{{client.email}}</div>
+      <div class="k">Year Built</div><div class="v">{{property.yearBuilt}}</div>
+    </div>
+
+    <div class="kv">
+      <div class="k">Claim #</div><div class="v">{{claim.claimNumber}}</div>
+      <div class="k">Policy #</div><div class="v">{{claim.policyNumber}}</div>
+      <div class="k">Loss Date</div><div class="v">{{claim.lossDate}}</div>
+      <div class="k">Carrier</div><div class="v">{{claim.carrierName}}</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="hr"></div>
+
+<div class="page">
+<div class="card">
+  <div class="h2">Weather Verification</div>
+  <div class="kv">
+    <div class="k">Storm Date</div><div class="v">{{weather.stormDate}}</div>
+    <div class="k">Hail Size</div><div class="v">{{weather.hailSize}}</div>
+    <div class="k">Wind Gust</div><div class="v">{{weather.windGust}}</div>
+    <div class="k">Source / Report</div><div class="v">{{weather.dataSource}} {{#if weather.reportId}}(ID: {{weather.reportId}}){{/if}}</div>
+  </div>
+</div>
+
+</div>
+
+<div class="hr"></div>
+
+<div class="page">
+<div class="card">
+  <div class="h2">Detailed Findings</div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 20%">Component</th>
+        <th style="width: 16%">Condition</th>
+        <th style="width: 16%">Damage Type</th>
+        <th style="width: 10%">Severity</th>
+        <th style="width: 16%">Action</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each findings}}
+        <tr>
+          <td>{{component}}</td>
+          <td>{{condition}}</td>
+          <td>{{damageType}}</td>
+          <td>{{severity}}</td>
+          <td>{{action}}</td>
+          <td>{{notes}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<div class="hr"></div>
+
+<div class="page">
+<div class="card">
+  <div class="h2">Photo Documentation</div>
+  <div class="photoGrid">
+    {{#each photos}}
+      <div>
+        <div class="photoBox">PHOTO</div>
+        <div class="photoCaption">{{caption}}</div>
+      </div>
+    {{/each}}
+  </div>
+</div>
+
+</div>
+
+<div class="hr"></div>
+
+<div class="page">
+<div class="card">
+  <div class="h2">Scope / Line Items</div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th style="width: 12%">Qty</th>
+        <th style="width: 12%">Unit</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each scopeItems}}
+        <tr>
+          <td>{{item}}</td>
+          <td>{{quantity}}</td>
+          <td>{{unit}}</td>
+          <td>{{notes}}</td>
+        </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</div>
+
+</div>
+
+<div class="hr"></div>
+
+<div class="page">
+<div class="card">
+  <div class="h2">Recommendations & Next Steps (AI fills)</div>
+  <div class="v" style="min-height: 70px">{{notes.recommendations}}</div>
+  <div style="height: 10px"></div>
+  <div class="v" style="min-height: 60px">{{notes.nextSteps}}</div>
+</div>
+
+<div class="hr"></div>
+
+<div class="card">
+  <div class="h2">Signature</div>
+  <div class="kv">
+    <div class="k">Inspector</div><div class="v">{{employee.fullName}}</div>
+    <div class="k">License</div><div class="v">{{employee.licenseNumber}}</div>
+  </div>
+  <div class="sigLine"></div>
+  <div class="muted small" style="margin-top: 8px">{{notes.disclaimers}}</div>
+</div>
+
+<div class="footerSpace"></div>
+
+</div>

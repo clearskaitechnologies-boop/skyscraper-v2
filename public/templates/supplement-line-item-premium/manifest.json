@@ -1,0 +1,23 @@
+{
+  "slug": "supplement-line-item-premium",
+  "title": "Supplement Line Item Premium",
+  "category": "Claims",
+  "version": "1.0.0",
+  "assets": {
+    "previewPdf": "/templates/supplement-line-item-premium/preview.pdf",
+    "thumbnail": "/templates/supplement-line-item-premium/thumbnail.png"
+  },
+  "schemaVersion": "report-schema-v1",
+  "sections": [
+    "CompanyBranding",
+    "ClientAndClaim",
+    "AssignedEmployee",
+    "ReportPurposeAndSummary",
+    "DamageFindings",
+    "PhotoSummary",
+    "WeatherVerification",
+    "ScopeAndLineItems",
+    "Recommendations",
+    "Appendix"
+  ]
+}

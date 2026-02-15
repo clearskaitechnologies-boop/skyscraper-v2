@@ -1,0 +1,392 @@
+/**
+ * Database Photo Helpers
+ * 
+ * Server-side utilities for managing proposal photos and findings
+ * in PostgreSQL using Prisma $queryRawUnsafe.
+ * 
+ * Note: These tables (proposal_photos, photo_findings) are NOT in Prisma schema yet.
+ * They are created by migrations. We use raw SQL queries until Prisma schema is updated.
+ */
+
+import { prisma } from "@/lib/db/client";
+import type { DamageReport } from "@/lib/ai/damage-schema";
+
+// =============================================================================
+// TYPE DEFINITIONS
+// =============================================================================
+
+export interface ProposalPhoto {
+  id: string;
+  proposal_id: string;
+  org_id: string;
+  user_id: string;
+  image_url: string;
+  metadata: Record<string, any>;
+  created_at: Date;
+}
+
+export interface PhotoFinding {
+  id: string;
+  proposal_id: string;
+  photo_id: string;
+  model: string;
+  findings: DamageReport;
+  severity: "none" | "minor" | "moderate" | "severe";
+  confidence: number;
+  created_at: Date;
+}
+
+export interface InsertPhotoParams {
+  proposalId: string;
+  orgId: string;
+  userId: string;
+  imageUrl: string;
+  metadata?: Record<string, any>;
+}
+
+export interface InsertFindingParams {
+  proposalId: string;
+  photoId: string;
+  model: string;
+  findings: DamageReport;
+}
+
+// =============================================================================
+// PHOTO CRUD OPERATIONS
+// =============================================================================
+
+/**
+ * Insert a single photo record
+ * 
+ * @param params - Photo parameters
+ * @returns Inserted photo record
+ */
+export async function insertPhoto(params: InsertPhotoParams): Promise<ProposalPhoto> {
+  const { proposalId, orgId, userId, imageUrl, metadata = {} } = params;
+
+  const result = await prisma.$queryRawUnsafe<ProposalPhoto[]>(
+    `INSERT INTO proposal_photos (proposal_id, org_id, user_id, image_url, metadata)
+     VALUES ($1, $2, $3, $4, $5::jsonb)
+     RETURNING *`,
+    proposalId, orgId, userId, imageUrl, JSON.stringify(metadata)
+  );
+
+  if (!result || result.length === 0) {
+    throw new Error("Failed to insert photo");
+  }
+
+  return result[0];
+}
+
+/**
+ * Insert multiple photo records
+ * 
+ * @param photos - Array of photo parameters
+ * @returns Array of inserted photo records
+ */
+export async function insertPhotos(photos: InsertPhotoParams[]): Promise<ProposalPhoto[]> {
+  if (photos.length === 0) {
+    return [];
+  }
+
+  // Build VALUES clause
+  const values = photos.map((p, idx) => {
+    const metadata = p.metadata || {};
+    return `($${idx * 5 + 1}, $${idx * 5 + 2}, $${idx * 5 + 3}, $${idx * 5 + 4}, $${idx * 5 + 5}::jsonb)`;
+  }).join(", ");
+
+  // Flatten parameters
+  const params = photos.flatMap(p => [
+    p.proposalId,
+    p.orgId,
+    p.userId,
+    p.imageUrl,
+    JSON.stringify(p.metadata || {})
+  ]);
+
+  const result = await sql<ProposalPhoto[]>`
+    INSERT INTO proposal_photos (proposal_id, org_id, user_id, image_url, metadata)
+    VALUES ${sql.raw(values)}
+    RETURNING *
+  `.values(...params);
+
+  return result;
+}
+
+/**
+ * Get all photos for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Array of photo records
+ */
+export async function getPhotosForProposal(proposalId: string): Promise<ProposalPhoto[]> {
+  const result = await sql<ProposalPhoto[]>`
+    SELECT * FROM proposal_photos
+    WHERE proposal_id = ${proposalId}
+    ORDER BY created_at ASC
+  `;
+
+  return result;
+}
+
+/**
+ * Get a single photo by ID
+ * 
+ * @param photoId - Photo UUID
+ * @returns Photo record or null
+ */
+export async function getPhoto(photoId: string): Promise<ProposalPhoto | null> {
+  const result = await sql<ProposalPhoto[]>`
+    SELECT * FROM proposal_photos
+    WHERE id = ${photoId}
+    LIMIT 1
+  `;
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Delete a photo and its findings
+ * 
+ * @param photoId - Photo UUID
+ */
+export async function deletePhoto(photoId: string): Promise<void> {
+  await sql`
+    DELETE FROM proposal_photos
+    WHERE id = ${photoId}
+  `;
+}
+
+// =============================================================================
+// FINDING CRUD OPERATIONS
+// =============================================================================
+
+/**
+ * Insert a damage finding for a photo
+ * 
+ * @param params - Finding parameters
+ * @returns Inserted finding record
+ */
+export async function insertFinding(params: InsertFindingParams): Promise<PhotoFinding> {
+  const { proposalId, photoId, model, findings } = params;
+
+  // Extract severity and confidence from findings
+  const { overall_severity, overall_confidence } = findings;
+
+  const result = await sql<PhotoFinding[]>`
+    INSERT INTO photo_findings (proposal_id, photo_id, model, findings, severity, confidence)
+    VALUES (
+      ${proposalId},
+      ${photoId},
+      ${model},
+      ${findings}::jsonb,
+      ${overall_severity},
+      ${overall_confidence}
+    )
+    RETURNING *
+  `;
+
+  if (!result || result.length === 0) {
+    throw new Error("Failed to insert finding");
+  }
+
+  return result[0];
+}
+
+/**
+ * Get all findings for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Array of finding records
+ */
+export async function getFindingsForProposal(proposalId: string): Promise<PhotoFinding[]> {
+  const result = await sql<PhotoFinding[]>`
+    SELECT * FROM photo_findings
+    WHERE proposal_id = ${proposalId}
+    ORDER BY created_at ASC
+  `;
+
+  return result;
+}
+
+/**
+ * Get findings for a specific photo
+ * 
+ * @param photoId - Photo UUID
+ * @returns Array of finding records
+ */
+export async function getFindingsForPhoto(photoId: string): Promise<PhotoFinding[]> {
+  const result = await sql<PhotoFinding[]>`
+    SELECT * FROM photo_findings
+    WHERE photo_id = ${photoId}
+    ORDER BY created_at ASC
+  `;
+
+  return result;
+}
+
+/**
+ * Get a single finding by ID
+ * 
+ * @param findingId - Finding UUID
+ * @returns Finding record or null
+ */
+export async function getFinding(findingId: string): Promise<PhotoFinding | null> {
+  const result = await sql<PhotoFinding[]>`
+    SELECT * FROM photo_findings
+    WHERE id = ${findingId}
+    LIMIT 1
+  `;
+
+  return result.length > 0 ? result[0] : null;
+}
+
+/**
+ * Delete a finding
+ * 
+ * @param findingId - Finding UUID
+ */
+export async function deleteFinding(findingId: string): Promise<void> {
+  await sql`
+    DELETE FROM photo_findings
+    WHERE id = ${findingId}
+  `;
+}
+
+// =============================================================================
+// AGGREGATE QUERIES
+// =============================================================================
+
+/**
+ * Get photo count for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Number of photos
+ */
+export async function getPhotoCount(proposalId: string): Promise<number> {
+  const result = await sql<{ count: string }[]>`
+    SELECT COUNT(*) as count
+    FROM proposal_photos
+    WHERE proposal_id = ${proposalId}
+  `;
+
+  return parseInt(result[0].count, 10);
+}
+
+/**
+ * Get finding count for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Number of findings
+ */
+export async function getFindingCount(proposalId: string): Promise<number> {
+  const result = await sql<{ count: string }[]>`
+    SELECT COUNT(*) as count
+    FROM photo_findings
+    WHERE proposal_id = ${proposalId}
+  `;
+
+  return parseInt(result[0].count, 10);
+}
+
+/**
+ * Get severity distribution for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Severity counts
+ */
+export async function getSeverityDistribution(proposalId: string): Promise<{
+  none: number;
+  minor: number;
+  moderate: number;
+  severe: number;
+}> {
+  const result = await sql<{ severity: string; count: string }[]>`
+    SELECT severity, COUNT(*) as count
+    FROM photo_findings
+    WHERE proposal_id = ${proposalId}
+    GROUP BY severity
+  `;
+
+  const distribution = {
+    none: 0,
+    minor: 0,
+    moderate: 0,
+    severe: 0
+  };
+
+  result.forEach(row => {
+    const severity = row.severity as keyof typeof distribution;
+    distribution[severity] = parseInt(row.count, 10);
+  });
+
+  return distribution;
+}
+
+/**
+ * Get photos with their findings
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Photos with findings nested
+ */
+export async function getPhotosWithFindings(proposalId: string): Promise<
+  Array<ProposalPhoto & { findings: PhotoFinding[] }>
+> {
+  const photos = await getPhotosForProposal(proposalId);
+  
+  const photosWithFindings = await Promise.all(
+    photos.map(async (photo) => {
+      const findings = await getFindingsForPhoto(photo.id);
+      return { ...photo, findings };
+    })
+  );
+
+  return photosWithFindings;
+}
+
+// =============================================================================
+// BATCH OPERATIONS
+// =============================================================================
+
+/**
+ * Delete all photos and findings for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ */
+export async function deleteAllPhotosForProposal(proposalId: string): Promise<void> {
+  await sql`
+    DELETE FROM proposal_photos
+    WHERE proposal_id = ${proposalId}
+  `;
+  // CASCADE will handle photo_findings
+}
+
+/**
+ * Get highest severity finding for a proposal
+ * 
+ * @param proposalId - Proposal UUID
+ * @returns Highest severity level found
+ */
+export async function getHighestSeverity(
+  proposalId: string
+): Promise<"none" | "minor" | "moderate" | "severe"> {
+  const result = await sql<{ severity: string }[]>`
+    SELECT severity
+    FROM photo_findings
+    WHERE proposal_id = ${proposalId}
+    ORDER BY 
+      CASE severity
+        WHEN 'severe' THEN 4
+        WHEN 'moderate' THEN 3
+        WHEN 'minor' THEN 2
+        WHEN 'none' THEN 1
+      END DESC
+    LIMIT 1
+  `;
+
+  if (result.length === 0) {
+    return "none";
+  }
+
+  return result[0].severity as "none" | "minor" | "moderate" | "severe";
+}

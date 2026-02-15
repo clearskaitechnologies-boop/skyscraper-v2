@@ -1,0 +1,17 @@
+# Require review for high-risk areas
+
+/middleware.ts @Damienwillingham-star
+
+# Template marketplace + public preview proxies
+
+/src/app/api/templates/ @Damienwillingham-star
+/src/app/reports/templates/ @Damienwillingham-star
+
+# Claims APIs (avoid throws, protect access)
+
+/src/app/api/claims/ @Damienwillingham-star
+
+# Client portal routes
+
+/src/app/(client-portal)/portal/ @Damienwillingham-star
+/src/app/api/portal/ @Damienwillingham-star

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="750" fill="#f0fdf4" rx="8"/>
+
+  <!-- Title -->
+  <rect x="0" y="0" width="1200" height="55" fill="#064e3b" rx="0"/>
+  <text x="600" y="35" text-anchor="middle" fill="white" font-size="20" font-weight="bold">Fig. 3 — Weather Date-of-Loss Verification Pipeline (Patent Reference)</text>
+  <text x="1180" y="35" text-anchor="end" fill="#6ee7b7" font-size="10">ClearSkai Technologies LLC © 2026</text>
+
+  <!-- Input -->
+  <rect x="40" y="80" width="250" height="90" rx="8" fill="white" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="165" y="108" text-anchor="middle" fill="#3b82f6" font-size="14" font-weight="bold">Input Data</text>
+  <text x="165" y="128" text-anchor="middle" fill="#1e40af" font-size="11">Property Coordinates (lat/lng)</text>
+  <text x="165" y="145" text-anchor="middle" fill="#1e40af" font-size="11">Claimed Date of Loss</text>
+  <text x="165" y="160" text-anchor="middle" fill="#64748b" font-size="10">± 3-day search window</text>
+
+  <!-- Arrow -->
+  <line x1="290" y1="125" x2="330" y2="125" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Multi-Provider Fetch -->
+  <rect x="330" y="70" width="330" height="250" rx="8" fill="white" stroke="#059669" stroke-width="2" filter="url(#shadow)"/>
+  <text x="495" y="95" text-anchor="middle" fill="#059669" font-size="14" font-weight="bold">Multi-Provider Fetch (Priority Fallback)</text>
+
+  <rect x="350" y="105" width="290" height="35" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+  <text x="360" y="120" fill="#065f46" font-size="11" font-weight="bold">1. Visual Crossing</text>
+  <text x="555" y="120" fill="#065f46" font-size="10">(Primary — Hourly/Daily)</text>
+  <text x="628" y="128" text-anchor="end" fill="#059669" font-size="10">✓</text>
+
+  <rect x="350" y="148" width="290" height="35" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+  <text x="360" y="163" fill="#065f46" font-size="11" font-weight="bold">2. WeatherStack</text>
+  <text x="490" y="163" fill="#065f46" font-size="10">(Fallback)</text>
+  <text x="628" y="171" text-anchor="end" fill="#f59e0b" font-size="10">⟳</text>
+
+  <rect x="350" y="191" width="290" height="35" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+  <text x="360" y="206" fill="#065f46" font-size="11" font-weight="bold">3. NOAA/NWS CAP</text>
+  <text x="510" y="206" fill="#065f46" font-size="10">(Free — Alerts)</text>
+  <text x="628" y="214" text-anchor="end" fill="#3b82f6" font-size="10">+</text>
+
+  <rect x="350" y="234" width="290" height="35" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+  <text x="360" y="249" fill="#065f46" font-size="11" font-weight="bold">4. Iowa Mesonet</text>
+  <text x="490" y="249" fill="#065f46" font-size="10">(Free — Radar)</text>
+  <text x="628" y="257" text-anchor="end" fill="#3b82f6" font-size="10">+</text>
+
+  <rect x="350" y="277" width="290" height="35" rx="4" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+  <text x="360" y="292" fill="#065f46" font-size="11" font-weight="bold">5. Open-Meteo</text>
+  <text x="480" y="292" fill="#065f46" font-size="10">(Free — Supplementary)</text>
+  <text x="628" y="300" text-anchor="end" fill="#3b82f6" font-size="10">+</text>
+
+  <!-- Arrow -->
+  <line x1="660" y1="190" x2="700" y2="190" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Data Extraction -->
+  <rect x="700" y="70" width="250" height="250" rx="8" fill="white" stroke="#7c3aed" stroke-width="2" filter="url(#shadow)"/>
+  <text x="825" y="95" text-anchor="middle" fill="#7c3aed" font-size="14" font-weight="bold">Data Extraction</text>
+
+  <text x="720" y="120" fill="#5b21b6" font-size="11" font-weight="bold">Hail Analysis:</text>
+  <text x="720" y="135" fill="#6b21a8" font-size="10">• Size (diameter), density, hardness</text>
+  <text x="720" y="148" fill="#6b21a8" font-size="10">• Swath mapping, probability</text>
+
+  <text x="720" y="170" fill="#5b21b6" font-size="11" font-weight="bold">Wind Analysis:</text>
+  <text x="720" y="185" fill="#6b21a8" font-size="10">• Gust speed, 3-sec peak</text>
+  <text x="720" y="198" fill="#6b21a8" font-size="10">• Direction, structural risk</text>
+
+  <text x="720" y="220" fill="#5b21b6" font-size="11" font-weight="bold">Precipitation:</text>
+  <text x="720" y="235" fill="#6b21a8" font-size="10">• 24hr/72hr totals, flood index</text>
+
+  <text x="720" y="257" fill="#5b21b6" font-size="11" font-weight="bold">Radar &amp; Alerts:</text>
+  <text x="720" y="272" fill="#6b21a8" font-size="10">• Storm cell tracking, NEXRAD</text>
+  <text x="720" y="285" fill="#6b21a8" font-size="10">• NWS warnings/advisories</text>
+  <text x="720" y="298" fill="#6b21a8" font-size="10">• Ice/snow accumulation</text>
+
+  <!-- Arrow -->
+  <line x1="950" y1="190" x2="990" y2="190" stroke="#64748b" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Severity Score -->
+  <rect x="990" y="80" width="180" height="110" rx="8" fill="white" stroke="#dc2626" stroke-width="2" filter="url(#shadow)"/>
+  <text x="1080" y="108" text-anchor="middle" fill="#dc2626" font-size="13" font-weight="bold">Severity Score</text>
+  <text x="1080" y="128" text-anchor="middle" fill="#991b1b" font-size="10">Weighted computation:</text>
+  <text x="1080" y="143" text-anchor="middle" fill="#991b1b" font-size="10">hail + wind + precip</text>
+  <text x="1080" y="158" text-anchor="middle" fill="#991b1b" font-size="10">+ event proximity</text>
+  <text x="1080" y="178" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="bold">Score: 0 – 100</text>
+
+  <!-- AI Enhancement Row -->
+  <rect x="40" y="345" width="1130" height="130" rx="8" fill="white" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="60" y="375" fill="#d97706" font-size="14" font-weight="bold">AI-Enhanced Analysis (GPT-4o Strict JSON Schema)</text>
+
+  <rect x="60" y="390" width="350" height="70" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="235" y="413" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">buildSmartDOL()</text>
+  <text x="235" y="430" text-anchor="middle" fill="#92400e" font-size="10">AI identifies most likely date of loss</text>
+  <text x="235" y="445" text-anchor="middle" fill="#92400e" font-size="10">from multi-provider weather patterns</text>
+
+  <rect x="430" y="390" width="350" height="70" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="605" y="413" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">buildSmartReport()</text>
+  <text x="605" y="430" text-anchor="middle" fill="#92400e" font-size="10">Generates event timeline narrative</text>
+  <text x="605" y="445" text-anchor="middle" fill="#92400e" font-size="10">+ carrier-specific talking points</text>
+
+  <rect x="800" y="390" width="350" height="70" rx="4" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="975" y="413" text-anchor="middle" fill="#92400e" font-size="12" font-weight="bold">Forensic Causation Analysis</text>
+  <text x="975" y="430" text-anchor="middle" fill="#92400e" font-size="10">Correlates damage findings ↔ weather data</text>
+  <text x="975" y="445" text-anchor="middle" fill="#92400e" font-size="10">Per-peril likelihood scores (0-100)</text>
+
+  <!-- Output Box -->
+  <rect x="40" y="500" width="1130" height="130" rx="8" fill="white" stroke="#1e293b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="60" y="530" fill="#1e293b" font-size="14" font-weight="bold">Verification Object (Output)</text>
+
+  <rect x="60" y="540" width="250" height="75" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1"/>
+  <text x="70" y="558" fill="#334155" font-size="10" font-weight="bold">Core Fields:</text>
+  <text x="70" y="573" fill="#475569" font-size="9">• provider: string[] (sources used)</text>
+  <text x="70" y="586" fill="#475569" font-size="9">• date_range: { start, end }</text>
+  <text x="70" y="599" fill="#475569" font-size="9">• confidenceScore: 0.0 – 1.0</text>
+
+  <rect x="320" y="540" width="260" height="75" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1"/>
+  <text x="330" y="558" fill="#334155" font-size="10" font-weight="bold">Detection Results:</text>
+  <text x="330" y="573" fill="#475569" font-size="9">• hailDetected: boolean</text>
+  <text x="330" y="586" fill="#475569" font-size="9">• maxWindSpeed: number (mph)</text>
+  <text x="330" y="599" fill="#475569" font-size="9">• totalPrecipitation: number (in)</text>
+
+  <rect x="590" y="540" width="280" height="75" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1"/>
+  <text x="600" y="558" fill="#334155" font-size="10" font-weight="bold">AI-Generated Content:</text>
+  <text x="600" y="573" fill="#475569" font-size="9">• verificationStatement: string (narrative)</text>
+  <text x="600" y="586" fill="#475569" font-size="9">• carrierTalkingPoints: string[]</text>
+  <text x="600" y="599" fill="#475569" font-size="9">• causationReport: PerPerilScores</text>
+
+  <rect x="880" y="540" width="270" height="75" rx="4" fill="#f1f5f9" stroke="#475569" stroke-width="1"/>
+  <text x="890" y="558" fill="#334155" font-size="10" font-weight="bold">Provenance:</text>
+  <text x="890" y="573" fill="#475569" font-size="9">• rawProviderPayloads: JSON[]</text>
+  <text x="890" y="586" fill="#475569" font-size="9">• model: "gpt-4o-2024-08-06"</text>
+  <text x="890" y="599" fill="#475569" font-size="9">• generatedAt: ISO timestamp</text>
+
+  <!-- Token Deduction -->
+  <rect x="40" y="650" width="1130" height="80" rx="8" fill="#1e293b" filter="url(#shadow)"/>
+  <text x="60" y="678" fill="#67e8f9" font-size="13" font-weight="bold">Token Deduction &amp; Persistence</text>
+  <text x="60" y="700" fill="#e2e8f0" font-size="11">Quick DOL Check: 1 dolCheckRemain token → tokens_ledger entry → weather_documents record → 30-day cache</text>
+  <text x="60" y="718" fill="#e2e8f0" font-size="11">Full Forensic Report: 1 dolFullRemain token → tokens_ledger entry → weather_documents + causation_report → PDF generation → branded export</text>
+</svg>

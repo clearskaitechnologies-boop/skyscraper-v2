@@ -1,0 +1,27 @@
+*** Begin Patch
+*** Add File: scripts/test-upload-worker.js
++// scripts/test-upload-worker.js
++// Test harness: inserts a test branding_uploads row and runs the worker in STOP_AFTER_ONE mode.
++// Usage: TEST_ORG=00000000-0000-0000-0000-000000000000 node ./scripts/test-upload-worker.js
++const { exec } = require('child_process');
++const { PrismaClient } = require('@prisma/client');
++const prisma = new PrismaClient();
++
++async function main(){
++  const orgId = process.env.TEST_ORG || '00000000-0000-0000-0000-000000000000';
++  console.log('Inserting test branding_uploads row for org:', orgId);
++  const now = new Date();
++  const res = await prisma.$queryRaw`INSERT INTO branding_uploads (org_id,dest_path,public_url,provider,filename,content_type,status,created_at) VALUES (${orgId},'test/dest/path.png','https://example.com/test.png','supabase','test.png','image/png','pending', now()) RETURNING id;`;
++  console.log('Inserted id:', res);
++  console.log('Running worker once (STOP_AFTER_ONE=1)');
++  exec('STOP_AFTER_ONE=1 node ./scripts/process-uploads-worker.js', (err, stdout, stderr) => {
++    if(err) console.error('Worker failed:', err);
++    console.log(stdout);
++    console.error(stderr);
++    process.exit(err ? 1 : 0);
++  });
++}
++
++main().catch(e=>{ console.error(e); process.exit(1); });
++
+*** End Patch

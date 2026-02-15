@@ -1,0 +1,81 @@
+/**
+ * POST /api/measurements/webhook
+ *
+ * Webhook endpoint for GAF QuickMeasure / EagleView callbacks.
+ * When a measurement report is ready, the provider sends a webhook here
+ * to update the order status and attach the report.
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+
+import prisma from "@/lib/prisma";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+
+    // Validate webhook (provider-specific — GAF QuickMeasure format)
+    const { orderId, externalId, status, reportUrl, measurements, provider } = body;
+
+    if (!orderId && !externalId) {
+      return NextResponse.json(
+        { ok: false, message: "Missing orderId or externalId" },
+        { status: 400 }
+      );
+    }
+
+    // Find the order — match by our ID or the provider's external ID
+    const order = orderId
+      ? await prisma.measurement_orders.findUnique({ where: { id: orderId } })
+      : await prisma.measurement_orders.findFirst({
+          where: { external_id: externalId },
+        });
+
+    if (!order) {
+      console.warn("[MEASUREMENTS_WEBHOOK] Order not found:", { orderId, externalId });
+      return NextResponse.json({ ok: false, message: "Order not found" }, { status: 404 });
+    }
+
+    // Update the order
+    const updateData: Record<string, unknown> = {
+      metadata: {
+        ...(order.metadata as Record<string, unknown> | null),
+        webhookPayload: body,
+        webhookReceivedAt: new Date().toISOString(),
+      },
+    };
+
+    if (status === "completed" || reportUrl) {
+      updateData.status = "completed";
+      updateData.completed_at = new Date();
+      if (reportUrl) updateData.report_url = reportUrl;
+      if (measurements) updateData.measurements = measurements;
+    } else if (status === "failed" || status === "error") {
+      updateData.status = "failed";
+      updateData.failed_at = new Date();
+      updateData.failure_reason = body.error || body.message || "Provider reported failure";
+    } else if (status === "processing") {
+      updateData.status = "processing";
+    }
+
+    await prisma.measurement_orders.update({
+      where: { id: order.id },
+      data: updateData,
+    });
+
+    console.log(
+      `[MEASUREMENTS_WEBHOOK] Order ${order.id} updated to ${updateData.status ?? "unchanged"}`
+    );
+
+    return NextResponse.json({ ok: true, message: "Webhook processed" });
+  } catch (error) {
+    console.error("[MEASUREMENTS_WEBHOOK_ERROR]", error);
+    return NextResponse.json(
+      { ok: false, message: error instanceof Error ? error.message : "Webhook processing failed" },
+      { status: 500 }
+    );
+  }
+}

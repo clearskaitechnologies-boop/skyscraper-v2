@@ -1,0 +1,132 @@
+/**
+ * Public Company API
+ * GET /api/portal/company/[slug] — Company profile with team members
+ * Returns company info and active team members for client portal viewing.
+ */
+
+import { NextRequest, NextResponse } from "next/server";
+
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { slug } = await params;
+
+  try {
+    // Try by slug first, then by UUID
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
+
+    const company = await prisma.tradesCompany.findFirst({
+      where: isUUID ? { id: slug } : { slug },
+      include: {
+        members: {
+          where: { isActive: true },
+          orderBy: [{ isOwner: "desc" }, { isAdmin: "desc" }, { createdAt: "asc" }],
+          select: {
+            id: true,
+            userId: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            jobTitle: true,
+            title: true,
+            tradeType: true,
+            bio: true,
+            avatar: true,
+            profilePhoto: true,
+            isOwner: true,
+            isAdmin: true,
+            role: true,
+            specialties: true,
+            certifications: true,
+            yearsExperience: true,
+            phone: true,
+            city: true,
+            state: true,
+          },
+        },
+      },
+    });
+
+    if (!company) {
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    }
+
+    // Calculate company average rating from member reviews
+    let avgRating = 0;
+    let totalReviews = 0;
+    try {
+      const memberIds = company.members.map((m) => m.id);
+      if (memberIds.length > 0) {
+        const reviews = await prisma.trade_reviews.findMany({
+          where: { contractorId: { in: memberIds } },
+        });
+        totalReviews = reviews.length;
+        avgRating =
+          reviews.length > 0 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length : 0;
+      }
+    } catch {
+      // Reviews table may not exist
+    }
+
+    // Build team members (public-safe fields only)
+    const employees = company.members.map((m) => ({
+      id: m.id,
+      firstName: m.firstName,
+      lastName: m.lastName,
+      name: [m.firstName, m.lastName].filter(Boolean).join(" ") || "Team Member",
+      avatar: m.profilePhoto || m.avatar || null,
+      jobTitle:
+        m.jobTitle || m.title || (m.isOwner ? "Owner" : m.isAdmin ? "Admin" : "Team Member"),
+      tradeType: m.tradeType || null,
+      bio: m.bio || null,
+      isOwner: m.isOwner || false,
+      isAdmin: m.isAdmin || false,
+      role: m.isOwner ? "owner" : m.isAdmin ? "admin" : m.role || "member",
+      specialties: m.specialties || [],
+      certifications: m.certifications || [],
+      yearsExperience: m.yearsExperience || null,
+      city: m.city || null,
+      state: m.state || null,
+    }));
+
+    return NextResponse.json({
+      company: {
+        id: company.id,
+        name: company.name,
+        slug: company.slug,
+        description: company.description,
+        logo: company.logo,
+        coverImage: company.coverimage,
+        email: company.email,
+        phone: company.phone,
+        website: company.website,
+        address: company.address,
+        city: company.city,
+        state: company.state,
+        zip: company.zip,
+        specialties: company.specialties || [],
+        serviceArea: company.serviceArea || [],
+        yearsInBusiness: company.yearsInBusiness,
+        licenseNumber: company.licenseNumber,
+        insuranceVerified: company.insuranceVerified || false,
+        isVerified: company.isVerified || false,
+        rating: avgRating
+          ? Math.round(avgRating * 10) / 10
+          : company.rating
+            ? parseFloat(String(company.rating))
+            : 0,
+        reviewCount: totalReviews || company.reviewCount || 0,
+      },
+      employees,
+      employeeCount: employees.length,
+    });
+  } catch (error) {
+    console.error("[portal/company] Error:", error);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}

@@ -1,0 +1,66 @@
+/**
+ * Xactimate Parser Stub
+ *
+ * TODO: Implement Xactimate ESX/XML file parsing
+ * This is a placeholder to allow builds to succeed
+ */
+
+export interface XactimateLineItem {
+  category: string;
+  selector: string;
+  description: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  total: number;
+}
+
+export interface XactimateParseResult {
+  success: boolean;
+  claimNumber?: string;
+  insured?: string;
+  dateOfLoss?: string;
+  lineItems: XactimateLineItem[];
+  grandTotal: number;
+  errors: string[];
+}
+
+/**
+ * Parse Xactimate ESX file
+ * Stub implementation
+ */
+export async function parseXactimateFile(file: File | Blob): Promise<XactimateParseResult> {
+  console.log("[XactimateParser] Stub: Would parse Xactimate file");
+  return {
+    success: false,
+    lineItems: [],
+    grandTotal: 0,
+    errors: ["Xactimate parsing not yet implemented"],
+  };
+}
+
+/**
+ * Parse Xactimate XML content
+ */
+export function parseXactimateXML(content: string): XactimateParseResult {
+  console.log("[XactimateParser] Stub: Would parse Xactimate XML");
+  return {
+    success: false,
+    lineItems: [],
+    grandTotal: 0,
+    errors: ["Xactimate XML parsing not yet implemented"],
+  };
+}
+
+/**
+ * Convert Xactimate line items to claim format
+ */
+export function convertToClaimFormat(items: XactimateLineItem[]): Record<string, any>[] {
+  return items.map((item) => ({
+    description: item.description,
+    category: item.category,
+    quantity: item.quantity,
+    unitPrice: item.unitPrice,
+    total: item.total,
+  }));
+}

@@ -1,0 +1,5 @@
+date,amount,description,reference
+2024-11-01,22500.00,State Farm ACV Payment - Claim 12345-ABC,TXN-001
+2024-11-05,5000.00,Supplement payment for Smith Roof,TXN-002
+2024-11-07,12000.00,Homeowner payment - 123 Main St,TXN-003
+2024-11-10,3500.00,Final depreciation Jones Property,TXN-004

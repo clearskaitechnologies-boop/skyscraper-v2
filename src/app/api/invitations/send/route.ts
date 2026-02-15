@@ -1,0 +1,124 @@
+/**
+ * POST /api/invitations/send
+ * Send client invitations from a pro — creates ClientProConnection + Client records
+ * Supports single and bulk invitations
+ */
+
+import { auth } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import prisma from "@/lib/prisma";
+
+export async function POST(request: NextRequest) {
+  const { userId } = await auth();
+
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { orgId } = await ensureUserOrgContext(userId);
+    const body = await request.json();
+    const { type, email, emails, firstName, lastName, message } = body;
+
+    // Get the pro's company
+    const member = await prisma.tradesCompanyMember.findFirst({
+      where: { userId },
+      select: { id: true, companyId: true, companyName: true, firstName: true, lastName: true },
+    });
+
+    if (!member?.companyId) {
+      return NextResponse.json(
+        { error: "You need a company profile to send invitations" },
+        { status: 400 }
+      );
+    }
+
+    const emailList: Array<{ email: string; firstName?: string; lastName?: string }> =
+      type === "bulk"
+        ? (emails || []).map((e: string) => ({ email: e }))
+        : [{ email, firstName, lastName }];
+
+    const results: Array<{ email: string; status: string; error?: string }> = [];
+
+    for (const invitee of emailList) {
+      try {
+        if (!invitee.email) {
+          results.push({ email: "", status: "skipped", error: "No email" });
+          continue;
+        }
+
+        // Check if client already exists
+        let client = await prisma.client.findFirst({
+          where: { email: invitee.email },
+        });
+
+        // Create client record if doesn't exist
+        if (!client) {
+          const slug = invitee.email.split("@")[0] + "-" + Date.now().toString(36);
+          client = await prisma.client.create({
+            data: {
+              id: crypto.randomUUID(),
+              slug,
+              email: invitee.email,
+              name:
+                invitee.firstName && invitee.lastName
+                  ? `${invitee.firstName} ${invitee.lastName}`
+                  : invitee.firstName || null,
+              firstName: invitee.firstName || null,
+              lastName: invitee.lastName || null,
+              orgId,
+            },
+          });
+        }
+
+        // Check if connection already exists
+        const existing = await prisma.clientProConnection.findFirst({
+          where: {
+            clientId: client.id,
+            contractorId: member.companyId,
+          },
+        });
+
+        if (existing) {
+          results.push({ email: invitee.email, status: "already_connected" });
+          continue;
+        }
+
+        // Create the connection invitation
+        await prisma.clientProConnection.create({
+          data: {
+            id: crypto.randomUUID(),
+            clientId: client.id,
+            contractorId: member.companyId,
+            status: "pending",
+            invitedBy: userId,
+            notes: message || "Invited via network invitations",
+          },
+        });
+
+        results.push({ email: invitee.email, status: "sent" });
+      } catch (err: any) {
+        results.push({ email: invitee.email, status: "error", error: err.message });
+      }
+    }
+
+    const sent = results.filter((r) => r.status === "sent").length;
+    const alreadyConnected = results.filter((r) => r.status === "already_connected").length;
+
+    return NextResponse.json({
+      success: true,
+      sent,
+      alreadyConnected,
+      total: results.length,
+      results,
+    });
+  } catch (error: any) {
+    console.error("[POST /api/invitations/send] Error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to send invitations" },
+      { status: 500 }
+    );
+  }
+}

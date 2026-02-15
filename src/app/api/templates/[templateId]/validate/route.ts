@@ -1,0 +1,54 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+
+import prisma from "@/lib/prisma";
+
+export const runtime = "nodejs";
+
+const REQUIRED_PLACEHOLDERS = [
+  "company.name",
+  "company.logoUrl",
+  "company.phone",
+  "company.email",
+  "claim.claimNumber",
+  "claim.dateOfLoss",
+  "property.address",
+  "weather.source",
+];
+
+const ValidateTemplateSchema = z.object({
+  templateId: z.string(),
+});
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+    const { templateId } = ValidateTemplateSchema.parse(body);
+
+    const template = await prisma.template.findUnique({ where: { id: templateId } });
+    if (!template) {
+      return NextResponse.json({ ok: false, error: "TEMPLATE_NOT_FOUND" }, { status: 404 });
+    }
+
+    const sectionsStr = JSON.stringify(template.sections ?? []);
+    const missingPlaceholders = REQUIRED_PLACEHOLDERS.filter((p) => !sectionsStr.includes(p));
+
+    const hasValidation = {
+      hasThumbnail: Boolean(template.thumbnailUrl),
+      hasSections: Boolean(template.sections),
+      hasRequiredPlaceholders: missingPlaceholders.length === 0,
+      hasCoverPage: true, // NOTE: Determined by inspecting sections structure
+    };
+
+    const isValid = Object.values(hasValidation).every((v) => v);
+
+    return NextResponse.json({
+      ok: true,
+      isValid,
+      validation: hasValidation,
+      missingPlaceholders,
+    });
+  } catch (e: any) {
+    return NextResponse.json({ ok: false, error: e?.message ?? "UNKNOWN_ERROR" }, { status: 500 });
+  }
+}

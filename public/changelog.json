@@ -1,0 +1,29 @@
+{
+  "releases": [
+    {
+      "version": "0.2.0",
+      "date": "2025-10-18",
+      "title": "M2 foundation + AI reports",
+      "items": [
+        "JE endpoints (sync, layers, export)",
+        "AI summary, photo captions, code items",
+        "Fast PDF export (off-screen + inline images)",
+        "Status page with JE live/mock + last sync",
+        "Auth: reset, signup, improved sign-in",
+        "Legal pages, Welcome modal, Announcement banner",
+        "Footer status chip and changelog page"
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "date": "2025-10-15",
+      "title": "M1 navigation & CTAs",
+      "items": [
+        "Public pages: Home, Features, Pricing, About, Contact",
+        "Report Workbench wired from all CTAs",
+        "Protected routes & redirects",
+        "Status check page"
+      ]
+    }
+  ]
+}

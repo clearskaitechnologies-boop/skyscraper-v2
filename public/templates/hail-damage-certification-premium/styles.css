@@ -1,0 +1,44 @@
+
+@page { margin: 0.55in 0.55in 0.8in 0.55in; }
+
+* { box-sizing: border-box; }
+html, body { padding: 0; margin: 0; }
+body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color: #0f172a; font-size: 12px; }
+
+.h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+.h2 { font-size: 15px; font-weight: 700; margin: 0 0 6px; }
+.muted { color: #64748b; }
+.small { font-size: 11px; }
+
+.cover { page-break-after: always; }
+.coverCard { border: 1px solid #e2e8f0; border-radius: 14px; padding: 22px; }
+.badge { display: inline-block; border: 1px solid #e2e8f0; padding: 4px 10px; border-radius: 999px; font-size: 11px; color: #334155; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.card { border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; }
+
+.row { display: flex; justify-content: space-between; gap: 12px; }
+.kv { display: grid; grid-template-columns: 140px 1fr; gap: 8px 10px; }
+.k { color: #475569; }
+.v { min-height: 14px; border-bottom: 1px dashed #cbd5e1; }
+
+.hr { height: 1px; background: #e2e8f0; margin: 14px 0; }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th { text-align: left; font-size: 11px; color: #475569; border-bottom: 1px solid #e2e8f0; padding: 8px 6px; }
+.table td { border-bottom: 1px solid #f1f5f9; padding: 8px 6px; vertical-align: top; }
+
+.photoGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.photoBox { border: 1px dashed #cbd5e1; border-radius: 10px; height: 120px; display: flex; align-items: center; justify-content: center; color: #94a3b8; font-weight: 700; }
+.photoCaption { margin-top: 6px; font-size: 10px; color: #475569; min-height: 12px; border-bottom: 1px dashed #e2e8f0; }
+
+.sigLine { height: 16px; border-bottom: 1px solid #94a3b8; margin-top: 22px; }
+
+.footerSpace { height: 18px; }
+
+.page { page-break-before: always; }
+.pageTitle { font-size: 18px; font-weight: 800; letter-spacing: -0.01em; }
+.pillRow { display:flex; gap:8px; flex-wrap:wrap; }
+.pill { display:inline-block; border:1px solid #e2e8f0; border-radius:999px; padding:4px 10px; font-size:11px; color:#334155; background:#fff; }
+.list { margin: 0; padding-left: 18px; color: #334155; }
+.list li { margin: 6px 0; }

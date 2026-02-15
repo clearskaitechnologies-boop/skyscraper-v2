@@ -1,0 +1,64 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#8b5cf6",
+    "secondaryColor": "#7c3aed",
+    "phone": "(555) 123-4567",
+    "email": ""
+  },
+  "claim": { "claimNumber": "CLM-2024-001234" },
+  "content": {
+    "rcvTotal": "$58,750.00",
+    "depreciationTotal": "$14,250.00",
+    "acvTotal": "$44,500.00",
+    "recoverableAmount": "$14,250.00",
+    "items": [
+      {
+        "item": "Architectural Shingles",
+        "age": "12 yrs",
+        "usefulLife": "25 yrs",
+        "rcv": "$22,500.00",
+        "depPercent": "48%",
+        "depreciation": "$10,800.00",
+        "acv": "$11,700.00"
+      },
+      {
+        "item": "Gutters & Downspouts",
+        "age": "12 yrs",
+        "usefulLife": "20 yrs",
+        "rcv": "$3,200.00",
+        "depPercent": "60%",
+        "depreciation": "$1,920.00",
+        "acv": "$1,280.00"
+      },
+      {
+        "item": "Siding - Vinyl",
+        "age": "12 yrs",
+        "usefulLife": "30 yrs",
+        "rcv": "$18,500.00",
+        "depPercent": "40%",
+        "depreciation": "$7,400.00",
+        "acv": "$11,100.00"
+      },
+      {
+        "item": "Paint - Exterior",
+        "age": "5 yrs",
+        "usefulLife": "10 yrs",
+        "rcv": "$8,750.00",
+        "depPercent": "50%",
+        "depreciation": "$4,375.00",
+        "acv": "$4,375.00"
+      },
+      {
+        "item": "Windows (5 units)",
+        "age": "12 yrs",
+        "usefulLife": "25 yrs",
+        "rcv": "$5,800.00",
+        "depPercent": "48%",
+        "depreciation": "$2,784.00",
+        "acv": "$3,016.00"
+      }
+    ]
+  }
+}

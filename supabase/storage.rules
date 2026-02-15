@@ -1,0 +1,12 @@
+-- Example Supabase storage RLS rules (informational)
+-- Ensure your Supabase project applies appropriate bucket-level policies.
+
+-- Buckets expected:
+-- branding (public or restricted)
+-- team (public)
+-- documents (private or signed URLs)
+-- mockups (public)
+
+-- Example policy (Postgres function current_org_id must be defined in your DB):
+-- Allow uploads where org_id matches current_org_id()
+-- This file is a guidance template. Apply policies via Supabase Console or SQL migrations.

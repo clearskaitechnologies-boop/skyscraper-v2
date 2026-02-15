@@ -1,0 +1,374 @@
+"use client";
+
+import { useOrganization } from "@clerk/nextjs";
+import { Archive, Lock, RefreshCw, RotateCcw, Trash2, Unlock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+interface ArchivedItem {
+  id: string;
+  type: "lead" | "claim" | "project";
+  title: string;
+  archivedAt: string;
+  daysSinceArchive: number;
+  isColdStorage: boolean;
+}
+
+interface ArchiveResponse {
+  items: ArchivedItem[];
+  coldStorageEnabled: boolean;
+  itemsInColdStorage: number;
+  coldStorageAccessFee: number;
+}
+
+export default function ArchivePage() {
+  const { organization } = useOrganization();
+  const [data, setData] = useState<ArchiveResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [restoring, setRestoring] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<"recent" | "cold" | null>("recent");
+
+  useEffect(() => {
+    fetchArchivedItems();
+  }, [organization]);
+
+  const fetchArchivedItems = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/archive");
+      if (!res.ok) throw new Error("Failed to fetch archive");
+      const json = await res.json();
+      setData(json);
+    } catch (err) {
+      console.error("Archive fetch error:", err);
+      toast.error("Failed to load archived items");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRestore = async (item: ArchivedItem) => {
+    if (item.isColdStorage && !data?.coldStorageEnabled) {
+      toast.error("Cold storage access required. Subscribe to access items older than 30 days.");
+      return;
+    }
+
+    try {
+      setRestoring(item.id);
+      const res = await fetch(`/api/archive?id=${item.id}&type=${item.type}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to restore");
+      }
+      toast.success(`${item.title} restored successfully!`);
+      fetchArchivedItems();
+    } catch (err: any) {
+      toast.error(err.message || "Failed to restore item");
+    } finally {
+      setRestoring(null);
+    }
+  };
+
+  const enableColdStorage = async () => {
+    // This would open a Stripe checkout for cold storage subscription
+    toast.info("Cold storage subscription coming soon!");
+    // TODO: Implement Stripe checkout for $7.99/mo cold storage
+  };
+
+  const recentItems = data?.items.filter((i) => !i.isColdStorage) || [];
+  const coldItems = data?.items.filter((i) => i.isColdStorage) || [];
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "claim":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+      case "lead":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300";
+      case "project":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  if (loading) {
+    return (
+      <PageContainer>
+        <PageHero
+          section="jobs"
+          title="Archive"
+          subtitle="Items are never deleted. Restore anything, anytime."
+          icon={<Archive className="h-6 w-6" />}
+        />
+        <div className="flex min-h-[400px] items-center justify-center">
+          <RefreshCw className="h-8 w-8 animate-spin text-muted-foreground" />
+        </div>
+      </PageContainer>
+    );
+  }
+
+  return (
+    <PageContainer>
+      <PageHero
+        section="jobs"
+        title="Archive"
+        subtitle="Items are never deleted. Restore anything, anytime."
+        icon={<Archive className="h-6 w-6" />}
+        actions={
+          <div className="flex gap-2">
+            <Badge variant="secondary" className="bg-white/20 text-white">
+              {data?.items.length || 0} items
+            </Badge>
+            {coldItems.length > 0 && (
+              <Badge variant="secondary" className="bg-amber-500/20 text-white">
+                {coldItems.length} in cold storage
+              </Badge>
+            )}
+          </div>
+        }
+      />
+
+      {/* Stats Cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
+              <RotateCcw className="h-6 w-6 text-green-600 dark:text-green-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{recentItems.length}</p>
+              <p className="text-sm text-muted-foreground">Recently Archived</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="rounded-full bg-amber-100 p-3 dark:bg-amber-900">
+              <Lock className="h-6 w-6 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{coldItems.length}</p>
+              <p className="text-sm text-muted-foreground">Cold Storage</p>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 p-6">
+            <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
+              <Trash2 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <p className="text-2xl font-bold">{data?.items.length || 0}</p>
+              <p className="text-sm text-muted-foreground">Total Archived</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Cold Storage Banner */}
+      {coldItems.length > 0 && !data?.coldStorageEnabled && (
+        <Card className="border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950">
+          <CardContent className="flex items-center justify-between py-4">
+            <div className="flex items-center gap-3">
+              <Lock className="h-5 w-5 text-amber-600" />
+              <div>
+                <p className="font-medium text-amber-900 dark:text-amber-100">
+                  {coldItems.length} items in Cold Storage
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  Items older than 30 days require Cold Storage access ($7.99/mo)
+                </p>
+              </div>
+            </div>
+            <Button onClick={enableColdStorage} variant="outline" size="sm">
+              <Unlock className="mr-2 h-4 w-4" />
+              Enable Access
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Archive Tabs */}
+      <Tabs defaultValue="recent" className="w-full">
+        <TabsList className="mb-4 grid w-full grid-cols-3">
+          <TabsTrigger value="recent">Recent ({recentItems.length})</TabsTrigger>
+          <TabsTrigger value="cold">Cold Storage ({coldItems.length})</TabsTrigger>
+          <TabsTrigger value="all">All Items ({data?.items.length || 0})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="recent">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <RotateCcw className="h-5 w-5" />
+                Recently Archived
+              </CardTitle>
+              <CardDescription>
+                Items archived within the last 30 days - always accessible
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {recentItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Archive className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                  <p className="text-muted-foreground">No recently archived items</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {recentItems.map((item) => (
+                    <ArchiveItemRow
+                      key={`${item.type}-${item.id}`}
+                      item={item}
+                      onRestore={handleRestore}
+                      restoring={restoring}
+                      getTypeColor={getTypeColor}
+                      locked={false}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="cold">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Lock className="h-5 w-5" />
+                Cold Storage
+              </CardTitle>
+              <CardDescription>
+                Items older than 30 days
+                {!data?.coldStorageEnabled && " - requires $7.99/mo subscription"}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {coldItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Lock className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                  <p className="text-muted-foreground">No items in cold storage</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {coldItems.map((item) => (
+                    <ArchiveItemRow
+                      key={`${item.type}-${item.id}`}
+                      item={item}
+                      onRestore={handleRestore}
+                      restoring={restoring}
+                      getTypeColor={getTypeColor}
+                      locked={!data?.coldStorageEnabled}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="all">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Archive className="h-5 w-5" />
+                All Archived Items
+              </CardTitle>
+              <CardDescription>Complete archive history</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {(data?.items.length || 0) === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <Archive className="mb-4 h-12 w-12 text-muted-foreground/50" />
+                  <h3 className="mb-2 text-lg font-medium">Nothing Archived</h3>
+                  <p className="max-w-md text-center text-muted-foreground">
+                    When you archive claims, leads, or projects, they&apos;ll appear here. You can
+                    restore them at any time.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {data?.items.map((item) => (
+                    <ArchiveItemRow
+                      key={`${item.type}-${item.id}`}
+                      item={item}
+                      onRestore={handleRestore}
+                      restoring={restoring}
+                      getTypeColor={getTypeColor}
+                      locked={item.isColdStorage && !data?.coldStorageEnabled}
+                    />
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </PageContainer>
+  );
+}
+
+// Extracted component for archive item rows
+function ArchiveItemRow({
+  item,
+  onRestore,
+  restoring,
+  getTypeColor,
+  locked,
+}: {
+  item: ArchivedItem;
+  onRestore: (item: ArchivedItem) => void;
+  restoring: string | null;
+  getTypeColor: (type: string) => string;
+  locked: boolean;
+}) {
+  return (
+    <div
+      className={`flex items-center justify-between rounded-lg border bg-card p-4 transition-colors ${
+        locked ? "bg-muted/50 opacity-75" : "hover:bg-accent/50"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <Badge className={getTypeColor(item.type)}>{item.type}</Badge>
+        <div>
+          <p className="font-medium">{item.title}</p>
+          <p className="text-sm text-muted-foreground">
+            Archived {item.daysSinceArchive} days ago
+            {item.isColdStorage && " • Cold Storage"}
+          </p>
+        </div>
+      </div>
+      {locked ? (
+        <Badge variant="outline" className="text-muted-foreground">
+          <Lock className="mr-1 h-3 w-3" />
+          Locked
+        </Badge>
+      ) : (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onRestore(item)}
+          disabled={restoring === item.id}
+        >
+          {restoring === item.id ? (
+            <RefreshCw className="h-4 w-4 animate-spin" />
+          ) : (
+            <>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Restore
+            </>
+          )}
+        </Button>
+      )}
+    </div>
+  );
+}

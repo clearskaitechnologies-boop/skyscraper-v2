@@ -1,0 +1,233 @@
+import { auth } from "@clerk/nextjs/server";
+
+import { ensureOrgForUser } from "@/lib/org/ensureOrgForUser";
+import prisma from "@/lib/prisma";
+import { ensureWorkspaceForOrg } from "@/lib/workspace/ensureWorkspaceForOrg";
+
+export type SafeOrgStatus = "unauthenticated" | "noMembership" | "ok" | "error";
+
+export type SafeOrgContext = {
+  status: SafeOrgStatus;
+  userId: string | null;
+  orgId: string | null;
+  role: string | null;
+  membership: any | null;
+  error?: string | null;
+  // Backwards compatibility fields (allow existing code expecting ok/reason/organizationId)
+  ok?: boolean;
+  reason?: string | null;
+  organizationId?: string | null;
+};
+
+export async function safeOrgContext(): Promise<SafeOrgContext> {
+  let userId: string | null = null;
+  try {
+    // Clerk v5 requires await
+    const a = await auth();
+    userId = a.userId ?? null;
+  } catch {
+    userId = null;
+  }
+
+  // Unauthenticated
+  if (!userId) {
+    return {
+      status: "unauthenticated",
+      userId: null,
+      orgId: null,
+      role: null,
+      membership: null,
+      ok: false,
+      reason: "no-user",
+      organizationId: null,
+    };
+  }
+
+  // Test bypass synthetic context
+  if (
+    process.env.TEST_AUTH_BYPASS === "1" &&
+    process.env.TEST_AUTH_USER_ID &&
+    process.env.TEST_AUTH_ORG_ID
+  ) {
+    return {
+      status: "ok",
+      userId: process.env.TEST_AUTH_USER_ID,
+      orgId: process.env.TEST_AUTH_ORG_ID,
+      role: "owner",
+      membership: {
+        id: `uo_${process.env.TEST_AUTH_ORG_ID}_${process.env.TEST_AUTH_USER_ID}`,
+        userId: process.env.TEST_AUTH_USER_ID,
+        organizationId: process.env.TEST_AUTH_ORG_ID,
+        role: "owner",
+      },
+      ok: true,
+      reason: null,
+      organizationId: process.env.TEST_AUTH_ORG_ID,
+    };
+  }
+
+  try {
+    // 1) PRIMARY SOURCE OF TRUTH: user_organizations memberships
+    // CRITICAL: Use "asc" order to match orgResolver.ts and ensure consistent org selection
+    const memberships = await prisma.user_organizations.findMany({
+      where: { userId: userId },
+      orderBy: { createdAt: "asc" },
+      select: { id: true, userId: true, organizationId: true, role: true, createdAt: true },
+    });
+
+    if (memberships.length > 0) {
+      for (const m of memberships) {
+        if (!m.organizationId) continue;
+
+        // Ensure the org row actually exists before using this membership
+        const org = await prisma.org.findUnique({
+          where: { id: m.organizationId },
+          select: { id: true },
+        });
+
+        if (!org) {
+          console.warn("[safeOrgContext] Membership points to missing org row", {
+            userId,
+            organizationId: m.organizationId,
+          });
+          continue;
+        }
+
+        // 🛡️ HARDEN: Ensure workspace primitives exist (idempotent, non-blocking)
+        await ensureWorkspaceForOrg({
+          orgId: org.id,
+          userId,
+        }).catch((err) => {
+          console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+        });
+
+        const mappedMembership = {
+          id: m.id,
+          userId: m.userId,
+          organizationId: org.id,
+          role: m.role,
+        };
+
+        return {
+          status: "ok",
+          userId,
+          orgId: org.id,
+          role: m.role ?? "member",
+          membership: mappedMembership,
+          ok: true,
+          reason: null,
+          organizationId: org.id,
+        };
+      }
+
+      // If we had memberships but none pointed to a valid org row,
+      // treat this as a corrupted state and fall through to self-healing
+      console.warn(
+        "[safeOrgContext] Memberships found but no valid Org rows; will attempt auto-onboard",
+        { userId }
+      );
+    }
+
+    // 2) LEGACY FALLBACK: users.orgId linkage (only when NO memberships exist)
+    if (memberships.length === 0) {
+      const legacyUser = await prisma.users.findUnique({
+        where: { clerkUserId: userId },
+        select: { id: true, orgId: true, role: true },
+      });
+
+      if (legacyUser?.orgId) {
+        console.warn(
+          "[safeOrgContext] Fallback activated: using users.orgId linkage (missing UserOrganization row)"
+        );
+
+        // 🛡️ HARDEN: Ensure workspace primitives exist (idempotent, non-blocking)
+        await ensureWorkspaceForOrg({
+          orgId: legacyUser.orgId,
+          userId,
+        }).catch((err) => {
+          console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+        });
+
+        const syntheticMembership = {
+          id: `synthetic_uo_${legacyUser.orgId}_${userId}`,
+          userId,
+          organizationId: legacyUser.orgId,
+          role: legacyUser.role || "member",
+          synthetic: true,
+          reason: "legacy-users-orgId-fallback",
+        };
+        return {
+          status: "ok",
+          userId,
+          orgId: legacyUser.orgId,
+          role: legacyUser.role || "member",
+          membership: syntheticMembership,
+          ok: true,
+          reason: null,
+          organizationId: legacyUser.orgId,
+        };
+      }
+    }
+
+    // Final fallback: attempt auto-onboarding (create org + membership)
+    console.log("[safeOrgContext] No org membership found, attempting auto-onboard for:", userId);
+    const ensured = await ensureOrgForUser();
+
+    if (ensured) {
+      console.log("[safeOrgContext] ✅ Auto-onboarded user to org:", ensured.orgId);
+
+      // 🛡️ HARDEN: Ensure workspace primitives exist (idempotent, non-blocking)
+      await ensureWorkspaceForOrg({
+        orgId: ensured.orgId,
+        userId,
+      }).catch((err) => {
+        console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+      });
+
+      return {
+        status: "ok",
+        userId,
+        orgId: ensured.orgId,
+        role: ensured.role,
+        membership: {
+          id: `auto_${ensured.orgId}_${userId}`,
+          userId,
+          organizationId: ensured.orgId,
+          role: ensured.role,
+        },
+        ok: true,
+        reason: null,
+        organizationId: ensured.orgId,
+      };
+    }
+
+    // Auto-onboarding failed (should be rare)
+    console.error("[safeOrgContext] Auto-onboarding failed for user:", userId);
+    return {
+      status: "noMembership",
+      userId,
+      orgId: null,
+      role: null,
+      membership: null,
+      ok: false,
+      reason: "auto-onboard-failed",
+      organizationId: null,
+    };
+  } catch (e: any) {
+    console.error("[safeOrgContext] membership lookup failed", { error: e?.message, userId });
+    return {
+      status: "error",
+      userId,
+      orgId: null,
+      role: null,
+      membership: null,
+      error: e?.message || "membership lookup failed",
+      ok: false,
+      reason: "error",
+      organizationId: null,
+    };
+  }
+}
+
+// Backwards compatibility type alias (optional external imports relying on old union)
+export type SafeOrgContextResult = SafeOrgContext;

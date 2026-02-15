@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Weather + Code Panel Placeholder">
+  <style>
+    .bg{fill:#ffffff}.panel{fill:#F1F5F9;rx:16}
+    .title{fill:#0A1A2F;font:800 28px Inter,system-ui,sans-serif}
+    .chip{fill:#117CFF;rx:10}.chipText{fill:#fff;font:700 16px Inter,system-ui,sans-serif}
+    .muted{fill:#64748B;font:600 16px Inter,system-ui,sans-serif}
+    .ok{fill:#22C55E;font:700 16px Inter,system-ui,sans-serif}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="115">Weather Match + Code Triggers</text>
+  <rect class="chip" x="90" y="140" width="210" height="36"></rect><text class="chipText" x="105" y="164">Pull Quick DOL</text>
+  <rect class="chip" x="310" y="140" width="320" height="36"></rect><text class="chipText" x="325" y="164">Full Weather Verification Report</text>
+  <text class="muted" x="90" y="200">DOL • Wind Speed • Hail Size • Duration • Direction</text>
+  <text class="ok" x="90" y="240">Code Compliance Card: IRC R905.x — Meets / Requires</text>
+  <text class="muted" x="90" y="280">Manufacturer Spec citations auto-attach</text>
+</svg>

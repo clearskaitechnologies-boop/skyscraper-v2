@@ -1,0 +1,65 @@
+// src/lib/prisma.ts
+// CANONICAL PRISMA SINGLETON — SINGLE SOURCE OF TRUTH
+//
+// ⚠️  CRITICAL: The singleton MUST be cached on `globalThis` in ALL
+//    environments, including production.  Vercel Serverless reuses the
+//    same Node process across many warm invocations.  Without the cache,
+//    every invocation creates a **new** PrismaClient, opens fresh DB
+//    connections, and never releases them → "Too many database connections
+//    opened: FATAL: remaining connection slots reserved for superuser".
+//
+//    Fix applied 2025-06: Always assign to globalThis.__prisma.
+
+import { PrismaClient } from "@prisma/client";
+
+declare global {
+  // eslint-disable-next-line no-var
+  var __prisma: PrismaClient | undefined;
+}
+
+/**
+ * Connection pool settings for 10,000-user enterprise scale:
+ *
+ * Prisma connection pool limits (per instance):
+ *   - connection_limit ➜ set via DATABASE_URL query param
+ *   - pool_timeout     ➜ set via DATABASE_URL query param
+ *
+ * Recommended DATABASE_URL for Supabase PgBouncer (port 6543):
+ *   ?pgbouncer=true&connection_limit=5&pool_timeout=20
+ *
+ * Recommended DIRECT_DATABASE_URL (port 5432, no PgBouncer):
+ *   Used for migrations only (prisma migrate / db push)
+ *
+ * At scale with Vercel Serverless (~50 concurrent functions):
+ *   Each function has its own pool of up to `connection_limit` connections.
+ *   Total DB connections = concurrent_functions × connection_limit.
+ *   PgBouncer's transaction-mode pooling prevents exhaustion.
+ *
+ * Safety limits are enforced in the query engine via datasource URL params.
+ * Additional in-app safeguards are handled by this module.
+ */
+
+const LOG_LEVELS =
+  process.env.NODE_ENV === "development"
+    ? (["query", "warn", "error"] as const)
+    : (["error"] as const);
+
+function createPrismaClient(): PrismaClient {
+  return new PrismaClient({
+    log: [...LOG_LEVELS],
+    // Prisma engine-level timeout for unresponsive queries (ms)
+    // This catches runaway queries that hold connections
+    transactionOptions: {
+      maxWait: 10_000, // max time (ms) to wait for a transaction slot
+      timeout: 30_000, // max time (ms) a transaction can run
+    },
+  });
+}
+
+// ── Singleton: reuse across ALL warm invocations ────────────────────
+const prismaClient = globalThis.__prisma ?? createPrismaClient();
+
+// Cache in EVERY environment (dev, preview, AND production)
+globalThis.__prisma = prismaClient;
+
+export default prismaClient;

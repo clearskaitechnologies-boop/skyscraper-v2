@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Warranty Placeholder">
+  <style>
+    .bg{fill:#ffffff}.panel{fill:#F8FAFC;rx:16}
+    .title{fill:#0A1A2F;font:800 28px Inter,system-ui,sans-serif}
+    .badge{fill:#117CFF;rx:10}.badgeText{fill:#fff;font:700 16px Inter,system-ui,sans-serif}
+    .muted{fill:#64748B;font:600 16px Inter,system-ui,sans-serif}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="120">Warranty &amp; Final Closeout</text>
+  <rect class="badge" x="90" y="150" width="260" height="40"></rect><text class="badgeText" x="105" y="176">10-Year Labor Warranty</text>
+  <rect class="badge" x="370" y="150" width="310" height="40"></rect><text class="badgeText" x="385" y="176">Manufacturer Certified Installer</text>
+  <text class="muted" x="90" y="220">Final Walkthrough • Punchlist • Sign-Off</text>
+</svg>

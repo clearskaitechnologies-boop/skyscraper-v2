@@ -1,0 +1,390 @@
+/**
+ * PDF Theme CSS - Raven UI for Print
+ * 
+ * Premium, print-optimized styles for template PDFs
+ * Matches Raven's elegant, professional aesthetic
+ */
+
+/* ===== PAGE SETUP ===== */
+@page {
+  size: Letter;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* ===== RESET & BASE ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  line-height: 1.5;
+  color: #1e293b; /* slate-800 */
+  background: #ffffff;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1 {
+  font-size: 24pt;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a; /* slate-900 */
+  margin-bottom: 8pt;
+}
+
+h2 {
+  font-size: 18pt;
+  font-weight: 600;
+  color: #1e293b; /* slate-800 */
+  margin-bottom: 6pt;
+}
+
+h3 {
+  font-size: 14pt;
+  font-weight: 600;
+  color: #334155; /* slate-700 */
+  margin-bottom: 4pt;
+}
+
+p {
+  margin-bottom: 8pt;
+}
+
+/* ===== LAYOUT CONTAINERS ===== */
+.page {
+  width: 8.5in;
+  min-height: 11in;
+  padding: 0.5in;
+  background: white;
+  position: relative;
+  page-break-after: always;
+}
+
+.page:last-child {
+  page-break-after: auto;
+}
+
+.container {
+  max-width: 7.5in;
+  margin: 0 auto;
+}
+
+/* ===== HEADER & FOOTER ===== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16pt;
+  border-bottom: 2pt solid #e2e8f0; /* slate-200 */
+  margin-bottom: 20pt;
+}
+
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 12pt;
+}
+
+.header-logo {
+  height: 40pt;
+  width: auto;
+  object-fit: contain;
+}
+
+.header-company {
+  font-size: 18pt;
+  font-weight: 700;
+  color: var(--primary-color, #0ea5e9); /* sky-500 */
+}
+
+.header-contact {
+  text-align: right;
+  font-size: 9pt;
+  color: #64748b; /* slate-500 */
+  line-height: 1.4;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0.5in;
+  left: 0.5in;
+  right: 0.5in;
+  padding-top: 12pt;
+  border-top: 1pt solid #e2e8f0; /* slate-200 */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8pt;
+  color: #94a3b8; /* slate-400 */
+}
+
+.footer-left {
+  flex: 1;
+}
+
+.footer-right {
+  text-align: right;
+}
+
+.page-number::before {
+  content: "Page ";
+}
+
+/* ===== COVER PAGE ===== */
+.cover {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 10in;
+  background: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%); /* sky-500 to blue-500 */
+  color: white;
+  padding: 2in;
+}
+
+.cover-title {
+  font-size: 36pt;
+  font-weight: 800;
+  margin-bottom: 12pt;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.cover-subtitle {
+  font-size: 16pt;
+  font-weight: 400;
+  opacity: 0.95;
+  margin-bottom: 24pt;
+}
+
+.cover-meta {
+  background: rgba(255, 255, 255, 0.15);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 8pt;
+  padding: 16pt 24pt;
+  margin-top: 32pt;
+}
+
+.cover-meta-item {
+  font-size: 11pt;
+  margin: 6pt 0;
+}
+
+.cover-meta-label {
+  font-weight: 600;
+  opacity: 0.9;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+  margin-bottom: 24pt;
+  break-inside: avoid;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 8pt;
+  margin-bottom: 12pt;
+  padding-bottom: 6pt;
+  border-bottom: 2pt solid var(--primary-color, #0ea5e9);
+}
+
+.section-title {
+  font-size: 16pt;
+  font-weight: 600;
+  color: var(--primary-color, #0ea5e9);
+}
+
+.section-content {
+  padding-left: 0;
+}
+
+/* ===== CARDS ===== */
+.card {
+  background: #f8fafc; /* slate-50 */
+  border: 1pt solid #e2e8f0; /* slate-200 */
+  border-radius: 6pt;
+  padding: 16pt;
+  margin-bottom: 12pt;
+  break-inside: avoid;
+}
+
+.card-title {
+  font-size: 12pt;
+  font-weight: 600;
+  color: #334155; /* slate-700 */
+  margin-bottom: 8pt;
+}
+
+.card-content {
+  font-size: 10pt;
+  color: #475569; /* slate-600 */
+}
+
+/* ===== TABLES ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16pt;
+  break-inside: avoid;
+}
+
+thead {
+  display: table-header-group;
+}
+
+thead tr {
+  background: var(--primary-color, #0ea5e9);
+  color: white;
+}
+
+thead th {
+  padding: 8pt;
+  text-align: left;
+  font-size: 10pt;
+  font-weight: 600;
+}
+
+tbody tr {
+  border-bottom: 1pt solid #e2e8f0;
+}
+
+tbody tr:nth-child(even) {
+  background: #f8fafc; /* slate-50 */
+}
+
+tbody td {
+  padding: 8pt;
+  font-size: 9pt;
+  color: #475569; /* slate-600 */
+}
+
+/* ===== LISTS ===== */
+ul,
+ol {
+  margin-left: 18pt;
+  margin-bottom: 12pt;
+}
+
+li {
+  margin-bottom: 4pt;
+  color: #475569; /* slate-600 */
+}
+
+/* ===== BADGES ===== */
+.badge {
+  display: inline-block;
+  padding: 2pt 8pt;
+  border-radius: 3pt;
+  font-size: 8pt;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-primary {
+  background: var(--primary-color, #0ea5e9);
+  color: white;
+}
+
+.badge-success {
+  background: #10b981; /* green-500 */
+  color: white;
+}
+
+.badge-warning {
+  background: #f59e0b; /* amber-500 */
+  color: white;
+}
+
+.badge-danger {
+  background: #ef4444; /* red-500 */
+  color: white;
+}
+
+/* ===== PHOTO GRID ===== */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12pt;
+  margin-bottom: 16pt;
+}
+
+.photo-item {
+  break-inside: avoid;
+}
+
+.photo-img {
+  width: 100%;
+  height: auto;
+  border-radius: 4pt;
+  border: 1pt solid #e2e8f0;
+}
+
+.photo-caption {
+  font-size: 8pt;
+  color: #64748b; /* slate-500 */
+  margin-top: 4pt;
+  text-align: center;
+}
+
+/* ===== UTILITIES ===== */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.font-bold {
+  font-weight: 600;
+}
+
+.text-primary {
+  color: var(--primary-color, #0ea5e9);
+}
+
+.mt-1 {
+  margin-top: 4pt;
+}
+.mt-2 {
+  margin-top: 8pt;
+}
+.mt-3 {
+  margin-top: 12pt;
+}
+.mt-4 {
+  margin-top: 16pt;
+}
+
+.mb-1 {
+  margin-bottom: 4pt;
+}
+.mb-2 {
+  margin-bottom: 8pt;
+}
+.mb-3 {
+  margin-bottom: 12pt;
+}
+.mb-4 {
+  margin-bottom: 16pt;
+}
+
+.break-avoid {
+  break-inside: avoid;
+}

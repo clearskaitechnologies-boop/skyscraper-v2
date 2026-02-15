@@ -1,0 +1,111 @@
+%PDF-1.4
+1 0 obj
+<<
+/Type /Catalog
+/Pages 2 0 R
+>>
+endobj
+2 0 obj
+<<
+/Type /Pages
+/Kids [3 0 R]
+/Count 1
+>>
+endobj
+3 0 obj
+<<
+/Type /Page
+/Parent 2 0 R
+/Resources <<
+/Font <<
+/F1 4 0 R
+/F2 5 0 R
+>>
+>>
+/MediaBox [0 0 612 792]
+/Contents 6 0 R
+>>
+endobj
+4 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica-Bold
+>>
+endobj
+5 0 obj
+<<
+/Type /Font
+/Subtype /Type1
+/BaseFont /Helvetica
+>>
+endobj
+6 0 obj
+<<
+/Length 720
+>>
+stream
+BT
+/F1 20 Tf
+50 740 Td
+(Water Damage Restoration Report) Tj
+/F2 11 Tf
+0 -30 Td
+0 -0 Td
+(Water Damage Restoration Report) Tj
+0 -14 Td
+(Property Inspection & Assessment) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Claim Information:) Tj
+0 -14 Td
+(  - Policy Number: _______________) Tj
+0 -14 Td
+(  - Date of Loss: _______________) Tj
+0 -14 Td
+(  - Insured Name: _______________) Tj
+0 -14 Td
+(  - Property Address: _______________) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Damage Assessment:) Tj
+0 -14 Td
+(  Water Damage Category: _______________) Tj
+0 -14 Td
+(  Affected Areas: _______________) Tj
+0 -14 Td
+(  Estimated Repair Cost: $_____________) Tj
+0 -14 Td
+() Tj
+0 -14 Td
+(Restoration Scope:) Tj
+0 -14 Td
+(  - Emergency water extraction) Tj
+0 -14 Td
+(  - Structural drying & dehumidification) Tj
+0 -14 Td
+(  - Mold remediation (if required)) Tj
+0 -14 Td
+(  - Reconstruction & restoration) Tj
+ET
+endstream
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000271 00000 n 
+0000000356 00000 n 
+0000000436 00000 n 
+trailer
+<<
+/Size 7
+/Root 1 0 R
+>>
+startxref
+1220
+%%EOF

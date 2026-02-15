@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quick Inspection Report - {{claim.claimNumber}}</title>
+    <style>
+      /* INJECT: pdf-theme.css */
+      :root { --primary-color: {{org.primaryColor}}; }
+    </style>
+  </head>
+  <body>
+    <!-- COVER -->
+    <div
+      class="page cover"
+      style="background: linear-gradient(135deg, {{org.primaryColor}} 0%, {{org.secondaryColor}} 100%);"
+    >
+      <div class="cover-content">
+        {{#if org.logoUrl}}<img
+          src="{{org.logoUrl}}"
+          alt="{{org.name}}"
+          class="header-logo"
+          style="margin-bottom: 24pt; max-height: 60pt"
+        />{{/if}}
+        <h1 class="cover-title">Quick Inspection Report</h1>
+        <p class="cover-subtitle">Professional Loss Documentation</p>
+        <div class="cover-meta">
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Claim:</span> {{claim.claimNumber}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Property:</span> {{property.address}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Loss Date:</span> {{claim.dateOfLoss}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLAIM SUMMARY -->
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Claim Information</h2></div>
+        <div class="section-content">
+          <div class="card">
+            <div class="card-title">Property Details</div>
+            <div class="card-content">
+              <p><strong>Address:</strong> {{property.address}}</p>
+              <p><strong>Insured:</strong> {{claim.insuredName}}</p>
+              <p><strong>Date of Loss:</strong> {{claim.dateOfLoss}}</p>
+              <p><strong>Claim Number:</strong> {{claim.claimNumber}}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Loss Summary</div>
+            <div class="card-content">
+              <p><strong>Loss Type:</strong> {{claim.lossType}}</p>
+              <p><strong>Description:</strong> {{claim.description}}</p>
+              {{#if claim.estimatedDamage}}
+              <p><strong>Estimated Damage:</strong> ${{claim.estimatedDamage}}</p>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAMAGE ASSESSMENT -->
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Damage Assessment</h2></div>
+        <div class="section-content">
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Description</th>
+                <th>Severity</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each content.damages}}
+              <tr>
+                <td>{{this.area}}</td>
+                <td>{{this.description}}</td>
+                <td><span class="badge badge-{{this.severityBadge}}">{{this.severity}}</span></td>
+                <td>{{this.notes}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECOMMENDATIONS -->
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Recommendations</h2></div>
+        <div class="section-content">
+          <div class="card">
+            <div class="card-title">Next Steps</div>
+            <div class="card-content">
+              {{#each content.recommendations}}
+              <p class="recommendation-item">{{this}}</p>
+              {{/each}}
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Inspector Information</div>
+            <div class="card-content">
+              <p><strong>Inspector:</strong> {{content.inspector}}</p>
+              <p><strong>Date:</strong> {{content.inspectionDate}}</p>
+              <p><strong>Contact:</strong> {{org.email}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

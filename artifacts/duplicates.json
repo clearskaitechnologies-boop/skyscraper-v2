@@ -1,0 +1,2651 @@
+{
+  "timestamp": "2025-12-25T00:43:40.706Z",
+  "duplicateFiles": [
+    {
+      "filename": "client.tsx",
+      "count": 4,
+      "locations": [
+        "src/app/(app)/ai-video-reports/client.tsx",
+        "src/app/(app)/ai/damage-builder/client.tsx",
+        "src/app/(app)/ai/mockup/client.tsx",
+        "src/app/(app)/carrier/export/client.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BuilderShell.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/builder/BuilderShell.tsx",
+        "src/app/(app)/reports/[reportId]/build/BuilderShell.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "RightBar.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/builder/RightBar.tsx",
+        "src/app/(app)/reports/_components/RightBar.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "SectionCard.tsx",
+      "count": 3,
+      "locations": [
+        "src/app/(app)/builder/SectionCard.tsx",
+        "src/app/(app)/claims/[claimId]/_components/SectionCard.tsx",
+        "src/app/(app)/reports/_components/SectionCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "error.tsx",
+      "count": 6,
+      "locations": [
+        "src/app/(app)/claims/[claimId]/error.tsx",
+        "src/app/(app)/claims/error.tsx",
+        "src/app/(app)/dashboard/error.tsx",
+        "src/app/(app)/error.tsx",
+        "src/app/(client-portal)/error.tsx",
+        "src/app/error.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "loading.tsx",
+      "count": 7,
+      "locations": [
+        "src/app/(app)/claims/[claimId]/loading.tsx",
+        "src/app/(app)/claims/loading.tsx",
+        "src/app/(app)/dashboard/loading.tsx",
+        "src/app/(app)/leads/loading.tsx",
+        "src/app/(app)/reports/loading.tsx",
+        "src/app/(app)/settings/loading.tsx",
+        "src/app/(client-portal)/loading.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "StatsCards.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/dashboard/_components/StatsCards.tsx",
+        "src/components/crm/StatsCards.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "OpportunityCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/dashboard/trades/opportunities/OpportunityCard.tsx",
+        "src/components/trades/OpportunityCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "DominusInsightCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/leads/[id]/DominusInsightCard.tsx",
+        "src/components/ai/DominusInsightCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "DominusPanel.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/leads/[id]/DominusPanel.tsx",
+        "src/components/ai/DominusPanel.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "DominusPhotoAnalysis.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/leads/[id]/DominusPhotoAnalysis.tsx",
+        "src/components/ai/DominusPhotoAnalysis.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "DominusTabs.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/leads/[id]/DominusTabs.tsx",
+        "src/components/ai/DominusTabs.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MessagesClient.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/messages/_components/MessagesClient.tsx",
+        "src/components/messages/MessagesClient.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MockupCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/reports/_components/MockupCard.tsx",
+        "src/components/mockups/MockupCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "TemplateEditor.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(app)/reports/templates/[templateId]/_components/TemplateEditor.tsx",
+        "src/app/(app)/reports/templates/_components/TemplateEditor.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ContactForm.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/(marketing)/contact/ContactForm.tsx",
+        "src/components/marketing/ContactForm.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Header.tsx",
+      "count": 4,
+      "locations": [
+        "src/app/_components/Header.tsx",
+        "src/components/layout/Header.tsx",
+        "src/components/marketing/Header.tsx",
+        "src/pdf/components/Header.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MarketingFooter.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/components/marketing/MarketingFooter.tsx",
+        "src/components/marketing/MarketingFooter.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MarketingNav.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/components/marketing/MarketingNav.tsx",
+        "src/components/marketing/MarketingNav.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "AppShell.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/AppShell.tsx",
+        "src/components/layout/AppShell.tsx",
+        "src/layouts/AppShell.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BrandingCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/BrandingCard.tsx",
+        "src/modules/branding/ui/BrandingCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BrandingProvider.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/BrandingProvider.tsx",
+        "src/theme/BrandingProvider.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BrandingUpload.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/BrandingUpload.tsx",
+        "src/components/branding/BrandingUpload.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "CTA.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/CTA.tsx",
+        "src/components/marketing/CTA.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "CarrierPicker.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/CarrierPicker.tsx",
+        "src/modules/carriers/ui/CarrierPicker.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ClaimActivityFeed.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/ClaimActivityFeed.tsx",
+        "src/components/activity/ClaimActivityFeed.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ErrorBoundary.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/ErrorBoundary.tsx",
+        "src/components/system/ErrorBoundary.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Features.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/Features.tsx",
+        "src/components/marketing/Features.tsx",
+        "src/components/pages/Features.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Footer.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/Footer.tsx",
+        "src/pdf/components/Footer.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Hero.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/Hero.tsx",
+        "src/components/marketing/Hero.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "LoadingSkeletons.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/LoadingSkeletons.tsx",
+        "src/components/system/LoadingSkeletons.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MapView.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/MapView.tsx",
+        "src/components/pages/MapView.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Navbar.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/Navbar.tsx",
+        "src/components/nav/Navbar.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "NotificationBell.tsx",
+      "count": 5,
+      "locations": [
+        "src/components/NotificationBell.tsx",
+        "src/components/dashboard/NotificationBell.tsx",
+        "src/components/notifications/NotificationBell.tsx",
+        "src/components/portal/NotificationBell.tsx",
+        "src/components/ui/NotificationBell.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "PhotoAnnotator.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/PhotoAnnotator.tsx",
+        "src/components/ai/PhotoAnnotator.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Pricing.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/Pricing.tsx",
+        "src/components/marketing/Pricing.tsx",
+        "src/components/pages/Pricing.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "RecentActivity.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/RecentActivity.tsx",
+        "src/components/crm/RecentActivity.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "SignaturePad.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/SignaturePad.tsx",
+        "src/components/approvals/SignaturePad.tsx",
+        "src/components/esign/SignaturePad.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ThemeProvider.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/ThemeProvider.tsx",
+        "src/modules/ui/theme/ThemeProvider.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ToastProvider.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/ToastProvider.tsx",
+        "src/components/toast/ToastProvider.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "TokenBadge.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/TokenBadge.tsx",
+        "src/components/trades/TokenBadge.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "VendorCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/VendorCard.tsx",
+        "src/components/vendors/VendorCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BarChart.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/_wip/reports/BarChart.tsx",
+        "src/components/reports/BarChart.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "BatchReportGenerator.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/_wip/reports/BatchReportGenerator.tsx",
+        "src/components/reports/BatchReportGenerator.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "CustomReportBuilder.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/_wip/reports/CustomReportBuilder.tsx",
+        "src/components/reports/CustomReportBuilder.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "DataExportPanel.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/_wip/reports/DataExportPanel.tsx",
+        "src/components/reports/DataExportPanel.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ReportBuilderPanel.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/_wip/reports/ReportBuilderPanel.tsx",
+        "src/components/reports/ReportBuilderPanel.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ActivityTimeline.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/claims/ActivityTimeline.tsx",
+        "src/modules/audit/ui/ActivityTimeline.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ClaimTimeline.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/claims/ClaimTimeline.tsx",
+        "src/components/portal/ClaimTimeline.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "KpiCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/kpi/KpiCard.tsx",
+        "src/components/ui/KpiCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "SidebarNav.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/layout/SidebarNav.tsx",
+        "src/features/report-builder/components/SidebarNav.tsx",
+        "src/modules/reports/ui/SidebarNav.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "MessageThread.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/messages/MessageThread.tsx",
+        "src/components/portal/MessageThread.tsx",
+        "src/components/trades/MessageThread.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "Claims.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/pages/CRM/Claims.tsx",
+        "src/components/pages/Claims.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "PageHeader.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/pdf/PageHeader.tsx",
+        "src/components/ui/PageHeader.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "PdfPreviewModal.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/pdf/PdfPreviewModal.tsx",
+        "src/components/reports/PdfPreviewModal.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "SectionHeader.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/pdf/SectionHeader.tsx",
+        "src/components/ui/SectionHeader.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "CoverPage.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/pdf/sections/CoverPage.tsx",
+        "src/components/sections/CoverPage.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ProfileForm.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/portal/ProfileForm.tsx",
+        "src/components/profile/ProfileForm.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "ReviewList.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/portal/ReviewList.tsx",
+        "src/components/reviews/ReviewList.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "v1.tsx",
+      "count": 3,
+      "locations": [
+        "src/components/proposals/templates/claims/v1.tsx",
+        "src/components/proposals/templates/contractor/v1.tsx",
+        "src/components/proposals/templates/retail/v1.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "TeamMemberPublicCard.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/team/TeamMemberPublicCard.tsx",
+        "src/components/teams/TeamMemberPublicCard.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "AddToTradeTeamButton.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/trade-team/AddToTradeTeamButton.tsx",
+        "src/components/trades/AddToTradeTeamButton.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "typography.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/typography.tsx",
+        "src/components/ui/typography.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "EmptyState.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/ui/EmptyState.tsx",
+        "src/modules/ui/empty/EmptyState.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "PhotoGrid.tsx",
+      "count": 2,
+      "locations": [
+        "src/components/workbench/PhotoGrid.tsx",
+        "src/pdf/components/PhotoGrid.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "TrialEndingEmail.tsx",
+      "count": 2,
+      "locations": [
+        "src/email-templates/react/TrialEndingEmail.tsx",
+        "src/emails/TrialEndingEmail.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "WelcomeEmail.tsx",
+      "count": 2,
+      "locations": [
+        "src/email-templates/react/WelcomeEmail.tsx",
+        "src/emails/WelcomeEmail.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "placeholder.tsx",
+      "count": 2,
+      "locations": [
+        "src/legacy/contact/placeholder.tsx",
+        "src/legacy/pricing/placeholder.tsx"
+      ],
+      "severity": "HIGH",
+      "type": "Duplicate component"
+    },
+    {
+      "filename": "registry.ts",
+      "count": 4,
+      "locations": [
+        "src/agents/base/registry.ts",
+        "src/lib/microservices/registry.ts",
+        "src/lib/ml/registry.ts",
+        "src/modules/ai/core/registry.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "types.ts",
+      "count": 14,
+      "locations": [
+        "src/agents/base/types.ts",
+        "src/components/sections/pricing/types.ts",
+        "src/features/report-builder/types.ts",
+        "src/integrations/supabase/types.ts",
+        "src/lib/agent/types.ts",
+        "src/lib/ai/types.ts",
+        "src/lib/ai/video/types.ts",
+        "src/lib/email/types.ts",
+        "src/lib/ml/recommendations/types.ts",
+        "src/lib/proposals/types.ts",
+        "src/lib/report/types.ts",
+        "src/lib/reports/types.ts",
+        "src/lib/storm-intake/types.ts",
+        "src/lib/weather/types.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "index.ts",
+      "count": 20,
+      "locations": [
+        "src/agents/config/index.ts",
+        "src/agents/index.ts",
+        "src/components/ai/index.ts",
+        "src/components/errors/index.ts",
+        "src/components/storm-intake/index.ts",
+        "src/components/toast/index.ts",
+        "src/components/uploads/index.ts",
+        "src/env/index.ts",
+        "src/lib/ai/agents/index.ts",
+        "src/lib/ai/index.ts",
+        "src/lib/ai/vision/index.ts",
+        "src/lib/db/index.ts",
+        "src/lib/geocode/index.ts",
+        "src/lib/queue/index.ts",
+        "src/lib/reports/ai/index.ts",
+        "src/lib/tokens/index.ts",
+        "src/modules/ai/types/index.ts",
+        "src/modules/reports/types/index.ts",
+        "src/sdk/index.ts",
+        "src/worker/index.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "rootPrompt.ts",
+      "count": 2,
+      "locations": [
+        "src/agents/prompts/rootPrompt.ts",
+        "src/agents/rootPrompt.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "queues.ts",
+      "count": 2,
+      "locations": [
+        "src/agents/runtime/queue/queues.ts",
+        "src/lib/agent/queues.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "messaging.ts",
+      "count": 2,
+      "locations": [
+        "src/api/messaging.ts",
+        "src/lib/queue/messaging.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "reports.ts",
+      "count": 2,
+      "locations": [
+        "src/api/reports.ts",
+        "src/lib/ai/reports.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "actions.ts",
+      "count": 8,
+      "locations": [
+        "src/app/(app)/company-map/actions.ts",
+        "src/app/(app)/depreciation/actions.ts",
+        "src/app/(app)/exports/carrier/actions.ts",
+        "src/app/(app)/inbox/actions.ts",
+        "src/app/(app)/jobs/map/actions.ts",
+        "src/app/(app)/route-optimization/actions.ts",
+        "src/app/(app)/settings/branding/actions.ts",
+        "src/app/(app)/teams/actions.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "page_legacy.tsx",
+      "count": 2,
+      "locations": [
+        "src/app/contact/page_legacy.tsx",
+        "src/app/pricing/page_legacy.tsx"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate file"
+    },
+    {
+      "filename": "nav.ts",
+      "count": 2,
+      "locations": [
+        "src/app/nav.ts",
+        "src/config/nav.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "use-toast.ts",
+      "count": 2,
+      "locations": [
+        "src/components/ui/use-toast.ts",
+        "src/hooks/use-toast.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "routes.ts",
+      "count": 2,
+      "locations": [
+        "src/config/routes.ts",
+        "src/lib/diagnostics/routes.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate file"
+    },
+    {
+      "filename": "vendors.ts",
+      "count": 2,
+      "locations": [
+        "src/data/vendors.ts",
+        "src/lib/data/vendors.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "client.ts",
+      "count": 5,
+      "locations": [
+        "src/db/lib/db/client.ts",
+        "src/integrations/supabase/client.ts",
+        "src/lib/ai/client.ts",
+        "src/lib/db/client.ts",
+        "src/lib/lob/client.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "renderEngine.ts",
+      "count": 2,
+      "locations": [
+        "src/features/reports/renderEngine.ts",
+        "src/lib/pdf/renderEngine.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "useDebounce.ts",
+      "count": 2,
+      "locations": [
+        "src/hooks/useDebounce.ts",
+        "src/lib/hooks/useDebounce.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "useTheme.ts",
+      "count": 2,
+      "locations": [
+        "src/hooks/useTheme.ts",
+        "src/modules/ui/theme/useTheme.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "store.ts",
+      "count": 2,
+      "locations": [
+        "src/jobs/store.ts",
+        "src/lib/eventsourcing/store.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "learning.ts",
+      "count": 7,
+      "locations": [
+        "src/lib/active/learning.ts",
+        "src/lib/continual/learning.ts",
+        "src/lib/federation/learning.ts",
+        "src/lib/meta/learning.ts",
+        "src/lib/multitask/learning.ts",
+        "src/lib/transfer/learning.ts",
+        "src/lib/zero-shot/learning.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "eventBus.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/agent/eventBus.ts",
+        "src/lib/events/eventBus.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "automation.ts",
+      "count": 7,
+      "locations": [
+        "src/lib/ai/automation.ts",
+        "src/lib/automation.ts",
+        "src/lib/backup/automation.ts",
+        "src/lib/compliance/automation.ts",
+        "src/lib/deployment/automation.ts",
+        "src/lib/timeline/automation.ts",
+        "src/lib/workflow/automation.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "damage.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/damage.ts",
+        "src/lib/reports/ai/damage.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "damageBuilder.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/damageBuilder.ts",
+        "src/modules/ai/engines/damageBuilder.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "logger.ts",
+      "count": 5,
+      "locations": [
+        "src/lib/ai/logger.ts",
+        "src/lib/logger.ts",
+        "src/lib/monitoring/logger.ts",
+        "src/lib/observability/logger.ts",
+        "src/modules/audit/core/logger.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "carrierProfiles.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/negotiation/carrierProfiles.ts",
+        "src/lib/carrierProfiles.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "realtime.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/realtime.ts",
+        "src/lib/collaboration/realtime.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "reportGenerator.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/reportGenerator.ts",
+        "src/lib/batch-processing/reportGenerator.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "queue.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/ai/vision/queue.ts",
+        "src/lib/jobs/queue.ts",
+        "src/lib/queue.ts",
+        "src/modules/ai/jobs/queue.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "vision.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ai/vision.ts",
+        "src/lib/ml/vision.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "weather.ts",
+      "count": 5,
+      "locations": [
+        "src/lib/ai/weather.ts",
+        "src/lib/integrations/weather.ts",
+        "src/lib/reports/ai/weather.ts",
+        "src/modules/ai/engines/weather.ts",
+        "src/types/weather.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "ai.ts",
+      "count": 5,
+      "locations": [
+        "src/lib/ai.ts",
+        "src/lib/intel/financial/ai.ts",
+        "src/lib/proposals/ai.ts",
+        "src/lib/report-engine/ai.ts",
+        "src/lib/weather/ai.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "engine.ts",
+      "count": 7,
+      "locations": [
+        "src/lib/alerting/engine.ts",
+        "src/lib/collaboration/engine.ts",
+        "src/lib/intel/automation/engine.ts",
+        "src/lib/intel/financial/engine.ts",
+        "src/lib/ml/recommendations/engine.ts",
+        "src/lib/search/engine.ts",
+        "src/lib/workflows/engine.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "advanced.ts",
+      "count": 10,
+      "locations": [
+        "src/lib/analytics/advanced.ts",
+        "src/lib/cache/advanced.ts",
+        "src/lib/export/advanced.ts",
+        "src/lib/graph/advanced.ts",
+        "src/lib/integrations/advanced.ts",
+        "src/lib/rateLimit/advanced.ts",
+        "src/lib/rl/advanced.ts",
+        "src/lib/search/advanced.ts",
+        "src/lib/vision/advanced.ts",
+        "src/lib/webhooks/advanced.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "dashboard.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/analytics/dashboard.ts",
+        "src/lib/client-portal/dashboard.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "enterprise.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/analytics/enterprise.ts",
+        "src/lib/audit/enterprise.ts",
+        "src/lib/sso/enterprise.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "tenant.ts",
+      "count": 5,
+      "locations": [
+        "src/lib/analytics/tenant.ts",
+        "src/lib/auth/tenant.ts",
+        "src/lib/isolation/tenant.ts",
+        "src/lib/onboarding/tenant.ts",
+        "src/lib/settings/tenant.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "track.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/analytics/track.ts",
+        "src/lib/track.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "usage.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/analytics/usage.ts",
+        "src/lib/billing/usage.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "analytics.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/analytics.ts",
+        "src/lib/geo/analytics.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "versioning.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/api/versioning.ts",
+        "src/lib/documents/versioning.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "api.ts",
+      "count": 6,
+      "locations": [
+        "src/lib/api.ts",
+        "src/lib/docs/api.ts",
+        "src/lib/gateway/api.ts",
+        "src/lib/mobile/api.ts",
+        "src/lib/storm-intake/api.ts",
+        "src/lib/throttling/api.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "audit.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/audit.ts",
+        "src/lib/compliance/audit.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "ensureOrgForUser.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/auth/ensureOrgForUser.ts",
+        "src/lib/org/ensureOrgForUser.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "permissions.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/auth/permissions.ts",
+        "src/lib/permissions.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "rbac.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/auth/rbac.ts",
+        "src/lib/rbac.ts",
+        "src/middleware/rbac.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "auth.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/auth.ts",
+        "src/lib/biometric/auth.ts",
+        "src/lib/mobile/auth.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "recovery.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/backup/recovery.ts",
+        "src/lib/disaster/recovery.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "system.ts",
+      "count": 10,
+      "locations": [
+        "src/lib/backup/system.ts",
+        "src/lib/comments/system.ts",
+        "src/lib/customFields/system.ts",
+        "src/lib/export/system.ts",
+        "src/lib/i18n/system.ts",
+        "src/lib/mentions/system.ts",
+        "src/lib/multitenancy/system.ts",
+        "src/lib/rateLimit/system.ts",
+        "src/lib/reports/system.ts",
+        "src/lib/webhooks/system.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "processor.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/batch-processing/processor.ts",
+        "src/lib/stream/processor.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "constants.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/billing/constants.ts",
+        "src/lib/config/constants.ts",
+        "src/lib/notifications/constants.ts",
+        "src/lib/trades/constants.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "stripe.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/billing/stripe.ts",
+        "src/lib/stripe.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "wallet.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/billing/wallet.ts",
+        "src/lib/credits/wallet.ts",
+        "src/lib/wallet.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "integration.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/blockchain/integration.ts",
+        "src/lib/calendar/integration.ts",
+        "src/lib/cdn/integration.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "branding.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/branding.ts",
+        "src/lib/db/branding.ts",
+        "src/lib/whitelabel/branding.ts",
+        "src/schemas/branding.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "distributed.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/cache/distributed.ts",
+        "src/lib/locking/distributed.ts",
+        "src/lib/ml/distributed.ts",
+        "src/lib/tracing/distributed.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "inference.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/causal/inference.ts",
+        "src/lib/ml/inference.ts",
+        "src/lib/zero-shot/inference.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "engineering.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/chaos/engineering.ts",
+        "src/lib/features/engineering.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "generator.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/claims/generator.ts",
+        "src/lib/pdf/generator.ts",
+        "src/lib/qr/generator.ts",
+        "src/lib/reports/generator.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "templates.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/claims/templates.ts",
+        "src/lib/email/templates.ts",
+        "src/lib/notifications/templates.ts",
+        "src/lib/reports/templates.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "timeline.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/claims/timeline.ts",
+        "src/lib/reports/ai/timeline.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "clerk.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/clerk.ts",
+        "src/lib/env/clerk.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "clipboard.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/clipboard.ts",
+        "src/lib/utils/clipboard.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "management.ts",
+      "count": 6,
+      "locations": [
+        "src/lib/config/management.ts",
+        "src/lib/cost/management.ts",
+        "src/lib/datalake/management.ts",
+        "src/lib/incidents/management.ts",
+        "src/lib/sessions/management.ts",
+        "src/lib/webhooks/management.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "tokens.ts",
+      "count": 7,
+      "locations": [
+        "src/lib/config/tokens.ts",
+        "src/lib/db/tokens.ts",
+        "src/lib/esign/tokens.ts",
+        "src/lib/security/tokens.ts",
+        "src/lib/tokens.ts",
+        "src/modules/ai/core/tokens.ts",
+        "src/server/tokens.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "metrics.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/db/metrics.ts",
+        "src/lib/metrics.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "org.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/db/org.ts",
+        "src/lib/org.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "prisma.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/db/prisma.ts",
+        "src/lib/prisma.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "db.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/db.ts",
+        "src/server/db.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "config.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/demo/config.ts",
+        "src/lib/legal/config.ts",
+        "src/lib/referrals/config.ts",
+        "src/lib/storage/config.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "custom.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/domains/custom.ts",
+        "src/lib/workflows/custom.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "computing.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/edge/computing.ts",
+        "src/lib/quantum/computing.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "orchestrator.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/edge/orchestrator.ts",
+        "src/modules/reports/export/orchestrator.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "email.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/email.ts",
+        "src/lib/intel/automation/executors/email.ts",
+        "src/lib/notifications/email.ts",
+        "src/lib/report-engine/email.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "storage.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/esign/storage.ts",
+        "src/lib/evidence/storage.ts",
+        "src/lib/storage.ts",
+        "src/worker/helpers/storage.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "pipeline.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/etl/pipeline.ts",
+        "src/lib/ml/pipeline.ts",
+        "src/lib/streaming/pipeline.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "featureFlags.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/featureFlags.ts",
+        "src/lib/features/featureFlags.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "flags.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/features/flags.ts",
+        "src/lib/flags.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "firebase-admin.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/firebase-admin.ts",
+        "src/lib/storage/firebase-admin.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "firebase.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/firebase.ts",
+        "src/lib/storage/firebase.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "database.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/graph/database.ts",
+        "src/lib/sharding/database.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "guardedFetch.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/guardedFetch.ts",
+        "src/lib/net/guardedFetch.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "save.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/intel/financial/save.ts",
+        "src/lib/report-engine/save.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "buildMasterPayload.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/intel/master/buildMasterPayload.ts",
+        "src/lib/report-engine/buildMasterPayload.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "reportBuilder.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/intel/reportBuilder.ts",
+        "src/lib/pdf/reportBuilder.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "scheduler.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/jobs/scheduler.ts",
+        "src/lib/reports/scheduler.ts",
+        "src/modules/automation/scheduler.ts",
+        "src/worker/scheduler.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "graph.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/knowledge/graph.ts",
+        "src/lib/zero-shot/graph.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "limits.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/limits.ts",
+        "src/lib/quotas/limits.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "rateLimit.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/middleware/rateLimit.ts",
+        "src/middleware/rateLimit.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "tools.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/migration/tools.ts",
+        "src/lib/tools.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "persist.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ml/recommendations/persist.ts",
+        "src/modules/ai/jobs/persist.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "correlation.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/monitoring/correlation.ts",
+        "src/types/correlation.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "performance.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/monitoring/performance.ts",
+        "src/lib/performance.ts",
+        "src/lib/profiling/performance.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "preferences.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/notifications/preferences.ts",
+        "src/lib/users/preferences.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "notifications.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/notifications.ts",
+        "src/lib/services/notifications.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "utils.ts",
+      "count": 4,
+      "locations": [
+        "src/lib/pdf/utils.ts",
+        "src/lib/referrals/utils.ts",
+        "src/lib/responsive/utils.ts",
+        "src/lib/utils.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "weatherTemplate.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/pdf/weatherTemplate.ts",
+        "src/pdf/weatherTemplate.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "render.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/proposals/render.ts",
+        "src/pdf/render.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "hooks.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/queue/hooks.ts",
+        "src/modules/ai/core/hooks.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "ratelimit.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/ratelimit.ts",
+        "src/lib/security/ratelimit.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "SectionRegistry.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/registry/SectionRegistry.ts",
+        "src/modules/reports/core/SectionRegistry.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "geo.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/replication/geo.ts",
+        "src/lib/utils/geo.ts",
+        "src/lib/weather/geo.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "ai-prompts.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/report-engine/ai-prompts.ts",
+        "src/lib/supplement/ai-prompts.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "framework.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/rl/framework.ts",
+        "src/lib/transformer/framework.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "processing.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/streaming/processing.ts",
+        "src/lib/video/processing.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "theme.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/theme.ts",
+        "src/pdf/theme.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "score.ts",
+      "count": 2,
+      "locations": [
+        "src/lib/trust/score.ts",
+        "src/lib/weather/score.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "server.ts",
+      "count": 3,
+      "locations": [
+        "src/lib/websocket/server.ts",
+        "src/lib/websockets/server.ts",
+        "src/utils/supabase/server.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "fileValidation.ts",
+      "count": 2,
+      "locations": [
+        "src/middleware/fileValidation.ts",
+        "src/utils/fileValidation.ts"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate utility/helper"
+    },
+    {
+      "filename": "index.jsx",
+      "count": 2,
+      "locations": [
+        "src/routes/auth/index.jsx",
+        "src/routes/index.jsx"
+      ],
+      "severity": "MEDIUM",
+      "type": "Duplicate file"
+    }
+  ],
+  "legacyItems": [
+    {
+      "path": "src/app/(app)/claims/generate-legacy",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/(app)/settings/backups",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/(app)/trades-hub/page.tsx.OLD_MOCK_DELETE_LATER",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/(portal)/portal-legacy",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/contact/page_legacy.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/pricing/page_legacy.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/components/maps/legacy",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/components/maps/legacy/MapClientLegacy.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/components/maps/legacy/MapboxMapLegacy.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/components/pages/ClientFolders.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/components/pages/Dashboard.legacy.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/legacy",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/legacy/contact/placeholder.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/legacy/pricing/placeholder.tsx",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/lib/ai/video/placeholderVideo.ts",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/lib/backup",
+      "type": "directory",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/lib/db/photos.ts.unused",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/lib/security/backupEncryption.ts",
+      "type": "file",
+      "reason": "Matches pattern: old|legacy|backup|deprecated|unused|bak",
+      "severity": "HIGH"
+    },
+    {
+      "path": "src/app/(app)/admin/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/admin/templates/coverage/_components/TemplateCoverageTable.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/[templateId]",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/[templateId]/_components/TemplateBrandPreview.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/[templateId]/_components/TemplateEditor.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/[templateId]/_components/TemplateSectionEditor.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/[templateId]/_components/TemplateSectionList.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/CreateTemplateModal.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/TemplateCard.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/TemplateEditor.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/TemplateList.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/TemplatePreviewCard.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/reports/templates/_components/TemplatePreviewModal.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(app)/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(public)/reports/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(public)/reports/templates/[templateId]",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(public)/reports/templates/marketplace/_components/AddTemplateButton.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/(public)/reports/templates/marketplace/_components/UseTemplateButton.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/generate-test-docx",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/report-templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/reports/generate-from-template",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/seed/test-data",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/templates/[templateId]",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/templates/[templateId]/duplicate",
+      "type": "directory",
+      "reason": "Matches pattern: copy|duplicate|\\(1\\)|\\(2\\)",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/templates/duplicate",
+      "type": "directory",
+      "reason": "Matches pattern: copy|duplicate|\\(1\\)|\\(2\\)",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/test-email",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/test-rate-limit",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/api/test-sentry",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/reports/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/app/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/TemplatePicker.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/ai/BrandingTemplateSelector.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/proposals/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/reporting/XactimateReportTemplate.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/reports/TemplateSelector.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/solutions/TemplatePreview.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/templates/TemplateIntelligencePanel.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/components/templates/UseTemplateModal.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/email-templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/ai/__tests__/buildAIContentFromTemplate.test.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/ai/buildAIContentFromTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/claims/templates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/email/brandedTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/email/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/email/templates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/export/email-templates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/notifications/templates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/pdf/TemplateLayouts.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/pdf/baseTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/pdf/baseTemplate.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/pdf/weatherTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/pdfTemplates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/duplicateTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/getMarketplaceTemplates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/getOrgTemplates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/getSystemTemplates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/templateSections.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/reports/templates.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/template",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/template/renderTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/templates/generateTemplatePDF.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/templates/mergeTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/lib/templates/templateContext.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/modules/reports/ui/TemplatesMenu.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/modules/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/modules/templates/ui/TemplateLibrary.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/modules/templates/ui/TemplatesMenuGuarded.tsx",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/pdf/weatherTemplate.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/pdf/weatherTemplateHtml.ts",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/carrier-rebuttal-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/commercial-property-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/contractor-estimate-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/depreciation-analysis-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/detailed-contractor-proposal/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/fire-loss-documentation/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/hail-damage-inspection/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/initial-claim-inspection/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/interior-damage-assessment/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/professional-damage-assessment/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/public-adjuster-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/quick-inspection-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/restoration-company-special/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/roofing-inspection-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/roofing-specialist-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/standard-roof-damage-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/storm-damage-comprehensive/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/supplement-line-item-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/supplement-request-template",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/supplement-request-template/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/water-damage-assessment/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/water-damage-restoration-cmjbneed/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/water-damage-restoration-tmpl_wat",
+      "type": "directory",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/water-damage-restoration-tmpl_wat/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/weather-correlation-premium/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/weather-damage-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/weather-damage-specialist/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    },
+    {
+      "path": "src/templates/marketplace/wind-damage-report/template.html",
+      "type": "file",
+      "reason": "Matches pattern: temp|tmp|test-",
+      "severity": "MEDIUM"
+    }
+  ],
+  "totalIssues": 297
+}

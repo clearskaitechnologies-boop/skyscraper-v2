@@ -1,0 +1,47 @@
+{
+  "name": "skai-health-panel",
+  "displayName": "SkaiScraper Health Panel",
+  "description": "Right-panel diagnostics for SkaiScraper (API pings, DNS, env sanity, Stripe webhook test, Vercel logs).",
+  "version": "0.1.0",
+  "publisher": "buildingwithdamien",
+  "engines": {
+    "vscode": "^1.84.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "skai.openHealthPanel",
+        "title": "Skai: Open Health Panel"
+      },
+      {
+        "command": "skai.runAllChecks",
+        "title": "Skai: Run All Checks"
+      },
+      {
+        "command": "skai.tailVercelLogs",
+        "title": "Skai: Tail Vercel Logs (toggle)"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -w -p .",
+    "build": "npm run compile",
+    "package": "vsce package",
+    "dev": "npm run build && NODE_OPTIONS=--enable-source-maps code --extensionDevelopmentPath=$(pwd)"
+  },
+  "dependencies": {
+    "cross-spawn": "^7.0.3",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.30",
+    "typescript": "^5.3.3",
+    "vsce": "^2.15.0",
+    "vscode": "^1.1.37"
+  }
+}

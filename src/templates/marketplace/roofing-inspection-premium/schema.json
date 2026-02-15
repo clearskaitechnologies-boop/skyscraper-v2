@@ -1,0 +1,32 @@
+{
+  "id": "roofing-inspection-premium",
+  "name": "Roofing Inspection Report",
+  "category": "inspection",
+  "description": "Premium roofing damage assessment with photo documentation, detailed findings table, and repair recommendations. Perfect for hail and wind damage claims.",
+  "version": "1.0.0",
+  "tags": ["roofing", "inspection", "hail", "wind", "damage-assessment"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "author": "SkaiScraper",
+  "requiredFields": [
+    "org.name",
+    "org.primaryColor",
+    "claim.claimNumber",
+    "claim.dateOfLoss",
+    "property.address",
+    "content.roofType",
+    "content.findings",
+    "content.photos"
+  ],
+  "optionalFields": [
+    "org.logoUrl",
+    "org.phone",
+    "org.email",
+    "org.website",
+    "content.immediateActions",
+    "content.longTermActions",
+    "content.scopeItems"
+  ],
+  "estimatedPages": 4,
+  "style": "modern-gradient"
+}

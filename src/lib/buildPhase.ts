@@ -1,0 +1,26 @@
+// lib/buildPhase.ts
+// Guard heavy DB operations during Next.js build / CI phases.
+
+export function isBuildPhase(): boolean {
+  const phase = process.env.NEXT_PHASE;
+  if (phase && phase.includes('build')) return true;
+  if (process.env.BUILD_PHASE === '1') return true;
+  if (process.env.CI && process.env.NODE_ENV === 'production') return true;
+  return false;
+}
+
+export async function guarded<T>(label: string, fn: () => Promise<T>, fallback: T | (() => T)): Promise<T> {
+  if (isBuildPhase()) {
+    console.log(`[build-guard] Skipping heavy async operation: ${label}`);
+    return typeof fallback === 'function' ? (fallback as () => T)() : fallback;
+  }
+  return fn();
+}
+
+export function guardedSync<T>(label: string, fn: () => T, fallback: T | (() => T)): T {
+  if (isBuildPhase()) {
+    console.log(`[build-guard] Skipping heavy sync operation: ${label}`);
+    return typeof fallback === 'function' ? (fallback as () => T)() : fallback;
+  }
+  return fn();
+}

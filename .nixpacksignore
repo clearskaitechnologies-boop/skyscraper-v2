@@ -1,0 +1,5 @@
+deno.json
+import_map.json
+supabase/
+functions/generate-mockup/
+functions/generate-pdf/

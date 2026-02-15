@@ -1,0 +1,22 @@
+# Security Headers for ClearSKai
+# Applied to all routes
+
+/*
+  # Enforce HTTPS
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  
+  # Prevent MIME type sniffing
+  X-Content-Type-Options: nosniff
+  
+  # Control referrer information leakage
+  Referrer-Policy: strict-origin-when-cross-origin
+  
+  # Disable dangerous browser features (camera, microphone, geolocation)
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  
+  # Content Security Policy
+  # Note: frame-ancestors * required for Lovable iframe embedding
+  # data: URIs allowed for inline PDF/image generation
+  # unsafe-inline/unsafe-eval required for Vite HMR in development
+  # Google One Tap: accounts.google.com, www.gstatic.com
+  Content-Security-Policy: default-src 'self' https:; img-src 'self' data: https: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: https://accounts.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https:; connect-src 'self' https: wss: blob: https://accounts.google.com https://www.googleapis.com https://www.gstatic.com; font-src 'self' data: https:; frame-src 'self' https://accounts.google.com; frame-ancestors *; base-uri 'self'; form-action 'self';

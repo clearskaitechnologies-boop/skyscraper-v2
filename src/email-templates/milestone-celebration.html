@@ -1,0 +1,65 @@
+<!doctype html>
+<!-- Relocated from emails/milestone-celebration.html -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>🎯 Milestone Reached!</title>
+    <style>
+      body { margin:0; padding:0; font-family:Arial,Helvetica,sans-serif; background-color:#f0f4f8; }
+      .wrapper { max-width:620px; margin:0 auto; background:#ffffff; }
+      .hero { background:linear-gradient(120deg,#805ad5,#6b46c1); padding:36px 28px; text-align:center; }
+      .hero h1 { color:#fff; margin:0; font-size:30px; }
+      .hero p { color:rgba(255,255,255,0.88); margin:8px 0 0; font-size:16px; }
+      .content { padding:40px 34px; }
+      .badge { font-size:70px; text-align:center; margin:0 0 10px; }
+      p { line-height:1.55; font-size:16px; color:#2d3748; }
+      .highlight { background:#faf5ff; border:1px solid #e9d8fd; border-radius:10px; padding:18px 22px; margin:24px 0; }
+      .highlight h3 { margin:0 0 10px; color:#553c9a; font-size:18px; }
+      ul { margin:10px 0 0; padding-left:22px; color:#4a5568; }
+      li { margin-bottom:6px; }
+      .cta { display:inline-block; background:#6b46c1; color:#fff !important; text-decoration:none; padding:16px 30px; border-radius:6px; font-weight:600; margin:26px 0; font-size:16px; }
+      .share-box { background:#edf2f7; border-radius:10px; padding:18px 22px; text-align:center; margin-top:30px; }
+      .share-links a { color:#6b46c1; text-decoration:none; margin:0 8px; font-weight:500; }
+      .footer { background:#f0f4f8; text-align:center; padding:28px; font-size:13px; color:#718096; }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <div class="hero">
+        <h1>Milestone Unlocked!</h1>
+        <p>You just completed <strong>{{milestoneLabel}}</strong></p>
+      </div>
+      <div class="content">
+        <div class="badge">⭐</div>
+        <p><strong>Fantastic progress, {{userName}}!</strong></p>
+        <p>You’ve reached an important milestone: <strong>{{milestoneLabel}}</strong>. This proves your workflow is scaling smoothly and you’re building consistent value for your clients.</p>
+        <div class="highlight">
+          <h3>Next Level Tips</h3>
+          <ul>
+            <li>Automate repetitive job types with saved presets</li>
+            <li>Use detailed damage descriptors for better AI nuance</li>
+            <li>Export grouped PDF reports for multi-building inspections</li>
+            <li>Track token usage trends to optimize workload</li>
+          </ul>
+        </div>
+        <p>Keep pushing forward—each milestone compounds your advantage.</p>
+        <p style="text-align:center"><a href="{{dashboardUrl}}" class="cta">Go to Dashboard →</a></p>
+        <div class="share-box">
+          <p style="margin:0 0 8px"><strong>Share your achievement:</strong></p>
+          <div class="share-links">
+            <a href="{{shareTwitterUrl}}">Twitter</a>
+            <a href="{{shareLinkedInUrl}}">LinkedIn</a>
+            <a href="{{shareFacebookUrl}}">Facebook</a>
+          </div>
+        </div>
+        <p style="margin-top:30px">Onward and upward! 🚀</p>
+        <p><strong>The SkaiScraper Team</strong></p>
+      </div>
+      <div class="footer">
+        <p>SkaiScraper — AI Roof Inspection Intelligence</p>
+        <p><a href="{{unsubscribeUrl}}" style="color:#6b46c1;text-decoration:none">Unsubscribe</a> | <a href="{{privacyUrl}}" style="color:#6b46c1;text-decoration:none">Privacy Policy</a></p>
+      </div>
+    </div>
+  </body>
+</html>

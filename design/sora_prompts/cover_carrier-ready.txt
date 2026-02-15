@@ -1,0 +1,9 @@
+Carrier-Ready Cover prompt (replace placeholders)
+
+Minimal white cover with bold header bar in {PRIMARY}, thin underline in {ACCENT}.
+Top-left {LOGO_URL}. Title: "{CATEGORY_TITLE}". Subheadline: {CATEGORY_PURPOSE}.
+Right-side hero tile: relevant graphic (hail map, estimate table, etc.).
+Footer bar: "{COMPANY_NAME} • ROC {ROC_NUMBER} • {WEBSITE_URL} • {CONTACT_PHONE}".
+16:9, print-clean, photo-real shadows. Output: 1600×900 JPG.
+
+Use {CATEGORY_TITLE} and {CATEGORY_PURPOSE} from one of the categories above, or set to e.g. "Carrier-Ready Cover".

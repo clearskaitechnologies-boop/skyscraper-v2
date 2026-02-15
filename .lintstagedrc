@@ -1,0 +1,5 @@
+{
+  "src/app/**/*.{ts,tsx}": ["eslint --fix"],
+  "src/components/**/*.{ts,tsx}": ["eslint --fix"],
+  "src/lib/**/*.{ts,tsx}": ["eslint --fix"]
+}

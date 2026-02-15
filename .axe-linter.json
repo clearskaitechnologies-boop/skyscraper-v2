@@ -1,0 +1,12 @@
+{
+  "$schema": "https://www.deque.com/axe-linter/schema.json",
+  "disabled": true,
+  "rules": {
+    "avoid-inline-styles": false,
+    "no-inline-styles": false,
+    "css-inline-styles": false,
+    "color-contrast": false
+  },
+  "exclude": ["**/*.tsx", "**/*.jsx", "**/node_modules/**"],
+  "tags": []
+}

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Code Compliance Placeholder">
+  <style>
+    .bg{fill:#0A1A2F}.panel{fill:#FFF;rx:18}
+    .title{fill:#0A1A2F;font:800 28px Inter,system-ui,sans-serif}
+    .muted{fill:#64748B;font:600 16px Inter,system-ui,sans-serif}
+    .ok{fill:#16A34A;font:800 16px Inter,system-ui,sans-serif}
+    .badge{fill:#FFC838;rx:8}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="120">Code Compliance &amp; Justification</text>
+  <text class="muted" x="90" y="160">Eaves • Hips • Valleys • Underlayment • Flashings</text>
+  <text class="ok" x="90" y="200">Meets Standard ✓  (auto-cited)</text>
+  <rect class="badge" x="90" y="230" width="300" height="36"></rect>
+  <text class="title" x="100" y="254">Add Manufacturer Card</text>
+</svg>

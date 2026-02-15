@@ -1,0 +1,11 @@
+{
+  "id": "depreciation-analysis-premium",
+  "name": "Depreciation Analysis",
+  "category": "estimate",
+  "description": "Clear breakdown of RCV vs ACV with recoverable depreciation calculations. Essential for explaining claims to policyholders.",
+  "version": "1.0.0",
+  "tags": ["depreciation", "acv", "rcv", "estimate"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "estimatedPages": 2
+}

@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Contractor Estimate - {{claim.claimNumber}}</title>
+    <style>
+      /* INJECT: pdf-theme.css */
+      :root { --primary-color: {{org.primaryColor}}; }
+    </style>
+  </head>
+  <body>
+    <div
+      class="page cover"
+      style="background: linear-gradient(135deg, {{org.primaryColor}} 0%, {{org.secondaryColor}} 100%);"
+    >
+      <div class="cover-content">
+        {{#if org.logoUrl}}<img
+          src="{{org.logoUrl}}"
+          alt="{{org.name}}"
+          class="header-logo"
+          style="margin-bottom: 24pt; max-height: 60pt"
+        />{{/if}}
+        <h1 class="cover-title">Repair Estimate</h1>
+        <p class="cover-subtitle">Licensed Contractor Scope & Pricing</p>
+        <div class="cover-meta">
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Claim:</span> {{claim.claimNumber}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Property:</span> {{property.address}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Contractor:</span> {{content.contractorName}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Total:</span> {{content.totalAmount}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Scope of Work</h2></div>
+        <div class="section-content">
+          <div class="card">
+            <div class="card-title">Contractor Information</div>
+            <div class="card-content">
+              <p><strong>Company:</strong> {{content.contractorName}}</p>
+              <p><strong>License:</strong> {{content.contractorLicense}}</p>
+              <p><strong>Phone:</strong> {{content.contractorPhone}}</p>
+              <p><strong>Estimate Date:</strong> {{content.estimateDate}}</p>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Qty</th>
+                <th>Unit</th>
+                <th>Rate</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each content.lineItems}}
+              <tr>
+                <td>{{this.description}}</td>
+                <td>{{this.quantity}}</td>
+                <td>{{this.unit}}</td>
+                <td>{{this.rate}}</td>
+                <td><strong>{{this.amount}}</strong></td>
+              </tr>
+              {{/each}}
+              <tr style="background: #f1f5f9">
+                <td colspan="4"><strong>Subtotal</strong></td>
+                <td><strong>{{content.subtotal}}</strong></td>
+              </tr>
+              <tr>
+                <td colspan="4">Tax ({{content.taxRate}})</td>
+                <td>{{content.taxAmount}}</td>
+              </tr>
+              <tr style="background: #0ea5e9; color: white; font-weight: 600">
+                <td colspan="4">TOTAL</td>
+                <td>{{content.totalAmount}}</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="card">
+            <div class="card-title">Terms & Conditions</div>
+            <div class="card-content">
+              <ul>
+                {{#each content.terms}}
+                <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-left">{{org.name}} | {{claim.claimNumber}}</div>
+        <div class="footer-right">Page 1</div>
+      </div>
+    </div>
+  </body>
+</html>

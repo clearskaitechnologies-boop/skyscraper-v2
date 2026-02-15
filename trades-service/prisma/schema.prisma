@@ -1,0 +1,209 @@
+// ============================================================================
+// SKAISCRAPER TRADES MICROSERVICE DATABASE SCHEMA
+// Separate database from SkaiScraper Core
+// Connects via Clerk User IDs for auth
+// ============================================================================
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  schemas  = ["trades"]
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
+}
+
+// ============================================================================
+// TRADE PROFILES
+// Contractor/Professional profiles in the trades network
+// ============================================================================
+
+model TradeProfile {
+  id              String   @id @default(cuid())
+  clerkUserId     String   @unique
+  
+  // Business Info
+  companyName     String?
+  tradeType       String   // roofing, plumbing, hvac, electrical, etc
+  specialties     Json?    // Array of specific services
+  bio             String?  @db.Text
+  portfolio       Json?    // Array of {url, caption, type} objects
+  
+  // Credentials
+  licenseNumber   String?
+  insured         Boolean  @default(false)
+  yearsExperience Int?
+  certifications  Json?    // Array of {name, url, expiresAt}
+  
+  // Service Area
+  baseZip         String?
+  radiusMiles     Int      @default(25)
+  serviceZips     Json?    // Array of additional zip codes
+  
+  // Stats & Reputation
+  avgRating       Float    @default(0)
+  reviewCount     Int      @default(0)
+  completedJobs   Int      @default(0)
+  responseRate    Float    @default(100)
+  
+  // Availability
+  acceptingClients Boolean @default(true)
+  emergencyService Boolean @default(false)
+  
+  // Timestamps
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  @@index([tradeType])
+  @@index([baseZip])
+  @@index([acceptingClients])
+  @@index([avgRating])
+  @@map("trade_profiles")
+  @@schema("trades")
+}
+
+// ============================================================================
+// CLIENT ↔ PRO CONNECTIONS
+// Tracks when a client requests connection with a pro
+// ============================================================================
+
+model ClientProConnection {
+  id             String   @id @default(cuid())
+  
+  clientClerkId  String
+  proClerkId     String
+  
+  // Status: pending, accepted, declined, expired
+  status         String   @default("pending")
+  
+  // Optional context
+  serviceType    String?  // What service they need
+  urgency        String?  // emergency, urgent, normal, flexible
+  notes          String?  @db.Text
+  
+  // Response tracking
+  respondedAt    DateTime?
+  responseTimeMinutes Int?
+  
+  // Integration with SkaiScraper Core
+  coreLeadId     String?  // Lead created in Core when accepted
+  coreClaimId    String?  // Claim if related to insurance job
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([clientClerkId])
+  @@index([proClerkId])
+  @@index([status])
+  @@unique([clientClerkId, proClerkId])
+  @@map("client_pro_connections")
+  @@schema("trades")
+}
+
+// ============================================================================
+// TRADE REVIEWS
+// Client reviews of pros after job completion
+// ============================================================================
+
+model TradeReview {
+  id             String   @id @default(cuid())
+  
+  proClerkId     String
+  clientClerkId  String
+  
+  rating         Int      // 1-5 stars
+  comment        String?  @db.Text
+  
+  // Job context
+  jobType        String?  // roofing, plumbing, etc
+  jobCompleted   Boolean  @default(false)
+  verified       Boolean  @default(false) // Linked to actual job in Core
+  
+  // Pro response
+  proResponse    String?  @db.Text
+  proRespondedAt DateTime?
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([proClerkId])
+  @@index([clientClerkId])
+  @@index([rating])
+  @@map("trade_reviews")
+  @@schema("trades")
+}
+
+// ============================================================================
+// SERVICE REQUESTS (Optional - Phase 2)
+// When clients post jobs that pros can bid on
+// ============================================================================
+
+model ServiceRequest {
+  id             String   @id @default(cuid())
+  
+  clientClerkId  String
+  
+  // Job Details
+  title          String
+  description    String   @db.Text
+  serviceType    String
+  urgency        String   @default("normal")
+  
+  // Location
+  zip            String
+  city           String?
+  state          String?
+  
+  // Budget
+  budgetMin      Int?     // in cents
+  budgetMax      Int?     // in cents
+  
+  // Status
+  status         String   @default("open") // open, matched, closed
+  matchedProId   String?
+  
+  // Photos
+  photos         Json?    // Array of Firebase Storage URLs
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  expiresAt      DateTime?
+  
+  @@index([clientClerkId])
+  @@index([status])
+  @@index([serviceType])
+  @@index([zip])
+  @@map("service_requests")
+  @@schema("trades")
+}
+
+// ============================================================================
+// PRO AVAILABILITY (Optional - Phase 3)
+// Calendar availability for pros
+// ============================================================================
+
+model ProAvailability {
+  id             String   @id @default(cuid())
+  
+  proClerkId     String
+  
+  // Availability window
+  date           DateTime @db.Date
+  available      Boolean  @default(true)
+  timeSlots      Json?    // Array of {start, end, available}
+  
+  // Booking info
+  bookedBy       String?  // clientClerkId if booked
+  bookingNote    String?
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  @@index([proClerkId])
+  @@index([date])
+  @@unique([proClerkId, date])
+  @@map("pro_availability")
+  @@schema("trades")
+}

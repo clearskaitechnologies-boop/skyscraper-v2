@@ -1,0 +1,38 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Allow authenticated users to upload to their organization's folder
+    match /organizations/{orgId}/{allPaths=**} {
+      allow read, write: if request.auth != null && 
+        (request.auth.token.org_id == orgId || 
+         request.auth.token.orgId == orgId ||
+         resource != null && resource.metadata.uploadedBy == request.auth.uid);
+    }
+    
+    // Allow authenticated users to upload to their user folder
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == userId || 
+         resource != null && resource.metadata.uploadedBy == request.auth.uid);
+    }
+    
+    // Public assets (branding, mockups) - read only for authenticated users
+    match /public/{allPaths=**} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && 
+        request.auth.token.role == 'admin';
+    }
+    
+    // Temporary uploads folder for processing
+    match /temp/{allPaths=**} {
+      allow read, write: if request.auth != null;
+      allow delete: if request.auth != null;
+    }
+    
+    // Deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -1,0 +1,7 @@
+Investor/Enterprise Cover prompt (replace placeholders)
+
+Deep {PRIMARY} background with subtle {SECONDARY} diagonal accent.
+Small {LOGO_URL} top-left. Center title: "SkaiScraper — {CATEGORY_TITLE}".
+Subtitle: "{COMPANY_NAME} • ROC {ROC_NUMBER} • {WEBSITE_URL}".
+Bottom icon row: Automation, Compliance, Approvals.
+16:9 photo-real lighting. Output: 1600×900 JPG.

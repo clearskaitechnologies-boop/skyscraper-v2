@@ -1,0 +1,187 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to SkaiScraper!</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 40px 20px;
+        text-align: center;
+      }
+      .logo {
+        font-size: 32px;
+        font-weight: bold;
+        color: #ffffff;
+        margin-bottom: 10px;
+      }
+      .content {
+        padding: 40px 30px;
+      }
+      .greeting {
+        font-size: 24px;
+        font-weight: bold;
+        color: #1a202c;
+        margin-bottom: 20px;
+      }
+      .text {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #4a5568;
+        margin-bottom: 20px;
+      }
+      .cta-button {
+        display: inline-block;
+        background-color: #667eea;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 16px 32px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 16px;
+        margin: 20px 0;
+      }
+      .features {
+        background-color: #f7fafc;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 30px 0;
+      }
+      .feature-item {
+        margin: 15px 0;
+        display: flex;
+        align-items: start;
+      }
+      .feature-icon {
+        font-size: 24px;
+        margin-right: 12px;
+      }
+      .footer {
+        background-color: #f8f9fa;
+        padding: 30px;
+        text-align: center;
+        font-size: 14px;
+        color: #718096;
+      }
+      .trial-badge {
+        background-color: #48bb78;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        display: inline-block;
+        font-weight: 600;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <div class="logo">🚀 SkaiScraper</div>
+        <p style="color: rgba(255, 255, 255, 0.9); margin: 0">AI-Powered Roof Inspection Reports</p>
+      </div>
+
+      <div class="content">
+        <div class="greeting">Welcome aboard, {{userName}}! 👋</div>
+
+        <div class="trial-badge">✨ 10 FREE TOKENS ACTIVATED</div>
+
+        <p class="text">
+          Thank you for joining SkaiScraper! We're excited to help you create professional roof
+          inspection reports in minutes, not hours.
+        </p>
+
+        <p class="text">
+          Your account is ready to go with <strong>10 free AI tokens</strong>. Each token generates
+          a complete, professional report with satellite imagery, damage assessment, and cost
+          estimates.
+        </p>
+
+        <div style="text-align: center">
+          <a href="{{dashboardUrl}}" class="cta-button"> Start Your First Job → </a>
+        </div>
+
+        <div class="features">
+          <h3 style="margin-top: 0; color: #1a202c">What you can do right now:</h3>
+
+          <div class="feature-item">
+            <span class="feature-icon">🏗️</span>
+            <div>
+              <strong>AI Job Wizard</strong><br />
+              <span style="color: #718096; font-size: 14px"
+                >Answer a few questions, get a complete report</span
+              >
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">📸</span>
+            <div>
+              <strong>Satellite Imagery</strong><br />
+              <span style="color: #718096; font-size: 14px"
+                >Automatic roof measurements from aerial photos</span
+              >
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">📄</span>
+            <div>
+              <strong>Professional PDFs</strong><br />
+              <span style="color: #718096; font-size: 14px"
+                >Client-ready reports you can send immediately</span
+              >
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <span class="feature-icon">💰</span>
+            <div>
+              <strong>Cost Estimates</strong><br />
+              <span style="color: #718096; font-size: 14px"
+                >Accurate pricing based on damage assessment</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <p class="text">
+          <strong>Pro Tip:</strong> Take our 60-second tour when you log in to discover all the
+          features and shortcuts.
+        </p>
+
+        <p class="text" style="margin-top: 30px">
+          Need help? Just reply to this email or click the help icon in your dashboard.
+        </p>
+
+        <p class="text">Let's build something amazing together! 🚀</p>
+
+        <p class="text">
+          <strong>The SkaiScraper Team</strong>
+        </p>
+      </div>
+
+      <div class="footer">
+        <p>SkaiScraper - AI-Powered Roof Inspection Reports</p>
+        <p>
+          <a href="{{unsubscribeUrl}}" style="color: #667eea; text-decoration: none">Unsubscribe</a>
+          |
+          <a href="{{privacyUrl}}" style="color: #667eea; text-decoration: none">Privacy Policy</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

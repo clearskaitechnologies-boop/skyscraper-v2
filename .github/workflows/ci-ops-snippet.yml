@@ -1,0 +1,33 @@
+name: CI (ops-harden)
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  actions: read
+  checks: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-and-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install deps
+        run: pnpm install
+      - name: Run ripgrep brand guard
+        run: |
+          if rg -n "SkaiScrape" -S --hidden --glob '!node_modules' ; then
+            echo "Found forbidden typo: SkaiScrape"; exit 1
+          fi
+      - name: Run tests
+        run: pnpm test

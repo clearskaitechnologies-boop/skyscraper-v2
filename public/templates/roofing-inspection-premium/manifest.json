@@ -1,0 +1,23 @@
+{
+  "slug": "roofing-inspection-premium",
+  "title": "Roofing Inspection Premium",
+  "category": "Roofing",
+  "version": "1.0.0",
+  "assets": {
+    "previewPdf": "/templates/roofing-inspection-premium/preview.pdf",
+    "thumbnail": "/templates/roofing-inspection-premium/thumbnail.png"
+  },
+  "schemaVersion": "report-schema-v1",
+  "sections": [
+    "CompanyBranding",
+    "ClientAndClaim",
+    "AssignedEmployee",
+    "ReportPurposeAndSummary",
+    "DamageFindings",
+    "PhotoSummary",
+    "WeatherVerification",
+    "ScopeAndLineItems",
+    "Recommendations",
+    "Appendix"
+  ]
+}

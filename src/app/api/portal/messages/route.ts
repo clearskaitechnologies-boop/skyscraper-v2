@@ -1,0 +1,186 @@
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
+
+import { getOrCreatePortalThread } from "@/lib/messages/getOrCreatePortalThread";
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+/**
+ * GET /api/portal/messages?claimId=xxx
+ * Fetch messages for a portal user's claim thread
+ */
+export async function GET(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const claimId = searchParams.get("claimId");
+
+    if (!claimId) {
+      return NextResponse.json({ error: "Missing claimId" }, { status: 400 });
+    }
+
+    // Get user email to check portal access
+    const user = await currentUser();
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+    if (!userEmail) {
+      return NextResponse.json({ error: "No email found" }, { status: 400 });
+    }
+
+    // Verify portal access to this claim
+    const portalAccess = await prisma.client_access.findFirst({
+      where: {
+        claimId,
+        email: userEmail,
+      },
+      include: {
+        claims: {
+          select: {
+            orgId: true,
+          },
+        },
+      },
+    });
+
+    if (!portalAccess) {
+      return NextResponse.json({ error: "You do not have access to this claim" }, { status: 403 });
+    }
+
+    // Get or create the portal thread
+    const thread = await getOrCreatePortalThread({
+      orgId: portalAccess.claims.orgId,
+      claimId,
+    });
+
+    // Fetch messages for this thread
+    const messages = await prisma.message.findMany({
+      where: {
+        threadId: thread.id,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+      select: {
+        id: true,
+        body: true,
+        createdAt: true,
+        fromPortal: true,
+        senderUserId: true,
+        senderType: true,
+      },
+    });
+
+    // Format messages with sender names
+    const formattedMessages = messages.map((msg) => ({
+      id: msg.id,
+      body: msg.body,
+      createdAt: msg.createdAt.toISOString(),
+      fromPortal: msg.fromPortal,
+      senderName: msg.fromPortal ? "You" : "Your Contractor",
+    }));
+
+    return NextResponse.json({
+      ok: true,
+      messages: formattedMessages,
+    });
+  } catch (error: any) {
+    console.error("[GET /api/portal/messages] Error:", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to fetch messages" },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * POST /api/portal/messages
+ * Send a message from portal user to pro team
+ */
+export async function POST(req: NextRequest) {
+  try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const body = await req.json();
+    const { claimId, message } = body;
+
+    if (!claimId || !message) {
+      return NextResponse.json({ error: "Missing claimId or message" }, { status: 400 });
+    }
+
+    if (typeof message !== "string" || message.trim().length === 0) {
+      return NextResponse.json({ error: "Message cannot be empty" }, { status: 400 });
+    }
+
+    // Get user email to check portal access
+    const user = await currentUser();
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+    if (!userEmail) {
+      return NextResponse.json({ error: "No email found" }, { status: 400 });
+    }
+
+    // Verify portal access to this claim
+    const portalAccess = await prisma.client_access.findFirst({
+      where: {
+        claimId,
+        email: userEmail,
+      },
+      include: {
+        claims: {
+          select: {
+            orgId: true,
+          },
+        },
+      },
+    });
+
+    if (!portalAccess) {
+      return NextResponse.json({ error: "You do not have access to this claim" }, { status: 403 });
+    }
+
+    // Get or create the portal thread
+    const thread = await getOrCreatePortalThread({
+      orgId: portalAccess.claims.orgId,
+      claimId,
+    });
+
+    // Create the message
+    const newMessage = await prisma.message.create({
+      data: {
+        id: crypto.randomUUID(),
+        threadId: thread.id,
+        senderUserId: userId,
+        senderType: "client",
+        body: message.trim(),
+        fromPortal: true,
+        read: false,
+      },
+    });
+
+    // Update thread timestamp
+    await prisma.messageThread.update({
+      where: { id: thread.id },
+      data: { updatedAt: new Date() },
+    });
+
+    return NextResponse.json({
+      ok: true,
+      message: {
+        id: newMessage.id,
+        body: newMessage.body,
+        createdAt: newMessage.createdAt.toISOString(),
+        fromPortal: newMessage.fromPortal,
+        senderName: "You",
+      },
+    });
+  } catch (error: any) {
+    console.error("[POST /api/portal/messages] Error:", error);
+    return NextResponse.json({ error: error.message || "Failed to send message" }, { status: 500 });
+  }
+}

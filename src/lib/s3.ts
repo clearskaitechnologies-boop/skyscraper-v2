@@ -1,0 +1,40 @@
+// src/lib/s3.ts
+// S3 helper configured to work with MinIO (dev) and AWS S3 (prod)
+import { GetObjectCommand,PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+
+const REGION = process.env.S3_REGION || process.env.AWS_REGION || "us-east-1";
+const ENDPOINT = process.env.S3_ENDPOINT; // e.g. http://localhost:9000
+const FORCE_PATH_STYLE =
+  process.env.S3_FORCE_PATH_STYLE === "1" || process.env.S3_FORCE_PATH_STYLE === "true";
+
+const s3 = new S3Client({
+  region: REGION,
+  endpoint: ENDPOINT,
+  forcePathStyle: !!FORCE_PATH_STYLE,
+  credentials: {
+    accessKeyId: process.env.S3_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || "minioadmin",
+    secretAccessKey:
+      process.env.S3_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || "minioadmin",
+  },
+});
+
+export async function uploadBuffer(
+  buffer: Buffer | Uint8Array,
+  key: string,
+  contentType = "application/pdf"
+) {
+  const Bucket = process.env.S3_BUCKET || "reports";
+  const cmd = new PutObjectCommand({ Bucket, Key: key, Body: buffer, ContentType: contentType });
+  await s3.send(cmd);
+  return { bucket: Bucket, key };
+}
+
+export async function getSignedGetUrl(key: string, expiresIn = 60 * 60) {
+  const Bucket = process.env.S3_BUCKET || "reports";
+  const cmd = new GetObjectCommand({ Bucket, Key: key });
+  const url = await getSignedUrl(s3, cmd, { expiresIn });
+  return url;
+}
+
+export default { uploadBuffer, getSignedGetUrl };

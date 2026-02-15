@@ -1,0 +1,11 @@
+{
+  "id": "contractor-estimate-premium",
+  "name": "Contractor Estimate",
+  "category": "estimate",
+  "description": "Professional contractor estimate with itemized pricing, licensing info, and terms. Ready for carrier submission.",
+  "version": "1.0.0",
+  "tags": ["contractor", "estimate", "pricing", "bid"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "estimatedPages": 2
+}

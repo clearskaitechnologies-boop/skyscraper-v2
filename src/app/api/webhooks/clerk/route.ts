@@ -1,0 +1,174 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+import { randomUUID } from "crypto";
+/**
+ * Clerk User Webhook Handler
+ *
+ * Automatically bootstraps new organizations when users sign up
+ * Integrates with scripts/bootstrap-new-Org.ts
+ *
+ * Setup:
+ * 1. In Clerk Dashboard → Webhooks → Add Endpoint
+ * 2. URL: https://your-domain.com/api/webhooks/clerk
+ * 3. Subscribe to: user.created, organization.created
+ * 4. Add CLERK_WEBHOOK_SECRET to .env
+ */
+import { NextRequest, NextResponse } from "next/server";
+import { Webhook } from "svix";
+
+import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/ratelimit";
+import { bootstrapNewOrg } from "@/scripts/bootstrap-new-org";
+
+const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+
+export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
+  const rl = await checkRateLimit(`clerk:${ip}`, "webhook-clerk");
+  if (!rl.success) {
+    return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
+  }
+  if (!webhookSecret) {
+    console.error("[Webhook] CLERK_WEBHOOK_SECRET not configured");
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
+  }
+
+  try {
+    // Get headers
+    const svix_id = req.headers.get("svix-id");
+    const svix_timestamp = req.headers.get("svix-timestamp");
+    const svix_signature = req.headers.get("svix-signature");
+
+    if (!svix_id || !svix_timestamp || !svix_signature) {
+      return NextResponse.json({ error: "Missing svix headers" }, { status: 400 });
+    }
+
+    // Get body
+    const body = await req.text();
+
+    // Verify webhook signature
+    const wh = new Webhook(webhookSecret);
+    let evt: any;
+
+    try {
+      evt = wh.verify(body, {
+        "svix-id": svix_id,
+        "svix-timestamp": svix_timestamp,
+        "svix-signature": svix_signature,
+      });
+    } catch (err) {
+      console.error("[Webhook] Verification failed:", err);
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+    }
+
+    // Handle different event types
+    const eventType = evt.type;
+    console.log(`[Webhook] Received event: ${eventType}`);
+
+    // User created event
+    if (eventType === "user.created") {
+      const {
+        id: userId,
+        email_addresses,
+        primary_email_address_id,
+        first_name,
+        last_name,
+      } = evt.data;
+      const primaryEmail = email_addresses.find(
+        (e: any) => e.id === primary_email_address_id
+      )?.email_address;
+
+      console.log(`[Webhook] New user created: ${userId} (${primaryEmail})`);
+
+      // Bootstrap user with default Org
+      try {
+        // Create Org first
+        const Org = await prisma.org.upsert({
+          where: { clerkOrgId: `org_${userId}` },
+          update: {},
+          create: {
+            id: randomUUID(),
+            clerkOrgId: `org_${userId}`,
+            name: `${primaryEmail?.split("@")[0] || "My"} Company`,
+          } as any,
+        });
+
+        // ⭐ CRITICAL FIX: Create the users table record FIRST
+        const userName =
+          [first_name, last_name].filter(Boolean).join(" ") ||
+          primaryEmail?.split("@")[0] ||
+          "New User";
+        await prisma.users.upsert({
+          where: { clerkUserId: userId },
+          update: {
+            email: primaryEmail || "",
+            orgId: Org.id,
+          },
+          create: {
+            id: randomUUID(),
+            clerkUserId: userId,
+            email: primaryEmail || "",
+            name: userName,
+            orgId: Org.id,
+          },
+        });
+        console.log(`[Webhook] ✅ User record created in users table`);
+
+        // Now bootstrap (creates userOrganization, team_members, tokens, etc.)
+        const result = await bootstrapNewOrg(userId, Org.id, {
+          includeWelcomeData: true,
+          initialTokens: 100,
+          skipBrandingSetup: false,
+        });
+
+        if (result.success) {
+          console.log(`[Webhook] ✅ User ${userId} fully bootstrapped`);
+        } else {
+          console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
+        }
+      } catch (error) {
+        console.error(`[Webhook] ❌ Bootstrap failed for user ${userId}:`, error);
+        // Don't return error - allow signup to continue
+      }
+    }
+
+    // Organization created event
+    if (eventType === "organization.created") {
+      const { id: orgId, created_by: userId } = evt.data;
+
+      console.log(`[Webhook] New Org created: ${orgId} by user ${userId}`);
+
+      // Bootstrap organization
+      try {
+        const result = await bootstrapNewOrg(userId, orgId, {
+          includeWelcomeData: false, // Orgs don't need welcome data
+          initialTokens: 200, // More tokens for Org accounts
+          skipBrandingSetup: false,
+        });
+
+        if (result.success) {
+          console.log(`[Webhook] ✅ Org ${orgId} bootstrapped successfully`);
+        } else {
+          console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
+        }
+      } catch (error) {
+        console.error(`[Webhook] ❌ Bootstrap failed for Org ${orgId}:`, error);
+      }
+    }
+
+    return NextResponse.json({ success: true, eventType });
+  } catch (error) {
+    console.error("[Webhook] Handler error:", error);
+    return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  return NextResponse.json({
+    status: "Clerk webhook endpoint active",
+    events: ["user.created", "organization.created"],
+    timestamp: new Date().toISOString(),
+  });
+}

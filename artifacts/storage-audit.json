@@ -1,0 +1,45 @@
+{
+  "timestamp": "2025-12-24T23:55:40.668Z",
+  "uploadthingConfigured": true,
+  "hasUploadRoutes": true,
+  "hasDBTables": true,
+  "hasAccessControl": false,
+  "hasDeleteLogic": false,
+  "envVarsPresent": [],
+  "envVarsMissing": [
+    "UPLOADTHING_SECRET",
+    "UPLOADTHING_APP_ID"
+  ],
+  "issues": [
+    {
+      "severity": "BLOCKER",
+      "component": "src/app/api/uploads/route.ts",
+      "issue": "No access control verification",
+      "suggestion": "Add verifyClaimAccess() or verifyOrgAccess()"
+    },
+    {
+      "severity": "BLOCKER",
+      "component": "Environment",
+      "issue": "Missing env var: UPLOADTHING_SECRET",
+      "suggestion": "Add to .env and Vercel"
+    },
+    {
+      "severity": "BLOCKER",
+      "component": "Environment",
+      "issue": "Missing env var: UPLOADTHING_APP_ID",
+      "suggestion": "Add to .env and Vercel"
+    },
+    {
+      "severity": "HIGH",
+      "component": "UploadThing Config",
+      "issue": "No file type restrictions",
+      "suggestion": "Restrict allowed file types for security"
+    },
+    {
+      "severity": "MEDIUM",
+      "component": "Storage",
+      "issue": "No file deletion endpoints found",
+      "suggestion": "Implement DELETE handlers to prevent orphaned files"
+    }
+  ]
+}

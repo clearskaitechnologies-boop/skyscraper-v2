@@ -1,0 +1,81 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+/.env
+**/.env
+functions/*/.env
+.env.local
+.env.*.local
+/.idea
+.vscode
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.env
+.env.*
+*.env
+
+
+.env
+.env.*
+*.env
+
+
+.env
+.env.*
+*.env
+
+.vercel
+.env*.local
+.next/
+.vercel
+
+# Firebase service account
+firebase-service-account.json
+*service-account*.json
+
+# Prisma backups and snapshots
+prisma/backup/
+DB_SCHEMA_SNAPSHOT*
+schema_backup_*
+*.backup
+*.bak
+
+# Test artifacts
+playwright-report/
+test-results/
+tests-backup/
+
+# Lighthouse CI
+.lighthouseci/
+
+# Local Netlify folder
+.netlify
+!/.env
+!/.env
+
+# 🔥 Prisma: NEVER commit schema snapshots/backups (Prisma LSP will parse them)
+**/*SNAPSHOT*.prisma
+**/*.prisma.bak
+**/*.prisma.backup
+**/*.prisma.old
+**/DB_SCHEMA_SNAPSHOT.prisma
+**/SCHEMA_SNAPSHOT_ARCHIVE.txt
+
+# Ensure .env never tracked
+.env
+tsconfig.tsbuildinfo
+.env.vercel

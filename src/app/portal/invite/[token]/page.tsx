@@ -1,0 +1,98 @@
+import { auth } from "@clerk/nextjs/server";
+import { Clock } from "lucide-react";
+import { redirect } from "next/navigation";
+
+import prisma from "@/lib/prisma";
+
+export const dynamic = "force-dynamic";
+
+interface InvitePageProps {
+  params: Promise<{ token: string }>;
+}
+
+export default async function InviteAcceptancePage({ params }: InvitePageProps) {
+  const { userId } = await auth();
+  const { token } = await params;
+
+  // Find the invite by id (token is the ClaimClientLink id)
+  const invite = await prisma.claimClientLink
+    .findUnique({
+      where: {
+        id: token,
+      },
+      include: {
+        claims: {
+          select: {
+            id: true,
+            claimNumber: true,
+            title: true,
+          },
+        },
+      },
+    })
+    .catch((error) => {
+      console.error("[Invite Page] Error fetching invite:", error);
+      return null;
+    });
+
+  if (!invite) {
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center p-4">
+        <div className="max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-lg dark:border-slate-700 dark:bg-slate-800">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-500/10">
+            <Clock className="h-8 w-8 text-red-500" />
+          </div>
+          <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
+            Invalid or Expired Invite
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            This invitation link is no longer valid. Please contact your adjuster for a new invite.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Check if already accepted or revoked
+  if (invite.status !== "PENDING") {
+    // Already accepted - redirect to claim portal
+    if (invite.status === "ACCEPTED" && invite.clientUserId) {
+      redirect(`/portal/claims/${invite.claimId}`);
+    }
+    return (
+      <div className="flex min-h-[60vh] items-center justify-center p-4">
+        <div className="max-w-md rounded-xl border border-slate-200 bg-white p-8 text-center shadow-lg dark:border-slate-700 dark:bg-slate-800">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-orange-100 dark:bg-orange-500/10">
+            <Clock className="h-8 w-8 text-orange-500" />
+          </div>
+          <h1 className="mb-2 text-2xl font-bold text-slate-900 dark:text-white">
+            Invitation No Longer Valid
+          </h1>
+          <p className="text-slate-500 dark:text-slate-400">
+            This invitation has already been used or revoked. Please request a new invite from your
+            adjuster.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // If not signed in, redirect to sign-in with return URL
+  if (!userId) {
+    const returnUrl = `/portal/invite/${token}`;
+    redirect(`/sign-in?redirect_url=${encodeURIComponent(returnUrl)}`);
+  }
+
+  // Activate the invite - update status and link to user
+  await prisma.claimClientLink.update({
+    where: { id: invite.id },
+    data: {
+      status: "ACCEPTED",
+      clientUserId: userId,
+      acceptedAt: new Date(),
+    },
+  });
+
+  // Redirect to the claim portal
+  redirect(`/portal/claims/${invite.claimId}`);
+}

@@ -1,0 +1,152 @@
+project_id = "ywvhczbmjumosmyouyag"
+
+[functions.approval-notify]
+verify_jwt = true
+
+[functions.stamp-approvals]
+verify_jwt = true
+
+[functions.proposal-autofill]
+verify_jwt = true
+
+[functions.client-reports]
+verify_jwt = true
+
+[functions.summarize-report]
+verify_jwt = true
+
+[functions.generate-mockup]
+verify_jwt = true
+
+[functions.weatherhail-ai]
+verify_jwt = true
+
+[functions.send-email]
+verify_jwt = true
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["http://localhost:3000"]
+jwt_expiry = 3600
+
+[functions.analyze-photo]
+verify_jwt = true
+
+[functions.generate-pdf]
+verify_jwt = true
+
+[functions.lookup-codes]
+verify_jwt = true
+
+[functions.fetch-weather]
+verify_jwt = true
+
+[functions.analytics-daily]
+verify_jwt = true
+
+[functions.analytics-funnel]
+verify_jwt = true
+
+[functions.ops-health]
+verify_jwt = true
+
+[functions.report-download]
+verify_jwt = false
+
+[functions.status-read]
+verify_jwt = false
+
+[functions.status-incident-create]
+verify_jwt = true
+
+[functions.status-incident-resolve]
+verify_jwt = true
+
+[functions.governance-insights]
+verify_jwt = true
+
+[functions.governance-incidents]
+verify_jwt = true
+
+[functions.governance-rules]
+verify_jwt = true
+
+[functions.generate-pdf-v2]
+verify_jwt = true
+
+[functions.generate-mockup-v2]
+verify_jwt = true
+
+[functions.generate-map-pin]
+verify_jwt = true
+
+[functions.create-signature]
+verify_jwt = true
+
+[functions.create-public-link]
+verify_jwt = true
+
+[functions.resolve-public-link]
+verify_jwt = false
+
+[functions.public-report]
+verify_jwt = false
+
+[functions.create-public-token]
+verify_jwt = true
+
+[functions.ops-metrics]
+verify_jwt = true
+
+[functions.ops-funnel]
+verify_jwt = true
+
+[functions.ai-summarize]
+verify_jwt = true
+
+[functions.ai-caption]
+verify_jwt = true
+
+[functions.ai-codes]
+verify_jwt = true
+
+[functions.je-sync]
+verify_jwt = true
+
+[functions.je-layers]
+verify_jwt = true
+
+[functions.je-assets-export]
+verify_jwt = true
+
+[functions.je-last-sync]
+verify_jwt = true
+
+[functions.ai-health]
+verify_jwt = false
+
+[functions.validate-brochure-upload]
+verify_jwt = true
+
+[functions.detect-damage]
+verify_jwt = false
+
+[functions.material-detect]
+verify_jwt = false
+
+[functions.storm-fetch]
+verify_jwt = false
+
+[functions.code-check]
+verify_jwt = false
+
+[functions.supplement-generate]
+verify_jwt = false

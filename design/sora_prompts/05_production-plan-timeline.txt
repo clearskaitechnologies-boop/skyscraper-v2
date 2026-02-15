@@ -1,0 +1,26 @@
+Master prompt (replace placeholders before pasting into Sora)
+
+Enterprise-grade product mockup for a roofing AI platform (SkaiScraper).
+
+Scene: open glossy booklet on a clean desk, soft shadows, cinematic depth of field.
+Angle: slightly elevated 35mm wide shot. Realistic paper textures. Photo-real.
+
+Left page (HERO): Horizontal timeline bars with milestone icons, crew checklist, target dates, “On Track” badge
+Right page (CONTENT):
+ • Headline: "Production Plan & Timeline"
+ • Subheadline: Pre-site → tear-off → dry-in → install → punch → closeout
+ • Small profile tile with {HEADSHOT_URL}, {CONTACT_NAME}, {CONTACT_EMAIL}, {CONTACT_PHONE}
+ • Meta strip: "{COMPANY_NAME} • ROC {ROC_NUMBER} • {WEBSITE_URL}"
+ • Include tasteful UI elements relevant to this category (clear, English, no lorem ipsum)
+
+Branding:
+ • Small {LOGO_URL} top-left
+ • Colors: primary {PRIMARY}, secondary {SECONDARY}, accent {ACCENT}
+ • Bold, premium tech sans-serif typography; clean grid; generous whitespace
+
+Constraints:
+ • Photo-real product photography only (no illustrations)
+ • Text must be crisp and readable; no placeholder text
+ • 16:9 composition, centered, print-quality
+
+Camera: Sony A7R look, commercial product lighting. Output: 1600×900 JPG.

@@ -1,0 +1,15 @@
+{
+  "importMap": "./import_map.json",
+  "tasks": {
+    "cache:functions": "deno cache --import-map=import_map.json functions/generate-mockup/index.ts",
+    "run:mockup": "deno run -A --import-map=import_map.json functions/generate-mockup/index.ts"
+  },
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "strict": true,
+    "noImplicitAny": false
+  },
+  "imports": {
+    "serve": "https://deno.land/std@0.224.0/http/server.ts"
+  }
+}

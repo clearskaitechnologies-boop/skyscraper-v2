@@ -1,0 +1,70 @@
+name: CI (legacy)
+
+on:
+  # DISABLED — consolidated into ci.yml
+  # push:
+  #   branches: [main]
+  # pull_request:
+  #   branches: [main]
+  workflow_dispatch: # manual only
+
+permissions:
+  contents: read
+
+jobs:
+  build-typecheck-lint:
+    name: Typecheck, Lint, and Build
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_ENV: production
+      NEXT_TELEMETRY_DISABLED: 1
+
+      # Public-ish Next vars (safe placeholders for CI)
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_dummy
+      NEXT_PUBLIC_STARTER_PRICE_ID: price_dummy_starter
+      NEXT_PUBLIC_BUSINESS_PRICE_ID: price_dummy_business
+      NEXT_PUBLIC_ENTERPRISE_PRICE_ID: price_dummy_enterprise
+
+      # Server-side vars — MUST use GitHub Secrets
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      STRIPE_WEBHOOK_SECRET: ${{ secrets.CI_STRIPE_WEBHOOK_SECRET }}
+      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+
+    steps:
+      - name: 🧾 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: 📦 Setup PNPM
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: 📦 Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: 🔧 Generate Prisma client (no DB connection required)
+        run: npx prisma generate
+
+      - name: 🔠 Type check
+        run: npx tsc -p tsconfig.json --noEmit
+
+      - name: 🔍 Lint
+        run: npm run lint --if-present
+
+      - name: 🏗️ Build (Next.js)
+        run: npm run build
+
+      # Optional: keep the build as an artifact for inspection
+      - name: 📦 Upload build artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build
+          path: .next

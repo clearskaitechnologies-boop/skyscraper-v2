@@ -1,0 +1,67 @@
+{
+  "org": {
+    "name": "Your Company Name",
+    "logoUrl": null,
+    "primaryColor": "#f59e0b",
+    "secondaryColor": "#d97706",
+    "phone": "(555) 123-4567",
+    "email": ""
+  },
+  "claim": { "claimNumber": "CLM-2024-000789" },
+  "property": { "address": "9101 Pine Street, Houston, TX 77002" },
+  "content": {
+    "originalTotal": "$42,500.00",
+    "supplementTotal": "$18,250.00",
+    "lineItems": [
+      {
+        "description": "Roofing - 3-Tab Shingles to Architectural",
+        "quantity": "30",
+        "unit": "SQ",
+        "unitPrice": "$75.00",
+        "total": "$2,250.00",
+        "reason": "Carrier missed upgrade"
+      },
+      {
+        "description": "Additional Hail Damage - West Slope",
+        "quantity": "12",
+        "unit": "SQ",
+        "unitPrice": "$350.00",
+        "total": "$4,200.00",
+        "reason": "Not visible from ground"
+      },
+      {
+        "description": "Interior Ceiling Repair - Water Damage",
+        "quantity": "150",
+        "unit": "SF",
+        "unitPrice": "$12.50",
+        "total": "$1,875.00",
+        "reason": "Discovered after leak"
+      },
+      {
+        "description": "Code Upgrade - Ice & Water Shield",
+        "quantity": "10",
+        "unit": "Rolls",
+        "unitPrice": "$185.00",
+        "total": "$1,850.00",
+        "reason": "Current code requirement"
+      },
+      {
+        "description": "Siding Replacement - Impact Damage",
+        "quantity": "420",
+        "unit": "SF",
+        "unitPrice": "$18.50",
+        "total": "$7,770.00",
+        "reason": "Hail damage not in original"
+      },
+      {
+        "description": "Paint - Color Match Premium",
+        "quantity": "1",
+        "unit": "LS",
+        "unitPrice": "$305.00",
+        "total": "$305.00",
+        "reason": "Custom color required"
+      }
+    ],
+    "justification": "This supplement addresses damages that were either not visible during the initial inspection, missed by the carrier's adjuster, or required by current building codes. All items have been verified on-site and are directly attributable to the covered loss event. Supporting photo documentation is attached."
+  }
+}

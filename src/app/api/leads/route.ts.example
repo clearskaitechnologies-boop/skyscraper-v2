@@ -1,0 +1,263 @@
+// ============================================================================
+// API Route: Create Lead (with proper RLS and org_id resolution)
+// File: src/app/api/leads/route.ts
+// ============================================================================
+
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { auth } from '@clerk/nextjs/server';
+
+// Type definitions
+interface CreateLeadRequest {
+  first_name: string;
+  last_name: string;
+  email?: string;
+  phone?: string;
+  address_line1: string;
+  address_line2?: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  source?: 'door_to_door' | 'referral' | 'website' | 'phone_call' | 'email' | 'social_media' | 'trade_show' | 'direct_mail' | 'other';
+  initial_notes?: string;
+  priority?: 'low' | 'medium' | 'high' | 'urgent';
+  tags?: string[];
+}
+
+// ============================================================================
+// POST /api/leads - Create a new lead
+// ============================================================================
+export async function POST(request: NextRequest) {
+  try {
+    // 1. Authenticate user with Clerk
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      );
+    }
+
+    // 2. Create Supabase client (server-side with RLS)
+    const supabase = createClient();
+
+    // 3. Get user's Supabase auth ID
+    // Note: You may need to map Clerk userId to Supabase auth.users.id
+    // For now, we'll query by userId assuming it matches
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Failed to authenticate with database', details: authError?.message },
+        { status: 401 }
+      );
+    }
+
+    // 4. Get user's organization ID
+    const { data: membership, error: membershipError } = await supabase
+      .from('pboss.org_members')
+      .select('org_id, role')
+      .eq('user_id', user.id)
+      .single();
+
+    if (membershipError || !membership) {
+      return NextResponse.json(
+        { 
+          error: 'No organization found', 
+          message: 'You must belong to an organization to create leads.',
+          details: membershipError?.message 
+        },
+        { status: 403 }
+      );
+    }
+
+    const org_id = membership.org_id;
+
+    // 5. Parse and validate request body
+    const body: CreateLeadRequest = await request.json();
+
+    // Required fields validation
+    if (!body.first_name || !body.last_name) {
+      return NextResponse.json(
+        { error: 'Missing required fields: first_name, last_name' },
+        { status: 400 }
+      );
+    }
+
+    if (!body.address_line1 || !body.city || !body.state || !body.zip_code) {
+      return NextResponse.json(
+        { error: 'Missing required address fields' },
+        { status: 400 }
+      );
+    }
+
+    // Validate state (2 characters)
+    if (body.state.length !== 2) {
+      return NextResponse.json(
+        { error: 'State must be 2 characters (e.g., AZ, CA, TX)' },
+        { status: 400 }
+      );
+    }
+
+    // Validate zip code format
+    if (!/^[0-9]{5}(-[0-9]{4})?$/.test(body.zip_code)) {
+      return NextResponse.json(
+        { error: 'Invalid zip code format. Use 12345 or 12345-6789' },
+        { status: 400 }
+      );
+    }
+
+    // 6. Insert lead into database
+    const { data: lead, error: insertError } = await supabase
+      .from('pboss.leads')
+      .insert([
+        {
+          org_id,
+          first_name: body.first_name.trim(),
+          last_name: body.last_name.trim(),
+          email: body.email?.trim() || null,
+          phone: body.phone?.trim() || null,
+          address_line1: body.address_line1.trim(),
+          address_line2: body.address_line2?.trim() || null,
+          city: body.city.trim(),
+          state: body.state.toUpperCase(),
+          zip_code: body.zip_code.trim(),
+          source: body.source || 'other',
+          initial_notes: body.initial_notes?.trim() || null,
+          priority: body.priority || 'medium',
+          tags: body.tags || null,
+          status: 'new',
+          created_by: user.id,
+        }
+      ])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('Failed to insert lead:', insertError);
+      return NextResponse.json(
+        { 
+          error: 'Failed to create lead', 
+          details: insertError.message,
+          hint: insertError.hint 
+        },
+        { status: 500 }
+      );
+    }
+
+    // 7. Success! Return the created lead
+    return NextResponse.json(
+      { 
+        success: true, 
+        lead,
+        message: 'Lead created successfully' 
+      },
+      { status: 201 }
+    );
+
+  } catch (error: any) {
+    console.error('Unexpected error in POST /api/leads:', error);
+    return NextResponse.json(
+      { 
+        error: 'Internal server error', 
+        details: error.message 
+      },
+      { status: 500 }
+    );
+  }
+}
+
+// ============================================================================
+// GET /api/leads - List leads for user's organization
+// ============================================================================
+export async function GET(request: NextRequest) {
+  try {
+    // 1. Authenticate user
+    const { userId } = await auth();
+    
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // 2. Create Supabase client
+    const supabase = createClient();
+
+    // 3. Get user's auth ID
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Failed to authenticate with database' },
+        { status: 401 }
+      );
+    }
+
+    // 4. Get user's organization ID
+    const { data: membership, error: membershipError } = await supabase
+      .from('pboss.org_members')
+      .select('org_id')
+      .eq('user_id', user.id)
+      .single();
+
+    if (membershipError || !membership) {
+      return NextResponse.json(
+        { error: 'No organization found' },
+        { status: 403 }
+      );
+    }
+
+    // 5. Query leads (RLS will automatically filter by org)
+    const { searchParams } = new URL(request.url);
+    const status = searchParams.get('status');
+    const source = searchParams.get('source');
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const offset = parseInt(searchParams.get('offset') || '0');
+
+    let query = supabase
+      .from('pboss.leads')
+      .select('*', { count: 'exact' })
+      .eq('org_id', membership.org_id)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (status) {
+      query = query.eq('status', status);
+    }
+
+    if (source) {
+      query = query.eq('source', source);
+    }
+
+    const { data: leads, error: queryError, count } = await query;
+
+    if (queryError) {
+      console.error('Failed to query leads:', queryError);
+      return NextResponse.json(
+        { error: 'Failed to fetch leads', details: queryError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json(
+      {
+        success: true,
+        leads,
+        count,
+        limit,
+        offset
+      },
+      { status: 200 }
+    );
+
+  } catch (error: any) {
+    console.error('Unexpected error in GET /api/leads:', error);
+    return NextResponse.json(
+      { error: 'Internal server error', details: error.message },
+      { status: 500 }
+    );
+  }
+}

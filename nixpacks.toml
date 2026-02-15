@@ -1,0 +1,12 @@
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+aptPkgs = []
+
+[phases.install]
+cmds = ["npm i -g pnpm@9.12.0", "pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["echo 'Skipping build phase - worker only'"]
+
+[start]
+cmd = "pnpm worker"

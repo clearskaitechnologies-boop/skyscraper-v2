@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather Correlation Report - {{claim.claimNumber}}</title>
+    <style>
+      /* INJECT: pdf-theme.css */
+      :root { --primary-color: {{org.primaryColor}}; }
+    </style>
+  </head>
+  <body>
+    <!-- COVER -->
+    <div
+      class="page cover"
+      style="background: linear-gradient(135deg, {{org.primaryColor}} 0%, {{org.secondaryColor}} 100%);"
+    >
+      <div class="cover-content">
+        {{#if org.logoUrl}}<img
+          src="{{org.logoUrl}}"
+          alt="{{org.name}}"
+          class="header-logo"
+          style="margin-bottom: 24pt; max-height: 60pt"
+        />{{/if}}
+        <h1 class="cover-title">Weather Correlation Report</h1>
+        <p class="cover-subtitle">Loss Date Verification & Storm Analysis</p>
+        <div class="cover-meta">
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Claim:</span> {{claim.claimNumber}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Property:</span> {{property.address}}
+          </div>
+          <div class="cover-meta-item">
+            <span class="cover-meta-label">Loss Date:</span> {{claim.dateOfLoss}}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WEATHER SUMMARY -->
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Weather Event Summary</h2></div>
+        <div class="section-content">
+          <div class="card">
+            <div class="card-title">Storm Details</div>
+            <div class="card-content">
+              <p><strong>Event Type:</strong> {{content.eventType}}</p>
+              <p><strong>Date/Time:</strong> {{content.eventDateTime}}</p>
+              <p><strong>Duration:</strong> {{content.duration}}</p>
+              <p>
+                <strong>Severity:</strong>
+                <span class="badge badge-{{content.severityBadge}}">{{content.severity}}</span>
+              </p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Meteorological Data</div>
+            <div class="card-content">
+              <p><strong>Max Wind Speed:</strong> {{content.maxWindSpeed}}</p>
+              <p><strong>Max Hail Size:</strong> {{content.maxHailSize}}</p>
+              <p><strong>Precipitation:</strong> {{content.precipitation}}</p>
+              <p><strong>Temperature:</strong> {{content.temperature}}</p>
+            </div>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Event</th>
+                <th>Intensity</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each content.timeline}}
+              <tr>
+                <td>{{this.time}}</td>
+                <td>{{this.event}}</td>
+                <td>{{this.intensity}}</td>
+                <td>{{this.notes}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-left">{{org.name}} | {{claim.claimNumber}}</div>
+        <div class="footer-right">Page 1</div>
+      </div>
+    </div>
+
+    <!-- CORRELATION ANALYSIS -->
+    <div class="page">
+      <div class="header">
+        <div class="header-brand">
+          {{#if org.logoUrl}}<img
+            src="{{org.logoUrl}}"
+            alt="{{org.name}}"
+            class="header-logo"
+          />{{/if}}
+          <div class="header-company">{{org.name}}</div>
+        </div>
+        <div class="header-contact">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div class="section">
+        <div class="section-header"><h2 class="section-title">Loss Correlation Analysis</h2></div>
+        <div class="section-content">
+          <div class="card">
+            <div class="card-title">Conclusion</div>
+            <div class="card-content">
+              <p><strong>Finding:</strong> {{content.conclusion}}</p>
+              <p>{{content.conclusionDetail}}</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">Data Sources</div>
+            <div class="card-content">
+              <ul>
+                {{#each content.sources}}
+                <li>{{this}}</li>
+                {{/each}}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-left">{{org.name}} | {{claim.claimNumber}}</div>
+        <div class="footer-right">Page 2</div>
+      </div>
+    </div>
+  </body>
+</html>

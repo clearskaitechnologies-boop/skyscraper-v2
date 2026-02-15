@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" font-family="Arial, Helvetica, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+    </marker>
+    <marker id="blueArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="purpleArrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#7c3aed"/>
+    </marker>
+    <filter id="shadow" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12"/>
+    </filter>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e3a5f"/>
+      <stop offset="100%" style="stop-color:#7c3aed"/>
+    </linearGradient>
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="100%" style="stop-color:#3b82f6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="900" fill="#f8fafc" rx="8"/>
+
+  <!-- Title Bar -->
+  <rect x="0" y="0" width="1200" height="60" fill="url(#headerGrad)" rx="0"/>
+  <text x="40" y="28" fill="#67e8f9" font-size="12" font-weight="bold">PATENT FIGURE 7</text>
+  <text x="40" y="48" fill="white" font-size="20" font-weight="bold">EyAi Inspect — Smart Inspection Glasses Data Flow</text>
+  <text x="1180" y="48" text-anchor="end" fill="#a5b4fc" font-size="10">ClearSkai Technologies LLC / SkaiScraper Platform</text>
+
+  <!-- ===================== COLUMN 1: THE DEVICE ===================== -->
+  <text x="180" y="90" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="bold">ON-SITE HARDWARE</text>
+
+  <!-- Smart Glasses Icon -->
+  <rect x="50" y="105" width="260" height="200" rx="12" fill="white" stroke="url(#glassGrad)" stroke-width="3" filter="url(#shadow)"/>
+  <!-- Glasses illustration -->
+  <ellipse cx="130" cy="155" rx="45" ry="25" fill="none" stroke="#06b6d4" stroke-width="3"/>
+  <ellipse cx="230" cy="155" rx="45" ry="25" fill="none" stroke="#06b6d4" stroke-width="3"/>
+  <line x1="175" y1="155" x2="185" y2="155" stroke="#06b6d4" stroke-width="3"/>
+  <line x1="85" y1="155" x2="60" y2="145" stroke="#06b6d4" stroke-width="2"/>
+  <line x1="275" y1="155" x2="300" y2="145" stroke="#06b6d4" stroke-width="2"/>
+  <circle cx="240" cy="140" r="6" fill="#ef4444" stroke="white" stroke-width="1.5"/>
+  <text x="180" y="200" text-anchor="middle" fill="#0e7490" font-size="15" font-weight="bold">EyAi Inspect Glasses</text>
+  <text x="180" y="218" text-anchor="middle" fill="#475569" font-size="10">Wearable AR inspection device</text>
+  <text x="180" y="234" text-anchor="middle" fill="#475569" font-size="10">Camera + GPS + Gyroscope + Mic</text>
+  <text x="180" y="250" text-anchor="middle" fill="#475569" font-size="10">BLE/WiFi sync to mobile companion</text>
+  <text x="180" y="268" text-anchor="middle" fill="#475569" font-size="10">Real-time AR overlay on lens display</text>
+  <text x="180" y="286" text-anchor="middle" fill="#06b6d4" font-size="9" font-weight="bold">HANDS-FREE ROOF INSPECTION</text>
+
+  <!-- Capture Modes -->
+  <rect x="50" y="320" width="260" height="150" rx="8" fill="white" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="180" y="345" text-anchor="middle" fill="#3b82f6" font-size="12" font-weight="bold">Capture Modes</text>
+  <line x1="60" y1="352" x2="300" y2="352" stroke="#dbeafe" stroke-width="1"/>
+
+  <rect x="65" y="360" width="110" height="28" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="120" y="379" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="bold">Auto-Capture</text>
+
+  <rect x="185" y="360" width="110" height="28" rx="4" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="240" y="379" text-anchor="middle" fill="#1e40af" font-size="9" font-weight="bold">Voice Trigger</text>
+
+  <text x="70" y="405" fill="#334155" font-size="9">Photo every 3s while scanning</text>
+  <text x="70" y="419" fill="#334155" font-size="9">"Hey Skai, capture this"</text>
+  <text x="70" y="433" fill="#334155" font-size="9">Video stream (30fps H.264)</text>
+  <text x="70" y="447" fill="#334155" font-size="9">Voice notes (Whisper STT)</text>
+  <text x="70" y="461" fill="#334155" font-size="9">EXIF + GPS auto-tagged per frame</text>
+
+  <!-- Arrow from glasses to processing -->
+  <line x1="310" y1="200" x2="400" y2="200" stroke="#3b82f6" stroke-width="2.5" marker-end="url(#blueArrow)"/>
+  <text x="355" y="192" text-anchor="middle" fill="#3b82f6" font-size="9" font-weight="bold">BLE/WiFi</text>
+
+  <!-- ===================== COLUMN 2: EDGE PROCESSING ===================== -->
+  <text x="550" y="90" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="bold">EDGE + CLOUD PROCESSING</text>
+
+  <!-- Mobile Companion App -->
+  <rect x="400" y="105" width="300" height="150" rx="8" fill="white" stroke="#8b5cf6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="550" y="130" text-anchor="middle" fill="#8b5cf6" font-size="13" font-weight="bold">SkaiScraper Companion App</text>
+  <line x1="410" y1="138" x2="690" y2="138" stroke="#ede9fe" stroke-width="1"/>
+  <text x="550" y="158" text-anchor="middle" fill="#5b21b6" font-size="10">Receives live glass feed via BLE</text>
+  <text x="550" y="175" text-anchor="middle" fill="#5b21b6" font-size="10">Edge pre-processing: dedup, blur detect, orient</text>
+  <text x="550" y="192" text-anchor="middle" fill="#5b21b6" font-size="10">Queues upload batch per roof facet</text>
+  <text x="550" y="209" text-anchor="middle" fill="#5b21b6" font-size="10">Offline mode: cache locally, sync when connected</text>
+  <text x="550" y="226" text-anchor="middle" fill="#5b21b6" font-size="10">Live AR overlay data pushed back to glasses</text>
+  <text x="550" y="243" text-anchor="middle" fill="#64748b" font-size="9">Auth: Clerk JWT (pro's orgId session)</text>
+
+  <!-- Arrow down to upload -->
+  <line x1="550" y1="255" x2="550" y2="285" stroke="#8b5cf6" stroke-width="2" marker-end="url(#purpleArrow)"/>
+  <text x="565" y="274" fill="#7c3aed" font-size="9">HTTPS Upload</text>
+
+  <!-- Upload + Vision Processing -->
+  <rect x="400" y="290" width="300" height="180" rx="8" fill="white" stroke="#059669" stroke-width="2" filter="url(#shadow)"/>
+  <text x="550" y="315" text-anchor="middle" fill="#059669" font-size="13" font-weight="bold">SkaiScraper Vision Pipeline</text>
+  <line x1="410" y1="322" x2="690" y2="322" stroke="#d1fae5" stroke-width="1"/>
+  <text x="420" y="342" fill="#065f46" font-size="10" font-weight="bold">1.</text>
+  <text x="435" y="342" fill="#065f46" font-size="10">Upload to Cloudflare R2 (orgId-scoped)</text>
+  <text x="420" y="360" fill="#065f46" font-size="10" font-weight="bold">2.</text>
+  <text x="435" y="360" fill="#065f46" font-size="10">Generate signed URL (15-min TTL)</text>
+  <text x="420" y="378" fill="#065f46" font-size="10" font-weight="bold">3.</text>
+  <text x="435" y="378" fill="#065f46" font-size="10">GPT-4o Vision: identifyDamage()</text>
+  <text x="420" y="396" fill="#065f46" font-size="10" font-weight="bold">4.</text>
+  <text x="435" y="396" fill="#065f46" font-size="10">Roof geometry + material classification</text>
+  <text x="420" y="414" fill="#065f46" font-size="10" font-weight="bold">5.</text>
+  <text x="435" y="414" fill="#065f46" font-size="10">BATF engine: before/after transform</text>
+  <text x="420" y="432" fill="#065f46" font-size="10" font-weight="bold">6.</text>
+  <text x="435" y="432" fill="#065f46" font-size="10">Assertive caption generation</text>
+  <text x="420" y="450" fill="#065f46" font-size="10" font-weight="bold">7.</text>
+  <text x="435" y="450" fill="#065f46" font-size="10">Xactimate line item suggestion</text>
+  <text x="550" y="465" text-anchor="middle" fill="#64748b" font-size="9">Token debit: -1 per photo analyzed</text>
+
+  <!-- ===================== COLUMN 3: PRO ACCOUNT ===================== -->
+  <text x="950" y="90" text-anchor="middle" fill="#0f172a" font-size="14" font-weight="bold">PRO ACCOUNT (DASHBOARD)</text>
+
+  <!-- Arrow to pro account -->
+  <line x1="700" y1="200" x2="770" y2="200" stroke="#059669" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="735" y="192" text-anchor="middle" fill="#059669" font-size="9" font-weight="bold">ROUTED</text>
+
+  <!-- Pro Dashboard -->
+  <rect x="770" y="105" width="400" height="365" rx="12" fill="white" stroke="#1e293b" stroke-width="2.5" filter="url(#shadow)"/>
+  <rect x="770" y="105" width="400" height="40" rx="12" fill="#1e293b"/>
+  <rect x="770" y="130" width="400" height="15" fill="#1e293b"/>
+  <text x="970" y="130" text-anchor="middle" fill="white" font-size="13" font-weight="bold">Pro Dashboard — Claim Workspace</text>
+
+  <!-- Sub-sections inside pro dashboard -->
+  <rect x="785" y="155" width="185" height="70" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="877" y="175" text-anchor="middle" fill="#3b82f6" font-size="10" font-weight="bold">Inspection Photos</text>
+  <text x="877" y="192" text-anchor="middle" fill="#1e40af" font-size="9">Auto-organized by facet</text>
+  <text x="877" y="206" text-anchor="middle" fill="#1e40af" font-size="9">GPS-mapped to roof plan</text>
+  <text x="877" y="218" text-anchor="middle" fill="#1e40af" font-size="9">Before/After pairs</text>
+
+  <rect x="980" y="155" width="180" height="70" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="1070" y="175" text-anchor="middle" fill="#dc2626" font-size="10" font-weight="bold">AI Damage Report</text>
+  <text x="1070" y="192" text-anchor="middle" fill="#991b1b" font-size="9">Per-photo findings</text>
+  <text x="1070" y="206" text-anchor="middle" fill="#991b1b" font-size="9">Severity scores</text>
+  <text x="1070" y="218" text-anchor="middle" fill="#991b1b" font-size="9">Component breakdown</text>
+
+  <rect x="785" y="235" width="185" height="70" rx="6" fill="#f0fdf4" stroke="#059669" stroke-width="1.5"/>
+  <text x="877" y="255" text-anchor="middle" fill="#059669" font-size="10" font-weight="bold">Scope of Work</text>
+  <text x="877" y="272" text-anchor="middle" fill="#065f46" font-size="9">Xactimate line items</text>
+  <text x="877" y="286" text-anchor="middle" fill="#065f46" font-size="9">ESX export ready</text>
+  <text x="877" y="298" text-anchor="middle" fill="#065f46" font-size="9">Regional pricing applied</text>
+
+  <rect x="980" y="235" width="180" height="70" rx="6" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text x="1070" y="255" text-anchor="middle" fill="#db2777" font-size="10" font-weight="bold">Voice Notes</text>
+  <text x="1070" y="272" text-anchor="middle" fill="#9d174d" font-size="9">Whisper transcription</text>
+  <text x="1070" y="286" text-anchor="middle" fill="#9d174d" font-size="9">Linked to photo timestamp</text>
+  <text x="1070" y="298" text-anchor="middle" fill="#9d174d" font-size="9">Searchable text</text>
+
+  <rect x="785" y="315" width="185" height="70" rx="6" fill="#fefce8" stroke="#d97706" stroke-width="1.5"/>
+  <text x="877" y="335" text-anchor="middle" fill="#d97706" font-size="10" font-weight="bold">Weather Verification</text>
+  <text x="877" y="352" text-anchor="middle" fill="#92400e" font-size="9">Auto-fetched for DOL</text>
+  <text x="877" y="366" text-anchor="middle" fill="#92400e" font-size="9">Forensic causation link</text>
+  <text x="877" y="378" text-anchor="middle" fill="#92400e" font-size="9">5-provider cascade</text>
+
+  <rect x="980" y="315" width="180" height="70" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="1070" y="335" text-anchor="middle" fill="#7c3aed" font-size="10" font-weight="bold">Rebuttal Letter</text>
+  <text x="1070" y="352" text-anchor="middle" fill="#5b21b6" font-size="9">Auto-generated if denied</text>
+  <text x="1070" y="366" text-anchor="middle" fill="#5b21b6" font-size="9">Glass evidence cited</text>
+  <text x="1070" y="378" text-anchor="middle" fill="#5b21b6" font-size="9">Code references included</text>
+
+  <!-- Pro outputs -->
+  <rect x="785" y="395" width="370" height="60" rx="6" fill="#1e293b"/>
+  <text x="970" y="416" text-anchor="middle" fill="#67e8f9" font-size="11" font-weight="bold">One-Click Outputs From Glass Inspection Data:</text>
+  <text x="970" y="436" text-anchor="middle" fill="#e2e8f0" font-size="10">PDF Report | Carrier Submission | Client Portal Share | Supplement Package</text>
+
+  <!-- ===================== BOTTOM: AR OVERLAY DETAIL ===================== -->
+  <rect x="50" y="500" width="1120" height="170" rx="10" fill="white" stroke="#06b6d4" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="50" y="500" width="1120" height="35" rx="10" fill="#06b6d4"/>
+  <rect x="50" y="520" width="1120" height="15" fill="#06b6d4"/>
+  <text x="610" y="524" text-anchor="middle" fill="white" font-size="14" font-weight="bold">REAL-TIME AR OVERLAY — What the Pro Sees Through the Glasses</text>
+
+  <!-- AR elements -->
+  <rect x="70" y="545" width="200" height="110" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.5"/>
+  <text x="170" y="568" text-anchor="middle" fill="#059669" font-size="11" font-weight="bold">Damage Highlights</text>
+  <line x1="80" y1="575" x2="260" y2="575" stroke="#bbf7d0" stroke-width="1"/>
+  <text x="170" y="592" text-anchor="middle" fill="#065f46" font-size="9">Red bounding boxes on damage</text>
+  <text x="170" y="607" text-anchor="middle" fill="#065f46" font-size="9">Severity badge (Minor/Severe)</text>
+  <text x="170" y="622" text-anchor="middle" fill="#065f46" font-size="9">Damage type label overlay</text>
+  <text x="170" y="637" text-anchor="middle" fill="#065f46" font-size="9">Pulsing indicator: "Capture"</text>
+
+  <rect x="285" y="545" width="200" height="110" rx="6" fill="#fef3c7" stroke="#d97706" stroke-width="1.5"/>
+  <text x="385" y="568" text-anchor="middle" fill="#d97706" font-size="11" font-weight="bold">Material ID</text>
+  <line x1="295" y1="575" x2="475" y2="575" stroke="#fef08a" stroke-width="1"/>
+  <text x="385" y="592" text-anchor="middle" fill="#92400e" font-size="9">Shingle type recognized</text>
+  <text x="385" y="607" text-anchor="middle" fill="#92400e" font-size="9">Age estimation badge</text>
+  <text x="385" y="622" text-anchor="middle" fill="#92400e" font-size="9">Code upgrade alert</text>
+  <text x="385" y="637" text-anchor="middle" fill="#92400e" font-size="9">Manufacturer match</text>
+
+  <rect x="500" y="545" width="200" height="110" rx="6" fill="#eff6ff" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="600" y="568" text-anchor="middle" fill="#3b82f6" font-size="11" font-weight="bold">Measurements</text>
+  <line x1="510" y1="575" x2="690" y2="575" stroke="#bfdbfe" stroke-width="1"/>
+  <text x="600" y="592" text-anchor="middle" fill="#1e40af" font-size="9">Hail dent diameter</text>
+  <text x="600" y="607" text-anchor="middle" fill="#1e40af" font-size="9">Crack length overlay</text>
+  <text x="600" y="622" text-anchor="middle" fill="#1e40af" font-size="9">Affected area estimate</text>
+  <text x="600" y="637" text-anchor="middle" fill="#1e40af" font-size="9">Pitch/slope indicator</text>
+
+  <rect x="715" y="545" width="210" height="110" rx="6" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="820" y="568" text-anchor="middle" fill="#dc2626" font-size="11" font-weight="bold">Inspection Checklist</text>
+  <line x1="725" y1="575" x2="915" y2="575" stroke="#fecaca" stroke-width="1"/>
+  <text x="820" y="592" text-anchor="middle" fill="#991b1b" font-size="9">Carrier-required shots list</text>
+  <text x="820" y="607" text-anchor="middle" fill="#991b1b" font-size="9">Completed / remaining count</text>
+  <text x="820" y="622" text-anchor="middle" fill="#991b1b" font-size="9">"Missing: soffit close-up"</text>
+  <text x="820" y="637" text-anchor="middle" fill="#991b1b" font-size="9">Progress bar per facet</text>
+
+  <rect x="940" y="545" width="210" height="110" rx="6" fill="#f5f3ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text x="1045" y="568" text-anchor="middle" fill="#7c3aed" font-size="11" font-weight="bold">Voice Commands</text>
+  <line x1="950" y1="575" x2="1140" y2="575" stroke="#ddd6fe" stroke-width="1"/>
+  <text x="1045" y="592" text-anchor="middle" fill="#5b21b6" font-size="9">"Skai, mark this hail"</text>
+  <text x="1045" y="607" text-anchor="middle" fill="#5b21b6" font-size="9">"Skai, next facet"</text>
+  <text x="1045" y="622" text-anchor="middle" fill="#5b21b6" font-size="9">"Skai, add note: cracked"</text>
+  <text x="1045" y="637" text-anchor="middle" fill="#5b21b6" font-size="9">"Skai, generate report"</text>
+
+  <!-- ===================== BOTTOM: PATENT NOVEL CLAIMS ===================== -->
+  <rect x="50" y="690" width="1120" height="185" rx="10" fill="#0f172a" filter="url(#shadow)"/>
+  <text x="610" y="718" text-anchor="middle" fill="#67e8f9" font-size="14" font-weight="bold">PATENT-NOVEL CLAIMS — EyAi Inspect System</text>
+
+  <rect x="70" y="730" width="340" height="55" rx="6" fill="#1e293b" stroke="#3b82f6" stroke-width="1"/>
+  <text x="80" y="750" fill="#93c5fd" font-size="10" font-weight="bold">Claim A: Wearable-to-Cloud Pipeline</text>
+  <text x="80" y="768" fill="#94a3b8" font-size="9">Hands-free roof inspection device with real-time AI</text>
+  <text x="80" y="780" fill="#94a3b8" font-size="9">damage identification routed to org-scoped SaaS account</text>
+
+  <rect x="425" y="730" width="340" height="55" rx="6" fill="#1e293b" stroke="#059669" stroke-width="1"/>
+  <text x="435" y="750" fill="#6ee7b7" font-size="10" font-weight="bold">Claim B: AR Damage Overlay</text>
+  <text x="435" y="768" fill="#94a3b8" font-size="9">Real-time GPT-4o inference displayed as augmented</text>
+  <text x="435" y="780" fill="#94a3b8" font-size="9">reality overlay on wearable lens during roof inspection</text>
+
+  <rect x="780" y="730" width="370" height="55" rx="6" fill="#1e293b" stroke="#d97706" stroke-width="1"/>
+  <text x="790" y="750" fill="#fcd34d" font-size="10" font-weight="bold">Claim C: Carrier-Aware Inspection Checklist</text>
+  <text x="790" y="768" fill="#94a3b8" font-size="9">AR-guided inspection workflow adapting required photo</text>
+  <text x="790" y="780" fill="#94a3b8" font-size="9">set per insurance carrier's documentation rules</text>
+
+  <rect x="70" y="795" width="340" height="55" rx="6" fill="#1e293b" stroke="#dc2626" stroke-width="1"/>
+  <text x="80" y="815" fill="#fca5a5" font-size="10" font-weight="bold">Claim D: Voice-Triggered Evidence Tagging</text>
+  <text x="80" y="833" fill="#94a3b8" font-size="9">Natural language voice commands during inspection</text>
+  <text x="80" y="845" fill="#94a3b8" font-size="9">auto-linked to GPS-tagged photo with STT transcription</text>
+
+  <rect x="425" y="795" width="340" height="55" rx="6" fill="#1e293b" stroke="#8b5cf6" stroke-width="1"/>
+  <text x="435" y="815" fill="#c4b5fd" font-size="10" font-weight="bold">Claim E: Offline-First Sync Architecture</text>
+  <text x="435" y="833" fill="#94a3b8" font-size="9">Edge-cached inspection data with automatic cloud</text>
+  <text x="435" y="845" fill="#94a3b8" font-size="9">sync when connectivity restored, zero data loss</text>
+
+  <rect x="780" y="795" width="370" height="55" rx="6" fill="#1e293b" stroke="#db2777" stroke-width="1"/>
+  <text x="790" y="815" fill="#f9a8d4" font-size="10" font-weight="bold">Claim F: Instant Scope-of-Work Generation</text>
+  <text x="790" y="833" fill="#94a3b8" font-size="9">Single inspection session auto-generates Xactimate</text>
+  <text x="790" y="845" fill="#94a3b8" font-size="9">line items, PDF report, and carrier submission package</text>
+
+  <text x="610" y="893" text-anchor="middle" fill="#475569" font-size="10">SkaiScraper / EyAi Inspect — ClearSkai Technologies LLC — Provisional Patent Reference — February 2026</text>
+</svg>

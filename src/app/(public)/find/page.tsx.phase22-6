@@ -1,0 +1,268 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { ContractorCard } from "@/components/contractors/ContractorCard";
+import { FilterDrawer } from "@/components/contractors/FilterDrawer";
+import { TRADE_LABELS } from "@/lib/trades/trade-types";
+
+type Contractor = {
+  id: string;
+  slug: string;
+  businessName: string;
+  logoUrl?: string | null;
+  tagline?: string | null;
+  serviceAreas?: any[];
+  services?: any[];
+  verified?: boolean;
+  emergencyAvailable?: boolean;
+  emergencyReady?: boolean;
+  featured?: boolean;
+  featuredUntil?: string | null;
+  totalJobs?: number;
+  trustScore?: number;
+  licenseVerified?: boolean;
+  insuranceVerified?: boolean;
+  businessVerified?: boolean;
+  emailVerified?: boolean;
+};
+
+export default function FindPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  const [contractors, setContractors] = useState<Contractor[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [total, setTotal] = useState(0);
+  
+  // Filter state
+  const [zip, setZip] = useState(searchParams.get("zip") || "");
+  const [city, setCity] = useState(searchParams.get("city") || "");
+  const [state, setState] = useState(searchParams.get("state") || "");
+  const [selectedTrade, setSelectedTrade] = useState(searchParams.get("trade") || "");
+  const [emergency, setEmergency] = useState(searchParams.get("emergency") === "true");
+  const [verified, setVerified] = useState(searchParams.get("verified") === "true");
+
+  async function searchContractors(filters: any = {}) {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      
+      // Build search query
+      const searchParts = [];
+      if (filters.zip || zip) searchParts.push(filters.zip || zip);
+      if (filters.city || city) searchParts.push(filters.city || city);
+      if (searchParts.length > 0) {
+        params.set("search", searchParts.join(" "));
+      }
+      
+      // Trade filter
+      if (filters.trade || selectedTrade) params.set("trade", filters.trade || selectedTrade);
+      
+      // Verified filter (trust score >= 70)
+      if (filters.verified !== undefined ? filters.verified : verified) {
+        params.set("verifiedOnly", "true");
+      }
+      
+      // Emergency filter
+      if (filters.emergency !== undefined ? filters.emergency : emergency) {
+        params.set("emergencyOnly", "true");
+      }
+
+      const res = await fetch(`/api/contractors/public/list?${params.toString()}`);
+      const json = await res.json();
+      
+      if (res.ok) {
+        setContractors(json.contractors || []);
+        setTotal(json.total || 0);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    if (zip || city || selectedTrade) {
+      searchContractors();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function handleQuickSearch() {
+    searchContractors();
+  }
+
+  function handleTradeClick(trade: string) {
+    setSelectedTrade(trade === selectedTrade ? "" : trade);
+    searchContractors({ trade: trade === selectedTrade ? "" : trade });
+  }
+
+  function handleApplyFilters(filters: any) {
+    setZip(filters.zip || "");
+    setCity(filters.city || "");
+    setState(filters.state || "");
+    setSelectedTrade(filters.trade || "");
+    setEmergency(filters.emergency || false);
+    setVerified(filters.verified || false);
+    searchContractors(filters);
+    setShowFilters(false);
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Hero Section */}
+      <div className="bg-gradient-to-br from-sky-600 to-sky-800 text-white">
+        <div className="mx-auto max-w-6xl px-6 py-12">
+          <div className="space-y-4">
+            <h1 className="text-4xl font-bold md:text-5xl">
+              Find Trusted Contractors
+            </h1>
+            <p className="text-lg text-sky-100">
+              No ads. No middlemen. No hidden fees. Connect directly with qualified pros in your area.
+            </p>
+          </div>
+
+          {/* Quick Search */}
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <Input
+              placeholder="Enter ZIP code (e.g., 86301)"
+              value={zip}
+              onChange={(e) => setZip(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleQuickSearch()}
+              className="flex-1 bg-white"
+            />
+            <Button
+              onClick={handleQuickSearch}
+              size="lg"
+              className="bg-white text-sky-700 hover:bg-slate-100"
+            >
+              Search
+            </Button>
+            <Button
+              onClick={() => setShowFilters(!showFilters)}
+              size="lg"
+              variant="outline"
+              className="border-white bg-transparent text-white hover:bg-white/10"
+            >
+              Advanced Filters
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-7xl px-6 py-10">
+        <div className="grid gap-8 lg:grid-cols-[280px,1fr]">
+          {/* Sidebar Filters */}
+          {showFilters && (
+            <aside className="lg:sticky lg:top-6 lg:h-fit">
+              <FilterDrawer
+                onApplyFilters={handleApplyFilters}
+                initialFilters={{
+                  zip,
+                  city,
+                  state,
+                  trade: selectedTrade,
+                  emergency,
+                  verified,
+                }}
+              />
+            </aside>
+          )}
+
+          {/* Main Content */}
+          <main className="space-y-6">
+            {/* Trade Categories */}
+            <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 className="mb-4 text-lg font-semibold">Browse by Trade</h2>
+              <div className="flex flex-wrap gap-2">
+                {TRADE_LABELS.map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => handleTradeClick(t.id)}
+                    className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                      selectedTrade === t.id
+                        ? "border-sky-600 bg-sky-600 text-white"
+                        : "border-slate-300 bg-white text-slate-700 hover:border-sky-400 hover:bg-sky-50"
+                    }`}
+                  >
+                    {t.icon} {t.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Results Header */}
+            {contractors.length > 0 && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-600">
+                  {total} contractor{total !== 1 ? "s" : ""} found
+                </p>
+              </div>
+            )}
+
+            {/* Results Grid */}
+            {loading ? (
+              <div className="py-20 text-center">
+                <div className="text-lg text-slate-500">Searching contractors...</div>
+              </div>
+            ) : contractors.length === 0 ? (
+              <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-sm">
+                <div className="mx-auto max-w-md space-y-3">
+                  <h3 className="text-xl font-semibold">No contractors found</h3>
+                  <p className="text-slate-600">
+                    Try adjusting your search filters or expanding your search area.
+                  </p>
+                  <Button
+                    onClick={() => {
+                      setZip("");
+                      setCity("");
+                      setState("");
+                      setSelectedTrade("");
+                      setEmergency(false);
+                      setVerified(false);
+                      setContractors([]);
+                    }}
+                    variant="outline"
+                    className="mt-4"
+                  >
+                    Clear Filters
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-6 sm:grid-cols-2">
+                {contractors.map((contractor) => (
+                  <ContractorCard
+                    key={contractor.id}
+                    slug={contractor.slug}
+                    businessName={contractor.businessName}
+                    logoUrl={contractor.logoUrl}
+                    tagline={contractor.tagline}
+                    serviceAreas={contractor.serviceAreas || []}
+                    services={contractor.services || []}
+                    verified={contractor.verified}
+                    emergencyAvailable={contractor.emergencyAvailable}
+                    emergencyReady={contractor.emergencyReady}
+                    featured={contractor.featured}
+                    featuredUntil={contractor.featuredUntil}
+                    totalJobs={contractor.totalJobs}
+                    trustScore={contractor.trustScore}
+                    licenseVerified={contractor.licenseVerified}
+                    insuranceVerified={contractor.insuranceVerified}
+                    businessVerified={contractor.businessVerified}
+                    emailVerified={contractor.emailVerified}
+                  />
+                ))}
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}

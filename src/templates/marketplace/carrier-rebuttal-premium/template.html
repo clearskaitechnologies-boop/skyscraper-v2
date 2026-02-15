@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Carrier Rebuttal Letter - {{claim.claimNumber}}</title>
+    <style>
+      /* INJECT: pdf-theme.css */
+      :root { --primary-color: {{org.primaryColor}}; }
+    </style>
+  </head>
+  <body>
+    <div class="page" style="padding: 1in">
+      <div style="margin-bottom: 24pt">
+        {{#if org.logoUrl}}<img
+          src="{{org.logoUrl}}"
+          alt="{{org.name}}"
+          style="height: 50pt"
+        />{{/if}}
+      </div>
+
+      <div style="margin-bottom: 16pt; color: #64748b; font-size: 10pt">{{content.date}}</div>
+
+      <div style="margin-bottom: 16pt">
+        <div><strong>{{content.recipientName}}</strong></div>
+        <div>{{content.recipientTitle}}</div>
+        <div>{{content.carrierName}}</div>
+        <div>{{content.carrierAddress}}</div>
+      </div>
+
+      <div style="margin-bottom: 16pt">
+        <strong>RE: Claim {{claim.claimNumber}} - {{property.address}}</strong>
+      </div>
+
+      <div style="margin-bottom: 12pt">Dear {{content.recipientName}}:</div>
+
+      <div style="margin-bottom: 12pt; line-height: 1.6">{{content.openingParagraph}}</div>
+
+      <h3 style="margin-top: 20pt; margin-bottom: 8pt">Points of Dispute</h3>
+      <ol style="line-height: 1.7">
+        {{#each content.disputePoints}}
+        <li style="margin-bottom: 8pt"><strong>{{this.title}}</strong><br />{{this.detail}}</li>
+        {{/each}}
+      </ol>
+
+      <h3 style="margin-top: 20pt; margin-bottom: 8pt">Supporting Evidence</h3>
+      <ul style="line-height: 1.7">
+        {{#each content.evidence}}
+        <li style="margin-bottom: 4pt">{{this}}</li>
+        {{/each}}
+      </ul>
+
+      <div style="margin-top: 20pt; margin-bottom: 12pt; line-height: 1.6">
+        {{content.closingParagraph}}
+      </div>
+
+      <div style="margin-top: 32pt">
+        <div>Respectfully,</div>
+        <div style="margin-top: 40pt"><strong>{{content.senderName}}</strong></div>
+        <div>{{content.senderTitle}}</div>
+        <div>{{org.name}}</div>
+        <div style="margin-top: 8pt">{{org.phone}}<br />{{org.email}}</div>
+      </div>
+
+      <div
+        style="
+          margin-top: 32pt;
+          padding-top: 12pt;
+          border-top: 1pt solid #e2e8f0;
+          font-size: 9pt;
+          color: #94a3b8;
+        "
+      >
+        <div><strong>Enclosures:</strong> {{content.enclosures}}</div>
+        <div><strong>CC:</strong> {{content.cc}}</div>
+      </div>
+    </div>
+  </body>
+</html>

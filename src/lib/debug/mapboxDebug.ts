@@ -1,0 +1,53 @@
+/**
+ * Mapbox Debug Console Utility
+ * Logs Mapbox configuration and environment status during development
+ */
+
+export function logMapboxDebugContext(context: string) {
+  if (process.env.NODE_ENV !== "development") return;
+
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? process.env.MAPBOX_API_KEY ?? "";
+
+  console.groupCollapsed(`[MapboxDebug] ${context}`);
+  console.log("Has token:", Boolean(token));
+  console.log("Token prefix:", token ? token.slice(0, 8) + "..." : "NONE");
+  console.log("Window MapboxGL:", typeof window !== "undefined" && (window as any).mapboxgl);
+  console.log("Environment:", process.env.NODE_ENV);
+  console.log("Timestamp:", new Date().toISOString());
+  console.groupEnd();
+}
+
+/**
+ * Get the Mapbox token with fallback support
+ * Works on both client and server side
+ */
+export function getMapboxToken(): string | null {
+  const fallbackToken =
+    "";
+
+  // Client-side: Check window.ENV or direct env access
+  if (typeof window !== "undefined") {
+    const token =
+      (window as any).ENV?.NEXT_PUBLIC_MAPBOX_TOKEN ??
+      process.env.NEXT_PUBLIC_MAPBOX_TOKEN ??
+      process.env.MAPBOX_API_KEY ??
+      fallbackToken ??
+      null;
+    if (!token) {
+      console.warn(
+        "[Mapbox] No token found on client. Set NEXT_PUBLIC_MAPBOX_TOKEN in your environment."
+      );
+    }
+    return token;
+  }
+
+  // Server-side: Check process.env
+  const token =
+    process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? process.env.MAPBOX_API_KEY ?? fallbackToken ?? null;
+  if (!token) {
+    console.warn(
+      "[Mapbox] No token found on server. Set NEXT_PUBLIC_MAPBOX_TOKEN in your environment."
+    );
+  }
+  return token;
+}

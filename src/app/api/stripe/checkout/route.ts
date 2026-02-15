@@ -1,0 +1,150 @@
+import { auth } from "@clerk/nextjs/server";
+import { randomUUID } from "crypto";
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+
+import { isBetaMode } from "@/lib/beta";
+import prisma from "@/lib/prisma";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+  apiVersion: "2022-11-15",
+});
+
+// Prisma singleton imported from @/lib/db/prisma
+
+export const dynamic = "force-dynamic";
+
+export async function GET(request: NextRequest) {
+  return handleCheckout(request);
+}
+
+export async function POST(request: NextRequest) {
+  return handleCheckout(request);
+}
+
+async function handleCheckout(request: NextRequest) {
+  try {
+    if (isBetaMode()) {
+      return NextResponse.json(
+        {
+          error: "Payments disabled during beta",
+          message:
+            "Payments are disabled during beta. A 3-day free trial will be enabled after beta testing concludes.",
+        },
+        { status: 403 }
+      );
+    }
+
+    const { userId, orgId } = await auth();
+
+    if (!userId || !orgId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Get plan and ref from URL params or body
+    const { searchParams } = new URL(request.url);
+    let plan = searchParams.get("plan");
+    let ref = searchParams.get("ref");
+
+    if (!plan && request.method === "POST") {
+      const body = await request.json();
+      plan = body.plan;
+      ref = body.ref || ref;
+    }
+
+    if (!plan) {
+      return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
+    }
+
+    const freeBeta = process.env.FREE_BETA === "true";
+
+    // FREE_BETA mode: bypass Stripe, create trial Org immediately
+    if (freeBeta) {
+      // Find or create Org
+      let Org = await prisma.org.findUnique({
+        where: { clerkOrgId: orgId },
+      });
+
+      if (!Org) {
+        Org = await prisma.org.upsert({
+          where: { clerkOrgId: orgId },
+          update: { planId: plan },
+          create: {
+            id: randomUUID(),
+            clerkOrgId: orgId,
+            name: "Beta Organization",
+            planId: plan,
+          } as any,
+        });
+      }
+
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/dashboard?beta=true`);
+    }
+
+    // Production mode: create Stripe checkout session
+    const Org = await prisma.org.findUnique({
+      where: { clerkOrgId: orgId },
+      include: { Subscription: true },
+    });
+
+    let customerId = Org?.Subscription?.stripeCustomerId;
+
+    // Create Stripe customer if doesn't exist
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        metadata: {
+          clerkOrgId: orgId,
+          clerkUserId: userId,
+        },
+      });
+      customerId = customer.id;
+    }
+
+    // Get price ID from environment variable (set during deployment)
+    const priceId = process.env[`STRIPE_PRICE_${plan.toUpperCase()}`];
+
+    if (!priceId) {
+      return NextResponse.json(
+        { error: `Stripe price not configured for ${plan} plan` },
+        { status: 500 }
+      );
+    }
+
+    // Create checkout session
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
+      mode: "subscription",
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      automatic_tax: { enabled: true }, // ✅ Stripe automatic tax
+      subscription_data: {
+        metadata: {
+          orgId: orgId,
+          ref: ref || "",
+        },
+      },
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard?success=true`,
+      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/pricing?canceled=true`,
+      metadata: {
+        clerkOrgId: orgId,
+        clerkUserId: userId,
+        planId: plan,
+        orgId: orgId,
+        ref: ref || "",
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      checkoutUrl: session.url,
+    });
+  } catch (error) {
+    console.error("[STRIPE_CHECKOUT] Error:", error);
+    return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
+  }
+}

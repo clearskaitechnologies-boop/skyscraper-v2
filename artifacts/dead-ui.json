@@ -1,0 +1,254 @@
+{
+  "timestamp": "2025-12-24T23:55:24.037Z",
+  "totalFiles": 2152,
+  "totalIssues": 27,
+  "blockers": 0,
+  "high": 5,
+  "medium": 22,
+  "low": 0,
+  "issues": [
+    {
+      "file": "src/components/claims/ClaimFiles.tsx",
+      "line": 15,
+      "column": 9,
+      "severity": "HIGH",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement file upload to Firebase Storage",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/claims/ClaimMessages.tsx",
+      "line": 26,
+      "column": 9,
+      "severity": "HIGH",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement POST /api/claims/[id]/messages",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/dashboard/ToolbarActions.tsx",
+      "line": 42,
+      "column": 9,
+      "severity": "HIGH",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement upsell modal component",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/storm-intake/steps/Step4_MediaUpload.tsx",
+      "line": 49,
+      "column": 31,
+      "severity": "HIGH",
+      "type": "TODO: Wire up handler",
+      "snippet": "{/* Media preview grid - TODO: Implement upload functionality */}",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/onboarding/progress/route.ts",
+      "line": 80,
+      "column": 41,
+      "severity": "HIGH",
+      "type": "TODO: Wire up handler",
+      "snippet": "const hasVendorReference = false; // TODO: Implement vendor visit tracking",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/FilesList.tsx",
+      "line": 178,
+      "column": 16,
+      "severity": "MEDIUM",
+      "type": "TODO in onClick handler",
+      "snippet": "onClick={() => {",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/ReportViewerModal.tsx",
+      "line": 44,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Connect to your AI summary API endpoint",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/ai/ClaimWriterPanel.tsx",
+      "line": 199,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement PDF export with proper formatting",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/ai/ClaimWriterPanel.tsx",
+      "line": 209,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement email/send functionality",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/branding/TeamLibraryTab.tsx",
+      "line": 31,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement team member photo upload when proper schema is available",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/crm/TasksToday.tsx",
+      "line": 167,
+      "column": 22,
+      "severity": "MEDIUM",
+      "type": "TODO in onClick handler",
+      "snippet": "onClick={() => {",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/components/crm/TasksToday.tsx",
+      "line": 168,
+      "column": 27,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement complete tasks",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/ai/exports/page.tsx",
+      "line": 66,
+      "column": 9,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement actual carrier export API",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/batch-proposals/[id]/mailers/page.tsx",
+      "line": 91,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement retry logic for failed mailers",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/carrier/export/client.tsx",
+      "line": 53,
+      "column": 9,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement actual carrier export API",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/depreciation/DepreciationClient.tsx",
+      "line": 27,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement PDF export with jsPDF or similar",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/exports/carrier/CarrierExportClient.tsx",
+      "line": 51,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement bulk export",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/(app)/exports/carrier/actions.ts",
+      "line": 105,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement ZIP bundling with JSZip",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/ai/damage/analyze/route.ts",
+      "line": 98,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement OpenAI Vision API or alternative ML vision service",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/ai/mockup/route.ts",
+      "line": 59,
+      "column": 5,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement actual AI mockup generation",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/contractor-packet/[id]/download/route.tsx",
+      "line": 87,
+      "column": 51,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// For DOCX and ZIP, return text file for now (TODO: implement proper converters)",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/contractor-packet/route.ts",
+      "line": 130,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement actual PDF generation using existing report renderer",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/messages/threads/route.ts",
+      "line": 48,
+      "column": 23,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// Client user - TODO: Implement proper client lookup",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/realtime/route.ts",
+      "line": 50,
+      "column": 5,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Implement Server-Sent Events or WebSocket connection",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/api/templates/marketplace/[slug]/preview-pdf/route.ts",
+      "line": 93,
+      "column": 7,
+      "severity": "MEDIUM",
+      "type": "TODO: Wire up handler",
+      "snippet": "// TODO: Wire up actual PDF generation with Puppeteer/Playwright",
+      "suggestion": "Complete implementation"
+    },
+    {
+      "file": "src/app/components/marketing/MarketingFooter.tsx",
+      "line": 13,
+      "column": 17,
+      "severity": "MEDIUM",
+      "type": "Dead anchor href=\"#\"",
+      "snippet": "<li><a href=\"#\" className=\"hover:text-gray-900\">Terms</a></li>",
+      "suggestion": "Add proper navigation or onClick"
+    },
+    {
+      "file": "src/app/components/marketing/MarketingFooter.tsx",
+      "line": 14,
+      "column": 17,
+      "severity": "MEDIUM",
+      "type": "Dead anchor href=\"#\"",
+      "snippet": "<li><a href=\"#\" className=\"hover:text-gray-900\">Privacy</a></li>",
+      "suggestion": "Add proper navigation or onClick"
+    }
+  ]
+}

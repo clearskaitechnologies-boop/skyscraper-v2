@@ -1,0 +1,5111 @@
+{
+  "timestamp": "2025-12-24T23:55:30.775Z",
+  "totalVarsUsed": 329,
+  "varsInExample": 82,
+  "varsMissing": 247,
+  "issues": [
+    {
+      "severity": "HIGH",
+      "var": "REDIS_HOST",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_PORT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_PASSWORD",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ENABLE_DEMO_TOOLS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ADMIN_FLAGS_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ENABLE_UNIVERSAL_REPORTS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_GIT_COMMIT_SHA",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_DEMO_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_TOKENS_100",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_TOKENS_500",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_TOKENS_1000",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_BETA_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_COMMIT_SHA",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_GIT_COMMIT_REF",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_BUILD_TIME",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_PDF_GENERATION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_AI_ANALYSIS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_SUPPLEMENTS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_MOCKUPS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TIMEOUT_PDF_GENERATION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TIMEOUT_AI_ANALYSIS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_VERCEL_ENV",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_TOKENS_10",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_TOKENS_25",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_TOKENS_50",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_TOKENS_100",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_ENV",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_REGION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_GIT_SHA",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BUILD_TIME",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ADMIN_USER_IDS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DOMINUS_AI_VISION_ENDPOINT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DOMINUS_AI_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "OPENAI_MODEL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STABILITY_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "OPENAI_ASSISTANT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_FULL_ACCESS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_PACK_SMALL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_PACK_STANDARD",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_PACK_PRO",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEV_BRANDING_AUTOFALLBACK",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOCAL_BRANDING_TEST_USER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_BUILD_SHA",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_STARTER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_PRICE_PRO",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_AUTOSAVE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_SOLO",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_PRO",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_BUSINESS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_PRICE_ENTERPRISE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SLACK_ALERT_WEBHOOK_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "EMERGENCY_DEMO_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_GIT_COMMIT_MESSAGE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_BRANCH",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ENABLE_DEMO_TOOLS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PHASE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SENTRY_TEST",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "WEATHER_STACK_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VISUAL_CROSSING_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VITE_CLERK_PUBLISHABLE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CLERK_PUBLISHABLE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "POSTGRES_URL_NON_POOLING",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_PROJECT_PRODUCTION_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "__BUILD_TIME__",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_APP_VERSION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FLAG_SPIKE_THRESHOLD",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_ADMIN_PROJECT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_ADMIN_CLIENT_EMAIL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_ADMIN_PRIVATE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ADMIN_HEALTH_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "EXPORT_URL_TTL_SECONDS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SUPABASE_STORAGE_BUCKET_EXPORTS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_ACCOUNT_SID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_AUTH_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_PHONE_NUMBER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "PDF_DEV_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ASSISTANT_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ASSISTANT_VARIANT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SUPABASE_STORAGE_BUCKET_TEMPLATES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SUPABASE_STORAGE_BUCKET_UPLOADS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_TEMPLATES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_EXPORTS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_UPLOADS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STRIPE_FULL_ACCESS_PRICE_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOB_WEBHOOK_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TRADES_WEBHOOK_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_RESEND_CONFIGURED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ANNOUNCE_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ANNOUNCE_TEXT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ENABLE_UNIVERSAL_REPORTS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_TEST_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_AUTH_BYPASS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_DEMO_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_INVITE_ONLY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_API_BASE_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_JE_MOCK",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "JE_MOCK",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_RESEND_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_JE_SHAW_API_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "JE_SHAW_API_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_JE_SHAW_API_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "JE_SHAW_API_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_STATUS_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_DEV_ORG",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SHOW_DEBUG_STRIP",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "APP_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_PRESIGN_EXPIRES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BUILD_PHASE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "INLINE_AGENT_PROCESSOR",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_PROVIDER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ANTHROPIC_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_MODEL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_MAX_TOKENS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_TEMPERATURE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "OPENAI_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_POSTHOG_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_POSTHOG_HOST",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_ANALYTICS_DISABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VERCEL_REQUEST_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ARTIFACT_SIGNING_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AUTO_CREATE_TENANT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SERVICE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BACKUP_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AWS_REGION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BACKUP_CONTAINER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CI",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TRADES_SERVICE_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_TOKEN_PACK_STARTER_PRICE_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_TOKEN_PACK_PRO_PRICE_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_TOKEN_PACK_ENTERPRISE_PRICE_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "PGPOOL_MAX",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "MAPBOX_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_READ_ONLY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_ALLOWED_CLAIMS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_AUTO_RESET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_RESET_INTERVAL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "RESEND_REPLY_TO",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SENDGRID_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FROM_EMAIL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DATABASE_ENCRYPTION_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_TEST_PAGES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_PDF_EXPORT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_ZIP_EXPORT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_RETAIL_WIZARD",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_CLAIMS_WIZARD",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_MAINTENANCE_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_AI_TOOLS_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_UPLOADS_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_SIGNUPS_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_MAINTENANCE_MESSAGE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "EMERGENCY_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "MAINTENANCE_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_AI_ASSISTANT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FEATURE_PUPPETEER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "PDF_RENDER_TIMEOUT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_REQUEST_TIMEOUT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_SERVICE_ACCOUNT_BASE64",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_USE_FUNCTIONS_EMULATOR",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "QUICKBOOKS_CLIENT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SALESFORCE_CLIENT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "GOOGLE_CLIENT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CARRIER_EMAIL_FROM",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOB_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOB_TEMPLATE_POSTCARD_FRONT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOB_TEMPLATE_POSTCARD_BACK_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOB_TEMPLATE_LETTER_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "JWT_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "JWT_REFRESH_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "LOG_LEVEL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VAPID_PUBLIC_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VAPID_PRIVATE_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ENABLE_REPORT_EMAIL_NOTIFICATIONS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_SID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_AUTH",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TWILIO_NUMBER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_AUTH_USER_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_AUTH_ORG_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REPORTS_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_ENDPOINT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AWS_ACCESS_KEY_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AWS_SECRET_ACCESS_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "INTERNAL_RENDER_BASE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_USERNAME",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_TLS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "REDIS_STRICT_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_REGION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_FORCE_PATH_STYLE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_ACCESS_KEY_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "S3_SECRET_ACCESS_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "VAULT_ENCRYPTION_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BACKUP_ENCRYPTION_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ATTOM_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CORELOGIC_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SERVICE_TOKEN_SECRET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIRST_STREET_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CORELOGIC_HAZARD_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_PROVIDER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_REGION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_ENDPOINT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_ACCESS_KEY_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STORAGE_SECRET_ACCESS_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AWS_S3_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "GCS_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AZURE_CONTAINER",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AZURE_STORAGE_ACCOUNT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "R2_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "R2_ACCOUNT_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_AUTH_DOMAIN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_SENDER_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "FIREBASE_APP_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "SUPABASE_ANON_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NOAA_API_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "CAP_API_BASE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "MESONET_API_BASE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_EMERGENCY_DEMO_MODE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "WHITELISTED_IPS",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "WHITELISTED_IP_RANGES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_REPORT_BUILDER_ENABLED",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_TOKENS_MOCKUP_LIMIT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_TOKENS_DOL_LIMIT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_TOKENS_WEATHER_LIMIT",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "ASSET_VERSION",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "AI_DIAGNOSTIC_BASE_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_AUTH_TOKEN",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BASE_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "WEATHER_API_KEY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "BRANDING_BUCKET",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "STOP_AFTER_ONE",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "DEMO_ORG_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NEXT_PUBLIC_URL",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "NETLIFY",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "HEALTH_MAX_RETRIES",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "HIGH",
+      "var": "TEST_PACK_ID",
+      "issue": "Used in code but missing from .env.example"
+    },
+    {
+      "severity": "LOW",
+      "var": "SHADOW_DATABASE_URL",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "STRIPE_PRO_MONTHLY_PRICE_ID",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "VITE_SUPABASE_URL",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "VITE_SUPABASE_ANON_KEY",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "FIREBASE_SERVICE_ACCOUNT_KEY",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "RESEND_FROM",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "NEXT_PUBLIC_SHOW_MARKETING_IN_APP",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "NEXT_PUBLIC_USE_MOCK_DATA",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "MOCK_LOVABLE",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_ENVIRONMENT",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_TRACES_SAMPLE_RATE",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_AUTH_TOKEN",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_ORG",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_PROJECT",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "SENTRY_DEBUG",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "PORT",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "PDF_COST_CENTS",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "MOCKUP_COST_CENTS",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "NEXTAUTH_SECRET",
+      "issue": "In .env.example but not used in code"
+    },
+    {
+      "severity": "LOW",
+      "var": "INSPECTION_NOTES",
+      "issue": "In .env.example but not used in code"
+    }
+  ],
+  "envVars": [
+    {
+      "name": "__BUILD_TIME__",
+      "usages": [
+        "src/app/api/diag/version/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ADMIN_HEALTH_TOKEN",
+      "usages": [
+        "src/app/api/health/report/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ADMIN_USER_IDS",
+      "usages": [
+        "src/app/api/admin/wallet/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_DIAGNOSTIC_BASE_URL",
+      "usages": [
+        "scripts/ai-tools-diagnostic.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_DIAGNOSTIC_TEST_CLAIM_ID",
+      "usages": [
+        "scripts/ai-tools-diagnostic.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_MAX_TOKENS",
+      "usages": [
+        "src/lib/ai/aiAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_MODEL",
+      "usages": [
+        "src/lib/ai/aiAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_PROVIDER",
+      "usages": [
+        "src/lib/ai/aiAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_REQUEST_TIMEOUT",
+      "usages": [
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_TEMPERATURE",
+      "usages": [
+        "src/lib/ai/aiAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_TOKENS_DOL_LIMIT",
+      "usages": [
+        "src/modules/ai/core/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_TOKENS_MOCKUP_LIMIT",
+      "usages": [
+        "src/modules/ai/core/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AI_TOKENS_WEATHER_LIMIT",
+      "usages": [
+        "src/modules/ai/core/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ANTHROPIC_API_KEY",
+      "usages": [
+        "src/lib/ai/aiAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "APP_URL",
+      "usages": [
+        "src/features/reports/renderEngine.ts",
+        "src/lib/integrations/advanced.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ARTIFACT_SIGNING_SECRET",
+      "usages": [
+        "src/lib/artifacts/signedUrls.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ASSET_VERSION",
+      "usages": [
+        "src/utils/assetVersion.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ATTOM_API_KEY",
+      "usages": [
+        "src/lib/services/county-assessor.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AUTO_CREATE_TENANT",
+      "usages": [
+        "src/lib/auth/tenant.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AWS_ACCESS_KEY_ID",
+      "usages": [
+        "src/lib/pdf/renderEngine.ts",
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "AWS_REGION",
+      "usages": [
+        "src/lib/backup/recovery.ts",
+        "src/lib/pdf/renderEngine.ts",
+        "src/lib/s3.ts",
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "AWS_S3_BUCKET",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "AWS_SECRET_ACCESS_KEY",
+      "usages": [
+        "src/lib/pdf/renderEngine.ts",
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "AZURE_CONTAINER",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "AZURE_STORAGE_ACCOUNT",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BACKUP_BUCKET",
+      "usages": [
+        "src/lib/backup/recovery.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BACKUP_CONTAINER",
+      "usages": [
+        "src/lib/backup/recovery.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BACKUP_ENCRYPTION_KEY",
+      "usages": [
+        "src/lib/security/backupEncryption.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BASE_URL",
+      "usages": [
+        "scripts/health-check.ts",
+        "scripts/playwright-qa.spec.ts",
+        "scripts/verify-branding-flow.js",
+        "scripts/verify-token-flow.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BRANDING_BUCKET",
+      "usages": [
+        "scripts/process-uploads-worker.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BUILD_PHASE",
+      "usages": [
+        "src/instrumentation-client.ts",
+        "src/instrumentation.ts",
+        "src/lib/buildPhase.ts",
+        "src/lib/net/guardedFetch.ts",
+        "scripts/test-build-guard.ts",
+        "scripts/verify-env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "BUILD_TIME",
+      "usages": [
+        "src/app/api/_meta/route.ts",
+        "src/app/api/build-info/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CAP_API_BASE",
+      "usages": [
+        "src/lib/weather/cap.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CARRIER_EMAIL_FROM",
+      "usages": [
+        "src/lib/intel/emailDeliveryChannel.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CI",
+      "usages": [
+        "src/lib/buildPhase.ts",
+        "scripts/verify-env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CLERK_PUBLISHABLE_KEY",
+      "usages": [
+        "src/app/api/diag/env/route.ts"
+      ],
+      "inExample": false,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "CLERK_SECRET_KEY",
+      "usages": [
+        "src/app/api/_diag/route.ts",
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/auth/health/route.ts",
+        "src/app/api/config/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/clerk/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/env/clerk.ts",
+        "src/lib/validateEnv.ts",
+        "scripts/check-env.js"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": true
+    },
+    {
+      "name": "CLERK_WEBHOOK_SECRET",
+      "usages": [
+        "src/app/api/webhooks/clerk/route.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "CORELOGIC_API_KEY",
+      "usages": [
+        "src/lib/services/county-assessor.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CORELOGIC_HAZARD_API_KEY",
+      "usages": [
+        "src/lib/services/weather-hazard.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "CRON_SECRET",
+      "usages": [
+        "src/app/api/cron/ai-insights/route.ts",
+        "src/app/api/cron/daily/route.ts",
+        "src/app/api/cron/email-retry/route.ts",
+        "src/app/api/cron/process-batch-jobs/route.ts",
+        "src/app/api/cron/stripe-reconcile/route.ts",
+        "src/app/api/cron/trials/sweep/route.ts",
+        "src/app/api/wallet/reset-monthly/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DATABASE_ENCRYPTION_KEY",
+      "usages": [
+        "src/lib/encryption/dataEncryption.ts"
+      ],
+      "inExample": false,
+      "category": "Database",
+      "required": false
+    },
+    {
+      "name": "DATABASE_URL",
+      "usages": [
+        "src/app/api/__truth/route.ts",
+        "src/app/api/_diag/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/prisma/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/flags/[key]/route.ts",
+        "src/app/api/flags/config/[key]/route.ts",
+        "src/app/api/health/agents/route.ts",
+        "src/app/api/health/live/route.ts",
+        "src/app/api/health/ready/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/xdebug/db/route.ts",
+        "src/app/api/xdebug/session/route.ts",
+        "src/app/api/xdebug/truth/route.ts",
+        "src/lib/backup/recovery.ts",
+        "src/lib/db/index.ts",
+        "src/lib/diagnostics/claimsIntegrity.ts",
+        "src/lib/queue/index.ts",
+        "src/lib/validateEnv.ts",
+        "scripts/add-tier-column.js",
+        "scripts/apply-migration-org-pricing.js",
+        "scripts/apply-production-migrations.js",
+        "scripts/backfillPlanSlugs.ts",
+        "scripts/check-db-schema.js",
+        "scripts/check-db.ts",
+        "scripts/check-env.js",
+        "scripts/check-org-columns.js",
+        "scripts/check-prisma-sync.ts",
+        "scripts/cleanup-orphaned-memberships.js",
+        "scripts/phase3-migrate.js",
+        "scripts/print-db-host.ts",
+        "scripts/production-smoke-test.js",
+        "scripts/test-bootstrap.js",
+        "scripts/test-prisma-queries.js",
+        "scripts/verify-production-schema.js",
+        "scripts/verify-storage.ts",
+        "scripts/verify-worker.ts"
+      ],
+      "inExample": true,
+      "category": "Database",
+      "required": true
+    },
+    {
+      "name": "DEMO_ALLOWED_CLAIMS",
+      "usages": [
+        "src/lib/demo/config.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_AUTO_RESET",
+      "usages": [
+        "src/lib/demo/config.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_MODE",
+      "usages": [
+        "src/lib/demoMode.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_ORG_ID",
+      "usages": [
+        "scripts/seed-demo-claim-pack.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_READ_ONLY",
+      "usages": [
+        "src/lib/demo/config.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_RESET_INTERVAL",
+      "usages": [
+        "src/lib/demo/config.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEMO_URL",
+      "usages": [
+        "scripts/demo-verify.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DEV_BRANDING_AUTOFALLBACK",
+      "usages": [
+        "src/app/api/branding/status/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DIRECT_URL",
+      "usages": [
+        "src/app/api/health/startup/route.ts",
+        "scripts/print-db-host.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DOMINUS_AI_API_KEY",
+      "usages": [
+        "src/app/api/ai/analyze-damage/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "DOMINUS_AI_VISION_ENDPOINT",
+      "usages": [
+        "src/app/api/ai/analyze-damage/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "EMAIL_FROM",
+      "usages": [
+        "src/app/api/cron/email-retry/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/referral/invite/route.ts",
+        "src/app/api/test-email/route.ts",
+        "src/lib/email/sendPacketEmail.ts",
+        "src/lib/mailer.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "EMERGENCY_DEMO_MODE",
+      "usages": [
+        "src/app/api/demo/setup/route.ts",
+        "src/lib/workspace/demoWorkspaceReady.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "EMERGENCY_MODE",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENABLE_DEMO_TOOLS",
+      "usages": [
+        "src/app/api/dev/create-demo-claim-report/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENABLE_REPORT_EMAIL_NOTIFICATIONS",
+      "usages": [
+        "src/lib/notifications/reportNotifications.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENABLE_SCHEDULER",
+      "usages": [
+        "src/worker/scheduler.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENABLE_UNIVERSAL_REPORTS",
+      "usages": [
+        "src/app/(app)/claims/[claimId]/report/page.tsx",
+        "src/app/api/admin/report-metrics/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENCRYPTION_KEY",
+      "usages": [
+        "src/lib/encryption/dataEncryption.ts",
+        "src/lib/security/backupEncryption.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "ENVIRONMENT",
+      "usages": [
+        "src/app/api/diag/nav/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "EXPORT_URL_TTL_SECONDS",
+      "usages": [
+        "src/app/api/mockups/generate/route.ts",
+        "src/app/api/reports/generate/route.ts",
+        "src/app/api/supplements/generate/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_AI_ANALYSIS",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_AI_ASSISTANT",
+      "usages": [
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_AUTOSAVE",
+      "usages": [
+        "src/app/api/claims/resume/route.ts",
+        "src/app/api/retail/resume/route.ts",
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_CLAIMS_WIZARD",
+      "usages": [
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_MOCKUPS",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_PDF_EXPORT",
+      "usages": [
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_PDF_GENERATION",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_PUPPETEER",
+      "usages": [
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_RETAIL_WIZARD",
+      "usages": [
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_SUPPLEMENTS",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_TEST_PAGES",
+      "usages": [
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FEATURE_ZIP_EXPORT",
+      "usages": [
+        "src/lib/env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_ADMIN_CLIENT_EMAIL",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_ADMIN_PRIVATE_KEY",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_ADMIN_PROJECT_ID",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_API_KEY",
+      "usages": [
+        "src/lib/storage/firebaseClient.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_APP_ID",
+      "usages": [
+        "src/lib/storage/firebaseClient.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_AUTH_DOMAIN",
+      "usages": [
+        "src/lib/storage/firebaseClient.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_CLIENT_EMAIL",
+      "usages": [
+        "src/lib/firebase-admin-safe.ts",
+        "src/lib/firebase-admin.ts",
+        "src/lib/firebaseAdmin.ts",
+        "scripts/generate-firebase-base64.js"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_PRIVATE_KEY",
+      "usages": [
+        "src/lib/firebase-admin-safe.ts",
+        "src/lib/firebase-admin.ts",
+        "src/lib/firebaseAdmin.ts",
+        "scripts/generate-firebase-base64.js"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_PROJECT_ID",
+      "usages": [
+        "src/app/api/diag/ai/route.ts",
+        "src/app/api/diag/storage/route.ts",
+        "src/lib/firebase-admin-safe.ts",
+        "src/lib/firebase-admin.ts",
+        "src/lib/firebaseAdmin.ts",
+        "src/lib/storage/firebaseClient.ts",
+        "src/lib/storage.ts",
+        "scripts/generate-firebase-base64.js",
+        "scripts/verify-storage.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_SENDER_ID",
+      "usages": [
+        "src/lib/storage/firebaseClient.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_SERVICE_ACCOUNT_BASE64",
+      "usages": [
+        "src/lib/firebase-admin-safe.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIREBASE_STORAGE_BUCKET",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/diag/storage/route.ts",
+        "src/lib/firebase-admin-safe.ts",
+        "src/lib/firebase-admin.ts",
+        "src/lib/firebaseAdmin.ts",
+        "src/lib/storage/config.ts",
+        "src/lib/storage/files.ts",
+        "src/lib/storage/firebaseClient.ts",
+        "src/lib/storage/getStorageUrl.ts",
+        "src/lib/storage.ts",
+        "scripts/mp47-audit-3-pdf-generation.js",
+        "scripts/verify-storage.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FIRST_STREET_API_KEY",
+      "usages": [
+        "src/lib/services/weather-hazard.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FLAG_SPIKE_THRESHOLD",
+      "usages": [
+        "src/app/api/flags/metrics/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FREE_BETA",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/me/init/route.ts",
+        "src/app/api/stripe/checkout/route.ts",
+        "src/lib/db/tokens.ts",
+        "src/lib/usage/quotas.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "FROM_EMAIL",
+      "usages": [
+        "src/lib/email.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "GCS_BUCKET",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "GOOGLE_CLIENT_ID",
+      "usages": [
+        "src/lib/integrations/advanced.ts",
+        "src/lib/integrations/marketplace.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "HEALTH_MAX_RETRIES",
+      "usages": [
+        "scripts/verify-left-nav-pages.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "INLINE_AGENT_PROCESSOR",
+      "usages": [
+        "src/lib/agent/inlineProcessor.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "INTERNAL_RENDER_BASE",
+      "usages": [
+        "src/lib/pdf/renderEngine.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "JE_MOCK",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "JE_SHAW_API_TOKEN",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "JE_SHAW_API_URL",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "JWT_REFRESH_SECRET",
+      "usages": [
+        "src/lib/mobile/auth.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "JWT_SECRET",
+      "usages": [
+        "src/lib/mobile/auth.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOB_API_KEY",
+      "usages": [
+        "src/lib/lob/client.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOB_TEMPLATE_LETTER_ID",
+      "usages": [
+        "src/lib/lob/client.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOB_TEMPLATE_POSTCARD_BACK_ID",
+      "usages": [
+        "src/lib/lob/client.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOB_TEMPLATE_POSTCARD_FRONT_ID",
+      "usages": [
+        "src/lib/lob/client.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOB_WEBHOOK_SECRET",
+      "usages": [
+        "src/app/api/webhooks/lob/route.ts"
+      ],
+      "inExample": false,
+      "category": "Webhooks",
+      "required": false
+    },
+    {
+      "name": "LOCAL_BRANDING_TEST_USER",
+      "usages": [
+        "src/app/api/branding/status/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "LOG_LEVEL",
+      "usages": [
+        "src/lib/monitoring/logger.ts",
+        "src/lib/observability/logger.ts",
+        "src/worker/scheduler.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "MAINTENANCE_MODE",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "MAPBOX_ACCESS_TOKEN",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/maps/route.ts",
+        "src/app/api/health-check/maps/route.ts",
+        "src/lib/storm/generateOverlay.ts"
+      ],
+      "inExample": true,
+      "category": "Maps (Mapbox)",
+      "required": false
+    },
+    {
+      "name": "MAPBOX_API_KEY",
+      "usages": [
+        "src/lib/debug/mapboxDebug.ts"
+      ],
+      "inExample": false,
+      "category": "Maps (Mapbox)",
+      "required": false
+    },
+    {
+      "name": "MESONET_API_BASE",
+      "usages": [
+        "src/lib/weather/mesonet.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "NETLIFY",
+      "usages": [
+        "scripts/verify-env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "NEXT_PHASE",
+      "usages": [
+        "src/app/api/dev/fix-org/route.ts",
+        "src/lib/auth/tenant.ts",
+        "src/lib/buildPhase.ts",
+        "src/lib/fetchSafe.ts",
+        "src/lib/net/guardedFetch.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ADMIN_FLAGS_KEY",
+      "usages": [
+        "src/app/(app)/admin/flags/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_AI_TOOLS_ENABLED",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ANALYTICS_DISABLED",
+      "usages": [
+        "src/lib/analytics/track.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ANNOUNCE_ENABLED",
+      "usages": [
+        "src/components/AnnouncementBar.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ANNOUNCE_TEXT",
+      "usages": [
+        "src/components/AnnouncementBar.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_API_BASE_URL",
+      "usages": [
+        "src/components/pages/RetailBuild.tsx",
+        "src/lib/api.ts",
+        "src/lib/storage.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_APP_URL",
+      "usages": [
+        "src/app/(app)/property-profiles/[id]/page.tsx",
+        "src/app/actions/addTokens.ts",
+        "src/app/api/_wip/report/pdf/route.ts",
+        "src/app/api/billing/checkout/route.ts",
+        "src/app/api/billing/full-access/checkout/route.ts",
+        "src/app/api/billing/portal/route.ts",
+        "src/app/api/billing/report-credits/checkout/route.ts",
+        "src/app/api/billing/token-pack/checkout/route.ts",
+        "src/app/api/billing/tokens/checkout/route.ts",
+        "src/app/api/checkout/route.ts",
+        "src/app/api/claims/[claimId]/rebuttal-builder/route.ts",
+        "src/app/api/claims/[claimId]/report/pdf/route.ts",
+        "src/app/api/claims/ai/build/route.ts",
+        "src/app/api/claims/route.ts",
+        "src/app/api/client/auth/request/route.ts",
+        "src/app/api/client-portal/invite/route.ts",
+        "src/app/api/cron/trials/sweep/route.ts",
+        "src/app/api/dev/send-email/route.ts",
+        "src/app/api/diag/version/route.ts",
+        "src/app/api/esign/envelopes/[envelopeId]/send/route.ts",
+        "src/app/api/estimates/[id]/draft-email/route.ts",
+        "src/app/api/estimates/[id]/send-packet/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/env/route.ts",
+        "src/app/api/portal/invite/route.ts",
+        "src/app/api/proposals/[id]/publish/route.ts",
+        "src/app/api/public/reports/[id]/accept/route.ts",
+        "src/app/api/qr/generate/route.ts",
+        "src/app/api/reports/[reportId]/draft-email/route.ts",
+        "src/app/api/reports/[reportId]/regenerate-links/route.ts",
+        "src/app/api/reports/[reportId]/send-packet/route.ts",
+        "src/app/api/reports/share/route.ts",
+        "src/app/api/stripe/checkout/route.ts",
+        "src/app/api/stripe/checkout/topup/route.ts",
+        "src/app/api/supplements/[id]/draft-email/route.ts",
+        "src/app/api/supplements/[id]/send-packet/route.ts",
+        "src/app/api/support/tickets/route.ts",
+        "src/app/api/team/invitations/[id]/resend/route.ts",
+        "src/app/api/team/invitations/route.ts",
+        "src/app/api/teams/invite/route.ts",
+        "src/app/api/tokens/buy/route.ts",
+        "src/app/api/trades/subscribe/route.ts",
+        "src/app/api/webhooks/stripe/route.ts",
+        "src/app/api/xdebug/truth/route.ts",
+        "src/app/dev/email-preview/page.tsx",
+        "src/lib/billing/autoRefill.ts",
+        "src/lib/billing/portal.ts",
+        "src/lib/client-portal/authentication.ts",
+        "src/lib/email/invitations.ts",
+        "src/lib/email/resend.ts",
+        "src/lib/mail.ts",
+        "src/lib/notifications/claimNotifications.ts",
+        "src/lib/notifications/sendNotification.ts",
+        "src/lib/proposals/render.ts",
+        "src/lib/qr/generator.ts",
+        "src/lib/realtime/collaboration.ts",
+        "src/lib/security/cors.ts",
+        "src/lib/templates/generateTemplatePDF.ts",
+        "src/lib/utils/publicId.ts",
+        "src/lib/websocket/server.ts",
+        "src/lib/websocket/useClaimWebSocket.ts",
+        "scripts/first-principles-audit.ts",
+        "scripts/health-check.js",
+        "scripts/lighthouse-audit.js",
+        "scripts/print-db-host.ts",
+        "scripts/smoke-test.ts",
+        "scripts/verify-left-nav-pages.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_APP_VERSION",
+      "usages": [
+        "src/app/api/diag/version/route.ts",
+        "src/components/FooterStatus.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ASSISTANT_ENABLED",
+      "usages": [
+        "src/app/api/status/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ASSISTANT_VARIANT",
+      "usages": [
+        "src/app/api/status/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_BASE_URL",
+      "usages": [
+        "src/app/api/checkout/route.ts",
+        "src/app/api/claims/[claimId]/invite/route.ts",
+        "src/app/api/export/pdf/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/reports/generate/route.ts",
+        "src/app/api/system/health/route.ts",
+        "src/app/api/trades/onboarding/route.ts",
+        "src/app/api/weather/share/route.ts",
+        "src/lib/artifacts/signedUrls.ts",
+        "src/lib/auth.ts",
+        "src/lib/config/constants.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_BETA_MODE",
+      "usages": [
+        "src/app/(app)/settings/billing/page.tsx",
+        "src/app/(marketing)/pricing/page.tsx",
+        "src/lib/beta.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_BRANCH",
+      "usages": [
+        "src/app/api/deploy-info/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_BUILD_SHA",
+      "usages": [
+        "src/app/api/build-info/route.ts",
+        "src/app/api/status/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL",
+      "usages": [
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/clerk-debug/page.tsx",
+        "src/lib/env/clerk.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL",
+      "usages": [
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/clerk-debug/page.tsx",
+        "src/lib/env/clerk.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+      "usages": [
+        "src/app/api/_diag/route.ts",
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/auth/health/route.ts",
+        "src/app/api/config/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/clerk/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/live/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/status/route.ts",
+        "src/app/clerk-debug/page.tsx",
+        "src/app/clerk-test/page.tsx",
+        "src/app/layout.tsx",
+        "src/components/providers/ClerkProviders.tsx",
+        "src/lib/env/clerk.ts",
+        "src/lib/validateEnv.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": true
+    },
+    {
+      "name": "NEXT_PUBLIC_CLERK_SIGN_IN_URL",
+      "usages": [
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/clerk-debug/page.tsx",
+        "src/lib/env/clerk.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_CLERK_SIGN_UP_URL",
+      "usages": [
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/clerk-debug/page.tsx",
+        "src/lib/env/clerk.ts"
+      ],
+      "inExample": true,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_COMMIT_SHA",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/app/api/build-info/route.ts",
+        "src/app/api/deploy-info/_deploy/route.ts",
+        "src/app/api/deploy-info/route.ts",
+        "src/components/BuildFingerprint.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_DEMO_MODE",
+      "usages": [
+        "src/app/(app)/layout.tsx",
+        "src/components/demo/DemoModeBanner.tsx",
+        "src/lib/demo/config.ts",
+        "src/lib/demoMode.ts",
+        "src/lib/flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_DEMO_URL",
+      "usages": [
+        "src/components/marketing/LaunchBanner.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_DEV_ORG",
+      "usages": [
+        "src/components/pages/network/post-job.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_EMERGENCY_DEMO_MODE",
+      "usages": [
+        "src/lib/workspace/demoWorkspaceReady.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ENABLE_DEMO_TOOLS",
+      "usages": [
+        "src/app/(app)/admin/demo-tools/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_ENABLE_UNIVERSAL_REPORTS",
+      "usages": [
+        "src/components/admin/ReportMetricsWidget.tsx",
+        "src/components/claims/UniversalReportSection.tsx",
+        "src/components/portal/ClientReportDocumentsCard.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FACEBOOK_PIXEL_ID",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_API_KEY",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_APP_ID",
+      "usages": [
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
+      "usages": [
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID",
+      "usages": [
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
+      "usages": [
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/firebase.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_GIT_SHA",
+      "usages": [
+        "src/app/api/_meta/route.ts",
+        "src/components/BuildStamp.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_GOOGLE_WEB_CLIENT_ID",
+      "usages": [
+        "src/components/auth/GoogleOneTap.tsx",
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_INVITE_ONLY",
+      "usages": [
+        "src/components/pages/AuthLogin.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_JE_MOCK",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_JE_SHAW_API_TOKEN",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_JE_SHAW_API_URL",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_MAINTENANCE_MESSAGE",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_MAINTENANCE_MODE",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN",
+      "usages": [
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Maps (Mapbox)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_MAPBOX_TOKEN",
+      "usages": [
+        "src/app/(app)/company-map/CompanyMapClient.tsx",
+        "src/app/(app)/jobs/map/page.tsx",
+        "src/app/(app)/map/ui/MapClient.tsx",
+        "src/app/(app)/maps/view/page.tsx",
+        "src/app/(public)/find/components/ContractorMap.tsx",
+        "src/app/(public)/find/page.tsx",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/geocode/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/maps/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/health-check/maps/route.ts",
+        "src/app/api/leads/map-snapshot/route.ts",
+        "src/app/api/maps/geocode/route.ts",
+        "src/app/api/maps/reverse/route.ts",
+        "src/app/api/routes/optimize/route.ts",
+        "src/app/api/system/truth/route.ts",
+        "src/components/MapView.tsx",
+        "src/components/maps/CommunityMapDraw.tsx",
+        "src/components/maps/LeadMap.tsx",
+        "src/components/maps/MapViewV2.tsx",
+        "src/components/maps/legacy/MapClientLegacy.tsx",
+        "src/components/maps/legacy/MapboxMapLegacy.tsx",
+        "src/components/pages/MapPage.tsx",
+        "src/lib/debug/mapboxDebug.ts",
+        "src/lib/geocode/geocodeAddress.ts"
+      ],
+      "inExample": true,
+      "category": "Maps (Mapbox)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_POSTHOG_HOST",
+      "usages": [
+        "src/lib/analytics/posthog.ts",
+        "src/lib/analytics.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_POSTHOG_KEY",
+      "usages": [
+        "src/lib/analytics/posthog.ts",
+        "src/lib/analytics.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_BUSINESS",
+      "usages": [
+        "src/app/api/config/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_ENTERPRISE",
+      "usages": [
+        "src/app/api/config/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_PRO",
+      "usages": [
+        "src/app/api/config/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_SOLO",
+      "usages": [
+        "src/app/api/config/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_TOKENS_100",
+      "usages": [
+        "src/app/(app)/settings/billing/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_TOKENS_1000",
+      "usages": [
+        "src/app/(app)/settings/billing/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_PRICE_TOKENS_500",
+      "usages": [
+        "src/app/(app)/settings/billing/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_REPORT_BUILDER_ENABLED",
+      "usages": [
+        "src/middleware.admin-features.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_RESEND_API_KEY",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_RESEND_CONFIGURED",
+      "usages": [
+        "src/app/dev/email-preview/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SENTRY_DSN",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/instrumentation-client.ts",
+        "src/lib/monitoring/errorTracking.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SHOW_DEBUG_STRIP",
+      "usages": [
+        "src/config/version.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SHOW_SECOND_SCREEN",
+      "usages": [
+        "src/modules/ui/controls/ModeToggles.tsx"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SIGNUPS_ENABLED",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SITE_URL",
+      "usages": [
+        "src/app/(public)/c/[slug]/page.tsx",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/reports/[reportId]/resend/route.ts",
+        "src/app/api/share/create/route.ts",
+        "src/env/index.ts",
+        "src/lib/validateEnv.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_STATUS_ENABLED",
+      "usages": [
+        "src/components/pages/StatusCheck.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUBSCRIPTIONS_OPEN_AT",
+      "usages": [
+        "src/app/api/admin/launch-status/route.ts",
+        "src/app/api/billing/checkout/route.ts",
+        "src/app/api/checkout/route.ts",
+        "src/components/BetaCountdownBanner.tsx",
+        "src/components/CheckoutButton.tsx",
+        "src/components/SubscriptionsChip.tsx"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      "usages": [
+        "src/app/api/config/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/components/pages/StatusCheck.tsx",
+        "src/hooks/useRealtimeMessages.ts",
+        "src/integrations/supabase/client.ts",
+        "src/lib/storage/claim-files.ts",
+        "src/lib/storage-docs.ts",
+        "src/lib/supabase-server.ts"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+      "usages": [
+        "src/components/workbench/PhotoActions.tsx"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_EXPORTS",
+      "usages": [
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_TEMPLATES",
+      "usages": [
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_STORAGE_BUCKET_UPLOADS",
+      "usages": [
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_SUPABASE_URL",
+      "usages": [
+        "src/app/api/claims/list/route.ts",
+        "src/app/api/claims/resume/route.ts",
+        "src/app/api/claims/save/route.ts",
+        "src/app/api/claims/start/route.ts",
+        "src/app/api/config/route.ts",
+        "src/app/api/export/complete-packet/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/mockups/generate/route.ts",
+        "src/app/api/reports/generate/route.ts",
+        "src/app/api/retail/list/route.ts",
+        "src/app/api/retail/resume/route.ts",
+        "src/app/api/retail/save/route.ts",
+        "src/app/api/retail/start/route.ts",
+        "src/app/api/storage/signed-read/route.ts",
+        "src/app/api/storage/signed-upload/route.ts",
+        "src/app/api/supplements/generate/route.ts",
+        "src/app/api/upload/avatar/route.ts",
+        "src/app/api/upload/portfolio/route.ts",
+        "src/app/api/verify/damage/route.ts",
+        "src/client/ClientDashboard.tsx",
+        "src/components/CreatePublicLinkButton.tsx",
+        "src/components/pages/AdminFunnels.tsx",
+        "src/components/pages/AdminOpsDashboard.tsx",
+        "src/components/pages/PublicSign.tsx",
+        "src/components/pages/PublicView.tsx",
+        "src/components/pages/StatusCheck.tsx",
+        "src/components/sections/WeatherHailSection.tsx",
+        "src/components/workbench/PhotoActions.tsx",
+        "src/hooks/useRealtimeMessages.ts",
+        "src/hooks/useSSEChat.ts",
+        "src/integrations/supabase/client.ts",
+        "src/lib/ai/useAnnotate.ts",
+        "src/lib/aiFillers.ts",
+        "src/lib/export/zipBuilder.ts",
+        "src/lib/featureFlags.ts",
+        "src/lib/notify.ts",
+        "src/lib/reports/pdf-utils.ts",
+        "src/lib/storage/claim-files.ts",
+        "src/lib/storage/getSignedUrl.ts",
+        "src/lib/storage/uploadPdf.ts",
+        "src/lib/storage-docs.ts",
+        "src/lib/storage.ts",
+        "src/lib/supabase-server.ts",
+        "src/lib/supabaseAdmin.ts",
+        "src/utils/supabase/server.ts",
+        "src/worker/helpers/storage.ts",
+        "scripts/check-env.js",
+        "scripts/process-uploads-worker.js",
+        "scripts/seed-demo-claim-pack.js"
+      ],
+      "inExample": true,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_TEST_MODE",
+      "usages": [
+        "src/components/billing/UpgradeCTA.tsx",
+        "src/lib/testMode.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_TOKEN_PACK_ENTERPRISE_PRICE_ID",
+      "usages": [
+        "src/lib/config/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_TOKEN_PACK_PRO_PRICE_ID",
+      "usages": [
+        "src/lib/config/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_TOKEN_PACK_STARTER_PRICE_ID",
+      "usages": [
+        "src/lib/config/tokens.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_UPLOADS_ENABLED",
+      "usages": [
+        "src/lib/feature-flags.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_URL",
+      "usages": [
+        "scripts/test-ai-endpoints.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR",
+      "usages": [
+        "src/lib/firebase.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_USE_FUNCTIONS_EMULATOR",
+      "usages": [
+        "src/lib/functionsClient.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_VERCEL_ENV",
+      "usages": [
+        "src/app/(app)/settings/production-verification/page.tsx",
+        "src/app/api/diag/version/route.ts",
+        "src/instrumentation-client.ts",
+        "src/lib/log.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA",
+      "usages": [
+        "src/app/(app)/settings/production-verification/page.tsx",
+        "src/app/(app)/support/page.tsx",
+        "src/instrumentation-client.ts",
+        "src/lib/log.ts"
+      ],
+      "inExample": false,
+      "category": "Client-side",
+      "required": false
+    },
+    {
+      "name": "NOAA_API_TOKEN",
+      "usages": [
+        "src/lib/storm/fetchStormData.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "NODE_ENV",
+      "usages": [
+        "src/app/(app)/dashboard/page.tsx",
+        "src/app/(app)/settings/security-audit/page.tsx",
+        "src/app/(client-portal)/error.tsx",
+        "src/app/api/__truth/route.ts",
+        "src/app/api/_build/route.ts",
+        "src/app/api/_diag/route.ts",
+        "src/app/api/_meta/route.ts",
+        "src/app/api/ai/rebuttal/route.ts",
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/auth/health/route.ts",
+        "src/app/api/branding/upsert/route.ts",
+        "src/app/api/build-info/route.ts",
+        "src/app/api/build-verify/route.ts",
+        "src/app/api/claims/create/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/dev/bootstrap-org/route.ts",
+        "src/app/api/dev/send-email/route.ts",
+        "src/app/api/dev/throw/route.ts",
+        "src/app/api/diag/clerk/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/env/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/tenant/route.ts",
+        "src/app/api/me/network-metrics/route.ts",
+        "src/app/api/messages/threads/route.ts",
+        "src/app/api/proposals/build/route.ts",
+        "src/app/api/reports/claims/[claimId]/pdf/route.ts",
+        "src/app/api/status/route.ts",
+        "src/app/api/test-sentry/route.ts",
+        "src/app/api/weather/quick-dol/route.ts",
+        "src/app/api/weather/report/route.ts",
+        "src/app/api/xdebug/claims-recovery/route.ts",
+        "src/app/api/xdebug/session/route.ts",
+        "src/app/api/xdebug/truth/route.ts",
+        "src/app/boot-test/page.tsx",
+        "src/app/dev/email-preview/page.tsx",
+        "src/app/dev-dashboard/page.tsx",
+        "src/app/global-error.tsx",
+        "src/components/AppHeader.tsx",
+        "src/components/ErrorBoundary.tsx",
+        "src/components/ProtectedRoute.tsx",
+        "src/components/SKaiAssistant.tsx",
+        "src/components/errors/ApiErrorBoundary.tsx",
+        "src/components/errors/AuthErrorBoundary.tsx",
+        "src/components/errors/PaymentErrorBoundary.tsx",
+        "src/components/errors/SmartErrorBoundary.tsx",
+        "src/components/errors/UploadErrorBoundary.tsx",
+        "src/components/onboarding/GettingStartedCard.tsx",
+        "src/env/index.ts",
+        "src/instrumentation-client.ts",
+        "src/lib/ai/router.ts",
+        "src/lib/analytics/posthog.ts",
+        "src/lib/api/response.ts",
+        "src/lib/api/safeResponse.ts",
+        "src/lib/buildPhase.ts",
+        "src/lib/db/index.ts",
+        "src/lib/debug/mapboxDebug.ts",
+        "src/lib/email.ts",
+        "src/lib/env/clerk.ts",
+        "src/lib/env.ts",
+        "src/lib/fetchSafe.ts",
+        "src/lib/firebase.ts",
+        "src/lib/log.ts",
+        "src/lib/logger.ts",
+        "src/lib/mail.ts",
+        "src/lib/monitoring/healthCheck.ts",
+        "src/lib/monitoring/logger.ts",
+        "src/lib/pdf/weatherTemplate.ts",
+        "src/lib/performance.ts",
+        "src/lib/permissions/verify.ts",
+        "src/lib/prisma.ts",
+        "src/lib/security/cors.ts",
+        "src/lib/security/secrets.ts",
+        "src/lib/templates/renderer.ts",
+        "src/lib/validateEnv.ts",
+        "src/middleware/ipWhitelist.ts",
+        "src/pdf/weatherTemplate.ts",
+        "src/worker/index.ts",
+        "scripts/print-db-host.ts",
+        "scripts/verify-env.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "OPENAI_API_KEY",
+      "usages": [
+        "src/app/api/ai/assistant/route.ts",
+        "src/app/api/ai/chat/route.ts",
+        "src/app/api/ai/claim-assistant/route.ts",
+        "src/app/api/ai/damage/route.ts",
+        "src/app/api/ai/damage-builder/route.ts",
+        "src/app/api/ai/estimate/[claimId]/route.ts",
+        "src/app/api/ai/health/route.ts",
+        "src/app/api/ai/insights/route.ts",
+        "src/app/api/ai/insights/snapshot/generate/route.ts",
+        "src/app/api/ai/inspect/route.ts",
+        "src/app/api/ai/supplement/[claimId]/route.ts",
+        "src/app/api/ai/vision/selftest/route.ts",
+        "src/app/api/ask-dominus/route.ts",
+        "src/app/api/assistant/query/route.ts",
+        "src/app/api/claims/[claimId]/ai/route.ts",
+        "src/app/api/claims/[claimId]/appeal/route.ts",
+        "src/app/api/claims/[claimId]/documents/[docId]/ask/route.ts",
+        "src/app/api/cron/ai-insights/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/ai/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/nav/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/agents/route.ts",
+        "src/app/api/health/ai/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/health/voice/route.ts",
+        "src/app/api/mockups/generate/route.ts",
+        "src/app/api/proposals/health/route.ts",
+        "src/app/api/reports/compose/route.ts",
+        "src/app/api/system/health/route.ts",
+        "src/app/api/system/truth/route.ts",
+        "src/lib/ai/aiAssistant.ts",
+        "src/lib/ai/batfEngine.ts",
+        "src/lib/ai/callOpenAI.ts",
+        "src/lib/ai/claimWriter.ts",
+        "src/lib/ai/client.ts",
+        "src/lib/ai/core-router.ts",
+        "src/lib/ai/dominusVideo.ts",
+        "src/lib/ai/embeddings.ts",
+        "src/lib/ai/engines/timelineEngine.ts",
+        "src/lib/ai/generateRebuttal.ts",
+        "src/lib/ai/generateSupplement.ts",
+        "src/lib/ai/geometry.ts",
+        "src/lib/ai/openai-vision.ts",
+        "src/lib/ai/photo-caption-generator.ts",
+        "src/lib/ai/pricing.ts",
+        "src/lib/ai/realtime.ts",
+        "src/lib/ai/reportGenerator.ts",
+        "src/lib/ai/supplementBuilder.ts",
+        "src/lib/ai/supplementEngine.ts",
+        "src/lib/ai/video/createVideoFromScript.ts",
+        "src/lib/ai/video-generator.ts",
+        "src/lib/ai/vision.ts",
+        "src/lib/ai.ts",
+        "src/lib/claims/predictor.ts",
+        "src/lib/claims/reconstructor.ts",
+        "src/lib/denial/appealEngine.ts",
+        "src/lib/featureFlags.ts",
+        "src/lib/proposals/ai.ts",
+        "src/lib/services/ai-inspection.ts",
+        "src/lib/weather/ai.ts",
+        "src/lib/weather/report.ts",
+        "src/modules/ingest/core/extract.ts",
+        "scripts/check-env.js",
+        "scripts/mp47-audit-3-pdf-generation.js"
+      ],
+      "inExample": true,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "OPENAI_ASSISTANT_ID",
+      "usages": [
+        "src/app/api/assistant/query/route.ts"
+      ],
+      "inExample": false,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "OPENAI_DEFAULT_MODEL",
+      "usages": [
+        "src/lib/ai/client.ts"
+      ],
+      "inExample": true,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "OPENAI_KEY",
+      "usages": [
+        "src/lib/ai/classifyDocument.ts",
+        "src/lib/ai/messageAssistant.ts"
+      ],
+      "inExample": false,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "OPENAI_MODEL",
+      "usages": [
+        "src/app/api/ai/health/route.ts"
+      ],
+      "inExample": false,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "OPENAI_VIDEO_MODEL",
+      "usages": [
+        "src/lib/ai/video/createVideoFromScript.ts"
+      ],
+      "inExample": true,
+      "category": "AI (OpenAI)",
+      "required": false
+    },
+    {
+      "name": "PDF_DEV_KEY",
+      "usages": [
+        "src/app/api/reports/claims/[claimId]/pdf/route.ts",
+        "scripts/test-ai-endpoints.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "PDF_RENDER_TIMEOUT",
+      "usages": [
+        "src/lib/featureFlags.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "PGPOOL_MAX",
+      "usages": [
+        "src/lib/db/index.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "POSTGRES_URL_NON_POOLING",
+      "usages": [
+        "src/app/api/diag/ready/route.ts"
+      ],
+      "inExample": false,
+      "category": "Database",
+      "required": false
+    },
+    {
+      "name": "PROPOSAL_DEV_KEY",
+      "usages": [
+        "src/app/api/proposals/build/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "QUICKBOOKS_CLIENT_ID",
+      "usages": [
+        "src/lib/integrations/advanced.ts",
+        "src/lib/integrations/marketplace.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "R2_ACCOUNT_ID",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "R2_BUCKET",
+      "usages": [
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_HOST",
+      "usages": [
+        "src/agents/runtime/queue/bullmqClient.ts",
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_PASSWORD",
+      "usages": [
+        "src/agents/runtime/queue/bullmqClient.ts",
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_PORT",
+      "usages": [
+        "src/agents/runtime/queue/bullmqClient.ts",
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_STRICT_MODE",
+      "usages": [
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_TLS",
+      "usages": [
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_TOKEN",
+      "usages": [
+        "src/lib/rateLimit/system.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_URL",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/agent/queues.ts",
+        "src/lib/rateLimit/system.ts",
+        "scripts/agentWorker.ts",
+        "scripts/enqueue-canary.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REDIS_USERNAME",
+      "usages": [
+        "src/lib/redis.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REFERRAL_TOKEN_REWARD",
+      "usages": [
+        "src/lib/referrals/config.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REPLICATE_API_TOKEN",
+      "usages": [
+        "src/app/api/ai/mockup/route.ts",
+        "src/app/api/diag/ai/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/ai/batfEngine.ts",
+        "src/lib/video/renderVideo.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "REPORTS_BUCKET",
+      "usages": [
+        "src/lib/pdf/renderEngine.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "RESEND_API_KEY",
+      "usages": [
+        "src/app/api/claims/[claimId]/send-to-adjuster/route.ts",
+        "src/app/api/client/auth/request/route.ts",
+        "src/app/api/cron/email-retry/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/referral/invite/route.ts",
+        "src/app/api/reports/email/route.ts",
+        "src/app/api/test-email/route.ts",
+        "src/components/pages/StatusCheck.tsx",
+        "src/lib/email/esignInvite.ts",
+        "src/lib/email/invitations.ts",
+        "src/lib/email/resend.ts",
+        "src/lib/intel/automation/executors/email.ts",
+        "src/lib/intel/emailDeliveryChannel.ts",
+        "src/lib/mail.ts",
+        "src/lib/mailer.ts",
+        "src/lib/notifications/claimNotifications.ts",
+        "src/lib/notifications/sendNotification.ts",
+        "src/lib/notify.ts",
+        "src/lib/services/notifications.ts",
+        "src/lib/storm-intake/email-notifications.ts",
+        "src/lib/workflow/automationEngine.ts",
+        "scripts/verify-storage.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "RESEND_FROM_EMAIL",
+      "usages": [
+        "src/lib/config/constants.ts",
+        "src/lib/email/esignInvite.ts",
+        "src/lib/email/invitations.ts",
+        "src/lib/email/resend.ts",
+        "src/lib/notifications/claimNotifications.ts",
+        "src/lib/storm-intake/email-notifications.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "RESEND_REPLY_TO",
+      "usages": [
+        "src/lib/email/resend.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "S3_ACCESS_KEY_ID",
+      "usages": [
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_BUCKET",
+      "usages": [
+        "src/app/api/claims/[claimId]/photos/route.ts",
+        "src/app/api/portal/claims/[claimId]/documents/route.ts",
+        "src/app/api/portal/claims/[claimId]/photos/route.ts",
+        "src/lib/pdf/renderEngine.ts",
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_ENDPOINT",
+      "usages": [
+        "src/lib/pdf/renderEngine.ts",
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_FORCE_PATH_STYLE",
+      "usages": [
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_PRESIGN_EXPIRES",
+      "usages": [
+        "src/features/reports/renderEngine.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_REGION",
+      "usages": [
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "S3_SECRET_ACCESS_KEY",
+      "usages": [
+        "src/lib/s3.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (AWS)",
+      "required": false
+    },
+    {
+      "name": "SALESFORCE_CLIENT_ID",
+      "usages": [
+        "src/lib/integrations/advanced.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SENDGRID_API_KEY",
+      "usages": [
+        "src/lib/email.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SENTRY_DSN",
+      "usages": [
+        "src/instrumentation-client.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SENTRY_TEST",
+      "usages": [
+        "src/app/api/dev/sentry-test/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SERVICE_KEY",
+      "usages": [
+        "src/lib/auth.ts",
+        "scripts/verify-branding-flow.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SERVICE_TOKEN_SECRET",
+      "usages": [
+        "src/lib/services/tradesService.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SLACK_ALERT_WEBHOOK_URL",
+      "usages": [
+        "src/app/api/cron/user-columns/route.ts"
+      ],
+      "inExample": false,
+      "category": "Webhooks",
+      "required": false
+    },
+    {
+      "name": "STABILITY_API_KEY",
+      "usages": [
+        "src/app/api/ai/mockup/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STOP_AFTER_ONE",
+      "usages": [
+        "scripts/process-uploads-worker.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_ACCESS_KEY_ID",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_BUCKET",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_ENABLED",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/firebaseAdmin.ts",
+        "src/lib/storage.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_ENDPOINT",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_PROVIDER",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts",
+        "src/lib/storage/fileManager.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_REGION",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STORAGE_SECRET_ACCESS_KEY",
+      "usages": [
+        "src/lib/storage/advancedStorage.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "STRIPE_API_KEY",
+      "usages": [
+        "src/app/api/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_BILLING_PORTAL_RETURN_URL",
+      "usages": [
+        "src/lib/billing/portal.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_BUSINESS_ANNUAL_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_BUSINESS_MONTHLY_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_ENTERPRISE_ANNUAL_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_ENTERPRISE_MONTHLY_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_FULL_ACCESS_PRICE_ID",
+      "usages": [
+        "src/app/api/trades/subscribe/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_BUSINESS",
+      "usages": [
+        "src/app/api/checkout/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/billing/priceMap.ts",
+        "src/lib/tokens/planQuotas.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_ENTERPRISE",
+      "usages": [
+        "src/app/api/checkout/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/billing/priceMap.ts",
+        "src/lib/tokens/planQuotas.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_FULL_ACCESS",
+      "usages": [
+        "src/app/api/billing/full-access/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_PACK_PRO",
+      "usages": [
+        "src/app/api/billing/token-pack/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_PACK_SMALL",
+      "usages": [
+        "src/app/api/billing/token-pack/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_PACK_STANDARD",
+      "usages": [
+        "src/app/api/billing/token-pack/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_PRO",
+      "usages": [
+        "src/app/api/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_SOLO",
+      "usages": [
+        "src/app/api/health/comprehensive/route.ts",
+        "src/lib/billing/priceMap.ts",
+        "src/lib/tokens/planQuotas.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_STARTER",
+      "usages": [
+        "src/app/api/checkout/route.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_TOKENS_10",
+      "usages": [
+        "src/app/actions/addTokens.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_TOKENS_100",
+      "usages": [
+        "src/app/actions/addTokens.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_TOKENS_25",
+      "usages": [
+        "src/app/actions/addTokens.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRICE_TOKENS_50",
+      "usages": [
+        "src/app/actions/addTokens.ts"
+      ],
+      "inExample": false,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_PRO_ANNUAL_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_SECRET_KEY",
+      "usages": [
+        "src/app/actions/addTokens.ts",
+        "src/app/api/billing/checkout/route.ts",
+        "src/app/api/billing/full-access/checkout/route.ts",
+        "src/app/api/billing/full-access/status/route.ts",
+        "src/app/api/billing/report-credits/checkout/route.ts",
+        "src/app/api/billing/stripe/webhook/route.ts",
+        "src/app/api/billing/token-pack/checkout/route.ts",
+        "src/app/api/billing/tokens/checkout/route.ts",
+        "src/app/api/checkout/route.ts",
+        "src/app/api/config/route.ts",
+        "src/app/api/cron/stripe-reconcile/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/stripe/checkout/route.ts",
+        "src/app/api/stripe/checkout/topup/route.ts",
+        "src/app/api/stripe/webhook/route.ts",
+        "src/app/api/tokens/buy/route.ts",
+        "src/app/api/trades/cancel-subscription/route.ts",
+        "src/app/api/trades/subscribe/route.ts",
+        "src/app/api/verify-session/route.ts",
+        "src/app/api/webhooks/stripe/route.ts",
+        "src/lib/billing/autoRefill.ts",
+        "src/lib/billing/portal.ts",
+        "src/lib/stripe/customer.ts",
+        "src/lib/stripe.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_SOLO_ANNUAL_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_SOLO_MONTHLY_PRICE_ID",
+      "usages": [
+        "src/lib/stripe/handler.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_TOKEN_PACK_PRICE_100",
+      "usages": [
+        "src/app/api/billing/tokens/checkout/route.ts",
+        "src/app/api/tokens/buy/route.ts",
+        "src/app/api/webhooks/stripe/route.ts",
+        "src/lib/billing/autoRefill.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_TOPUP_100",
+      "usages": [
+        "src/app/api/stripe/checkout/topup/route.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_TOPUP_2000",
+      "usages": [
+        "src/app/api/stripe/checkout/topup/route.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_TOPUP_500",
+      "usages": [
+        "src/app/api/stripe/checkout/topup/route.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "STRIPE_WEBHOOK_SECRET",
+      "usages": [
+        "src/app/api/billing/stripe/webhook/route.ts",
+        "src/app/api/config/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/stripe/webhook/route.ts",
+        "src/app/api/webhooks/stripe/route.ts",
+        "src/lib/stripe.ts"
+      ],
+      "inExample": true,
+      "category": "Payments (Stripe)",
+      "required": false
+    },
+    {
+      "name": "SUBSCRIPTIONS_FORCE_OPEN",
+      "usages": [
+        "src/app/api/admin/launch-status/route.ts",
+        "src/app/api/billing/checkout/route.ts",
+        "src/app/api/checkout/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_ANON_KEY",
+      "usages": [
+        "src/lib/storage-docs.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "usages": [
+        "src/app/api/claims/list/route.ts",
+        "src/app/api/claims/resume/route.ts",
+        "src/app/api/claims/save/route.ts",
+        "src/app/api/claims/start/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/export/complete-packet/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/app/api/mockups/generate/route.ts",
+        "src/app/api/reports/generate/route.ts",
+        "src/app/api/retail/list/route.ts",
+        "src/app/api/retail/resume/route.ts",
+        "src/app/api/retail/save/route.ts",
+        "src/app/api/retail/start/route.ts",
+        "src/app/api/storage/signed-read/route.ts",
+        "src/app/api/storage/signed-upload/route.ts",
+        "src/app/api/supplements/generate/route.ts",
+        "src/app/api/system/truth/route.ts",
+        "src/app/api/upload/avatar/route.ts",
+        "src/app/api/upload/portfolio/route.ts",
+        "src/app/api/verify/damage/route.ts",
+        "src/lib/auth.ts",
+        "src/lib/export/zipBuilder.ts",
+        "src/lib/featureFlags.ts",
+        "src/lib/reports/pdf-utils.ts",
+        "src/lib/storage/claim-files.ts",
+        "src/lib/storage/getSignedUrl.ts",
+        "src/lib/storage/uploadPdf.ts",
+        "src/lib/storage-server.ts",
+        "src/lib/supabase-server.ts",
+        "src/lib/supabaseAdmin.ts",
+        "src/utils/supabase/server.ts",
+        "src/worker/helpers/storage.ts",
+        "scripts/check-env.js",
+        "scripts/process-uploads-worker.js",
+        "scripts/seed-demo-claim-pack.js",
+        "scripts/verify-branding-flow.js"
+      ],
+      "inExample": true,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_STORAGE_BUCKET_EXPORTS",
+      "usages": [
+        "src/app/api/mockups/generate/route.ts",
+        "src/app/api/reports/generate/route.ts",
+        "src/app/api/supplements/generate/route.ts",
+        "src/app/api/system/health/route.ts",
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_STORAGE_BUCKET_TEMPLATES",
+      "usages": [
+        "src/app/api/system/health/route.ts",
+        "src/app/api/system/storage-check/route.ts",
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_STORAGE_BUCKET_UPLOADS",
+      "usages": [
+        "src/app/api/system/health/route.ts",
+        "src/app/api/system/truth/route.ts"
+      ],
+      "inExample": false,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SUPABASE_URL",
+      "usages": [
+        "src/app/api/system/truth/route.ts",
+        "src/lib/storage-docs.ts",
+        "src/lib/storage-server.ts",
+        "src/lib/supabase-server.ts",
+        "src/utils/supabase/server.ts"
+      ],
+      "inExample": true,
+      "category": "Storage (Supabase)",
+      "required": false
+    },
+    {
+      "name": "SYNTHESIA_API_KEY",
+      "usages": [
+        "src/lib/ai/video/createVideoFromScript.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_AUTH_BYPASS",
+      "usages": [
+        "src/components/dashboard/AICardsGrid.tsx",
+        "src/lib/org/getActiveOrgContext.ts",
+        "src/lib/permissions.ts",
+        "src/lib/safeOrgContext.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_AUTH_ORG_ID",
+      "usages": [
+        "src/lib/org/getActiveOrgContext.ts",
+        "src/lib/permissions.ts",
+        "src/lib/safeOrgContext.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_AUTH_TOKEN",
+      "usages": [
+        "scripts/ai-tools-diagnostic.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_AUTH_USER_ID",
+      "usages": [
+        "src/lib/org/getActiveOrgContext.ts",
+        "src/lib/permissions.ts",
+        "src/lib/safeOrgContext.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_ORG",
+      "usages": [
+        "scripts/verify-branding-flow.js",
+        "scripts/verify-token-flow.js"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_PACK_ID",
+      "usages": [
+        "scripts/verify-token-flow.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TEST_URL",
+      "usages": [
+        "scripts/ai-smoke-test.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TIMEOUT_AI_ANALYSIS",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TIMEOUT_PDF_GENERATION",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TRADES_SERVICE_URL",
+      "usages": [
+        "src/lib/config/constants.ts",
+        "src/lib/services/tradesService.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TRADES_WEBHOOK_SECRET",
+      "usages": [
+        "src/app/api/webhooks/trades/route.ts"
+      ],
+      "inExample": false,
+      "category": "Webhooks",
+      "required": false
+    },
+    {
+      "name": "TWILIO_ACCOUNT_SID",
+      "usages": [
+        "src/app/api/notifications/sms/route.ts",
+        "src/lib/notifications/sms.ts",
+        "src/lib/services/notifications.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TWILIO_AUTH",
+      "usages": [
+        "src/lib/notify.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TWILIO_AUTH_TOKEN",
+      "usages": [
+        "src/app/api/notifications/sms/route.ts",
+        "src/lib/notifications/sms.ts",
+        "src/lib/services/notifications.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TWILIO_NUMBER",
+      "usages": [
+        "src/lib/notify.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TWILIO_PHONE_NUMBER",
+      "usages": [
+        "src/app/api/notifications/sms/route.ts",
+        "src/lib/notifications/sms.ts",
+        "src/lib/services/notifications.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "TWILIO_SID",
+      "usages": [
+        "src/lib/notify.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "UPSTASH_REDIS_REST_TOKEN",
+      "usages": [
+        "src/lib/artifacts/aiRateLimit.ts",
+        "src/lib/flagCache.ts",
+        "src/lib/jobs/pdfQueue.ts",
+        "src/lib/rate-limit.ts",
+        "src/lib/ratelimit.ts",
+        "src/lib/security/ratelimit.ts",
+        "src/lib/upstash.ts",
+        "scripts/test-redis-connection.js"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "UPSTASH_REDIS_REST_URL",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/artifacts/aiRateLimit.ts",
+        "src/lib/flagCache.ts",
+        "src/lib/jobs/pdfQueue.ts",
+        "src/lib/rate-limit.ts",
+        "src/lib/ratelimit.ts",
+        "src/lib/security/ratelimit.ts",
+        "src/lib/upstash.ts",
+        "scripts/check-env.js",
+        "scripts/test-redis-connection.js",
+        "scripts/verify-storage.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VAPID_PRIVATE_KEY",
+      "usages": [
+        "src/lib/notifications/push.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VAPID_PUBLIC_KEY",
+      "usages": [
+        "src/lib/notifications/push.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VAULT_ENCRYPTION_KEY",
+      "usages": [
+        "src/lib/secrets/vault.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL",
+      "usages": [
+        "src/app/api/diag/clerk/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/system/health/route.ts",
+        "src/lib/db/index.ts",
+        "src/lib/templates/renderer.ts",
+        "src/lib/validateEnv.ts",
+        "scripts/verify-env.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_BUILD_TIME",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/app/api/diag/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_CRON_SECRET",
+      "usages": [
+        "src/app/api/cron/trials/sweep/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_ENV",
+      "usages": [
+        "src/app/api/_build/route.ts",
+        "src/app/api/_diag/route.ts",
+        "src/app/api/_meta/route.ts",
+        "src/app/api/auth/debug/route.ts",
+        "src/app/api/build-info/route.ts",
+        "src/app/api/build-verify/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/debug/whoami/route.ts",
+        "src/app/api/deploy-info/_deploy/route.ts",
+        "src/app/api/deploy-info/route.ts",
+        "src/app/api/dev/throw/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/diag/version/route.ts",
+        "src/app/api/routes-manifest/route.ts",
+        "src/app/api/system/truth/route.ts",
+        "src/app/api/xdebug/claims-recovery/route.ts",
+        "src/app/api/xdebug/session/route.ts",
+        "src/app/api/xdebug/truth/route.ts",
+        "src/lib/env.ts",
+        "src/lib/validateEnv.ts",
+        "scripts/print-db-host.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_GIT_COMMIT_MESSAGE",
+      "usages": [
+        "src/app/api/deploy-info/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_GIT_COMMIT_REF",
+      "usages": [
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/app/api/_build/route.ts",
+        "src/app/api/build-info/route.ts",
+        "src/app/api/debug/whoami/route.ts",
+        "src/app/api/deploy-info/route.ts",
+        "src/app/api/diag/version/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_GIT_COMMIT_SHA",
+      "usages": [
+        "src/app/(app)/dashboard/page.tsx",
+        "src/app/(app)/settings/deployment/page.tsx",
+        "src/app/api/__truth/route.ts",
+        "src/app/api/_build/route.ts",
+        "src/app/api/_meta/route.ts",
+        "src/app/api/build-info/route.ts",
+        "src/app/api/build-verify/route.ts",
+        "src/app/api/debug/whoami/route.ts",
+        "src/app/api/deploy-info/_deploy/route.ts",
+        "src/app/api/deploy-info/route.ts",
+        "src/app/api/diag/route.ts",
+        "src/app/api/diag/version/route.ts",
+        "src/app/api/health/report/route.ts",
+        "src/app/api/health/route.ts",
+        "src/app/api/health/summary/route.ts",
+        "src/app/api/system/truth/route.ts",
+        "src/app/api/xdebug/session/route.ts",
+        "src/app/api/xdebug/truth/route.ts",
+        "src/app/boot-test/page.tsx",
+        "src/app/dev-dashboard/page.tsx",
+        "src/lib/validateEnv.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_PROJECT_PRODUCTION_URL",
+      "usages": [
+        "src/app/api/diag/version/route.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_REGION",
+      "usages": [
+        "src/app/api/_build/route.ts",
+        "src/app/api/deploy-info/_deploy/route.ts",
+        "src/lib/validateEnv.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_REQUEST_ID",
+      "usages": [
+        "src/lib/apiError.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VERCEL_URL",
+      "usages": [
+        "src/app/api/build-info/route.ts",
+        "src/app/api/build-verify/route.ts",
+        "src/app/api/deploy-info/_deploy/route.ts",
+        "src/app/api/health/summary/route.ts",
+        "src/app/api/share/create/route.ts",
+        "src/env/index.ts",
+        "src/instrumentation.ts",
+        "src/lib/env.ts",
+        "src/lib/fetchSafe.ts",
+        "src/lib/security/cors.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VIDEO_MOCK_MODE",
+      "usages": [
+        "src/lib/video/renderVideo.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VIDEO_REAL_ENABLED",
+      "usages": [
+        "src/lib/video/access.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VISUAL_CROSSING_API_KEY",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/worker/jobs/weather-analyze.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VISUALCROSSING_API_KEY",
+      "usages": [
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/weather/visualcrossing.ts",
+        "src/worker/jobs/weather-analyze.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "VITE_CLERK_PUBLISHABLE_KEY",
+      "usages": [
+        "src/app/api/diag/env/route.ts"
+      ],
+      "inExample": false,
+      "category": "Auth (Clerk)",
+      "required": false
+    },
+    {
+      "name": "WEATHER_API_KEY",
+      "usages": [
+        "scripts/mp47-audit-3-pdf-generation.js"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "WEATHER_DEV_KEY",
+      "usages": [
+        "src/app/api/weather/quick-dol/route.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "WEATHER_STACK_API_KEY",
+      "usages": [
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/weather/weatherstack.ts",
+        "src/worker/jobs/weather-analyze.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "WEATHERSTACK_API_KEY",
+      "usages": [
+        "src/app/api/ai/weather/run/route.ts",
+        "src/app/api/debug/env-check/route.ts",
+        "src/app/api/diag/env/route.ts",
+        "src/app/api/diag/ready/route.ts",
+        "src/app/api/health/comprehensive/route.ts",
+        "src/app/api/health/startup/route.ts",
+        "src/lib/weather/buildWeatherVerification.ts",
+        "src/lib/weather/weatherstack.ts",
+        "src/worker/jobs/weather-analyze.ts"
+      ],
+      "inExample": true,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "WHITELISTED_IP_RANGES",
+      "usages": [
+        "src/middleware/ipWhitelist.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    },
+    {
+      "name": "WHITELISTED_IPS",
+      "usages": [
+        "src/middleware/ipWhitelist.ts"
+      ],
+      "inExample": false,
+      "category": "Other",
+      "required": false
+    }
+  ],
+  "providers": {
+    "clerk": true,
+    "database": true,
+    "uploadthing": false,
+    "openai": true,
+    "stripe": true,
+    "mapbox": true
+  }
+}

@@ -1,0 +1,378 @@
+"use client";
+
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+interface NewMessageModalProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  orgId: string;
+  onSuccess?: () => void;
+  initialSubject?: string;
+  initialBody?: string;
+  initialRecipientType?: "contact" | "pro";
+  initialContactId?: string;
+  initialProProfileId?: string;
+}
+
+export default function NewMessageModal({
+  open,
+  onOpenChange,
+  orgId,
+  onSuccess,
+  initialSubject,
+  initialBody,
+  initialRecipientType = "contact",
+  initialContactId,
+  initialProProfileId,
+}: NewMessageModalProps) {
+  const [contacts, setContacts] = useState<any[]>([]);
+  const [claims, setClaims] = useState<any[]>([]);
+  const [connectedPros, setConnectedPros] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [recipientType, setRecipientType] = useState<"contact" | "pro">(initialRecipientType);
+
+  const [formData, setFormData] = useState({
+    contactId: "",
+    claimId: "",
+    subject: "",
+    body: "",
+    proProfileId: "",
+  });
+
+  useEffect(() => {
+    if (open) {
+      fetchData();
+      setRecipientType(initialRecipientType);
+      setFormData({
+        contactId: initialContactId || "",
+        claimId: "",
+        subject: initialSubject || "",
+        body: initialBody || "",
+        proProfileId: initialProProfileId || "",
+      });
+    }
+  }, [
+    open,
+    orgId,
+    initialRecipientType,
+    initialContactId,
+    initialProProfileId,
+    initialSubject,
+    initialBody,
+  ]);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      // Fetch contacts, claims, connected pros, AND connected clients
+      const [contactsRes, claimsRes, prosRes, clientConnectionsRes] = await Promise.all([
+        fetch(`/api/contacts?orgId=${orgId}`),
+        fetch(`/api/claims?orgId=${orgId}`),
+        fetch("/api/network/trades"),
+        fetch("/api/clients/connections"), // Connected clients via ClientProConnection
+      ]);
+
+      if (contactsRes.ok) {
+        const contactsData = await contactsRes.json();
+        // Merge with connected clients for complete contact list
+        let allContacts = contactsData.contacts || [];
+
+        // Add connected clients from ClientProConnection
+        if (clientConnectionsRes.ok) {
+          const clientData = await clientConnectionsRes.json();
+          const connectedClients = (clientData.clients || [])
+            .filter(
+              (c: any) =>
+                c.connection?.status === "connected" || c.connection?.status === "ACCEPTED"
+            )
+            .map((c: any) => ({
+              id: c.id,
+              firstName: c.name?.split(" ")[0] || c.name,
+              lastName: c.name?.split(" ").slice(1).join(" ") || "",
+              email: c.email,
+              phone: c.phone,
+              isClientConnection: true,
+            }));
+
+          // Dedupe by ID
+          const existingIds = new Set(allContacts.map((c: any) => c.id));
+          connectedClients.forEach((client: any) => {
+            if (!existingIds.has(client.id)) {
+              allContacts.push(client);
+            }
+          });
+        }
+
+        setContacts(allContacts);
+      }
+
+      if (claimsRes.ok) {
+        const claimsData = await claimsRes.json();
+        setClaims(claimsData.claims || []);
+      }
+
+      if (prosRes.ok) {
+        const prosData = await prosRes.json();
+        setConnectedPros(prosData.trades || []);
+      }
+    } catch (error) {
+      console.error("Failed to load data:", error);
+      toast.error("Failed to load recipients and claims");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (recipientType === "contact" && !formData.contactId) {
+      toast.error("Contact is required");
+      return;
+    }
+
+    if (recipientType === "pro" && !formData.proProfileId) {
+      toast.error("Connected pro is required");
+      return;
+    }
+
+    if (!formData.body) {
+      toast.error("Message body is required");
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      // Determine which endpoint to use based on recipient
+      const selectedContact = contacts.find((c: any) => c.id === formData.contactId);
+      const isClientConnection = selectedContact?.isClientConnection;
+
+      let res: Response;
+
+      if (recipientType === "pro") {
+        // Pro-to-pro via trades network
+        res = await fetch("/api/trades/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            toProfileId: formData.proProfileId,
+            subject: formData.subject || "New Message",
+            message: formData.body,
+          }),
+        });
+      } else if (isClientConnection) {
+        // Pro-to-client via ClientProConnection system
+        res = await fetch("/api/messages/pro-to-client/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            clientId: formData.contactId,
+            subject: formData.subject || "New Message",
+            body: formData.body,
+          }),
+        });
+      } else {
+        // Pro-to-contact via CRM system
+        res = await fetch("/api/messages/create", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            orgId,
+            contactId: formData.contactId,
+            claimId: formData.claimId || null,
+            subject: formData.subject || "New Message",
+            body: formData.body,
+          }),
+        });
+      }
+
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to send message");
+      }
+
+      toast.success("Message sent successfully");
+      setFormData({
+        contactId: "",
+        claimId: "",
+        subject: "",
+        body: "",
+        proProfileId: "",
+      });
+      onOpenChange(false);
+      onSuccess?.();
+    } catch (error: any) {
+      console.error("Failed to send message:", error);
+      toast.error(error.message || "Failed to send message");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>New Message</DialogTitle>
+        </DialogHeader>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="recipient-type">Recipient Type</Label>
+              <Select
+                value={recipientType}
+                onValueChange={(value) => setRecipientType(value as "contact" | "pro")}
+              >
+                <SelectTrigger id="recipient-type">
+                  <SelectValue placeholder="Select recipient type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="contact">Client / Contact</SelectItem>
+                  <SelectItem value="pro">Connected Pro</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact">
+                {recipientType === "pro" ? "Connected Pro *" : "Contact *"}
+              </Label>
+              {recipientType === "pro" ? (
+                <Select
+                  value={formData.proProfileId}
+                  onValueChange={(value) => setFormData({ ...formData, proProfileId: value })}
+                >
+                  <SelectTrigger id="contact">
+                    <SelectValue placeholder="Select a connected pro" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {connectedPros.length === 0 ? (
+                      <div className="p-2 text-sm text-slate-500">No connected pros found</div>
+                    ) : (
+                      connectedPros.map((pro) => (
+                        <SelectItem key={pro.id} value={pro.id}>
+                          {pro.companyName || pro.contactName || "Connected Pro"}
+                          {pro.tradeType && ` • ${pro.tradeType}`}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              ) : (
+                <Select
+                  value={formData.contactId}
+                  onValueChange={(value) => setFormData({ ...formData, contactId: value })}
+                >
+                  <SelectTrigger id="contact">
+                    <SelectValue placeholder="Select a contact" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {contacts.length === 0 ? (
+                      <div className="p-2 text-sm text-slate-500">No contacts found</div>
+                    ) : (
+                      contacts.map((contact) => (
+                        <SelectItem key={contact.id} value={contact.id}>
+                          {contact.firstName || contact.firstName}{" "}
+                          {contact.lastName || contact.lastName}
+                          {contact.email && ` (${contact.email})`}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+
+            {recipientType === "contact" && (
+              <div className="space-y-2">
+                <Label htmlFor="claim">Claim (Optional)</Label>
+                <Select
+                  value={formData.claimId}
+                  onValueChange={(value) => setFormData({ ...formData, claimId: value })}
+                >
+                  <SelectTrigger id="claim">
+                    <SelectValue placeholder="Attach to a claim (optional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {claims.length === 0 ? (
+                      <div className="p-2 text-sm text-slate-500">No claims found</div>
+                    ) : (
+                      claims.map((claim) => (
+                        <SelectItem key={claim.id} value={claim.id}>
+                          {claim.claimNumber} - {claim.title}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label htmlFor="subject">Subject</Label>
+              <Input
+                id="subject"
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                placeholder="Message subject (optional)"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="body">Message *</Label>
+              <Textarea
+                id="body"
+                value={formData.body}
+                onChange={(e) => setFormData({ ...formData, body: e.target.value })}
+                placeholder="Type your message here..."
+                rows={6}
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting}>
+                {submitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Sending...
+                  </>
+                ) : (
+                  "Send Message"
+                )}
+              </Button>
+            </div>
+          </form>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,0 +1,29 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
+
+import { runDominusAutomations } from "@/lib/intel/automation/engine";
+
+export async function POST(req: Request) {
+  try {
+    const user = await currentUser();
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const orgId = (user.publicMetadata?.orgId as string) || user.id;
+    const { claimId } = await req.json();
+
+    if (!claimId) {
+      return NextResponse.json({ error: "claimId required" }, { status: 400 });
+    }
+
+    const result = await runDominusAutomations(claimId, orgId);
+    return NextResponse.json(result);
+  } catch (error: any) {
+    console.error("[Automation Run Error]", error);
+    return NextResponse.json(
+      { error: error.message || "Failed to run automation" },
+      { status: 500 }
+    );
+  }
+}

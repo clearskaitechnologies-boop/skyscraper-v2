@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="AI Damage Builder Placeholder">
+  <style>
+    .bg{fill:#0A1A2F}
+    .card{fill:#ffffff;rx:18}
+    .muted{fill:#94a3b8;font:500 16px/1.3 Inter,system-ui,-apple-system,sans-serif}
+    .title{fill:#0A1A2F;font:800 28px/1.2 Inter,system-ui,-apple-system,sans-serif}
+    .k{fill:#334155;font:600 18px Inter,system-ui,-apple-system,sans-serif}
+    .v{fill:#0A1A2F;font:600 18px Inter,system-ui,-apple-system,sans-serif}
+    .cap{fill:#117CFF;font:700 18px Inter,system-ui,-apple-system,sans-serif}
+    .chip{fill:#117CFF;rx:10}
+    .frame{fill:none;stroke:#CBD5E1;stroke-width:2;stroke-dasharray:6 6}
+    .ghost{fill:#E2E8F0;rx:10}
+    .logo{fill:#E2E8F0;rx:8}
+  </style>
+  <rect class="bg" x="0" y="0" width="1600" height="900"></rect>
+  <!-- Canvas -->
+  <rect class="card" x="60" y="60" width="1480" height="780"></rect>
+  <!-- Header -->
+  <rect class="logo" x="90" y="88" width="160" height="56"></rect>
+  <text class="muted" x="1260" y="108">Your Brand Badge / Phone / Email / AZROC</text>
+  <text class="muted" x="1260" y="136">Auto-fills from Company Branding</text>
+  <!-- Left: Client block -->
+  <rect class="ghost" x="90" y="170" width="520" height="200"></rect>
+  <text class="title" x="110" y="210">Client Info</text>
+  <text class="k" x="110" y="240">Name / Address / Date of Loss</text>
+  <text class="k" x="110" y="270">Map Pin + “Open in Maps” QR</text>
+  <text class="k" x="110" y="300">Job Type / System / Stories</text>
+  <!-- Center: Roof photo with callouts -->
+  <rect class="frame" x="640" y="170" width="850" height="400"></rect>
+  <text class="muted" x="700" y="200">Roof aerial image (auto from photos)</text>
+  <rect class="chip" x="660" y="220" width="150" height="34"></rect><text class="cap" x="675" y="243">Hail Strike</text>
+  <rect class="chip" x="840" y="280" width="170" height="34"></rect><text class="cap" x="855" y="303">Wind Crease</text>
+  <rect class="chip" x="1040" y="345" width="200" height="34"></rect><text class="cap" x="1055" y="368">Missing Shingle</text>
+  <!-- Right: Analytics cards -->
+  <rect class="ghost" x="1160" y="600" width="330" height="60"></rect>
+  <rect class="ghost" x="1160" y="670" width="330" height="60"></rect>
+  <rect class="ghost" x="1160" y="740" width="330" height="60"></rect>
+  <text class="k" x="1180" y="636">Damage Index • Roof Age • Material</text>
+  <text class="muted" x="1180" y="705">Auto labels + values from AI</text>
+  <text class="muted" x="1180" y="775">Carrier-ready evidence</text>
+  <!-- Bottom-left: thumbnails -->
+  <rect class="ghost" x="90" y="400" width="520" height="170"></rect>
+  <text class="k" x="110" y="435">Photo Thumbnails (auto)</text>
+  <text class="muted" x="110" y="465">Front • Rear • Left • Right • Closeups</text>
+</svg>

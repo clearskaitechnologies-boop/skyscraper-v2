@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-label="Production Plan Placeholder">
+  <style>
+    .bg{fill:#0A1A2F}.panel{fill:#fff;rx:16}
+    .title{fill:#0A1A2F;font:800 28px Inter,system-ui,sans-serif}
+    .step{fill:#F8FAFC;rx:12}.muted{fill:#475569;font:600 16px Inter,system-ui,sans-serif}
+    .bar{fill:#117CFF;rx:8}
+  </style>
+  <rect class="bg" width="1600" height="900"></rect>
+  <rect class="panel" x="60" y="60" width="1480" height="780"></rect>
+  <text class="title" x="90" y="120">Production Plan &amp; Timeline</text>
+  <rect class="step" x="90" y="160" width="400" height="90"></rect><text class="muted" x="110" y="205">Tear-Off</text>
+  <rect class="step" x="510" y="160" width="400" height="90"></rect><text class="muted" x="530" y="205">Dry-In</text>
+  <rect class="step" x="930" y="160" width="400" height="90"></rect><text class="muted" x="950" y="205">Install + QA</text>
+  <rect class="bar" x="90" y="270" width="1240" height="14"></rect>
+  <text class="muted" x="90" y="320">Crew • Dumpster • Materials • Inspections</text>
+</svg>

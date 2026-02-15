@@ -1,0 +1,103 @@
+// NOTE: Placeholder draft module intentionally disabled (no JobDraft model).
+// Removed deprecated jobDraft references to reduce schema mismatch noise.
+
+import prisma from "@/lib/prisma";
+
+// Prisma singleton imported from @/lib/db/prisma
+
+export type UpsertDraftPayload = {
+  draftId?: string;
+  step: number;
+  data: any;
+};
+
+/**
+ * Upsert a job draft for the given user
+ */
+export async function upsertDraft(
+  userId: string,
+  orgId: string | null,
+  payload: UpsertDraftPayload
+): Promise<any> {
+  // const { draftId, step, data } = payload;
+  throw new Error("Draft system not implemented");
+
+  // if (draftId) {
+  //   // Update existing draft
+  //   return prisma.jobDraft.update({
+  //     where: {
+  //       id: draftId,
+  //       userId,
+  //     },
+  //     data: {
+  //       step,
+  //       data,
+  //       updatedAt: new Date(),
+  //     },
+  //   });
+  // }
+
+  // // Check if user already has a draft for this org
+  // const existing = await prisma.jobDraft.findFirst({
+  //   where: {
+  //     userId,
+  //     orgId: orgId ?? undefined,
+  //   },
+  //   orderBy: {
+  //     updatedAt: "desc",
+  //   },
+  // });
+
+  // if (existing) {
+  //   // Update the most recent draft
+  //   return prisma.jobDraft.update({
+  //     where: { id: existing.id },
+  //     data: {
+  //       step,
+  //       data,
+  //       updatedAt: new Date(),
+  //     },
+  //   });
+  // }
+
+  // // Create new draft
+  // return prisma.jobDraft.create({
+  //   data: {
+  //     userId,
+  //     orgId: orgId ?? undefined,
+  //     step,
+  //     data,
+  //   },
+  // });
+}
+
+/**
+ * Get the most recent draft for a user
+ */
+export async function getLatestDraft(userId: string, orgId: string | null): Promise<any> {
+  throw new Error("Draft system not implemented");
+
+  // return prisma.jobDraft.findFirst({
+  //   where: {
+  //     userId,
+  //     orgId: orgId ?? undefined,
+  //   },
+  //   orderBy: {
+  //     updatedAt: "desc",
+  //   },
+  // });
+}
+
+/**
+ * Delete a draft
+ */
+export async function deleteDraft(draftId: string, userId: string): Promise<any> {
+  throw new Error("Draft system not implemented");
+
+  // return prisma.jobDraft.delete({
+  //   where: {
+  //     id: draftId,
+  //     userId,
+  //   },
+  // });
+}

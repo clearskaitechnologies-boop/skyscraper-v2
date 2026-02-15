@@ -1,0 +1,13 @@
+packages:
+  - "."
+
+ignoredBuiltDependencies:
+  - puppeteer
+
+onlyBuiltDependencies:
+  - "@prisma/client"
+  - "@prisma/engines"
+  - "@swc/core"
+  - core-js
+  - esbuild
+  - prisma

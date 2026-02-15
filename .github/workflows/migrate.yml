@@ -1,0 +1,100 @@
+name: Database Migration
+
+on:
+  workflow_dispatch:
+    inputs:
+      migration_file:
+        description: "Migration file to run (relative to db/migrations/)"
+        required: true
+        type: string
+      environment:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+  release:
+    types: [published]
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client
+
+      - name: Verify migration file exists
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          MIGRATION_PATH="db/migrations/${{ github.event.inputs.migration_file }}"
+          if [ ! -f "$MIGRATION_PATH" ]; then
+            echo "❌ Migration file not found: $MIGRATION_PATH"
+            exit 1
+          fi
+          echo "✅ Migration file found: $MIGRATION_PATH"
+
+      - name: Set database URL (staging)
+        if: github.event.inputs.environment == 'staging'
+        run: echo "DATABASE_URL=${{ secrets.STAGING_DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Set database URL (production)
+        if: github.event.inputs.environment == 'production' || github.event_name == 'release'
+        run: echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> $GITHUB_ENV
+
+      - name: Backup database
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          BACKUP_FILE="backup_${TIMESTAMP}.sql"
+          echo "📦 Creating backup: $BACKUP_FILE"
+          pg_dump "$DATABASE_URL" > "$BACKUP_FILE"
+          echo "✅ Backup created successfully"
+          echo "BACKUP_FILE=$BACKUP_FILE" >> $GITHUB_ENV
+
+      - name: Run migration (manual)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          MIGRATION_PATH="db/migrations/${{ github.event.inputs.migration_file }}"
+          echo "🔄 Running migration: $MIGRATION_PATH"
+          psql "$DATABASE_URL" -f "$MIGRATION_PATH"
+          echo "✅ Migration completed successfully"
+
+      - name: Run all pending migrations (release)
+        if: github.event_name == 'release'
+        run: |
+          echo "🔄 Running all pending migrations..."
+          for migration in db/migrations/*.sql; do
+            echo "Applying: $migration"
+            psql "$DATABASE_URL" -f "$migration" || echo "⚠️  Migration may have already been applied: $migration"
+          done
+          echo "✅ All migrations processed"
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ env.BACKUP_FILE }}
+          path: ${{ env.BACKUP_FILE }}
+          retention-days: 30
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Migration failed! Backup available as artifact: ${{ env.BACKUP_FILE }}"
+          echo "To restore: psql \$DATABASE_URL -f ${{ env.BACKUP_FILE }}"

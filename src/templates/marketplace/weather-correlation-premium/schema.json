@@ -1,0 +1,11 @@
+{
+  "id": "weather-correlation-premium",
+  "name": "Weather Correlation Report",
+  "category": "analysis",
+  "description": "Verify loss dates with NOAA radar, METAR data, and storm archives. Essential for defending claims against carrier disputes.",
+  "version": "1.0.0",
+  "tags": ["weather", "correlation", "noaa", "verification"],
+  "isMarketplace": true,
+  "isPremium": true,
+  "estimatedPages": 2
+}

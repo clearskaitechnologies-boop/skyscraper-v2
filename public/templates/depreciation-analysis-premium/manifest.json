@@ -1,0 +1,23 @@
+{
+  "slug": "depreciation-analysis-premium",
+  "title": "Depreciation Analysis Premium",
+  "category": "Estimates",
+  "version": "1.0.0",
+  "assets": {
+    "previewPdf": "/templates/depreciation-analysis-premium/preview.pdf",
+    "thumbnail": "/templates/depreciation-analysis-premium/thumbnail.png"
+  },
+  "schemaVersion": "report-schema-v1",
+  "sections": [
+    "CompanyBranding",
+    "ClientAndClaim",
+    "AssignedEmployee",
+    "ReportPurposeAndSummary",
+    "DamageFindings",
+    "PhotoSummary",
+    "WeatherVerification",
+    "ScopeAndLineItems",
+    "Recommendations",
+    "Appendix"
+  ]
+}

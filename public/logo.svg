@@ -1,0 +1,59 @@
+<!-- SkaiScraper™ Logo SVG -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="primary-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#081A2F"/>
+      <stop offset="100%" style="stop-color:#147BFF"/>
+    </linearGradient>
+    <linearGradient id="accent-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#147BFF"/>
+      <stop offset="100%" style="stop-color:#F4B42A"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#primary-gradient)" stroke="#147BFF" stroke-width="8"/>
+  
+  <!-- House/roof icon -->
+  <g transform="translate(256, 256) scale(1.5)">
+    <!-- Roof -->
+    <path d="M-80 -20 L0 -80 L80 -20 L60 -20 L60 40 L-60 40 L-60 -20 Z" 
+          fill="white" stroke="url(#accent-gradient)" stroke-width="3"/>
+    
+    <!-- Roof tiles/shingles -->
+    <g fill="#F4B42A" opacity="0.8">
+      <rect x="-50" y="-45" width="20" height="8" rx="2"/>
+      <rect x="-20" y="-45" width="20" height="8" rx="2"/>
+      <rect x="10" y="-45" width="20" height="8" rx="2"/>
+      <rect x="40" y="-45" width="20" height="8" rx="2"/>
+      
+      <rect x="-40" y="-35" width="20" height="8" rx="2"/>
+      <rect x="-10" y="-35" width="20" height="8" rx="2"/>
+      <rect x="20" y="-35" width="20" height="8" rx="2"/>
+      <rect x="50" y="-35" width="20" height="8" rx="2"/>
+    </g>
+    
+    <!-- AI/scan lines -->
+    <g stroke="#147BFF" stroke-width="2" opacity="0.6">
+      <line x1="-70" y1="10" x2="70" y2="10"/>
+      <line x1="-70" y1="20" x2="70" y2="20"/>
+      <line x1="-70" y1="30" x2="70" y2="30"/>
+    </g>
+    
+    <!-- Scanner/viewfinder corners -->
+    <g stroke="#F4B42A" stroke-width="3" fill="none">
+      <path d="M-70 -10 L-70 -30 L-50 -30"/>
+      <path d="M70 -10 L70 -30 L50 -30"/>
+      <path d="M-70 50 L-70 30 L-50 30"/>
+      <path d="M70 50 L70 30 L50 30"/>
+    </g>
+  </g>
+  
+  <!-- SkaiScraper text arc (optional, for larger versions) -->
+  <path id="text-arc" d="M 100 400 A 200 200 0 0 1 412 400" fill="none"/>
+  <text font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white">
+    <textPath href="#text-arc" startOffset="50%" text-anchor="middle">
+      SKAISCRAPER
+    </textPath>
+  </text>
+</svg>
