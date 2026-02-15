@@ -57,9 +57,19 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!clerkKey) {
+    console.error("❌ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set! Auth will not work.");
+    console.error(
+      "Available env vars:",
+      Object.keys(process.env).filter((k) => k.includes("CLERK") || k.includes("PUBLIC"))
+    );
+  }
+
   return (
     <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      publishableKey={clerkKey || ""}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
       afterSignInUrl="/after-sign-in"
