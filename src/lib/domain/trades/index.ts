@@ -2,6 +2,7 @@
  * Trades Domain Services
  *
  * Pure business logic functions - no HTTP, no Next.js, no UI.
+ * All HTTP handlers should call these services.
  */
 
 import prisma from "@/lib/prisma";
@@ -13,6 +14,94 @@ import prisma from "@/lib/prisma";
 export interface AcceptConnectionInput {
   connectionId?: string;
   inviteId?: string;
+}
+
+export interface RemoveConnectionInput {
+  profileId: string;
+  connectionId: string;
+}
+
+export interface BlockUserInput {
+  profileId: string;
+  targetProfileId: string;
+  reason?: string;
+}
+
+export interface SendRequestInput {
+  profileId: string;
+  targetProfileId: string;
+  message?: string;
+}
+
+// Company types
+export interface UpdateCompanyCoverInput {
+  companyId: string;
+  coverUrl: string;
+}
+
+export interface AddEmployeeInput {
+  companyId: string;
+  email: string;
+  role?: string;
+}
+
+export interface RemoveEmployeeInput {
+  companyId: string;
+  employeeId: string;
+}
+
+export interface HandleJoinRequestInput {
+  companyId: string;
+  requestId: string;
+  approve: boolean;
+  message?: string;
+}
+
+export interface InviteSeatInput {
+  companyId: string;
+  invitedBy: string;
+  email: string;
+  role?: string;
+}
+
+export interface AcceptSeatInput {
+  userId: string;
+  inviteId: string;
+}
+
+export interface UpdateCompanyInfoInput {
+  companyId: string;
+  name?: string;
+  description?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  address?: Record<string, unknown>;
+}
+
+// Profile types
+export interface UpdateProfileInput {
+  profileId: string;
+  data: Record<string, unknown>;
+}
+
+export interface UpdateProfilePhotoInput {
+  profileId: string;
+  photoUrl: string;
+}
+
+export interface AddCertificationInput {
+  profileId: string;
+  name: string;
+  issuer: string;
+  issuedAt?: Date;
+  expiresAt?: Date;
+  documentUrl?: string;
+}
+
+export interface RemoveCertificationInput {
+  profileId: string;
+  certificationId: string;
 }
 
 export interface DeclineConnectionInput {
@@ -266,4 +355,299 @@ export async function convertLead(
   }
 
   return { success: true, lead, claim };
+}
+
+// ============================================================================
+// Connection Services (from connections/actions)
+// ============================================================================
+
+/**
+ * Remove a connection
+ */
+export async function removeConnection(input: RemoveConnectionInput) {
+  const connection = await prisma.tradesConnection.findFirst({
+    where: {
+      id: input.connectionId,
+      OR: [{ requesterId: input.profileId }, { targetId: input.profileId }],
+      status: "accepted",
+    },
+  });
+
+  if (!connection) {
+    throw new Error("Connection not found");
+  }
+
+  await prisma.tradesConnection.delete({
+    where: { id: input.connectionId },
+  });
+
+  return { success: true, message: "Connection removed" };
+}
+
+/**
+ * Block a user
+ */
+export async function blockUser(input: BlockUserInput) {
+  await prisma.tradesBlock.create({
+    data: {
+      blockerId: input.profileId,
+      blockedId: input.targetProfileId,
+      reason: input.reason,
+    },
+  });
+
+  // Remove any existing connections
+  await prisma.tradesConnection.deleteMany({
+    where: {
+      OR: [
+        { requesterId: input.profileId, targetId: input.targetProfileId },
+        { requesterId: input.targetProfileId, targetId: input.profileId },
+      ],
+    },
+  });
+
+  return { success: true, message: "User blocked" };
+}
+
+/**
+ * Send connection request (with block check)
+ */
+export async function sendRequest(input: SendRequestInput) {
+  // Check if connection already exists
+  const existing = await prisma.tradesConnection.findFirst({
+    where: {
+      OR: [
+        { requesterId: input.profileId, targetId: input.targetProfileId },
+        { requesterId: input.targetProfileId, targetId: input.profileId },
+      ],
+    },
+  });
+
+  if (existing) {
+    throw new Error("Connection already exists or pending");
+  }
+
+  // Check if blocked
+  const blocked = await prisma.tradesBlock.findFirst({
+    where: {
+      OR: [
+        { blockerId: input.profileId, blockedId: input.targetProfileId },
+        { blockerId: input.targetProfileId, blockedId: input.profileId },
+      ],
+    },
+  });
+
+  if (blocked) {
+    throw new Error("Cannot connect with this user");
+  }
+
+  const connection = await prisma.tradesConnection.create({
+    data: {
+      requesterId: input.profileId,
+      targetId: input.targetProfileId,
+      message: input.message,
+      status: "pending",
+    },
+  });
+
+  return { success: true, connection };
+}
+
+// ============================================================================
+// Company Services (from company/actions)
+// ============================================================================
+
+/**
+ * Update company cover photo
+ */
+export async function updateCompanyCover(input: UpdateCompanyCoverInput) {
+  await prisma.tradesCompany.update({
+    where: { id: input.companyId },
+    data: { coverPhotoUrl: input.coverUrl },
+  });
+
+  return { success: true };
+}
+
+/**
+ * Add employee to company
+ */
+export async function addEmployee(input: AddEmployeeInput) {
+  const employee = await prisma.tradesCompanyEmployee.create({
+    data: {
+      companyId: input.companyId,
+      email: input.email,
+      role: input.role || "member",
+      status: "invited",
+    },
+  });
+
+  return { success: true, employee };
+}
+
+/**
+ * Remove employee from company
+ */
+export async function removeEmployee(input: RemoveEmployeeInput) {
+  await prisma.tradesCompanyEmployee.delete({
+    where: {
+      id: input.employeeId,
+      companyId: input.companyId,
+    },
+  });
+
+  return { success: true };
+}
+
+/**
+ * Handle join request
+ */
+export async function handleJoinRequest(input: HandleJoinRequestInput) {
+  if (input.approve) {
+    await prisma.tradesJoinRequest.update({
+      where: { id: input.requestId },
+      data: { status: "approved", approvedAt: new Date() },
+    });
+
+    // Add as member
+    const request = await prisma.tradesJoinRequest.findUnique({
+      where: { id: input.requestId },
+    });
+
+    if (request) {
+      await prisma.tradesCompanyMember.create({
+        data: {
+          companyId: input.companyId,
+          userId: request.userId,
+          role: "member",
+        },
+      });
+    }
+  } else {
+    await prisma.tradesJoinRequest.update({
+      where: { id: input.requestId },
+      data: { status: "rejected", rejectionMessage: input.message },
+    });
+  }
+
+  return { success: true };
+}
+
+/**
+ * Invite a seat
+ */
+export async function inviteSeat(input: InviteSeatInput) {
+  const invite = await prisma.tradesSeatInvite.create({
+    data: {
+      companyId: input.companyId,
+      email: input.email,
+      role: input.role || "member",
+      invitedBy: input.invitedBy,
+      status: "pending",
+    },
+  });
+
+  return { success: true, invite };
+}
+
+/**
+ * Accept seat invite
+ */
+export async function acceptSeat(input: AcceptSeatInput) {
+  const invite = await prisma.tradesSeatInvite.findUnique({
+    where: { id: input.inviteId },
+  });
+
+  if (!invite) {
+    throw new Error("Invite not found");
+  }
+
+  await prisma.tradesSeatInvite.update({
+    where: { id: input.inviteId },
+    data: { status: "accepted", acceptedAt: new Date() },
+  });
+
+  await prisma.tradesCompanyMember.create({
+    data: {
+      companyId: invite.companyId,
+      userId: input.userId,
+      role: invite.role || "member",
+    },
+  });
+
+  return { success: true };
+}
+
+/**
+ * Update company info
+ */
+export async function updateCompanyInfo(input: UpdateCompanyInfoInput) {
+  const { companyId, ...updateData } = input;
+
+  await prisma.tradesCompany.update({
+    where: { id: companyId },
+    data: updateData,
+  });
+
+  return { success: true };
+}
+
+// ============================================================================
+// Profile Services (from profile/actions)
+// ============================================================================
+
+/**
+ * Update profile
+ */
+export async function updateProfile(input: UpdateProfileInput) {
+  await prisma.tradesProfile.update({
+    where: { id: input.profileId },
+    data: input.data,
+  });
+
+  return { success: true };
+}
+
+/**
+ * Update profile photo
+ */
+export async function updateProfilePhoto(input: UpdateProfilePhotoInput) {
+  await prisma.tradesProfile.update({
+    where: { id: input.profileId },
+    data: { logoUrl: input.photoUrl },
+  });
+
+  return { success: true };
+}
+
+/**
+ * Add certification
+ */
+export async function addCertification(input: AddCertificationInput) {
+  const cert = await prisma.tradesCertification.create({
+    data: {
+      profileId: input.profileId,
+      name: input.name,
+      issuer: input.issuer,
+      issuedAt: input.issuedAt,
+      expiresAt: input.expiresAt,
+      documentUrl: input.documentUrl,
+    },
+  });
+
+  return { success: true, certification: cert };
+}
+
+/**
+ * Remove certification
+ */
+export async function removeCertification(input: RemoveCertificationInput) {
+  await prisma.tradesCertification.delete({
+    where: {
+      id: input.certificationId,
+      profileId: input.profileId,
+    },
+  });
+
+  return { success: true };
 }

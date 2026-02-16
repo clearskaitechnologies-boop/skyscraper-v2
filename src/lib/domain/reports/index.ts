@@ -320,3 +320,162 @@ export async function createEmailDraft(
 
   return { success: true, draft };
 }
+
+// ============================================================================
+// Batch Report Services (from reports/actions)
+// ============================================================================
+
+export interface GenerateFromTemplateInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  templateId: string;
+  variables?: Record<string, unknown>;
+}
+
+export interface ComposeReportInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  sections: Array<{
+    key: string;
+    content?: string;
+    include?: boolean;
+  }>;
+}
+
+export interface GenerateSummaryInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  format?: "brief" | "detailed" | "executive";
+}
+
+export interface GenerateSupplementInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  originalReportId?: string;
+  newDamage?: Record<string, unknown>[];
+}
+
+export interface QueueReportInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  reportType: string;
+  priority?: "low" | "normal" | "high";
+  scheduledFor?: string;
+}
+
+/**
+ * Generate report from template
+ */
+export async function generateFromTemplate(input: GenerateFromTemplateInput) {
+  const { claimId, orgId, userId, templateId, variables } = input;
+
+  // Verify template exists
+  const template = await prisma.reportTemplate.findFirst({
+    where: { id: templateId, orgId },
+  });
+
+  if (!template) {
+    throw new Error("Template not found");
+  }
+
+  const report = await prisma.ai_reports.create({
+    data: {
+      claimId,
+      orgId,
+      reportType: template.type,
+      templateId,
+      status: "generating",
+      createdBy: userId,
+      variables: variables || {},
+    },
+  });
+
+  return { success: true, report: { id: report.id } };
+}
+
+/**
+ * Compose report with sections
+ */
+export async function composeReport(input: ComposeReportInput) {
+  const { claimId, orgId, userId, sections } = input;
+
+  const report = await prisma.ai_reports.create({
+    data: {
+      claimId,
+      orgId,
+      reportType: "composed",
+      status: "draft",
+      createdBy: userId,
+      sections,
+    },
+  });
+
+  return { success: true, report: { id: report.id } };
+}
+
+/**
+ * Generate summary report
+ */
+export async function generateSummary(input: GenerateSummaryInput) {
+  const { claimId, orgId, userId, format } = input;
+
+  const report = await prisma.ai_reports.create({
+    data: {
+      claimId,
+      orgId,
+      reportType: "summary",
+      status: "generating",
+      createdBy: userId,
+      options: { format: format || "detailed" },
+    },
+  });
+
+  return { success: true, report: { id: report.id } };
+}
+
+/**
+ * Generate supplement report
+ */
+export async function generateSupplement(input: GenerateSupplementInput) {
+  const { claimId, orgId, userId, originalReportId, newDamage } = input;
+
+  const report = await prisma.ai_reports.create({
+    data: {
+      claimId,
+      orgId,
+      reportType: "supplement",
+      status: "generating",
+      createdBy: userId,
+      parentReportId: originalReportId,
+      supplementData: { newDamage: newDamage || [] },
+    },
+  });
+
+  return { success: true, report: { id: report.id } };
+}
+
+/**
+ * Queue report for generation
+ */
+export async function queueReport(input: QueueReportInput) {
+  const { claimId, orgId, userId, reportType, priority, scheduledFor } = input;
+
+  const queueItem = await prisma.reportQueue.create({
+    data: {
+      claimId,
+      orgId,
+      reportType,
+      priority: priority || "normal",
+      scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
+      createdBy: userId,
+      status: "queued",
+    },
+  });
+
+  return { success: true, queueItem: { id: queueItem.id } };
+}

@@ -2,9 +2,27 @@ export { AccuLynxClient } from "./acculynx-client";
 export type {
   AccuLynxConfig,
   AccuLynxContact,
-  AccuLynxJob,
   AccuLynxDocument,
+  AccuLynxJob,
 } from "./acculynx-client";
+export { mapContact, mapJobToJob, mapJobToLead, mapJobToProperty } from "./acculynx-mapper";
 export { runAccuLynxMigration } from "./migration-engine";
 export type { MigrationOptions, MigrationResult } from "./migration-engine";
-export { mapContact, mapJobToJob, mapJobToLead, mapJobToProperty } from "./acculynx-mapper";
+
+// JobNimbus
+export { JobNimbusClient } from "./jobnimbus-client";
+export type {
+  JobNimbusConfig,
+  JobNimbusContact,
+  JobNimbusFile,
+  JobNimbusJob,
+} from "./jobnimbus-client";
+export { JobNimbusMigrationEngine } from "./jobnimbus-engine";
+export {
+  mapAllData as mapAllJobNimbusData,
+  mapActivity as mapJobNimbusActivity,
+  mapContact as mapJobNimbusContact,
+  mapFile as mapJobNimbusFile,
+  mapJob as mapJobNimbusJob,
+  mapTask as mapJobNimbusTask,
+} from "./jobnimbus-mapper";

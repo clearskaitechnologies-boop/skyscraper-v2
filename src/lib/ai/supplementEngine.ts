@@ -1,6 +1,6 @@
 /**
  * PHASE 42: Auto-Supplement Engine
- * 
+ *
  * Core engine for generating insurance claim supplements:
  * - Extract carrier scope from PDF
  * - Compare contractor vs carrier scope
@@ -9,13 +9,10 @@
  * - Create negotiation scripts and final packets
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import { type ScopeLineItem } from "./carrierComplianceEngine";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export interface ScopeComparison {
   missingItems: ScopeLineItem[]; // In contractor scope but not carrier
@@ -133,8 +130,9 @@ export function compareScopes(
   // Find missing items (in contractor scope but not carrier)
   for (const contractorItem of contractorScope) {
     const carrierItem = carrierScope.find(
-      c => c.code === contractorItem.code || 
-           c.description.toLowerCase() === contractorItem.description.toLowerCase()
+      (c) =>
+        c.code === contractorItem.code ||
+        c.description.toLowerCase() === contractorItem.description.toLowerCase()
     );
 
     if (!carrierItem) {
@@ -145,7 +143,8 @@ export function compareScopes(
       const carrierTotal = carrierItem.totalPrice;
       const difference = contractorTotal - carrierTotal;
 
-      if (difference > 50) { // More than $50 difference
+      if (difference > 50) {
+        // More than $50 difference
         underpaidItems.push({
           item: contractorItem,
           contractorAmount: contractorTotal,
@@ -195,8 +194,9 @@ export async function detectCodeUpgrades(
   if (state.toLowerCase() === "arizona" || state.toLowerCase() === "az") {
     // IRC 2021 - Ventilation requirements
     const hasProperVentilation = existingScope.some(
-      item => item.description.toLowerCase().includes("vent") ||
-              item.description.toLowerCase().includes("ventilation")
+      (item) =>
+        item.description.toLowerCase().includes("vent") ||
+        item.description.toLowerCase().includes("ventilation")
     );
 
     if (!hasProperVentilation) {
@@ -205,7 +205,8 @@ export async function detectCodeUpgrades(
         description: "Roof ventilation upgrade (IRC 2021 compliant)",
         codeSection: "IRC 2021 R806.2",
         jurisdiction: `${city}, ${state}`,
-        reasoning: "IRC 2021 requires balanced ventilation with 1:150 or 1:300 ratio for attic spaces",
+        reasoning:
+          "IRC 2021 requires balanced ventilation with 1:150 or 1:300 ratio for attic spaces",
         estimatedCost: 1200,
         required: true,
       });
@@ -213,8 +214,7 @@ export async function detectCodeUpgrades(
 
     // Drip edge requirement
     const hasDripEdge = existingScope.some(
-      item => item.code === "RFG410" ||
-              item.description.toLowerCase().includes("drip edge")
+      (item) => item.code === "RFG410" || item.description.toLowerCase().includes("drip edge")
     );
 
     if (!hasDripEdge) {
@@ -233,8 +233,9 @@ export async function detectCodeUpgrades(
     if (city.toLowerCase().includes("prescott")) {
       // Prescott has stricter wind requirements
       const hasHighWindRated = existingScope.some(
-        item => item.description.toLowerCase().includes("high wind") ||
-                item.description.toLowerCase().includes("class h")
+        (item) =>
+          item.description.toLowerCase().includes("high wind") ||
+          item.description.toLowerCase().includes("class h")
       );
 
       if (!hasHighWindRated) {
@@ -253,8 +254,9 @@ export async function detectCodeUpgrades(
     if (city.toLowerCase().includes("phoenix")) {
       // Phoenix has heat-related requirements
       const hasReflectiveRoof = existingScope.some(
-        item => item.description.toLowerCase().includes("cool roof") ||
-                item.description.toLowerCase().includes("reflective")
+        (item) =>
+          item.description.toLowerCase().includes("cool roof") ||
+          item.description.toLowerCase().includes("reflective")
       );
 
       // This is more of a recommendation than requirement
@@ -330,7 +332,8 @@ Be firm but professional. Cite specific code sections when applicable. Keep it c
   }
 
   // Generate arguments for underpaid items
-  for (const underpaid of comparison.underpaidItems.slice(0, 5)) { // Limit to 5 to avoid rate limits
+  for (const underpaid of comparison.underpaidItems.slice(0, 5)) {
+    // Limit to 5 to avoid rate limits
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -364,7 +367,7 @@ Be firm but professional. Cite specific code sections when applicable. Keep it c
   }
 
   // Generate arguments for code upgrades
-  for (const upgrade of codeUpgrades.filter(u => u.required)) {
+  for (const upgrade of codeUpgrades.filter((u) => u.required)) {
     suppArgs.push({
       itemCode: upgrade.itemCode,
       itemDescription: upgrade.description,
@@ -396,9 +399,11 @@ export async function generateNegotiationScript(
   const totalSupplement = suppArgs.reduce((sum, arg) => sum + arg.difference, 0);
 
   const toneInstructions = {
-    professional: "Write in a cooperative, professional tone. Express willingness to work together.",
+    professional:
+      "Write in a cooperative, professional tone. Express willingness to work together.",
     firm: "Write in a confident, assertive tone. Be clear about your position without being aggressive.",
-    legal: "Write in a formal, legal tone. Reference relevant statutes and policy language. Mention potential for appraisal or legal action if necessary.",
+    legal:
+      "Write in a formal, legal tone. Reference relevant statutes and policy language. Mention potential for appraisal or legal action if necessary.",
   };
 
   const completion = await openai.chat.completions.create({
@@ -421,7 +426,7 @@ Format as a conversational script with clear talking points.`,
       },
       {
         role: "user",
-        content: `Generate a negotiation script for a supplement of $${totalSupplement.toFixed(2)} covering ${suppArgs.length} items:\n\n${suppArgs.map(arg => `- ${arg.itemDescription}: $${arg.difference.toFixed(2)}`).join("\n")}`,
+        content: `Generate a negotiation script for a supplement of $${totalSupplement.toFixed(2)} covering ${suppArgs.length} items:\n\n${suppArgs.map((arg) => `- ${arg.itemDescription}: $${arg.difference.toFixed(2)}`).join("\n")}`,
       },
     ],
     temperature: 0.8,

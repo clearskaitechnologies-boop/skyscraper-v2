@@ -3,20 +3,9 @@
  * Converts storm data into claims-ready impact paragraph
  */
 
+import { getOpenAI } from "@/lib/ai/client";
 import { safeAI } from "@/lib/aiGuard";
-import type { DOLResult, PropertyContext,ScoredEvent } from "@/types/weather";
-
-// Lazy-load OpenAI client
-let openaiClient: any = null;
-async function getOpenAI() {
-  if (!openaiClient) {
-    const { default: OpenAI } = await import("openai");
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-  }
-  return openaiClient;
-}
+import type { DOLResult, PropertyContext, ScoredEvent } from "@/types/weather";
 
 const MODEL = "gpt-4o-mini"; // Fast & cost-effective
 
@@ -73,7 +62,7 @@ ${eventsSummary}
 Generate a claims-ready weather impact summary.`;
 
   try {
-    const openai = await getOpenAI();
+    const openai = getOpenAI();
     const ai = await safeAI("weather-summary", () =>
       openai.chat.completions.create({
         model: MODEL,

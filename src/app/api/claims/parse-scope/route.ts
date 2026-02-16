@@ -7,6 +7,7 @@
  */
 
 import { NextResponse } from "next/server";
+import type OpenAI from "openai";
 import pdf from "pdf-parse";
 
 import { getOpenAI } from "@/lib/ai/client";

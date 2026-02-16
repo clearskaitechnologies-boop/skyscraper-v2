@@ -7,7 +7,7 @@
  * Features:
  * - Duplicate detection via externalId tracking
  * - Partial retry (picks up where it left off)
- * - Full migration log for audit + transparency
+ * - Per-record audit trail via migration_items
  * - Transactional inserts per-batch
  */
 
@@ -15,7 +15,7 @@ import "server-only";
 
 import prisma from "@/lib/prisma";
 
-import { AccuLynxClient, type AccuLynxConfig } from "./acculynx-client";
+import { AccuLynxClient } from "./acculynx-client";
 import { mapContact, mapJobToJob, mapJobToLead, mapJobToProperty } from "./acculynx-mapper";
 
 // ---------------------------------------------------------------------------
@@ -59,12 +59,17 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
     jobs: { imported: 0, skipped: 0, errors: 0 },
   };
 
-  // Create migration log entry
-  await prisma.$executeRaw`
-    INSERT INTO app.migration_logs (id, "orgId", "userId", source, status, started_at)
-    VALUES (${migrationId}, ${opts.orgId}, ${opts.userId}, 'acculynx', 'running', NOW())
-    ON CONFLICT DO NOTHING
-  `;
+  // Create migration job entry
+  await prisma.migration_jobs.create({
+    data: {
+      id: migrationId,
+      orgId: opts.orgId,
+      userId: opts.userId,
+      source: "acculynx",
+      status: "running",
+      startedAt: new Date(),
+    },
+  });
 
   try {
     const client = new AccuLynxClient({
@@ -79,7 +84,7 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
     }
 
     if (opts.dryRun) {
-      await updateMigrationLog(migrationId, "completed", stats, []);
+      await updateMigrationJob(migrationId, "completed", stats, []);
       return {
         success: true,
         migrationId,
@@ -90,7 +95,6 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
     }
 
     // 2. Pull + insert contacts
-    console.log(`[Migration ${migrationId}] Pulling contacts...`);
     const rawContacts = await client.fetchAllContacts();
 
     for (const raw of rawContacts) {
@@ -109,12 +113,22 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
 
         if (exists) {
           stats.contacts.skipped++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "contact",
+              externalId: raw.id,
+              internalId: exists.id,
+              status: "skipped",
+            },
+          });
           continue;
         }
 
+        const newContactId = crypto.randomUUID();
         await prisma.contacts.create({
           data: {
-            id: crypto.randomUUID(),
+            id: newContactId,
             orgId: opts.orgId,
             firstName: mapped.firstName,
             lastName: mapped.lastName,
@@ -132,14 +146,31 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
           },
         });
         stats.contacts.imported++;
+        await prisma.migration_items.create({
+          data: {
+            migrationId,
+            entityType: "contact",
+            externalId: raw.id,
+            internalId: newContactId,
+            status: "imported",
+          },
+        });
       } catch (err: any) {
         stats.contacts.errors++;
         errors.push(`Contact ${raw.id}: ${err.message}`);
+        await prisma.migration_items.create({
+          data: {
+            migrationId,
+            entityType: "contact",
+            externalId: raw.id,
+            status: "error",
+            errorMessage: err.message,
+          },
+        });
       }
     }
 
     // 3. Pull + insert jobs → properties + leads + jobs
-    console.log(`[Migration ${migrationId}] Pulling jobs...`);
     const rawJobs = await client.fetchAllJobs();
 
     for (const raw of rawJobs) {
@@ -160,6 +191,15 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
         if (existingProp) {
           propertyId = existingProp.id;
           stats.properties.skipped++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "property",
+              externalId: raw.id,
+              internalId: existingProp.id,
+              status: "skipped",
+            },
+          });
         } else {
           propertyId = crypto.randomUUID();
           // Find matching contact by AccuLynx contactId
@@ -180,7 +220,7 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
             data: {
               id: propertyId,
               orgId: opts.orgId,
-              contactId: contactId || await getOrCreatePlaceholderContact(opts.orgId),
+              contactId: contactId || (await getOrCreatePlaceholderContact(opts.orgId)),
               name: mappedProperty.name,
               propertyType: mappedProperty.propertyType,
               street: mappedProperty.street || "",
@@ -194,6 +234,15 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
             },
           });
           stats.properties.imported++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "property",
+              externalId: raw.id,
+              internalId: propertyId,
+              status: "imported",
+            },
+          });
         }
 
         // 3b. Create lead from job
@@ -210,6 +259,15 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
 
         if (existingLead) {
           stats.leads.skipped++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "lead",
+              externalId: raw.id,
+              internalId: existingLead.id,
+              status: "skipped",
+            },
+          });
         } else {
           // Find contact for lead
           let contactId: string | null = null;
@@ -225,11 +283,12 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
             contactId = matchedContact?.id || null;
           }
 
+          const newLeadId = crypto.randomUUID();
           await prisma.leads.create({
             data: {
-              id: crypto.randomUUID(),
+              id: newLeadId,
               orgId: opts.orgId,
-              contactId: contactId || await getOrCreatePlaceholderContact(opts.orgId),
+              contactId: contactId || (await getOrCreatePlaceholderContact(opts.orgId)),
               title: mappedLead.title,
               description: mappedLead.description,
               source: mappedLead.source,
@@ -246,6 +305,15 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
             },
           });
           stats.leads.imported++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "lead",
+              externalId: raw.id,
+              internalId: newLeadId,
+              status: "imported",
+            },
+          });
         }
 
         // 3c. Create job record
@@ -262,10 +330,20 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
 
         if (existingJob) {
           stats.jobs.skipped++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "job",
+              externalId: raw.id,
+              internalId: existingJob.id,
+              status: "skipped",
+            },
+          });
         } else {
+          const newJobId = crypto.randomUUID();
           await prisma.jobs.create({
             data: {
-              id: crypto.randomUUID(),
+              id: newJobId,
               orgId: opts.orgId,
               propertyId,
               title: mappedJob.title,
@@ -280,17 +358,33 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
             },
           });
           stats.jobs.imported++;
+          await prisma.migration_items.create({
+            data: {
+              migrationId,
+              entityType: "job",
+              externalId: raw.id,
+              internalId: newJobId,
+              status: "imported",
+            },
+          });
         }
       } catch (err: any) {
         stats.jobs.errors++;
         errors.push(`Job ${raw.id}: ${err.message}`);
+        await prisma.migration_items.create({
+          data: {
+            migrationId,
+            entityType: "job",
+            externalId: raw.id,
+            status: "error",
+            errorMessage: err.message,
+          },
+        });
       }
     }
 
-    // 4. Update migration log
-    await updateMigrationLog(migrationId, "completed", stats, errors);
-
-    console.log(`[Migration ${migrationId}] ✅ Complete`, stats);
+    // 4. Update migration job
+    await updateMigrationJob(migrationId, "completed", stats, errors);
 
     return {
       success: true,
@@ -300,9 +394,8 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
       durationMs: Date.now() - startTime,
     };
   } catch (err: any) {
-    console.error(`[Migration ${migrationId}] ❌ Fatal:`, err.message);
     errors.push(err.message);
-    await updateMigrationLog(migrationId, "failed", stats, errors);
+    await updateMigrationJob(migrationId, "failed", stats, errors);
 
     return {
       success: false,
@@ -315,27 +408,33 @@ export async function runAccuLynxMigration(opts: MigrationOptions): Promise<Migr
 }
 
 // ---------------------------------------------------------------------------
-// Log helper
+// Job helper
 // ---------------------------------------------------------------------------
 
-async function updateMigrationLog(
+async function updateMigrationJob(
   migrationId: string,
   status: string,
   stats: MigrationResult["stats"],
   errors: string[]
 ) {
-  try {
-    await prisma.$executeRaw`
-      UPDATE app.migration_logs
-      SET status = ${status},
-          stats = ${JSON.stringify(stats)}::jsonb,
-          errors = ${JSON.stringify(errors)}::jsonb,
-          completed_at = NOW()
-      WHERE id = ${migrationId}
-    `;
-  } catch (err: any) {
-    console.error("[Migration] Failed to update log:", err.message);
-  }
+  const total = Object.values(stats).reduce((a, s) => a + s.imported + s.skipped + s.errors, 0);
+  const imported = Object.values(stats).reduce((a, s) => a + s.imported, 0);
+  const skipped = Object.values(stats).reduce((a, s) => a + s.skipped, 0);
+  const errorCount = Object.values(stats).reduce((a, s) => a + s.errors, 0);
+
+  await prisma.migration_jobs.update({
+    where: { id: migrationId },
+    data: {
+      status,
+      totalRecords: total,
+      importedRecords: imported,
+      skippedRecords: skipped,
+      errorRecords: errorCount,
+      stats: stats as any,
+      errors: errors as any,
+      completedAt: new Date(),
+    },
+  });
 }
 
 /**

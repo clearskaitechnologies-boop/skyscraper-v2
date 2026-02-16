@@ -1,88 +1,33 @@
-import { Ratelimit } from "@upstash/ratelimit";
-
-import { upstash } from "@/lib/upstash";
-
-// Initialize Redis client
-const redis =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN ? upstash : null;
-
-// Create rate limiters for different scenarios
-export const rateLimiters = {
-  // Strict rate limit for public lead forms (5 requests per minute)
-  publicLeads: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(5, "1 m"),
-        analytics: true,
-        prefix: "@upstash/ratelimit:public-leads",
-      })
-    : null,
-
-  // AI endpoints rate limit (10 requests per minute per user)
-  ai: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(10, "1 m"),
-        analytics: true,
-        prefix: "@upstash/ratelimit:ai",
-      })
-    : null,
-
-  // Moderate rate limit for API key generation (10 requests per hour)
-  apiKeys: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(10, "1 h"),
-        analytics: true,
-        prefix: "@upstash/ratelimit:api-keys",
-      })
-    : null,
-
-  // General API rate limit (100 requests per minute)
-  api: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(100, "1 m"),
-        analytics: true,
-        prefix: "@upstash/ratelimit:api",
-      })
-    : null,
-
-  // Webhook endpoints (50 requests per minute)
-  webhooks: redis
-    ? new Ratelimit({
-        redis,
-        limiter: Ratelimit.slidingWindow(50, "1 m"),
-        analytics: true,
-        prefix: "@upstash/ratelimit:webhooks",
-      })
-    : null,
-};
-
 /**
- * Apply rate limiting to a request
- * @param identifier - Unique identifier (IP, user ID, etc.)
- * @param limiter - Which rate limiter to use
- * @returns { success: boolean, limit: number, remaining: number, reset: number }
+ * Security Rate Limiting
+ *
+ * @deprecated This file is deprecated. Import from '@/lib/rate-limit' instead.
+ *
+ * ```typescript
+ * import { checkRateLimit, RATE_LIMIT_PRESETS } from '@/lib/rate-limit';
+ *
+ * // Check rate limit with preset
+ * const result = await checkRateLimit(userId, 'AI');
+ * ```
  */
-export async function checkRateLimit(identifier: string, limiter: keyof typeof rateLimiters) {
-  const ratelimit = rateLimiters[limiter];
 
-  // If Redis is not configured, allow all requests
-  if (!ratelimit) {
-    console.warn(`Rate limiting not configured for ${limiter}`);
-    return { success: true, limit: 0, remaining: 0, reset: 0 };
-  }
+// Re-export from canonical module
+export {
+  RATE_LIMIT_PRESETS,
+  checkRateLimit,
+  createRateLimitHeaders,
+  type RateLimitPreset,
+  type RateLimitResult,
+} from "@/lib/rate-limit";
 
-  try {
-    const result = await ratelimit.limit(identifier);
-    return result;
-  } catch (error) {
-    console.error(`Rate limit check failed for ${limiter}:`, error);
-    // Fail open - allow request if rate limiting fails
-    return { success: true, limit: 0, remaining: 0, reset: 0 };
-  }
-}
+// Legacy compatibility - maps old limiter names to new presets
+export const rateLimiters = {
+  publicLeads: "PUBLIC",
+  ai: "AI",
+  apiKeys: "API_KEYS",
+  api: "API",
+  webhooks: "WEBHOOK",
+} as const;
 
 /**
  * Get client identifier from request (IP address or user ID)

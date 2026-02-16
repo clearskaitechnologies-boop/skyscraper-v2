@@ -1,9 +1,9 @@
 /**
  * PHASE 47: CLAIMS LIFECYCLE PREDICTION ENGINE v1.0
- * 
+ *
  * This is the industry nuke.
  * AI that predicts the carrier's next move before they make it.
- * 
+ *
  * Analyzes:
  * - Dominus AI output (damage, materials, urgency)
  * - Storm data (hail size, wind speed, distance)
@@ -11,7 +11,7 @@
  * - Timeline events
  * - Denial letters
  * - Workflow stage
- * 
+ *
  * Predicts:
  * - Approval/Partial/Denial probabilities
  * - Risk flags
@@ -20,11 +20,9 @@
  * - Confidence score (0-100)
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export interface PredictionInput {
   claimId: string;
@@ -335,7 +333,8 @@ Be specific and tactical.`;
       messages: [
         {
           role: "system",
-          content: "You are an expert insurance claims analyst. Provide tactical predictions about carrier behavior.",
+          content:
+            "You are an expert insurance claims analyst. Provide tactical predictions about carrier behavior.",
         },
         {
           role: "user",
@@ -439,20 +438,23 @@ function generateSuccessPath(
     {
       step: 1,
       action: "Documentation Phase",
-      doThis: "Upload 15-20 high-quality photos from multiple angles. Include close-ups and wide shots.",
+      doThis:
+        "Upload 15-20 high-quality photos from multiple angles. Include close-ups and wide shots.",
       dontDoThis: "Don't submit blurry photos or less than 10 total images.",
     },
     {
       step: 2,
       action: "AI Analysis",
-      doThis: "Run Dominus AI analysis to identify all damage and materials. Export adjuster packet.",
+      doThis:
+        "Run Dominus AI analysis to identify all damage and materials. Export adjuster packet.",
       dontDoThis: "Don't skip AI analysis - carriers respect data-driven reports.",
     },
     {
       step: 3,
       action: "Storm Correlation",
       doThis: "Generate storm impact report with NOAA data. Prove damage timing and severity.",
-      dontDoThis: "Don't submit without storm documentation - carriers will deny for lack of causation.",
+      dontDoThis:
+        "Don't submit without storm documentation - carriers will deny for lack of causation.",
     },
     {
       step: 4,
@@ -469,8 +471,10 @@ function generateSuccessPath(
     {
       step: 6,
       action: "Negotiation",
-      doThis: "If partial approval, use supplement engine to argue for missing items with code citations.",
-      dontDoThis: "Don't accept first offer without review. Most initial offers are 60-70% of actual.",
+      doThis:
+        "If partial approval, use supplement engine to argue for missing items with code citations.",
+      dontDoThis:
+        "Don't accept first offer without review. Most initial offers are 60-70% of actual.",
     },
   ];
 }
@@ -512,7 +516,7 @@ Probabilities:
 
 Carrier Strategy: ${carrierBehavior.likelyStrategy}
 
-Be direct and tactical. Start with "The carrier will likely..."`
+Be direct and tactical. Start with "The carrier will likely..."`;
 
   try {
     const completion = await openai.chat.completions.create({

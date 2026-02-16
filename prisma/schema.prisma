@@ -1016,6 +1016,7 @@ model Org {
   commission_records        commission_records[]
   quickbooks_connections    quickbooks_connections?
   measurement_orders        measurement_orders[]
+  migration_jobs            migration_jobs[]
 
   @@index([stripeCustomerId])
   @@index([subscriptionStatus])
@@ -6473,4 +6474,53 @@ model measurement_orders {
   @@index([job_id])
   @@index([status])
   @@index([provider])
+}
+
+// ---------------------------------------------------------------------------
+// CRM Migration Tracking
+// ---------------------------------------------------------------------------
+
+/// Tracks a full CRM migration run (AccuLynx, JobNimbus, CSV, etc.)
+model migration_jobs {
+  id              String    @id @default(dbgenerated("gen_random_uuid()::text"))
+  orgId           String
+  userId          String
+  source          String // "acculynx" | "jobnimbus" | "csv"
+  status          String    @default("pending") // pending | running | completed | failed | rolled_back
+  totalRecords    Int       @default(0)
+  importedRecords Int       @default(0)
+  skippedRecords  Int       @default(0)
+  errorRecords    Int       @default(0)
+  stats           Json?     @default("{}")
+  errors          Json?     @default("[]")
+  config          Json? // encrypted api key, filters, options
+  startedAt       DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  Org   Org               @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  items migration_items[]
+
+  @@index([orgId, source])
+  @@index([status])
+}
+
+/// Tracks each individual record within a migration run
+model migration_items {
+  id           String   @id @default(dbgenerated("gen_random_uuid()::text"))
+  migrationId  String
+  entityType   String // "contact" | "property" | "lead" | "job" | "claim" | "document"
+  externalId   String
+  internalId   String? // SkaiScraper record ID after import
+  status       String   @default("pending") // pending | imported | skipped | error | rolled_back
+  errorMessage String?
+  rawData      Json? // Original source record for debugging
+  createdAt    DateTime @default(now())
+
+  migration migration_jobs @relation(fields: [migrationId], references: [id], onDelete: Cascade)
+
+  @@unique([migrationId, entityType, externalId])
+  @@index([migrationId, entityType])
+  @@index([externalId])
 }

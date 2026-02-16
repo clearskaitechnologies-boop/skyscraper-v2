@@ -374,3 +374,33 @@ export async function archiveThread(userId: string, threadId: string) {
 
   return { success: true };
 }
+
+// ============================================================================
+// Job Invitation Services
+// ============================================================================
+
+export interface SendJobInviteInput {
+  userId: string;
+  email: string;
+  jobId: string;
+  message?: string;
+}
+
+/**
+ * Send a job invitation
+ */
+export async function sendJobInvite(input: SendJobInviteInput) {
+  const { userId, email, jobId, message } = input;
+
+  const invitation = await prisma.jobInvitation.create({
+    data: {
+      email,
+      jobId,
+      message,
+      invitedBy: userId,
+      status: "pending",
+    },
+  });
+
+  return { success: true, invitation: { id: invitation.id } };
+}

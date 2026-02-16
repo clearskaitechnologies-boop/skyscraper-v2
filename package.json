@@ -44,6 +44,8 @@
     "test:api": "playwright test --project=smoke tests/api/",
     "test:auth": "playwright test --project=smoke tests/api/auth-matrix.spec.ts",
     "test:isolation": "playwright test --project=smoke tests/api/org-isolation.spec.ts",
+    "knip": "knip",
+    "knip:fix": "knip --fix",
     "seed:validate": "node scripts/validate-seeds.mjs",
     "db:diff": "prisma migrate diff --from-schema-datamodel prisma/schema.prisma --to-schema-datasource prisma/schema.prisma --script > db/migrations/drift_$(date +%Y%m%d_%H%M%S).sql",
     "db:check": "node scripts/db-check.mjs",
