@@ -266,8 +266,10 @@ export default function ClientMessagesPage() {
       {/* Messages Interface */}
       {threads.length > 0 && (
         <div className="grid h-[calc(100vh-380px)] min-h-[500px] grid-cols-1 gap-0 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900 lg:grid-cols-3">
-          {/* Thread List */}
-          <div className="overflow-y-auto border-r border-slate-200 dark:border-slate-700">
+          {/* Thread List — hidden on mobile when a thread is selected */}
+          <div
+            className={`overflow-y-auto border-r border-slate-200 dark:border-slate-700 ${selectedThread ? "hidden lg:block" : ""}`}
+          >
             <div className="border-b border-slate-100 p-4 dark:border-slate-800">
               <h2 className="font-semibold text-slate-900 dark:text-white">Conversations</h2>
             </div>
@@ -327,12 +329,30 @@ export default function ClientMessagesPage() {
             </div>
           </div>
 
-          {/* Message View */}
-          <div className="col-span-2 flex flex-col">
+          {/* Message View — hidden on mobile when no thread is selected */}
+          <div className={`col-span-2 flex flex-col ${!selectedThread ? "hidden lg:flex" : ""}`}>
             {selectedThread ? (
               <>
                 {/* Thread Header */}
                 <div className="flex items-center gap-4 border-b border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800">
+                  <button
+                    onClick={() => setSelectedThread(null)}
+                    className="mr-1 rounded-lg p-1.5 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 lg:hidden"
+                    aria-label="Back to conversations"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
                   <Link
                     href={
                       selectedThread.tradePartnerId

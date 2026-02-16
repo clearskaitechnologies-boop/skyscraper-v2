@@ -7,11 +7,11 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Button } from "@/components/ui/button";
 
 interface ClientHomePageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export default function ClientHomePage({ params }: ClientHomePageProps) {
-  const { slug } = params;
+export default async function ClientHomePage({ params }: ClientHomePageProps) {
+  const { slug } = await params;
   const basePath = `/client/${slug}`;
 
   return (

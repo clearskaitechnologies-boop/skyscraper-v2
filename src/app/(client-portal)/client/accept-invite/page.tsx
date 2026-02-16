@@ -114,7 +114,7 @@ export default async function AcceptInvitePage({ searchParams }: AcceptInvitePag
               Claim: {invite.claims.title || invite.claims.claimNumber}
             </p>
             <Button asChild className="bg-green-600 hover:bg-green-700">
-              <Link href={`/portal/${invite.claims.id}`}>View Your Claim</Link>
+              <Link href={`/portal/claims/${invite.claims.id}`}>View Your Claim</Link>
             </Button>
           </CardContent>
         </Card>
@@ -127,7 +127,7 @@ export default async function AcceptInvitePage({ searchParams }: AcceptInvitePag
 
   // Not logged in - show sign in prompt
   if (!userId) {
-    const signInUrl = `/sign-in?redirect_url=/client/accept-invite?token=${token}`;
+    const signInUrl = `/sign-in?redirect_url=${encodeURIComponent(`/client/accept-invite?token=${token}`)}`;
 
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
@@ -185,7 +185,7 @@ export default async function AcceptInvitePage({ searchParams }: AcceptInvitePag
     });
 
     // Redirect to the claim portal
-    redirect(`/portal/${invite.claims.id}`);
+    redirect(`/portal/claims/${invite.claims.id}`);
   } catch (error) {
     console.error("[ACCEPT_INVITE] Error accepting invitation:", error);
 

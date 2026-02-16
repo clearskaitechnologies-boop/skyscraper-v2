@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Globe, Lock, Moon, Settings, Shield, Sun, User } from "lucide-react";
+import { Bell, Lock, Settings, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 

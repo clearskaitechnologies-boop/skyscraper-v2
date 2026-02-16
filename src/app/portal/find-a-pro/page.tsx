@@ -469,6 +469,7 @@ export default function FindAProPage() {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                   placeholder="Search trades professionals by name, specialty, or location..."
+                  aria-label="Search trades professionals"
                   className="h-12 pl-10 pr-4 text-base"
                 />
               </div>
@@ -489,6 +490,8 @@ export default function FindAProPage() {
                 size="icon"
                 className="h-12 w-12"
                 onClick={() => setShowFilters(!showFilters)}
+                aria-label={showFilters ? "Hide filters" : "Show filters"}
+                aria-expanded={showFilters}
               >
                 <Filter className="h-5 w-5" />
               </Button>
@@ -877,6 +880,7 @@ function ProCard({
         <button
           onClick={handleSaveClick}
           disabled={saving}
+          aria-label={isSaved ? "Remove from saved pros" : "Save this pro"}
           className={`absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full shadow-lg backdrop-blur-sm transition-all ${
             isSaved ? "bg-pink-500 text-white" : "bg-white/20 text-white hover:bg-white/30"
           }`}
