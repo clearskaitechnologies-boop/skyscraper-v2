@@ -69,6 +69,8 @@ export class AICoreRouter {
       return { success: false, error: "Missing imageUrl" };
     }
 
+    const openai = getOpenAI();
+
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -144,6 +146,8 @@ Respond with JSON:
       return { success: false, error: "Missing imageUrl" };
     }
 
+    const openai = getOpenAI();
+
     try {
       const response = await openai.chat.completions.create({
         model: "gpt-4o",
@@ -214,6 +218,8 @@ Respond with JSON:
     if (!options.imageUrl) {
       return { success: false, error: "Missing imageUrl" };
     }
+
+    const openai = getOpenAI();
 
     try {
       const response = await openai.chat.completions.create({
@@ -286,6 +292,7 @@ Respond with JSON:
       return { success: false, error: "Missing imageUrl" };
     }
 
+    const openai = getOpenAI();
     const prompt = options.prompt || "Describe this roof damage image in detail.";
 
     try {

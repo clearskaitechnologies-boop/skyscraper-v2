@@ -3,8 +3,6 @@
  * Centralized API client for GPT-4
  */
 
-import { getOpenAI } from "@/lib/ai/client";
-
 export interface CallOpenAIOptions {
   system: string;
   user: string;

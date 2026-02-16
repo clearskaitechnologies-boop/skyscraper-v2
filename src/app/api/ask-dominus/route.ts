@@ -4,7 +4,6 @@ import { z } from "zod";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { saveChatMessage } from "@/lib/dominus/chat";
-import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +19,15 @@ export async function POST(req: NextRequest) {
   const { userId, orgId } = auth();
   const isStreamHeader = req.headers.get("accept") === "text/event-stream";
   let bodyRaw: any = null;
-  try { bodyRaw = await req.json().catch(() => null); } catch {}
+  try {
+    bodyRaw = await req.json().catch(() => null);
+  } catch {}
   const parseResult = RequestSchema.safeParse(bodyRaw || {});
   if (!parseResult.success) {
-    return NextResponse.json({ error: parseResult.error.issues.map(i => i.message).join("; ") }, { status: 400 });
+    return NextResponse.json(
+      { error: parseResult.error.issues.map((i) => i.message).join("; ") },
+      { status: 400 }
+    );
   }
   const { question, claimId, routeName, temperature = 0.3, stream } = parseResult.data;
   const streamRequested = Boolean(stream) || isStreamHeader;
@@ -114,8 +118,22 @@ async function safePersist(
   answer: string
 ) {
   try {
-    await saveChatMessage({ userId: userId || undefined, orgId: orgId || undefined, claimId, routeName: routeName || undefined, role: "user", content: question });
-    await saveChatMessage({ userId: userId || undefined, orgId: orgId || undefined, claimId, routeName: routeName || undefined, role: "assistant", content: answer });
+    await saveChatMessage({
+      userId: userId || undefined,
+      orgId: orgId || undefined,
+      claimId,
+      routeName: routeName || undefined,
+      role: "user",
+      content: question,
+    });
+    await saveChatMessage({
+      userId: userId || undefined,
+      orgId: orgId || undefined,
+      claimId,
+      routeName: routeName || undefined,
+      role: "assistant",
+      content: answer,
+    });
   } catch (err) {
     console.error("Persist Dominus messages error (non-blocking):", err);
   }

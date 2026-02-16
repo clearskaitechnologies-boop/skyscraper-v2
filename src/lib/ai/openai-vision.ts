@@ -1,9 +1,9 @@
 /**
  * OpenAI Vision Helper for Damage Analysis
- * 
+ *
  * Uses OpenAI gpt-4o-mini with structured outputs to analyze
  * property photos for damage detection.
- * 
+ *
  * @see https://platform.openai.com/docs/guides/vision
  * @see https://platform.openai.com/docs/guides/structured-outputs
  */
@@ -12,13 +12,9 @@ import { zodResponseFormat } from "openai/helpers/zod";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { safeAI } from "@/lib/aiGuard";
-import { aiFail, aiOk, type AiResponse,classifyOpenAiError } from "@/lib/api/aiResponse";
+import { aiFail, aiOk, type AiResponse, classifyOpenAiError } from "@/lib/api/aiResponse";
 
-import { 
-  type DamageReport,
-  DamageReportSchema, 
-  validateDamageReport 
-} from "./damage-schema";
+import { type DamageReport, DamageReportSchema, validateDamageReport } from "./damage-schema";
 
 // =============================================================================
 // SYSTEM PROMPTS
@@ -61,7 +57,7 @@ export interface AnalyzeImageOptions {
 
 /**
  * Analyze a single image for property damage
- * 
+ *
  * @param imageUrl - Public URL to the image (must be accessible to OpenAI)
  * @param options - Analysis options
  * @returns Structured damage report
@@ -71,11 +67,7 @@ export async function analyzeImage(
   imageUrl: string,
   options: AnalyzeImageOptions = {}
 ): Promise<DamageReport> {
-  const {
-    context = "",
-    maxTokens = 2000,
-    model = "gpt-4o-mini"
-  } = options;
+  const { context = "", maxTokens = 2000, model = "gpt-4o-mini" } = options;
 
   const openai = getOpenAI();
 
@@ -92,28 +84,28 @@ export async function analyzeImage(
         messages: [
           {
             role: "system",
-            content: DAMAGE_ANALYSIS_SYSTEM_PROMPT
+            content: DAMAGE_ANALYSIS_SYSTEM_PROMPT,
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: userMessage
+                text: userMessage,
               },
               {
                 type: "image_url",
                 image_url: {
                   url: imageUrl,
-                  detail: "high" // Use high-res analysis
-                }
-              }
-            ]
-          }
+                  detail: "high", // Use high-res analysis
+                },
+              },
+            ],
+          },
         ],
         response_format: zodResponseFormat(DamageReportSchema, "damage_report"),
         max_tokens: maxTokens,
-        temperature: 0.3 // Lower temperature for more consistent results
+        temperature: 0.3, // Lower temperature for more consistent results
       })
     );
 
@@ -130,12 +122,11 @@ export async function analyzeImage(
 
     // Parse JSON response
     const parsed = JSON.parse(content);
-    
+
     // Validate with Zod schema
     const validated = validateDamageReport(parsed);
 
     return validated;
-
   } catch (error) {
     if (error instanceof Error) {
       throw new Error(`OpenAI Vision analysis failed: ${error.message}`);
@@ -162,20 +153,25 @@ export async function analyzeImageEnvelope(
     // For minimal metrics, expose model + duration. Token counts will require upstream capture.
     return aiOk(report, {
       model: options.model || "gpt-4o-mini",
-      durationMs: Date.now() - start
+      durationMs: Date.now() - start,
     });
   } catch (err: any) {
     const { message, code } = classifyOpenAiError(err);
-    return aiFail(message, code, { imageUrl }, {
-      model: options.model || "gpt-4o-mini",
-      durationMs: Date.now() - start
-    });
+    return aiFail(
+      message,
+      code,
+      { imageUrl },
+      {
+        model: options.model || "gpt-4o-mini",
+        durationMs: Date.now() - start,
+      }
+    );
   }
 }
 
 /**
  * Analyze multiple images in batch
- * 
+ *
  * @param imageUrls - Array of public image URLs
  * @param options - Analysis options
  * @returns Array of damage reports (same order as input)
@@ -211,7 +207,7 @@ export async function analyzeImagesEnvelope(
 
 /**
  * Combine multiple damage reports into a single summary
- * 
+ *
  * @param reports - Array of individual damage reports
  * @returns Combined damage report
  */
@@ -221,7 +217,7 @@ export function combineDamageReports(reports: DamageReport[]): DamageReport {
       summary: "No damage reports provided.",
       items: [],
       overall_severity: "none",
-      overall_confidence: 1.0
+      overall_confidence: 1.0,
     };
   }
 
@@ -230,28 +226,27 @@ export function combineDamageReports(reports: DamageReport[]): DamageReport {
   }
 
   // Combine all damage items
-  const allItems = reports.flatMap(r => r.items);
+  const allItems = reports.flatMap((r) => r.items);
 
   // Determine overall severity (take highest)
   const severityOrder = { none: 0, minor: 1, moderate: 2, severe: 3 };
-  const maxSeverity = reports.reduce((max, r) => {
-    return severityOrder[r.overall_severity] > severityOrder[max] 
-      ? r.overall_severity 
-      : max;
-  }, "none" as DamageReport["overall_severity"]);
+  const maxSeverity = reports.reduce(
+    (max, r) => {
+      return severityOrder[r.overall_severity] > severityOrder[max] ? r.overall_severity : max;
+    },
+    "none" as DamageReport["overall_severity"]
+  );
 
   // Average confidence across all reports
   const avgConfidence = reports.reduce((sum, r) => sum + r.overall_confidence, 0) / reports.length;
 
   // Combine summaries
-  const combinedSummary = reports
-    .map((r, i) => `Photo ${i + 1}: ${r.summary}`)
-    .join(" ");
+  const combinedSummary = reports.map((r, i) => `Photo ${i + 1}: ${r.summary}`).join(" ");
 
   // Combine recommendations (deduplicate)
   const allRecommendations = new Set<string>();
-  reports.forEach(r => {
-    r.recommendations?.forEach(rec => allRecommendations.add(rec));
+  reports.forEach((r) => {
+    r.recommendations?.forEach((rec) => allRecommendations.add(rec));
   });
 
   return {
@@ -259,7 +254,7 @@ export function combineDamageReports(reports: DamageReport[]): DamageReport {
     items: allItems,
     overall_severity: maxSeverity,
     overall_confidence: Math.round(avgConfidence * 100) / 100,
-    recommendations: Array.from(allRecommendations)
+    recommendations: Array.from(allRecommendations),
   };
 }
 
@@ -269,24 +264,21 @@ export function combineDamageReports(reports: DamageReport[]): DamageReport {
 
 /**
  * Estimate OpenAI API cost for image analysis
- * 
+ *
  * Pricing (as of 2024):
  * - gpt-4o-mini: $0.15/1M input tokens, $0.60/1M output tokens
  * - High-res image: ~765 tokens (512x512 tile)
  * - Text tokens: ~500 for system + user prompt
  * - Response: ~500-1500 tokens
- * 
+ *
  * @param model - Model to use
  * @param imageCount - Number of images to analyze
  * @returns Estimated cost in USD
  */
-export function estimateAnalysisCost(
-  model: "gpt-4o-mini" | "gpt-4o",
-  imageCount: number
-): number {
+export function estimateAnalysisCost(model: "gpt-4o-mini" | "gpt-4o", imageCount: number): number {
   const pricing = {
-    "gpt-4o-mini": { input: 0.15 / 1_000_000, output: 0.60 / 1_000_000 },
-    "gpt-4o": { input: 5.00 / 1_000_000, output: 15.00 / 1_000_000 }
+    "gpt-4o-mini": { input: 0.15 / 1_000_000, output: 0.6 / 1_000_000 },
+    "gpt-4o": { input: 5.0 / 1_000_000, output: 15.0 / 1_000_000 },
   };
 
   const { input, output } = pricing[model];
@@ -305,4 +297,4 @@ export function estimateAnalysisCost(
 // EXPORT ALL
 // =============================================================================
 
-export type { DamageItem,DamageReport } from "./damage-schema";
+export type { DamageItem, DamageReport } from "./damage-schema";

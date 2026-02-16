@@ -1,16 +1,14 @@
 /**
  * PHASE 36: COMPUTER VISION ENGINE
- * 
+ *
  * Automated damage detection using gpt-4o-vision with structured output
- * 
+ *
  * Features:
  * - Property image analysis
  * - Damage detection with bounding boxes
  * - Severity classification
  * - Confidence scoring
  */
-
-import { getOpenAI } from "@/lib/ai/client";
 
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
@@ -152,14 +150,14 @@ async function _analyzeImageInternal(
 
     // Parse JSON response
     const analysis = JSON.parse(content);
-    
+
     return {
       ...analysis,
       analyzedAt: new Date(),
     };
   } catch (error) {
     console.error("[Vision] Analysis error:", error);
-    
+
     // Return safe fallback
     return {
       overallCondition: "fair",
@@ -219,9 +217,7 @@ export function filterBySeverity(
 /**
  * Get estimated cost in USD
  */
-export function getEstimatedCostRange(
-  costLevel: string
-): { min: number; max: number } {
+export function getEstimatedCostRange(costLevel: string): { min: number; max: number } {
   const ranges: Record<string, { min: number; max: number }> = {
     low: { min: 0, max: 5000 },
     medium: { min: 5000, max: 25000 },

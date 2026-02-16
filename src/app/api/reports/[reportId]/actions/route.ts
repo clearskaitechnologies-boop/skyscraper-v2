@@ -1,5 +1,5 @@
 /**
- * Reports Actions - Unified action handler for report workflow operations
+ * Reports Actions - Thin dispatcher calling service layer
  *
  * POST /api/reports/[reportId]/actions
  * Actions: approve, reject, send, send_packet, draft, draft_email,
@@ -10,6 +10,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import * as reportService from "@/lib/domain/reports";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -63,13 +64,14 @@ const ActionSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
-type ActionInput = z.infer<typeof ActionSchema>;
-
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ reportId: string }> }
 ) {
   try {
+    // =========================================================================
+    // Auth & Validation
+    // =========================================================================
     const { userId, orgId } = await auth();
     if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -86,7 +88,7 @@ export async function POST(
       );
     }
 
-    // Verify org access
+    // Resolve org
     const org = await prisma.org.findUnique({
       where: { clerkOrgId: orgId },
       select: { id: true },
@@ -105,35 +107,95 @@ export async function POST(
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
+    // =========================================================================
+    // Dispatch to Service Layer
+    // =========================================================================
     const input = parsed.data;
 
     switch (input.action) {
-      case "approve":
-        return handleApprove(reportId, userId, org.id, input);
+      case "approve": {
+        const result = await reportService.approveReport({
+          reportId,
+          orgId: org.id,
+          userId,
+          notes: input.notes,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "reject":
-        return handleReject(reportId, userId, org.id, input);
+      case "reject": {
+        const result = await reportService.rejectReport({
+          reportId,
+          orgId: org.id,
+          userId,
+          reason: input.reason,
+          notes: input.notes,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "send":
-        return handleSend(reportId, userId, org.id, input);
+      case "send": {
+        const result = await reportService.sendReport({
+          reportId,
+          orgId: org.id,
+          userId,
+          recipientEmail: input.recipientEmail,
+          recipientType: input.recipientType,
+          message: input.message,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "send_packet":
-        return handleSendPacket(reportId, userId, org.id, input);
+      case "send_packet": {
+        const result = await reportService.sendPacket({
+          reportId,
+          orgId: org.id,
+          userId,
+          recipientEmail: input.recipientEmail,
+          message: input.message,
+          includePhotos: input.includePhotos,
+          includeDocuments: input.includeDocuments,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "draft":
-        return handleDraft(reportId, input);
+      case "draft": {
+        const result = await reportService.saveDraft(reportId, input.content);
+        return NextResponse.json(result);
+      }
 
-      case "draft_email":
-        return handleDraftEmail(reportId, input);
+      case "draft_email": {
+        const result = await reportService.createEmailDraft(
+          reportId,
+          input.subject,
+          input.body,
+          input.recipientType
+        );
+        return NextResponse.json(result);
+      }
 
-      case "regenerate_links":
-        return handleRegenerateLinks(reportId, input);
+      case "regenerate_links": {
+        const result = await reportService.regenerateShareLinks(reportId, input.expireExisting);
+        return NextResponse.json(result);
+      }
 
-      case "update_status":
-        return handleUpdateStatus(reportId, input);
+      case "update_status": {
+        const result = await reportService.updateReportStatus({
+          reportId,
+          status: input.status,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "add_note":
-        return handleAddNote(reportId, userId, input);
+      case "add_note": {
+        const result = await reportService.addReportNote({
+          reportId,
+          userId,
+          content: input.content,
+          noteType: input.noteType,
+        });
+        return NextResponse.json(result);
+      }
 
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
@@ -142,220 +204,4 @@ export async function POST(
     console.error("[Reports Actions] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
-
-async function handleApprove(
-  reportId: string,
-  userId: string,
-  orgId: string,
-  input: Extract<ActionInput, { action: "approve" }>
-) {
-  await prisma.ai_reports.update({
-    where: { id: reportId },
-    data: {
-      status: "approved",
-      approvedAt: new Date(),
-      approvedBy: userId,
-      approvalNotes: input.notes,
-    },
-  });
-
-  // Log event
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "approved",
-      userId,
-      metadata: { notes: input.notes },
-    },
-  });
-
-  return NextResponse.json({ success: true, message: "Report approved" });
-}
-
-async function handleReject(
-  reportId: string,
-  userId: string,
-  orgId: string,
-  input: Extract<ActionInput, { action: "reject" }>
-) {
-  await prisma.ai_reports.update({
-    where: { id: reportId },
-    data: {
-      status: "rejected",
-      rejectedAt: new Date(),
-      rejectedBy: userId,
-      rejectionReason: input.reason,
-      rejectionNotes: input.notes,
-    },
-  });
-
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "rejected",
-      userId,
-      metadata: { reason: input.reason, notes: input.notes },
-    },
-  });
-
-  return NextResponse.json({ success: true, message: "Report rejected" });
-}
-
-async function handleSend(
-  reportId: string,
-  userId: string,
-  orgId: string,
-  input: Extract<ActionInput, { action: "send" }>
-) {
-  // Create send record
-  await prisma.reportSend.create({
-    data: {
-      reportId,
-      recipientEmail: input.recipientEmail,
-      recipientType: input.recipientType || "adjuster",
-      message: input.message,
-      sentBy: userId,
-      sentAt: new Date(),
-    },
-  });
-
-  // Update report status
-  await prisma.ai_reports.update({
-    where: { id: reportId },
-    data: { status: "sent", sentAt: new Date() },
-  });
-
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "sent",
-      userId,
-      metadata: { recipientEmail: input.recipientEmail },
-    },
-  });
-
-  // In production, trigger email send here
-  return NextResponse.json({ success: true, message: "Report sent" });
-}
-
-async function handleSendPacket(
-  reportId: string,
-  userId: string,
-  orgId: string,
-  input: Extract<ActionInput, { action: "send_packet" }>
-) {
-  // Create packet record
-  const packet = await prisma.reportPacket.create({
-    data: {
-      reportId,
-      recipientEmail: input.recipientEmail,
-      message: input.message,
-      includePhotos: input.includePhotos ?? true,
-      includeDocuments: input.includeDocuments ?? true,
-      sentBy: userId,
-      sentAt: new Date(),
-    },
-  });
-
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "packet_sent",
-      userId,
-      metadata: { packetId: packet.id },
-    },
-  });
-
-  return NextResponse.json({ success: true, packet });
-}
-
-async function handleDraft(reportId: string, input: Extract<ActionInput, { action: "draft" }>) {
-  await prisma.ai_reports.update({
-    where: { id: reportId },
-    data: {
-      draftContent: input.content,
-      status: "draft",
-    },
-  });
-
-  return NextResponse.json({ success: true, message: "Draft saved" });
-}
-
-async function handleDraftEmail(
-  reportId: string,
-  input: Extract<ActionInput, { action: "draft_email" }>
-) {
-  const draft = await prisma.emailDraft.create({
-    data: {
-      reportId,
-      subject: input.subject,
-      body: input.body,
-      recipientType: input.recipientType,
-    },
-  });
-
-  return NextResponse.json({ success: true, draft });
-}
-
-async function handleRegenerateLinks(
-  reportId: string,
-  input: Extract<ActionInput, { action: "regenerate_links" }>
-) {
-  if (input.expireExisting) {
-    await prisma.reportShareLink.updateMany({
-      where: { reportId, active: true },
-      data: { active: false, expiredAt: new Date() },
-    });
-  }
-
-  // Generate new share link
-  const token = crypto.randomUUID();
-  const link = await prisma.reportShareLink.create({
-    data: {
-      reportId,
-      token,
-      active: true,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    shareUrl: `/reports/share/${token}`,
-    link,
-  });
-}
-
-async function handleUpdateStatus(
-  reportId: string,
-  input: Extract<ActionInput, { action: "update_status" }>
-) {
-  await prisma.ai_reports.update({
-    where: { id: reportId },
-    data: { status: input.status },
-  });
-
-  return NextResponse.json({ success: true });
-}
-
-async function handleAddNote(
-  reportId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "add_note" }>
-) {
-  const note = await prisma.reportNote.create({
-    data: {
-      reportId,
-      content: input.content,
-      noteType: input.noteType || "general",
-      authorId: userId,
-    },
-  });
-
-  return NextResponse.json({ success: true, note });
 }

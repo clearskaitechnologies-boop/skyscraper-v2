@@ -5,17 +5,17 @@ import type { VideoScript } from "./types";
 
 /**
  * Creates a video from a script using available providers or graceful fallback.
- * 
+ *
  * Provider Priority:
  * 1. OpenAI Sora (if OPENAI_API_KEY + OPENAI_VIDEO_MODEL env vars present)
  * 2. Synthesia (if SYNTHESIA_API_KEY present)
  * 3. Placeholder video (always succeeds)
  */
-export async function createVideoFromScript(
-  script: VideoScript
-): Promise<Buffer> {
+export async function createVideoFromScript(script: VideoScript): Promise<Buffer> {
   console.log(`[Video Generation] Starting for ${script.kind}: ${script.title}`);
-  console.log(`[Video Generation] Duration: ${script.durationSeconds}s, Scenes: ${script.scenes.length}`);
+  console.log(
+    `[Video Generation] Duration: ${script.durationSeconds}s, Scenes: ${script.scenes.length}`
+  );
 
   const combinedPrompt = script.scenes
     .map(
@@ -54,10 +54,7 @@ export async function createVideoFromScript(
 /**
  * Generate video using OpenAI Sora
  */
-async function generateWithOpenAI(
-  script: VideoScript,
-  prompt: string
-): Promise<Buffer> {
+async function generateWithOpenAI(script: VideoScript, prompt: string): Promise<Buffer> {
   const openai = getOpenAI();
 
   const response = await openai.videos.generate({
@@ -79,10 +76,7 @@ async function generateWithOpenAI(
 /**
  * Generate video using Synthesia
  */
-async function generateWithSynthesia(
-  script: VideoScript,
-  prompt: string
-): Promise<Buffer> {
+async function generateWithSynthesia(script: VideoScript, prompt: string): Promise<Buffer> {
   const narration = script.scenes.map((s) => s.voiceover).join(" ");
 
   const response = await fetch("https://api.synthesia.io/v2/videos", {
@@ -115,14 +109,11 @@ async function generateWithSynthesia(
   while (attempts < maxAttempts) {
     await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5s
 
-    const statusResponse = await fetch(
-      `https://api.synthesia.io/v2/videos/${videoId}`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.SYNTHESIA_API_KEY}`,
-        },
-      }
-    );
+    const statusResponse = await fetch(`https://api.synthesia.io/v2/videos/${videoId}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.SYNTHESIA_API_KEY}`,
+      },
+    });
 
     const statusData = await statusResponse.json();
 
