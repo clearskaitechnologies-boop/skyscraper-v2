@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
-import { verifyProClaimAccess } from "@/lib/security";
 
 /**
  * POST /api/claims/[claimId]/toggle-visibility
@@ -10,18 +10,14 @@ import { verifyProClaimAccess } from "@/lib/security";
  */
 export async function POST(req: NextRequest, { params }: { params: Promise<{ claimId: string }> }) {
   try {
-    const { userId } = await auth();
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
+
     const { claimId } = await params;
 
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Security: Verify Pro has access to this claim
-    const securityCheck = await verifyProClaimAccess(claimId, userId);
-    if (!securityCheck) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    // Security: Verify claim belongs to this org
+    await getOrgClaimOrThrow(orgId, claimId);
 
     const body = await req.json();
     const { type, itemIds, visible } = body;
@@ -80,6 +76,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       visible,
     });
   } catch (error) {
+    if (error instanceof OrgScopeError) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
     console.error("[TOGGLE_VISIBILITY_ERROR]", error);
     return NextResponse.json({ error: "Failed to toggle visibility" }, { status: 500 });
   }

@@ -1,3 +1,8 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// GET returns all active tradesPost records (public feed — no auth required for read).
+// POST is userId-scoped (creates post as authenticated user).
+// tradesPost has no orgId; the trades feed is a cross-org social network.
+
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 

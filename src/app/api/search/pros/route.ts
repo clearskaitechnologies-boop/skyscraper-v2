@@ -1,19 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 /**
  * POST /api/search/pros
- * Search for Pro companies or users
+ * Search for Pro companies or users — admin-only, returns only limited info
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
 
     const body = await req.json();
     const { query } = body;
@@ -22,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Query too short" }, { status: 400 });
     }
 
-    // Search for Pro companies (orgs table)
+    // Search for Pro companies (orgs table) — limited fields for security
     const orgs = await prisma.org.findMany({
       where: {
         name: { contains: query, mode: "insensitive" },
@@ -30,7 +27,6 @@ export async function POST(req: NextRequest) {
       select: {
         id: true,
         name: true,
-        planKey: true,
         createdAt: true,
       },
       take: 10,
@@ -40,7 +36,6 @@ export async function POST(req: NextRequest) {
       id: org.id,
       companyName: org.name,
       type: "company",
-      planTier: org.planKey,
       createdAt: org.createdAt,
     }));
 

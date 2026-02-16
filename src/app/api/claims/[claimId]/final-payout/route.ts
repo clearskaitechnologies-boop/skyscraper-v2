@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -31,16 +31,15 @@ type PayoutStatus = (typeof PAYOUT_STAGES)[number];
  */
 export async function GET(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const ctx = await getActiveOrgContext();
-    if (!ctx.ok) {
-      return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const { claimId } = params;
 
     // Get claim with all related data
     const claim = await prisma.claims.findUnique({
-      where: { id: claimId, orgId: ctx.orgId },
+      where: { id: claimId, orgId },
       include: {
         properties: true,
         depreciation_items: true,
@@ -219,10 +218,9 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
  */
 export async function PATCH(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const ctx = await getActiveOrgContext();
-    if (!ctx.ok) {
-      return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const { claimId } = params;
     const body = await request.json();
@@ -230,7 +228,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { claimI
 
     // Verify claim exists and belongs to org
     const claim = await prisma.claims.findUnique({
-      where: { id: claimId, orgId: ctx.orgId },
+      where: { id: claimId, orgId },
       select: { id: true },
     });
 
@@ -274,7 +272,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { claimI
       create: {
         id: `dep_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
         claim_id: claimId,
-        org_id: ctx.orgId,
+        org_id: orgId,
         total_depreciation: 0,
         status: "PENDING",
         created_at: new Date(),
@@ -306,7 +304,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { claimI
       type: "status_change",
       status: trackerData.status,
       timestamp: new Date().toISOString(),
-      userId: ctx.userId,
+      userId,
       notes: notes || `Status updated to ${status}`,
     };
 

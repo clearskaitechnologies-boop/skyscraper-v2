@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId/clientId — queries clientSavedPro by client.id (derived from auth userId). No cross-tenant risk.
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

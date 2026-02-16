@@ -1,0 +1,72 @@
+{
+  "_description": "Sentry Alert Rules for Auth Hardening Monitoring",
+  "_instructions": "Import these alert rules into Sentry Dashboard > Alerts > Create Alert Rule",
+
+  "alerts": [
+    {
+      "name": "Auth: High 401 Rate (Unauthenticated)",
+      "description": "Fires when more than 50 unauthenticated (401) API responses occur in 5 minutes. Indicates potential auth misconfiguration or bot attack.",
+      "conditions": {
+        "filter": "event.type:error AND http.status_code:401",
+        "threshold": 50,
+        "window": "5m",
+        "comparison": "count()"
+      },
+      "actions": ["slack:#alerts-auth", "email:team"],
+      "severity": "warning"
+    },
+    {
+      "name": "Auth: High 403 Rate (Forbidden/Cross-Org)",
+      "description": "Fires when more than 10 forbidden (403) responses occur in 5 minutes. May indicate cross-org access attempts.",
+      "conditions": {
+        "filter": "event.type:error AND http.status_code:403",
+        "threshold": 10,
+        "window": "5m",
+        "comparison": "count()"
+      },
+      "actions": ["slack:#alerts-security", "email:team", "pagerduty"],
+      "severity": "critical"
+    },
+    {
+      "name": "Auth: requireAuth Failures Spike",
+      "description": "Fires when requireAuth guard failures exceed normal baseline by 3x.",
+      "conditions": {
+        "filter": "message:*UNAUTHENTICATED* OR message:*NO_ORG*",
+        "threshold": "3x baseline",
+        "window": "10m",
+        "comparison": "percent_change()"
+      },
+      "actions": ["slack:#alerts-auth"],
+      "severity": "warning"
+    },
+    {
+      "name": "Auth: Portal Access Denied Spike",
+      "description": "Fires when portal FORBIDDEN errors spike — may indicate broken client access tokens.",
+      "conditions": {
+        "filter": "message:*FORBIDDEN* AND url:*/api/portal/*",
+        "threshold": 20,
+        "window": "15m",
+        "comparison": "count()"
+      },
+      "actions": ["slack:#alerts-portal"],
+      "severity": "warning"
+    },
+    {
+      "name": "Security: Cross-Org Data Access Attempt",
+      "description": "CRITICAL — Fires on any potential cross-org data access. Should NEVER fire if org-scoping is correct.",
+      "conditions": {
+        "filter": "tags.security:cross-org-attempt",
+        "threshold": 1,
+        "window": "1m",
+        "comparison": "count()"
+      },
+      "actions": ["slack:#alerts-security", "pagerduty", "email:founders"],
+      "severity": "critical"
+    }
+  ],
+
+  "custom_tags_to_add": {
+    "description": "Add these tags to Sentry events for better filtering",
+    "tags": ["auth.guard_type", "auth.failure_reason", "auth.org_id", "security.cross_org_attempt"]
+  }
+}

@@ -25,6 +25,7 @@ export const revalidate = 0;
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { q, qOne } from "@/lib/db/index";
 import { enqueue } from "@/lib/queue";
 
@@ -124,15 +125,19 @@ async function pollForFindings(photoId: string, timeoutMs: number = 60000): Prom
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     // Parse request body
     const body = await req.json();
-    const { proposalId, orgId } = body;
+    const { proposalId } = body;
 
-    if (!proposalId || !orgId) {
+    if (!proposalId) {
       return NextResponse.json(
         {
           ok: false,
-          error: "proposalId and orgId are required",
+          error: "proposalId is required",
         },
         { status: 400 }
       );

@@ -5,9 +5,9 @@
  * Uses the actual SignatureEnvelope schema with single signer info
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -18,10 +18,9 @@ export async function POST(
   { params }: { params: Promise<{ envelopeId: string }> }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
 
     const { envelopeId } = await params;
 
@@ -32,6 +31,17 @@ export async function POST(
 
     if (!envelope) {
       return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+    }
+
+    // Org isolation: verify linked claim belongs to this org
+    if (envelope.claimId) {
+      const claim = await prisma.claims.findFirst({
+        where: { id: envelope.claimId, orgId },
+        select: { id: true },
+      });
+      if (!claim) {
+        return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+      }
     }
 
     // Check if envelope has signer info

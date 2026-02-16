@@ -3,6 +3,16 @@ import { redirect } from "next/navigation";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import {
+  ContentCard,
+  DataTable,
+  DataTableBody,
+  DataTableHead,
+  EmptyRow,
+  Td,
+  Th,
+} from "@/components/ui/ContentCard";
+import { StatCard } from "@/components/ui/MetricCard";
 import { guarded } from "@/lib/buildPhase";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -11,7 +21,7 @@ import PermitForm from "./PermitForm";
 
 export const dynamic = "force-dynamic";
 
-const statusIcons: Record<string, any> = {
+const statusIcons: Record<string, React.ReactNode> = {
   applied: <Clock className="h-4 w-4 text-blue-500" />,
   approved: <CheckCircle2 className="h-4 w-4 text-green-500" />,
   issued: <FileCheck className="h-4 w-4 text-emerald-500" />,
@@ -78,73 +88,81 @@ export default async function PermitsPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-        {[
-          { label: "Total", value: summary.total, color: "blue" },
-          { label: "Active", value: summary.active, color: "green" },
-          { label: "Pending Inspection", value: summary.pendingInspection, color: "yellow" },
-          { label: "Passed", value: summary.passed, color: "emerald" },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-5 backdrop-blur-xl"
-          >
-            <div className="text-sm text-slate-600 dark:text-slate-300">{stat.label}</div>
-            <div className="mt-1 text-3xl font-bold text-[color:var(--text)]">{stat.value}</div>
-          </div>
-        ))}
+        <StatCard
+          label="Total Permits"
+          value={summary.total}
+          icon={<ClipboardList className="h-5 w-5" />}
+          intent="info"
+        />
+        <StatCard
+          label="Active"
+          value={summary.active}
+          icon={<CheckCircle2 className="h-5 w-5" />}
+          intent="success"
+        />
+        <StatCard
+          label="Pending Inspection"
+          value={summary.pendingInspection}
+          icon={<Clock className="h-5 w-5" />}
+          intent="warning"
+        />
+        <StatCard
+          label="Passed"
+          value={summary.passed}
+          icon={<Shield className="h-5 w-5" />}
+          intent="success"
+        />
       </div>
 
       {/* Add permit form */}
       <PermitForm />
 
       {/* Permits table */}
-      <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[color:var(--border)] text-left text-xs uppercase text-slate-500">
-                <th className="px-6 py-3">Permit #</th>
-                <th className="px-6 py-3">Type</th>
-                <th className="px-6 py-3">Jurisdiction</th>
-                <th className="px-6 py-3 text-center">Status</th>
-                <th className="px-6 py-3">Applied</th>
-                <th className="px-6 py-3">Inspection</th>
-                <th className="px-6 py-3 text-right">Fee</th>
+      <ContentCard noPadding>
+        <DataTable>
+          <DataTableHead>
+            <Th>Permit #</Th>
+            <Th>Type</Th>
+            <Th>Jurisdiction</Th>
+            <Th align="center">Status</Th>
+            <Th>Applied</Th>
+            <Th>Inspection</Th>
+            <Th align="right">Fee</Th>
+          </DataTableHead>
+          <DataTableBody>
+            {permits.length === 0 && (
+              <EmptyRow
+                colSpan={7}
+                message="No permits tracked yet. Add your first permit above."
+              />
+            )}
+            {permits.map((p) => (
+              <tr
+                key={p.id}
+                className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
+              >
+                <Td mono className="font-medium text-blue-600 dark:text-blue-400">
+                  {p.permitNumber}
+                </Td>
+                <Td className="capitalize">{p.permitType}</Td>
+                <Td>{p.jurisdiction || "—"}</Td>
+                <Td align="center">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[p.status] || ""}`}
+                  >
+                    {statusIcons[p.status]} {p.status.replace("_", " ")}
+                  </span>
+                </Td>
+                <Td className="text-xs text-slate-500">{p.appliedAt}</Td>
+                <Td className="text-xs text-slate-500">{p.inspectionDate || "—"}</Td>
+                <Td align="right" mono>
+                  {p.fee ? `$${p.fee.toFixed(2)}` : "—"}
+                </Td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-[color:var(--border)]">
-              {permits.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    No permits tracked yet. Add your first permit above.
-                  </td>
-                </tr>
-              )}
-              {permits.map((p) => (
-                <tr key={p.id} className="transition-colors hover:bg-[var(--surface-1)]">
-                  <td className="px-6 py-4 font-mono font-medium text-[color:var(--primary)]">
-                    {p.permitNumber}
-                  </td>
-                  <td className="px-6 py-4 capitalize text-[color:var(--text)]">{p.permitType}</td>
-                  <td className="px-6 py-4 text-[color:var(--text)]">{p.jurisdiction || "—"}</td>
-                  <td className="px-6 py-4 text-center">
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[p.status] || ""}`}
-                    >
-                      {statusIcons[p.status]} {p.status.replace("_", " ")}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-slate-500">{p.appliedAt}</td>
-                  <td className="px-6 py-4 text-xs text-slate-500">{p.inspectionDate || "—"}</td>
-                  <td className="px-6 py-4 text-right font-mono text-[color:var(--text)]">
-                    {p.fee ? `$${p.fee.toFixed(2)}` : "—"}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            ))}
+          </DataTableBody>
+        </DataTable>
+      </ContentCard>
     </PageContainer>
   );
 }

@@ -5,12 +5,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const { searchParams } = new URL(request.url);
     const programType = searchParams.get("type");
     const tradeType = searchParams.get("trade");

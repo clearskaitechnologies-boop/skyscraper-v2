@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId/clientId — GET queries by client.id, POST creates under client.id. No cross-tenant risk.
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 

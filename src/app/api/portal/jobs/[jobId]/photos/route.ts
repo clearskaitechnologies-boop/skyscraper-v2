@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by clientId + jobId — job ownership verified (clientId: client.id). No cross-tenant risk.
 /**
  * Job Photos API - Manage project photos
  */

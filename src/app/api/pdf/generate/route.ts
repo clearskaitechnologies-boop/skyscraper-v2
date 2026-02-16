@@ -3,11 +3,16 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { BasePDFTemplate } from "@/lib/pdf/baseTemplate.tsx";
 import { uploadPDFToFirebase } from "@/lib/storage/firebaseUpload";
 import { pdfToUint8 } from "@/pdf/render";
 
 export async function POST(req: Request) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
+  const { orgId, userId } = auth;
+
   const body = await req.json();
   // Default to landscape unless explicitly set to false
   const landscape = body.landscape !== false;

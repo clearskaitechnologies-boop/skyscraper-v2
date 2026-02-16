@@ -8,6 +8,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -88,6 +90,9 @@ const COMMON_MISSING_BY_CATEGORY = {
 };
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const formData = await request.formData();
     const files = formData.getAll("files") as File[];

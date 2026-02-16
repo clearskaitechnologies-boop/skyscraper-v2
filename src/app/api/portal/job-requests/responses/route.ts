@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId — own responses filtered by contractorId (member.id) or job ownership verified via clientId. No cross-tenant risk.
 /**
  * Client Job Request Responses API
  * Allows contractors to respond to client job requests

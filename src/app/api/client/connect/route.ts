@@ -162,6 +162,7 @@ export async function GET(req: Request) {
     }
 
     // Verify the client belongs to the authenticated user
+    // Scoped by userId — ownership check prevents cross-tenant access
     const client = await prisma.client.findUnique({
       where: { id: clientId },
       select: { id: true, userId: true },

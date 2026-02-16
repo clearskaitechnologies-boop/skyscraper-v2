@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by proId/contractorId (GET) and userId→clientId (POST) — no cross-tenant risk
+// GET filters reviews by contractorId (proId param). POST requires authenticated user's
+// client record + verified connection to the pro. trade_reviews has no orgId;
+// reviews are cross-org (clients from any org can review pros from any org).
+
 /**
  * POST /api/trades/reviews
  * Client submits a review for a Pro they've connected with

@@ -1,3 +1,8 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// No auth required. Serves a single member/company public profile page.
+// Lookups by UUID, Clerk userId, or slug. tradesCompanyMember and tradesCompany
+// have no orgId; public profiles are intentionally shareable across the network.
+
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";

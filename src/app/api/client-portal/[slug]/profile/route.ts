@@ -7,12 +7,18 @@
  * Uses the Client model (not client_networks) for profile management.
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { slug } = params;
 
     // Find the client by slug (Client model has slug field)
@@ -67,6 +73,11 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 
 export async function POST(request: NextRequest, { params }: { params: { slug: string } }) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { slug } = params;
     const body = await request.json();
 

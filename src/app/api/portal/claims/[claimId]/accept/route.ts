@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import { createTimelineEvent } from "@/lib/claims/timeline";
 import prisma from "@/lib/prisma";
 
@@ -8,15 +9,19 @@ import prisma from "@/lib/prisma";
  *
  * Homeowner accepts/confirms a proposal, estimate, or completion.
  * Creates a record of their acceptance with timestamp and IP.
+ * Requires Clerk auth.
  *
  * Body:
- *   token: Portal access token (required)
  *   acceptanceType: "proposal" | "estimate" | "completion" | "terms"
  *   notes?: Optional notes from homeowner
  *   signatureData?: Base64 signature if applicable
  */
 export async function POST(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
+
     const { claimId } = params;
     const body = await request.json();
     const { token, acceptanceType, notes, signatureData } = body;

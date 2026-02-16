@@ -6,9 +6,9 @@
  * and creates claim_documents records.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
@@ -25,10 +25,9 @@ try {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const formData = await request.formData();
     const claimId = formData.get("claimId") as string;

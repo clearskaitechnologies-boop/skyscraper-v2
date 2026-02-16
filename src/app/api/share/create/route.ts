@@ -6,6 +6,8 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
+
 const ShareCreateSchema = z.object({
   resourceType: z.enum(["report", "export"]),
   resourceId: z.string().min(1),
@@ -20,6 +22,9 @@ const ShareCreateSchema = z.object({
  * This endpoint creates ephemeral share links without persistence.
  */
 export async function POST(req: Request) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
+
   const body = await req.json();
   const parsed = ShareCreateSchema.safeParse(body);
   if (!parsed.success) {

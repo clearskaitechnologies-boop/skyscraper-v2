@@ -1,0 +1,83 @@
+{
+  "_description": "PostHog Dashboard Configuration for Auth Failure Monitoring",
+  "_instructions": "Create this dashboard in PostHog > Dashboards > New Dashboard",
+
+  "dashboard": {
+    "name": "🔒 Auth & Security Monitor",
+    "description": "Tracks authentication failures, cross-org access attempts, and portal access denials following the auth hardening sprint.",
+
+    "tiles": [
+      {
+        "name": "401 Failures (24h)",
+        "type": "trends",
+        "event": "auth_failure_401",
+        "display": "ActionsLineGraph",
+        "interval": "hour",
+        "date_range": "Last 24 hours",
+        "breakdown": "route"
+      },
+      {
+        "name": "403 Forbidden Responses (24h)",
+        "type": "trends",
+        "event": "auth_failure_403",
+        "display": "ActionsLineGraph",
+        "interval": "hour",
+        "date_range": "Last 24 hours",
+        "breakdown": "route"
+      },
+      {
+        "name": "🚨 Cross-Org Access Attempts",
+        "type": "trends",
+        "event": "auth_cross_org_attempt",
+        "display": "BoldNumber",
+        "date_range": "Last 7 days",
+        "description": "CRITICAL: Should always be 0. Any non-zero value indicates a potential security breach."
+      },
+      {
+        "name": "Portal Access Denials",
+        "type": "trends",
+        "event": "portal_access_denied",
+        "display": "ActionsLineGraph",
+        "interval": "hour",
+        "date_range": "Last 24 hours",
+        "breakdown": "reason"
+      },
+      {
+        "name": "Auth Failures by Route (Top 10)",
+        "type": "table",
+        "events": ["auth_failure_401", "auth_failure_403"],
+        "breakdown": "route",
+        "date_range": "Last 7 days",
+        "order": "descending",
+        "limit": 10
+      },
+      {
+        "name": "Auth Success vs Failure Rate",
+        "type": "funnel",
+        "steps": [
+          { "event": "user_signed_in", "label": "Authenticated" },
+          { "event": "auth_failure_403", "label": "Access Denied" }
+        ],
+        "date_range": "Last 30 days"
+      }
+    ]
+  },
+
+  "alerts": [
+    {
+      "name": "Cross-Org Attempt Detected",
+      "event": "auth_cross_org_attempt",
+      "threshold": 1,
+      "condition": "absolute",
+      "notify": ["slack:#alerts-security", "email"]
+    },
+    {
+      "name": "High 403 Rate",
+      "event": "auth_failure_403",
+      "threshold": 50,
+      "window": "1h",
+      "condition": "absolute",
+      "notify": ["slack:#alerts-auth"]
+    }
+  ]
+}

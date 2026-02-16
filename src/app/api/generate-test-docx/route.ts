@@ -8,6 +8,7 @@ export const revalidate = 0;
 import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { generateClaimPacket } from "@/lib/claims/generator";
 import { BLANK_PACKET, ClaimPacketData } from "@/lib/claims/templates";
 
@@ -96,6 +97,10 @@ const SAMPLE_RETAIL_DATA: ClaimPacketData = {
 
 export async function POST() {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     console.info("[TEST_DOCX] Generating retail packet with sample photos...");
 
     const blob = await generateClaimPacket({

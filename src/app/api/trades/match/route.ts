@@ -1,3 +1,8 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// No auth required. Searches all active tradesCompany, tradesCompanyMember,
+// and tradesProfile records for client-facing contractor matching.
+// None of these tables use orgId; the marketplace is intentionally cross-org.
+
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";

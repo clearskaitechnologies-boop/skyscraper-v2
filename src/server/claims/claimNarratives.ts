@@ -1,6 +1,7 @@
 "use server";
-import { AIModels,callOpenAI } from "@/lib/ai/client";
-import { requireAuth, safeServerAction,verifyClaimAccess } from "@/lib/security/serverSecurity";
+import { AIModels, callOpenAI } from "@/lib/ai/client";
+import { requireAuth } from "@/lib/auth/requireAuth";
+import { safeServerAction, verifyClaimAccess } from "@/lib/security/serverSecurity";
 
 export type ClaimNarratives = {
   overview: string;

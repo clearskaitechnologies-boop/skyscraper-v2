@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // Weather fetch using NOAA/NWS data - production ready
@@ -21,10 +21,9 @@ async function fetchWeatherForDate(address: string, dateOfLoss: Date) {
 
 export async function GET(req: Request) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
 
     const { searchParams } = new URL(req.url);
     const claimId = searchParams.get("claimId");
@@ -33,8 +32,9 @@ export async function GET(req: Request) {
       return NextResponse.json({ ok: false, error: "claimId required" }, { status: 400 });
     }
 
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Org-scoped claim lookup
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
       include: { properties: true },
     });
 

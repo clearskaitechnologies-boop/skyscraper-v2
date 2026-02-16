@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     const category = searchParams.get("category") || "";
 
     // Fetch groups (tradesGroup uses privacy field, not isPublic)
+    // NOTE: tradesGroup has no orgId — intentionally cross-org community groups
     const groups = await prisma.tradesGroup
       .findMany({
         where: {

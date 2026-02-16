@@ -1,24 +1,23 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request, { params }: { params: { claimId: string } }) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId, userId } = auth;
 
   try {
     const { adjusterEmail, includeDepreciation, includeSupplement, message } = await req.json();
     const claimId = params.claimId;
 
-    // Fetch claim (claims uses 'properties' not 'property')
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Fetch claim — org-scoped
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
       include: {
         properties: true,
       },

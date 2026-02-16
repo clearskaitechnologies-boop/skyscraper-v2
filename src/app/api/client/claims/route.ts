@@ -16,6 +16,7 @@ export async function GET() {
     }
 
     // Find all CONNECTED claim links for this client
+    // Scoped by userId (clientUserId) — no cross-tenant risk
     const links = await prisma.claimClientLink.findMany({
       where: {
         clientUserId: userId,

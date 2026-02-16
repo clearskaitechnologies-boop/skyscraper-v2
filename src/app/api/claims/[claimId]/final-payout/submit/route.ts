@@ -6,8 +6,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { getOrgBranding } from "@/lib/branding/getOrgBranding";
-import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -18,10 +18,9 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const ctx = await getActiveOrgContext();
-    if (!ctx.ok) {
-      return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const { claimId } = params;
     const body = await request.json();
@@ -43,7 +42,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
 
     // Get claim with all needed data
     const claim = await prisma.claims.findUnique({
-      where: { id: claimId, orgId: ctx.orgId },
+      where: { id: claimId, orgId },
       include: {
         properties: true,
         depreciation_items: true,
@@ -75,7 +74,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     const totalDue = totalDepreciation + supplementsTotal;
 
     // Get branding for email
-    const branding = await getOrgBranding(ctx.orgId);
+    const branding = await getOrgBranding(orgId);
 
     // Update or create depreciation tracker
     const tracker = await prisma.depreciation_trackers.upsert({
@@ -83,7 +82,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       create: {
         id: `dep_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
         claim_id: claimId,
-        org_id: ctx.orgId,
+        org_id: orgId,
         total_depreciation: totalDepreciation,
         requested_amount: totalDue,
         status: "REQUESTED",
@@ -92,7 +91,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
           {
             type: "submitted",
             timestamp: new Date().toISOString(),
-            userId: ctx.userId,
+            userId,
             signedBy,
             notes: notesToCarrier || "Final payout package submitted to carrier",
           },
@@ -118,7 +117,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
           {
             type: "submitted",
             timestamp: new Date().toISOString(),
-            userId: ctx.userId,
+            userId,
             signedBy,
             totalDue,
             notesToCarrier,
@@ -137,7 +136,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       data: {
         id: packageId,
         claim_id: claimId,
-        org_id: ctx.orgId,
+        org_id: orgId,
         invoice: {
           claimNumber: claim.claimNumber,
           carrier: claim.carrier,
@@ -165,7 +164,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
         status: "SUBMITTED",
         sent_at: new Date(),
         sent_to: claim.adjusterEmail ? [claim.adjusterEmail] : [],
-        generated_by: ctx.userId || "system",
+        generated_by: userId || "system",
         created_at: new Date(),
         updated_at: new Date(),
         notes: notesToCarrier,
@@ -181,7 +180,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
           data: {
             id: `notif_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
             claimId,
-            orgId: ctx.orgId,
+            orgId,
             notificationType: "FINAL_PAYOUT_SUBMITTED",
             title: `Final Payout Package - ${claim.claimNumber}`,
             message: `A final payout package for claim ${claim.claimNumber} has been submitted. Total due: $${totalDue.toLocaleString()}`,
@@ -214,12 +213,12 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     await prisma.activities.create({
       data: {
         id: `act_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
-        orgId: ctx.orgId,
+        orgId,
         claimId,
         type: "FINAL_PAYOUT_SUBMITTED",
         title: "Final Payout Package Submitted",
         description: `Submitted final payout package to carrier. Total due: $${totalDue.toLocaleString()}`,
-        userId: ctx.userId,
+        userId,
         userName: "System",
         createdAt: new Date(),
         updatedAt: new Date(),

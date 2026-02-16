@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import { validatePortalAccess } from "@/lib/portalAuth";
 import prisma from "@/lib/prisma";
 import { rateLimiters } from "@/lib/rate-limit";
@@ -10,6 +11,10 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: Request) {
   try {
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
+
     const form = await req.formData();
     const title = form.get("title")?.toString();
     const file = form.get("file") as File | null;

@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by userId — no cross-tenant risk
+// GET filters by userId (current user or specified targetUserId for public viewing).
+// POST/PATCH/DELETE verify userId ownership before mutations.
+// tradesFeaturedWork has no orgId; portfolio items belong to individual users.
+
 /**
  * Featured Work API
  * Handles CRUD operations for featured work items on profiles

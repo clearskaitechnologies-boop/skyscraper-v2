@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 
+import { requireAdmin } from "@/lib/auth/requireAuth";
+
 /**
  * Safe Auth Debug Endpoint
  * Shows Clerk environment configuration WITHOUT exposing secrets
@@ -20,6 +22,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const auth = await requireAdmin();
+  if (auth instanceof NextResponse) return auth;
+  const { orgId, userId } = auth;
   const publishable = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ?? null;
   const secret = process.env.CLERK_SECRET_KEY ?? null;
 

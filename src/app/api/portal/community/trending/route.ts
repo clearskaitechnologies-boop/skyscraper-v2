@@ -1,19 +1,18 @@
+// ORG-SCOPE: Public marketplace — queries active tradesCompanyMember/tradesProfile. Cross-org by design (pro discovery).
 /**
  * Trending Pros API
  * Returns contractors with most recent reviews/activity
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
 
     const { searchParams } = new URL(req.url);
     const trade = searchParams.get("trade");

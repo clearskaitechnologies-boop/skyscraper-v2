@@ -6,8 +6,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { getOrgBranding } from "@/lib/branding/getOrgBranding";
-import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 import { generateDepreciationPDF } from "@/lib/reports/generators";
 import type { DepreciationReportPayload } from "@/lib/reports/types";
@@ -20,10 +20,9 @@ export const dynamic = "force-dynamic";
  */
 export async function POST(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const ctx = await getActiveOrgContext();
-    if (!ctx.ok) {
-      return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const { claimId } = params;
     const body = await request.json();
@@ -37,7 +36,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
 
     // Get claim with all related data
     const claim = await prisma.claims.findUnique({
-      where: { id: claimId, orgId: ctx.orgId },
+      where: { id: claimId, orgId },
       include: {
         properties: true,
         depreciation_items: true,
@@ -56,7 +55,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     }
 
     // Get branding
-    const branding = await getOrgBranding(ctx.orgId);
+    const branding = await getOrgBranding(orgId);
 
     // Get job info
     const job = claim.jobs[0];
@@ -151,13 +150,13 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     const report = await prisma.reports.create({
       data: {
         id: `rpt_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
-        orgId: ctx.orgId,
+        orgId,
         claimId,
         type: "FINAL_PAYOUT_PACKET",
         title: `Final Payout Package - ${claim.claimNumber}`,
         subtitle: `Complete final payout package including invoice, lien waiver, completion certificate`,
         pdfUrl,
-        createdById: ctx.userId,
+        createdById: userId,
         createdAt: new Date(),
         updatedAt: new Date(),
         meta: {
@@ -182,14 +181,14 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       create: {
         id: `dep_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
         claim_id: claimId,
-        org_id: ctx.orgId,
+        org_id: orgId,
         total_depreciation: totalDepreciation,
         status: "PENDING",
         timeline: [
           {
             type: "packet_generated",
             timestamp: new Date().toISOString(),
-            userId: ctx.userId,
+            userId,
             reportId: report.id,
           },
         ],
@@ -206,12 +205,12 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     await prisma.activities.create({
       data: {
         id: `act_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
-        orgId: ctx.orgId,
+        orgId,
         claimId,
         type: "FINAL_PACKET_GENERATED",
         title: "Final Payout Packet Generated",
         description: `Generated final payout package. Total due: $${totalDue.toLocaleString()}`,
-        userId: ctx.userId,
+        userId,
         userName: "System",
         createdAt: new Date(),
         updatedAt: new Date(),

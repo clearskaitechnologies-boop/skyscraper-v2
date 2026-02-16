@@ -6,6 +6,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 import { getLogoFromWebsite, VENDOR_LOGOS } from "@/lib/vendors/vendorLogos";
@@ -14,6 +15,10 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const { searchParams } = new URL(request.url);
     const trade = searchParams.get("trade");
     const vendorType = searchParams.get("vendorType");

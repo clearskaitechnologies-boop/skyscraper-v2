@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache";
 
 import { prismaModel } from "@/lib/db/prismaModel";
+import { requireAuth } from "@/lib/auth/requireAuth";
 import {
-  requireAuth,
   safeServerAction,
   sanitizeInput,
   verifyClaimAccess,

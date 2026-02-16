@@ -14,7 +14,7 @@ export async function POST(_req: Request, { params }: { params: { estimateId: st
   const estimateId = params.estimateId;
 
   try {
-    // Fetch estimate with items and product details
+    // Fetch estimate with items — verify existence with auth
     const estimate = await prisma.retailEstimate.findUnique({
       where: { id: estimateId },
       include: {

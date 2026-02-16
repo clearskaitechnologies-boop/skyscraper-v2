@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -12,11 +12,9 @@ export const dynamic = "force-dynamic";
  * List artifacts for a claim (portal access)
  */
 export async function GET(req: NextRequest, { params }: { params: Promise<{ claimId: string }> }) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requirePortalAuth();
+  if (isPortalAuthError(authResult)) return authResult;
+  const { userId } = authResult;
 
   try {
     const { claimId } = await params;

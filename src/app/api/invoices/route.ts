@@ -47,7 +47,6 @@ export async function GET(req: NextRequest) {
 
     // contractor_invoices are linked through crm_jobs which have orgId
     const where: any = {};
-    if (jobId) where.job_id = jobId;
     if (kind) where.kind = kind;
 
     // First get job IDs belonging to this org
@@ -56,6 +55,11 @@ export async function GET(req: NextRequest) {
       select: { id: true },
     });
     const orgJobIds = new Set(orgJobs.map((j) => j.id));
+
+    // If jobId filter provided, verify it belongs to this org
+    if (jobId && !orgJobIds.has(jobId)) {
+      return apiOk({ invoices: [], count: 0, limit, offset });
+    }
 
     const invoices = await prisma.contractor_invoices.findMany({
       where: {

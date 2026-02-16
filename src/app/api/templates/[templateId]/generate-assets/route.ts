@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 
+import { isAuthError, requireAdmin } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 import { supabaseServer } from "@/lib/supabase-server";
 import { renderPdfAndThumbnail } from "@/lib/template/renderPdfAndThumb";
@@ -15,6 +16,10 @@ function requireEnv(name: string) {
 
 export async function POST(_: Request, ctx: { params: Promise<{ templateId: string }> }) {
   try {
+    // Enforce admin auth for template asset generation
+    const auth = await requireAdmin();
+    if (isAuthError(auth)) return auth;
+
     const { templateId } = await ctx.params;
 
     const bucket = requireEnv("SUPABASE_STORAGE_BUCKET_TEMPLATES");

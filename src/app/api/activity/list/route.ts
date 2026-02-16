@@ -4,12 +4,16 @@ export const revalidate = 0;
 
 import { NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
+
 /**
  * Query: ?cursor=...&limit=20
  * Returns: { items: [...], nextCursor?: string }
  * NOTE: Back with DB reads using created_at/id cursor for pagination.
  */
 export async function GET(req: Request) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
   const { searchParams } = new URL(req.url);
   const limit = Number(searchParams.get("limit") ?? "20");
   const items = []; // await db.query('select ... order by created_at desc limit $1', [limit+1])

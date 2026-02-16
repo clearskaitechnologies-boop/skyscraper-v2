@@ -3,34 +3,10 @@
  * Simplified utilities for requiring org context in pages
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-export interface OrgContextResult {
-  userId: string;
-  orgId: string | null;
-}
-
-/**
- * Require authenticated user, return userId and orgId (may be null)
- * Use this when you need at minimum an authenticated user
- */
-export async function requireAuth(): Promise<OrgContextResult> {
-  const authResult = auth();
-  const userId = authResult.userId;
-
-  if (!userId) {
-    redirect("/sign-in");
-  }
-
-  // Try to get orgId from auth
-  const orgId = authResult.orgId ?? null;
-
-  return {
-    userId,
-    orgId,
-  };
-}
+// NOTE: requireAuth has been consolidated to @/lib/auth/requireAuth
+// Import from there instead: import { requireAuth } from "@/lib/auth/requireAuth";
 
 /**
  * Require authenticated user with organization membership

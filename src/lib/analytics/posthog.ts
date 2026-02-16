@@ -71,6 +71,13 @@ export const EVENTS = {
   WORKSPACE_VIEWED: "workspace_viewed",
   DASHBOARD_VIEWED: "dashboard_viewed",
   PORTAL_VIEWED: "portal_viewed",
+
+  // Auth / Security (hardening phase)
+  AUTH_FAILURE_401: "auth_failure_401",
+  AUTH_FAILURE_403: "auth_failure_403",
+  AUTH_CROSS_ORG_ATTEMPT: "auth_cross_org_attempt",
+  PORTAL_ACCESS_DENIED: "portal_access_denied",
+  AUTH_GUARD_TRIGGERED: "auth_guard_triggered",
 } as const;
 
 /**
@@ -113,5 +120,24 @@ export const analytics = {
 
   trackPageView: (pageName: string, properties?: Record<string, any>) => {
     trackEvent("page_viewed", { pageName, ...properties });
+  },
+
+  // ── Auth / Security Tracking ──────────────────────────────────────────
+  trackAuthFailure: (statusCode: 401 | 403, route: string, reason: string) => {
+    const event = statusCode === 401 ? EVENTS.AUTH_FAILURE_401 : EVENTS.AUTH_FAILURE_403;
+    trackEvent(event, { statusCode, route, reason });
+  },
+
+  trackCrossOrgAttempt: (attemptedOrgId: string, actualOrgId: string, route: string) => {
+    trackEvent(EVENTS.AUTH_CROSS_ORG_ATTEMPT, {
+      attemptedOrgId,
+      actualOrgId,
+      route,
+      severity: "critical",
+    });
+  },
+
+  trackPortalAccessDenied: (claimId: string, reason: string) => {
+    trackEvent(EVENTS.PORTAL_ACCESS_DENIED, { claimId, reason });
   },
 };

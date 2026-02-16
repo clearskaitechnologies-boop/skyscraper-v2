@@ -11,6 +11,14 @@ export async function POST(req: Request) {
   if (!estimateId || !productId)
     return new NextResponse("Missing estimateId or productId", { status: 400 });
 
+  // Verify estimate exists before inserting item
+  const estimate = await prisma.retailEstimate.findUnique({
+    where: { id: estimateId },
+  });
+  if (!estimate) {
+    return NextResponse.json({ error: "Estimate not found" }, { status: 404 });
+  }
+
   const created = await prisma.retailEstimateItem.create({
     data: { estimateId, productId, price, spec, warranty, color, quantity: quantity ?? 1 } as any,
   });

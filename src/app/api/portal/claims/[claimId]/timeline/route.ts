@@ -1,5 +1,7 @@
+// ORG-SCOPE: Scoped by claimId — access verified via ClaimClientLink. Claim belongs to one org. No cross-tenant risk.
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 /**
@@ -7,12 +9,14 @@ import prisma from "@/lib/prisma";
  *
  * Returns the client-visible timeline for a claim.
  * This is the homeowner's view of their claim progress.
- *
- * Query params:
- *   token: Portal access token (required for unauthenticated access)
+ * Requires Clerk auth.
  */
 export async function GET(request: NextRequest, { params }: { params: { claimId: string } }) {
   try {
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
+
     const { claimId } = params;
     const { searchParams } = new URL(request.url);
     const token = searchParams.get("token");

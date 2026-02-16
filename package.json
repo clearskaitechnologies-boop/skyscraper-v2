@@ -19,7 +19,7 @@
     "worker": "node --import tsx src/worker/index.ts",
     "worker:dev": "NODE_ENV=development node --import tsx --watch src/worker/index.ts",
     "vercel-build": "node scripts/env-preflight.js && node scripts/build-ci.js",
-    "build": "NODE_OPTIONS=--max_old_space_size=8192 BUILD_PHASE=1 next build",
+    "build": "NODE_OPTIONS='--max-old-space-size=8192' BUILD_PHASE=1 next build",
     "regression:check": "node scripts/regression-guards.cjs",
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",

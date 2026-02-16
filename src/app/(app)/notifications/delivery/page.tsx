@@ -21,6 +21,8 @@ import { toast } from "sonner";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import { ContentCard } from "@/components/ui/ContentCard";
+import { StatCard } from "@/components/ui/MetricCard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
@@ -166,50 +168,31 @@ export default function ClientDeliveryNotificationsPage() {
 
       {/* Stats */}
       <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="rounded-lg bg-emerald-100 p-2 dark:bg-emerald-900/30">
-              <Send className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-            </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Total Sent
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-[color:var(--text)]">{notifications.length}</p>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-              <CheckCircle2 className="h-4 w-4 text-green-600 dark:text-green-400" />
-            </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Delivered
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400">{sentCount}</p>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-              <MessageSquare className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-            </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Read</span>
-          </div>
-          <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{readCount}</p>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <div className="rounded-lg bg-amber-100 p-2 dark:bg-amber-900/30">
-              <Clock className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            </div>
-            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-              Open Rate
-            </span>
-          </div>
-          <p className="text-3xl font-bold text-[color:var(--text)]">
-            {notifications.length > 0 ? Math.round((readCount / notifications.length) * 100) : 0}%
-          </p>
-        </div>
+        <StatCard
+          label="Total Sent"
+          value={notifications.length}
+          icon={<Send className="h-4 w-4" />}
+          variant="gradient"
+          gradientColor="success"
+        />
+        <StatCard
+          label="Delivered"
+          value={sentCount}
+          icon={<CheckCircle2 className="h-4 w-4" />}
+          intent="success"
+        />
+        <StatCard
+          label="Read"
+          value={readCount}
+          icon={<MessageSquare className="h-4 w-4" />}
+          intent="info"
+        />
+        <StatCard
+          label="Open Rate"
+          value={`${notifications.length > 0 ? Math.round((readCount / notifications.length) * 100) : 0}%`}
+          icon={<Clock className="h-4 w-4" />}
+          intent="warning"
+        />
       </div>
 
       {/* Notification History */}
@@ -239,17 +222,16 @@ export default function ClientDeliveryNotificationsPage() {
               NOTIFICATION_TYPES.find((t) => t.id === n.type) || NOTIFICATION_TYPES[1];
             const TypeIcon = typeInfo.icon;
             return (
-              <div
-                key={n.id}
-                className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-4 backdrop-blur-xl transition-all hover:shadow-md"
-              >
+              <ContentCard key={n.id}>
                 <div className="flex items-center gap-4">
                   <div className="rounded-xl bg-emerald-50 p-2.5 dark:bg-emerald-950/30">
                     <TypeIcon className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <h4 className="font-semibold text-[color:var(--text)]">{n.title}</h4>
+                      <h4 className="font-semibold text-slate-900 dark:text-slate-100">
+                        {n.title}
+                      </h4>
                       <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-medium capitalize text-slate-500 dark:bg-slate-800 dark:text-slate-400">
                         {n.channel?.replace("_", " ") || "in-app"}
                       </span>
@@ -274,7 +256,7 @@ export default function ClientDeliveryNotificationsPage() {
                     })}
                   </div>
                 </div>
-              </div>
+              </ContentCard>
             );
           })}
         </div>

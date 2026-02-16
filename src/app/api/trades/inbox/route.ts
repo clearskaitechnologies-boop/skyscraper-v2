@@ -19,9 +19,37 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Find user's trades member ID for proper inbox scoping
+    const memberRecord = await prisma.tradesCompanyMember.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!memberRecord) {
+      return NextResponse.json({ ok: true, threads: [], count: 0 });
+    }
+
+    const memberId = memberRecord.id;
+
+    // Query inbox scoped to threads where user is a participant
     const threads: any = await prisma.$queryRaw`
-      SELECT * FROM v_tn_inbox
-      ORDER BY last_message_at DESC NULLS LAST
+      SELECT DISTINCT ON (t.id)
+        t.id as thread_id,
+        t.post_id,
+        t.visibility,
+        t.created_at as thread_created_at,
+        m.created_at as last_message_at,
+        (SELECT COUNT(*) FROM tn_messages WHERE thread_id = t.id) as message_count,
+        m.body as last_message_body,
+        m.sender_id as last_sender_id
+      FROM tn_threads t
+      LEFT JOIN tn_messages m ON m.thread_id = t.id
+      WHERE EXISTS (
+        SELECT 1 FROM tn_participants
+        WHERE thread_id = t.id
+        AND user_id = ${memberId}::uuid
+      )
+      ORDER BY t.id, m.created_at DESC
     `;
 
     return NextResponse.json({

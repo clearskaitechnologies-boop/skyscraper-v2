@@ -8,11 +8,11 @@
  * models need to be added to the Prisma schema before this endpoint can function.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { mkdir, writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { storagePaths } from "@/lib/esign/storage";
 import prisma from "@/lib/prisma";
 
@@ -24,22 +24,31 @@ export async function POST(
   { params }: { params: { envelopeId: string; signerId: string } }
 ) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
 
     const envelopeId = params.envelopeId;
     const signerId = params.signerId;
 
-    // Use existing SignatureEnvelope model as a simplified alternative
-    // until esign models are migrated to the schema
+    // Use existing SignatureEnvelope model
     const envelope = await prisma.signatureEnvelope.findUnique({
       where: { id: envelopeId },
     });
 
     if (!envelope) {
       return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+    }
+
+    // Org isolation: verify linked claim belongs to this org
+    if (envelope.claimId) {
+      const claim = await prisma.claims.findFirst({
+        where: { id: envelope.claimId, orgId },
+        select: { id: true },
+      });
+      if (!claim) {
+        return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+      }
     }
 
     // Parse request

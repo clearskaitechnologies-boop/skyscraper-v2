@@ -1,3 +1,7 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// No auth required. Serves a single company's public profile page.
+// tradesCompany has no orgId; this is intentionally public for shareable company URLs.
+
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";

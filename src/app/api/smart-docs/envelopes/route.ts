@@ -5,9 +5,9 @@
  * Used by the Smart Documents hub page.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -15,12 +15,21 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
+
+    // Get all claim IDs belonging to this org, then filter envelopes
+    const orgClaims = await prisma.claims.findMany({
+      where: { orgId },
+      select: { id: true },
+    });
+    const orgClaimIds = orgClaims.map((c) => c.id);
 
     const envelopes = await prisma.signatureEnvelope.findMany({
+      where: {
+        claimId: { in: orgClaimIds },
+      },
       orderBy: { createdAt: "desc" },
       take: 200,
       select: {

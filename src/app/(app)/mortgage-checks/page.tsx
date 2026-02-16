@@ -3,6 +3,16 @@ import { redirect } from "next/navigation";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import {
+  ContentCard,
+  DataTable,
+  DataTableBody,
+  DataTableHead,
+  EmptyRow,
+  Td,
+  Th,
+} from "@/components/ui/ContentCard";
+import { StatCard } from "@/components/ui/MetricCard";
 import { guarded } from "@/lib/buildPhase";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -81,120 +91,110 @@ export default async function MortgageChecksPage() {
 
       {/* Stats */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-5 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <Banknote className="h-5 w-5 text-blue-500" />
-            <span className="text-sm text-slate-600 dark:text-slate-300">Total Checks</span>
-          </div>
-          <div className="text-3xl font-bold text-[color:var(--text)]">{checks.length}</div>
-          <div className="mt-1 text-xs text-slate-500">{fmt(totalAmount)} total</div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-5 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-yellow-500" />
-            <span className="text-sm text-slate-600 dark:text-slate-300">Pending</span>
-          </div>
-          <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400">
-            {pending.length}
-          </div>
-          <div className="mt-1 text-xs text-slate-500">{fmt(totalPending)}</div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-5 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-purple-500" />
-            <span className="text-sm text-slate-600 dark:text-slate-300">In Process</span>
-          </div>
-          <div className="text-3xl font-bold text-[color:var(--text)]">
-            {checks.filter((c) => ["received", "endorsed", "deposited"].includes(c.status)).length}
-          </div>
-        </div>
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-5 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
-            <span className="text-sm text-slate-600 dark:text-slate-300">Cleared</span>
-          </div>
-          <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-            {cleared.length}
-          </div>
-          <div className="mt-1 text-xs text-slate-500">{fmt(totalCleared)}</div>
-        </div>
+        <StatCard
+          label="Total Checks"
+          value={checks.length}
+          icon={<Banknote className="h-5 w-5" />}
+          intent="info"
+          description={`${fmt(totalAmount)} total`}
+        />
+        <StatCard
+          label="Pending"
+          value={pending.length}
+          icon={<Clock className="h-5 w-5" />}
+          intent="warning"
+          description={fmt(totalPending)}
+        />
+        <StatCard
+          label="In Process"
+          value={
+            checks.filter((c) => ["received", "endorsed", "deposited"].includes(c.status)).length
+          }
+          icon={<Building2 className="h-5 w-5" />}
+          intent="default"
+        />
+        <StatCard
+          variant="gradient"
+          gradientColor="success"
+          label="Cleared"
+          value={cleared.length}
+          icon={<CheckCircle2 className="h-5 w-5" />}
+          description={fmt(totalCleared)}
+        />
       </div>
 
       {/* Add form */}
       <MortgageCheckForm />
 
       {/* Checks table */}
-      <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[color:var(--border)] text-left text-xs uppercase text-slate-500">
-                <th className="px-6 py-3">Claim</th>
-                <th className="px-6 py-3">Lender</th>
-                <th className="px-6 py-3">Check #</th>
-                <th className="px-6 py-3 text-right">Amount</th>
-                <th className="px-6 py-3 text-center">Status</th>
-                <th className="px-6 py-3 text-center">Progress</th>
-                <th className="px-6 py-3">Expected</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[color:var(--border)]">
-              {checks.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    No mortgage checks tracked yet.
-                  </td>
-                </tr>
-              )}
-              {checks.map((c) => {
-                const stepIdx = statusSteps.indexOf(c.status);
-                return (
-                  <tr key={c.id} className="transition-colors hover:bg-[var(--surface-1)]">
-                    <td className="px-6 py-4">
-                      <div className="font-medium text-[color:var(--text)]">{c.claimNumber}</div>
-                      <div className="text-xs text-slate-500">{c.insuredName || c.claimTitle}</div>
-                    </td>
-                    <td className="px-6 py-4 text-[color:var(--text)]">{c.lender}</td>
-                    <td className="px-6 py-4 font-mono text-slate-500">{c.checkNumber || "—"}</td>
-                    <td className="px-6 py-4 text-right font-mono font-medium text-[color:var(--text)]">
-                      {fmt(c.amount)}
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[c.status] || ""}`}
-                      >
-                        {c.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="flex items-center justify-center gap-1">
-                        {statusSteps.map((step, i) => (
-                          <div key={step} className="flex items-center gap-1">
+      <ContentCard header="Mortgage Checks" noPadding>
+        <DataTable>
+          <DataTableHead>
+            <Th>Claim</Th>
+            <Th>Lender</Th>
+            <Th>Check #</Th>
+            <Th align="right">Amount</Th>
+            <Th align="center">Status</Th>
+            <Th align="center">Progress</Th>
+            <Th>Expected</Th>
+          </DataTableHead>
+          <DataTableBody>
+            {checks.length === 0 && (
+              <EmptyRow colSpan={7} message="No mortgage checks tracked yet." />
+            )}
+            {checks.map((c) => {
+              const stepIdx = statusSteps.indexOf(c.status);
+              return (
+                <tr
+                  key={c.id}
+                  className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
+                >
+                  <Td>
+                    <div className="font-medium text-slate-900 dark:text-slate-100">
+                      {c.claimNumber}
+                    </div>
+                    <div className="text-xs text-slate-500">{c.insuredName || c.claimTitle}</div>
+                  </Td>
+                  <Td>{c.lender}</Td>
+                  <Td mono>{c.checkNumber || "—"}</Td>
+                  <Td align="right" mono>
+                    {fmt(c.amount)}
+                  </Td>
+                  <Td align="center">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[c.status] || ""}`}
+                    >
+                      {c.status}
+                    </span>
+                  </Td>
+                  <Td align="center">
+                    <div className="flex items-center justify-center gap-1">
+                      {statusSteps.map((step, i) => (
+                        <div key={step} className="flex items-center gap-1">
+                          <div
+                            className={`h-2 w-2 rounded-full ${
+                              i <= stepIdx
+                                ? "bg-teal-500 dark:bg-teal-400"
+                                : "bg-slate-300 dark:bg-slate-600"
+                            }`}
+                            title={step}
+                          />
+                          {i < statusSteps.length - 1 && (
                             <div
-                              className={`h-2 w-2 rounded-full ${
-                                i <= stepIdx
-                                  ? "bg-[var(--primary)]"
-                                  : "bg-slate-300 dark:bg-slate-600"
-                              }`}
-                              title={step}
+                              className={`h-0.5 w-3 ${i < stepIdx ? "bg-teal-500 dark:bg-teal-400" : "bg-slate-300 dark:bg-slate-600"}`}
                             />
-                            {i < statusSteps.length - 1 && (
-                              <div
-                                className={`h-0.5 w-3 ${i < stepIdx ? "bg-[var(--primary)]" : "bg-slate-300 dark:bg-slate-600"}`}
-                              />
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-xs text-slate-500">{c.expectedDate || "—"}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </Td>
+                  <Td>{c.expectedDate || "—"}</Td>
+                </tr>
+              );
+            })}
+          </DataTableBody>
+        </DataTable>
+      </ContentCard>
     </PageContainer>
   );
 }

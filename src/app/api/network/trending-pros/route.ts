@@ -22,6 +22,7 @@ export async function GET(request: Request) {
     const trade = searchParams.get("trade") || "";
 
     // Fetch top-rated active companies
+    // NOTE: Intentionally cross-org — public marketplace/directory listing
     const companies = await prisma.tradesCompany
       .findMany({
         where: {

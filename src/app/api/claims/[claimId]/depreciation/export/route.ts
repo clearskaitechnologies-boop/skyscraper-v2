@@ -1,22 +1,21 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import PDFDocument from "pdfkit";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request, { params }: { params: { claimId: string } }) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId, userId } = auth;
 
   try {
     const { format = "pdf" } = await req.json();
     const claimId = params.claimId;
 
-    // Fetch claim with materials
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Fetch claim with materials — org-scoped
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
       include: {
         ClaimMaterial: {
           include: {

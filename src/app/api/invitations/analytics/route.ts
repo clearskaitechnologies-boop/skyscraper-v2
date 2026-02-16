@@ -39,6 +39,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Fetch ALL company seat members (both active and pending) for this company
+    // Scoped by membership.companyId (derived from userId) — no cross-tenant risk
     const companyMembers = await prisma.tradesCompanyMember.findMany({
       where: {
         companyId: membership.companyId,

@@ -6,12 +6,17 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAdmin, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest, { params }: { params: { vendorId: string } }) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const vendor = await prisma.vendor.findFirst({
       where: {
         OR: [{ id: params.vendorId }, { slug: params.vendorId }],
@@ -164,6 +169,10 @@ export async function GET(request: NextRequest, { params }: { params: { vendorId
 
 export async function PUT(request: NextRequest, { params }: { params: { vendorId: string } }) {
   try {
+    // Vendor mutation requires admin role
+    const auth = await requireAdmin();
+    if (isAuthError(auth)) return auth;
+
     const body = await request.json();
 
     const vendor = await prisma.vendor.update({

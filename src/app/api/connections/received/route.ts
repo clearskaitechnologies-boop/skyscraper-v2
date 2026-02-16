@@ -30,6 +30,7 @@ export async function GET() {
     }
 
     // Find all ClientProConnection rows targeting this company
+    // Scoped by member.companyId (derived from userId) — no cross-tenant risk
     const connections = await prisma.clientProConnection.findMany({
       where: { contractorId: member.companyId },
       include: {

@@ -5,30 +5,20 @@
  * Professional 3-step claim creation with auto-healing org validation
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { getNextActionFromStatus } from "@/lib/claims/status";
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import prisma from "@/lib/prisma";
-import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export async function POST(req: Request) {
   try {
-    // 1. AUTH & ORG VALIDATION with safeOrgContext
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const orgCtx = await safeOrgContext();
-    if (!orgCtx?.orgId) {
-      return NextResponse.json(
-        { error: "No organization context. Please contact support." },
-        { status: 400 }
-      );
-    }
+    // 1. AUTH & ORG VALIDATION with requireAuth
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     // 2. PARSE REQUEST BODY
     const body = await req.json();
@@ -83,7 +73,7 @@ export async function POST(req: Request) {
       const contact = await prisma.contacts.create({
         data: {
           id: nanoid(),
-          orgId: orgCtx.orgId,
+          orgId,
           firstName,
           lastName,
           phone: contactPhone || null,
@@ -107,7 +97,7 @@ export async function POST(req: Request) {
     const propertyRecord = await prisma.properties.create({
       data: {
         id: nanoid(),
-        orgId: orgCtx.orgId,
+        orgId,
         contactId: finalContactId, // Always valid — contact created above if needed
         name: `Property at ${propertyAddress}`,
         propertyType: structureType || "residential",
@@ -124,7 +114,7 @@ export async function POST(req: Request) {
     const claim = await prisma.claims.create({
       data: {
         id: nanoid(),
-        orgId: orgCtx.orgId,
+        orgId,
         claimNumber,
 
         // Required fields
@@ -158,10 +148,10 @@ export async function POST(req: Request) {
       .create({
         data: {
           id: nanoid(),
-          orgId: orgCtx.orgId,
+          orgId,
           type: "CLAIM_CREATED",
           title: `Claim ${claimNumber} created`,
-          userId: orgCtx.userId || "system",
+          userId: userId || "system",
           userName: "Intake Wizard",
           claimId: claim.id,
           metadata: {

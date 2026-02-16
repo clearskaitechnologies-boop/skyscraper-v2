@@ -4,10 +4,11 @@
  * Exports a claims folder to PDF, ZIP, or Xactimate ESX format
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { assembleClaimFolder } from "@/lib/claims-folder/folderAssembler";
 import type { ClaimFolder, FolderSection } from "@/lib/claims-folder/folderSchema";
 import { FOLDER_SECTIONS } from "@/lib/claims-folder/folderSchema";
@@ -20,10 +21,9 @@ const ExportRequestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
   try {
     const body = await request.json();
@@ -38,6 +38,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { claimId, format, sections } = parsed.data;
+
+    // Verify claim belongs to this org
+    await getOrgClaimOrThrow(orgId, claimId);
 
     // Assemble the folder data
     const result = await assembleClaimFolder({ claimId });
@@ -125,6 +128,9 @@ export async function POST(request: NextRequest) {
         );
     }
   } catch (error) {
+    if (error instanceof OrgScopeError) {
+      return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
+    }
     console.error("Error in claims folder export:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }

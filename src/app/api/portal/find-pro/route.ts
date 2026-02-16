@@ -1,3 +1,4 @@
+// ORG-SCOPE: Public marketplace — searches tradesCompanyMember/tradesProfile. Cross-org by design (pro discovery).
 /**
  * Find Pro API - Client Portal
  * Searches for contractors with filtering and sorting

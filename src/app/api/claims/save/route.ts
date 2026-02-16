@@ -5,9 +5,10 @@
  * Similar to /api/retail/save but uses claim_reports table and 11 steps
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
+
+import { requireAuth } from "@/lib/auth/requireAuth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,10 +27,9 @@ interface SaveRequestBody {
 
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const body: SaveRequestBody = await request.json();
     const { reportId, step, fragment } = body;

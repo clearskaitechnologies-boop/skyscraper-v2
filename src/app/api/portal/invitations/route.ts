@@ -3,9 +3,9 @@
  * Handles fetching invitations from pros to clients (homeowners)
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -15,10 +15,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET() {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     // Get the client record for this user
     const client = await prisma.client.findFirst({

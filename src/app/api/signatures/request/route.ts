@@ -1,8 +1,9 @@
 // /api/signatures/request
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getOrgClaimOrThrow } from "@/lib/auth/orgScope";
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { notifySignatureRequested } from "@/lib/notifications/sendNotification";
 import prisma from "@/lib/prisma";
 import { isTestMode } from "@/lib/testMode";
@@ -11,10 +12,9 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId, userId } = auth;
 
     const body = await req.json();
     const { claimId, documentId, signerName, signerEmail, message } = body;
@@ -23,7 +23,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Verify document exists (using documents model)
+    // Verify claim belongs to user's org
+    await getOrgClaimOrThrow(orgId, claimId);
+
+    // Verify document exists
     const document = await prisma.documents.findFirst({
       where: {
         id: documentId,

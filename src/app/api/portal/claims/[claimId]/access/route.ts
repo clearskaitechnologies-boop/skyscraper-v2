@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 
 export const dynamic = "force-dynamic";
 
@@ -11,10 +11,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const { claimId } = params;
 

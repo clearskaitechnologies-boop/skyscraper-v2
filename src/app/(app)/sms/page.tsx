@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import { ContentCard } from "@/components/ui/ContentCard";
 
 interface Thread {
   id: string;
@@ -97,11 +98,8 @@ export default function SMSPage() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3" style={{ minHeight: "500px" }}>
         {/* Thread List */}
-        <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl">
-          <div className="border-b border-[color:var(--border)] px-4 py-3">
-            <h2 className="text-sm font-semibold text-[color:var(--text)]">Conversations</h2>
-          </div>
-          <div className="max-h-[500px] divide-y divide-[color:var(--border)] overflow-y-auto">
+        <ContentCard header="Conversations" noPadding>
+          <div className="max-h-[500px] divide-y divide-slate-200/60 overflow-y-auto dark:divide-slate-700/50">
             {threads.length === 0 && (
               <div className="p-6 text-center text-sm text-slate-500">
                 <MessageCircle className="mx-auto mb-2 h-8 w-8 text-slate-400" />
@@ -112,19 +110,19 @@ export default function SMSPage() {
               <button
                 key={t.contactId}
                 onClick={() => loadMessages(t.contactId)}
-                className={`w-full px-4 py-3 text-left transition-colors hover:bg-[var(--surface-1)] ${
+                className={`w-full px-4 py-3 text-left transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40 ${
                   selectedContact === t.contactId
-                    ? "border-l-2 border-[var(--primary)] bg-[var(--surface-1)]"
+                    ? "border-l-2 border-emerald-500 bg-slate-50/60 dark:bg-slate-800/40"
                     : ""
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-sm font-bold text-white">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-sm font-bold text-white">
                     {(t.firstName || "?")[0]}
                     {(t.lastName || "")[0]}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="truncate font-medium text-[color:var(--text)]">
+                    <div className="truncate font-medium text-slate-900 dark:text-slate-100">
                       {t.firstName} {t.lastName}
                     </div>
                     <div className="truncate text-xs text-slate-500">{t.body}</div>
@@ -136,10 +134,10 @@ export default function SMSPage() {
               </button>
             ))}
           </div>
-        </div>
+        </ContentCard>
 
         {/* Message Thread */}
-        <div className="flex flex-col overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl lg:col-span-2">
+        <div className="rounded-card flex flex-col overflow-hidden border border-slate-200/60 bg-white/80 shadow-sm backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/60 lg:col-span-2">
           {!selectedContact ? (
             <div className="flex flex-1 items-center justify-center">
               <div className="text-center text-slate-500">
@@ -159,8 +157,8 @@ export default function SMSPage() {
                     <div
                       className={`max-w-[80%] rounded-2xl px-4 py-2.5 ${
                         msg.direction === "outbound"
-                          ? "bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] text-white"
-                          : "bg-[var(--surface-2)] text-[color:var(--text)]"
+                          ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white"
+                          : "bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100"
                       }`}
                     >
                       <p className="whitespace-pre-wrap text-sm">{msg.body}</p>
@@ -177,18 +175,18 @@ export default function SMSPage() {
               {/* Compose */}
               <form
                 onSubmit={handleSend}
-                className="flex gap-3 border-t border-[color:var(--border)] p-4"
+                className="flex gap-3 border-t border-slate-200/60 p-4 dark:border-slate-700/50"
               >
                 <input
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   placeholder="Type a message..."
-                  className="flex-1 rounded-xl border border-[color:var(--border)] bg-[var(--surface-2)] px-4 py-3 text-sm text-[color:var(--text)] placeholder-slate-400 focus:border-[var(--primary)] focus:outline-none"
+                  className="flex-1 rounded-xl border border-slate-200/60 bg-slate-50 px-4 py-3 text-sm text-slate-900 placeholder-slate-400 focus:border-emerald-500 focus:outline-none dark:border-slate-700/50 dark:bg-slate-800 dark:text-slate-100"
                 />
                 <button
                   type="submit"
                   disabled={sending || !newMessage.trim()}
-                  className="rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-4 py-3 text-white shadow-[var(--glow)] transition hover:scale-[1.02] disabled:opacity-50"
+                  className="rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-3 text-white shadow-sm transition hover:scale-[1.02] disabled:opacity-50"
                 >
                   <Send className="h-4 w-4" />
                 </button>

@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId — all queries filter by user.id, client.id, or email. No cross-tenant risk.
 /**
  * 📢 CLIENT ACTIVITY FEED API
  *
@@ -9,9 +10,9 @@
  * - Project milestones
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 interface ActivityItem {
@@ -26,17 +27,15 @@ interface ActivityItem {
 
 export async function GET() {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId, email } = authResult;
 
     const activities: ActivityItem[] = [];
-    const email = user.emailAddresses?.[0]?.emailAddress;
 
     // Find client
     const client = await prisma.client.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     if (client) {
@@ -102,7 +101,7 @@ export async function GET() {
       try {
         const messages = await prisma.claimMessage.findMany({
           where: {
-            userId: user.id,
+            userId: userId,
           },
           orderBy: { createdAt: "desc" },
           take: 10,
@@ -113,7 +112,7 @@ export async function GET() {
 
         for (const msg of messages) {
           // Show messages from others (userId is the author)
-          if (msg.userId !== user.id) {
+          if (msg.userId !== userId) {
             activities.push({
               id: `msg-${msg.id}`,
               type: "message",

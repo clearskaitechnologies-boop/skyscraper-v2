@@ -1,5 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
-
 import prisma from "@/lib/prisma";
 
 /**
@@ -7,43 +5,8 @@ import prisma from "@/lib/prisma";
  * Provides authorization guards, null safety, and error handling
  */
 
-export interface AuthResult {
-  userId: string;
-  orgId: string | null;
-  isAuthenticated: boolean;
-}
-
-/**
- * Get authenticated user and their organization
- * @returns AuthResult with userId and orgId
- * @throws Error if not authenticated
- */
-export async function requireAuth(): Promise<AuthResult> {
-  try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      throw new Error("UNAUTHORIZED: User not authenticated");
-    }
-
-    // Get user's organization
-    const user = await prisma.users.findFirst({
-      where: { clerkUserId: userId },
-      select: { orgId: true },
-    });
-
-    const orgId = user?.orgId || null;
-
-    return {
-      userId,
-      orgId,
-      isAuthenticated: true,
-    };
-  } catch (error) {
-    console.error("[requireAuth] Authentication failed:", error);
-    throw new Error("Authentication required");
-  }
-}
+// NOTE: requireAuth has been consolidated to @/lib/auth/requireAuth
+// Import from there instead: import { requireAuth } from "@/lib/auth/requireAuth";
 
 /**
  * Verify user has access to a specific claim

@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Find client access by email
+    // Scoped by userId → email — no cross-tenant risk
     const clientAccess = await prisma.client_access.findFirst({
       where: { email: userEmail },
       select: { id: true, claimId: true },

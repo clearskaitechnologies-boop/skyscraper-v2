@@ -8,6 +8,7 @@ export async function GET() {
   const user = await currentUser();
   if (!user) return new NextResponse("Unauthorized", { status: 401 });
 
+  // Scoped by userId — no cross-tenant risk
   const acceptances = await prisma.legal_acceptances.findMany({
     where: { userId: user.id },
     orderBy: { acceptedAt: "desc" },

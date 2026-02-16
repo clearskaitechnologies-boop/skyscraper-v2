@@ -1,3 +1,8 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// GET lists public/private groups for discovery (myGroups mode filters by userId membership).
+// POST creates groups scoped to the authenticated user as creator.
+// tradesGroup has no orgId; groups are cross-org communities of trades professionals.
+
 /**
  * Trades Groups API
  * Handles CRUD operations for trades professional groups

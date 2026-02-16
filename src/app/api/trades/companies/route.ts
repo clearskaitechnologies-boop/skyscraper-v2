@@ -1,14 +1,23 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// Lists all active tradesCompany records for marketplace discovery.
+// tradesCompany has no orgId column; companies exist across the cross-org trades network.
+
 /*
  * PHASE 3: Trades Companies API
  * Returns list of active trades companies
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
 export async function GET(request: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const { searchParams } = new URL(request.url);
     const specialty = searchParams.get("specialty");
 

@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by userId — no cross-tenant risk
+// GET returns only connections where authenticated userId is requester or addressee.
+// POST/PATCH/DELETE all verify userId ownership. Connections are intentionally cross-org
+// (pros from different orgs connect). tradesConnection has no orgId column.
+
 /**
  * Trades Connections API
  * Handles connection requests between trades professionals (friend-like system)

@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId/clientId — all queries filter by client.id (derived from auth userId). No cross-tenant risk.
 /**
  * Network Connections API
  * Manages connections between clients and pros (tradesCompany)

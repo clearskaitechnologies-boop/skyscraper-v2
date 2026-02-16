@@ -4,9 +4,9 @@
  * DELETE /api/measurements/[id]  — cancel an order
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -20,14 +20,15 @@ type RouteContext = { params: Promise<{ id: string }> };
 
 export async function GET(_req: NextRequest, { params }: RouteContext) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId } = auth;
 
     const { id } = await params;
 
-    const order = await prisma.measurement_orders.findUnique({ where: { id } });
+    const order = await prisma.measurement_orders.findFirst({
+      where: { id, org_id: orgId },
+    });
 
     if (!order) {
       return NextResponse.json({ ok: false, message: "Not found" }, { status: 404 });
@@ -49,13 +50,20 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 
 export async function PATCH(req: NextRequest, { params }: RouteContext) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId } = auth;
 
     const { id } = await params;
     const body = await req.json();
+
+    // Verify order belongs to this org before updating
+    const existing = await prisma.measurement_orders.findFirst({
+      where: { id, org_id: orgId },
+    });
+    if (!existing) {
+      return NextResponse.json({ ok: false, message: "Not found" }, { status: 404 });
+    }
 
     const updated = await prisma.measurement_orders.update({
       where: { id },
@@ -88,12 +96,19 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
 export async function DELETE(_req: NextRequest, { params }: RouteContext) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId } = auth;
 
     const { id } = await params;
+
+    // Verify order belongs to this org before cancelling
+    const existing = await prisma.measurement_orders.findFirst({
+      where: { id, org_id: orgId },
+    });
+    if (!existing) {
+      return NextResponse.json({ ok: false, message: "Not found" }, { status: 404 });
+    }
 
     await prisma.measurement_orders.update({
       where: { id },

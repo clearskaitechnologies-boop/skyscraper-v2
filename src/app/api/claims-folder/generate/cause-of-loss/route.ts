@@ -2,6 +2,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 const RequestSchema = z.object({
@@ -10,12 +11,16 @@ const RequestSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
+
     const body = await request.json();
     const { claimId } = RequestSchema.parse(body);
 
-    // Fetch claim data with property relation
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Fetch claim data with property relation — org-scoped
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
       include: {
         properties: true,
         weather_reports: true,

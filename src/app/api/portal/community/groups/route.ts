@@ -4,17 +4,16 @@
  * POST: Create a group
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const { searchParams } = new URL(req.url);
     const category = searchParams.get("category");
@@ -37,10 +36,9 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const body = await req.json();
     const { name, description, category, isPrivate } = body;
@@ -51,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Find client
     const client = await prisma.client.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     if (!client) {

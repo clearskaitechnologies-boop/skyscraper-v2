@@ -5,6 +5,16 @@ import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import {
+  ContentCard,
+  DataTable,
+  DataTableBody,
+  DataTableHead,
+  EmptyRow,
+  Td,
+  Th,
+} from "@/components/ui/ContentCard";
+import { StatCard } from "@/components/ui/MetricCard";
 import { guarded } from "@/lib/buildPhase";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -98,96 +108,81 @@ export default async function InvoicesPage() {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-3">
-            <div className="rounded-lg bg-blue-100 p-2 dark:bg-blue-900/30">
-              <FileText className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            </div>
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">Total Billed</h3>
-          </div>
-          <p className="text-3xl font-bold text-[color:var(--text)]">{fmt(totalBilled)}</p>
-          <p className="mt-1 text-xs text-slate-500">{invoices.length} invoices</p>
-        </div>
-
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-3">
-            <div className="rounded-lg bg-green-100 p-2 dark:bg-green-900/30">
-              <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
-            </div>
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">Collected</h3>
-          </div>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400">
-            {fmt(totalCollected)}
-          </p>
-        </div>
-
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
-          <div className="mb-2 flex items-center gap-3">
-            <div className="rounded-lg bg-orange-100 p-2 dark:bg-orange-900/30">
-              <Send className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-            </div>
-            <h3 className="text-sm font-medium text-slate-700 dark:text-slate-300">Outstanding</h3>
-          </div>
-          <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
-            {fmt(totalOutstanding)}
-          </p>
-        </div>
+        <StatCard
+          label="Total Billed"
+          value={fmt(totalBilled)}
+          icon={<FileText className="h-5 w-5" />}
+          intent="info"
+          description={`${invoices.length} invoices`}
+        />
+        <StatCard
+          variant="gradient"
+          gradientColor="success"
+          label="Collected"
+          value={fmt(totalCollected)}
+          icon={<DollarSign className="h-5 w-5" />}
+        />
+        <StatCard
+          variant="gradient"
+          gradientColor="warning"
+          label="Outstanding"
+          value={fmt(totalOutstanding)}
+          icon={<Send className="h-5 w-5" />}
+        />
       </div>
 
       {/* Invoice Table */}
-      <div className="overflow-hidden rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-[color:var(--border)] text-left text-xs uppercase text-slate-500 dark:text-slate-400">
-                <th className="px-6 py-3">Invoice #</th>
-                <th className="px-6 py-3">Job</th>
-                <th className="px-6 py-3">Type</th>
-                <th className="px-6 py-3 text-right">Total</th>
-                <th className="px-6 py-3 text-right">Balance Due</th>
-                <th className="px-6 py-3 text-center">Status</th>
-                <th className="px-6 py-3">Date</th>
+      <ContentCard noPadding>
+        <DataTable>
+          <DataTableHead>
+            <Th>Invoice #</Th>
+            <Th>Job</Th>
+            <Th>Type</Th>
+            <Th align="right">Total</Th>
+            <Th align="right">Balance Due</Th>
+            <Th align="center">Status</Th>
+            <Th>Date</Th>
+          </DataTableHead>
+          <DataTableBody>
+            {invoices.length === 0 && (
+              <EmptyRow
+                colSpan={7}
+                message="No invoices yet. Create your first invoice to get started."
+              />
+            )}
+            {invoices.map((inv) => (
+              <tr
+                key={inv.id}
+                className="transition-colors hover:bg-slate-50/60 dark:hover:bg-slate-800/40"
+              >
+                <Td mono className="font-medium text-blue-600 dark:text-blue-400">
+                  {inv.invoiceNo}
+                </Td>
+                <Td>{inv.jobName}</Td>
+                <Td>
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs capitalize dark:bg-slate-800">
+                    {inv.kind}
+                  </span>
+                </Td>
+                <Td align="right" mono>
+                  {fmt(inv.total)}
+                </Td>
+                <Td align="right" mono>
+                  {fmt(inv.balanceDue)}
+                </Td>
+                <Td align="center">
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[inv.status] || statusColors.draft}`}
+                  >
+                    {inv.status}
+                  </span>
+                </Td>
+                <Td className="text-xs text-slate-500">{inv.createdAt}</Td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-[color:var(--border)]">
-              {invoices.length === 0 && (
-                <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
-                    No invoices yet. Create your first invoice to get started.
-                  </td>
-                </tr>
-              )}
-              {invoices.map((inv) => (
-                <tr key={inv.id} className="transition-colors hover:bg-[var(--surface-1)]">
-                  <td className="px-6 py-4 font-mono font-medium text-[color:var(--primary)]">
-                    {inv.invoiceNo}
-                  </td>
-                  <td className="px-6 py-4 text-[color:var(--text)]">{inv.jobName}</td>
-                  <td className="px-6 py-4">
-                    <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-xs capitalize text-[color:var(--text)]">
-                      {inv.kind}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right font-mono text-[color:var(--text)]">
-                    {fmt(inv.total)}
-                  </td>
-                  <td className="px-6 py-4 text-right font-mono text-[color:var(--text)]">
-                    {fmt(inv.balanceDue)}
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium capitalize ${statusColors[inv.status] || statusColors.draft}`}
-                    >
-                      {inv.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-xs text-slate-500">{inv.createdAt}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            ))}
+          </DataTableBody>
+        </DataTable>
+      </ContentCard>
     </PageContainer>
   );
 }

@@ -1,8 +1,8 @@
 // MODULE 4: Approvals - Client responds (approve/reject)
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 const respondSchema = z.object({
@@ -12,10 +12,9 @@ const respondSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId, userId } = auth;
 
   try {
     const body = await req.json();
@@ -30,8 +29,9 @@ export async function POST(req: NextRequest) {
 
     const { approvalId, status, notes } = parsed.data;
 
-    const approval = await prisma.claimApproval.findUnique({
-      where: { id: approvalId },
+    // Org-scoped lookup — prevents cross-org approval manipulation
+    const approval = await prisma.claimApproval.findFirst({
+      where: { id: approvalId, orgId },
     });
 
     if (!approval) {

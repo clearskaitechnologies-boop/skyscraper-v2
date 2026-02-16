@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { money } from "@/lib/money";
 
 type LineItem = {
@@ -13,6 +14,10 @@ type LineItem = {
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const items: LineItem[] = await req.json();
 
     // Calculate total

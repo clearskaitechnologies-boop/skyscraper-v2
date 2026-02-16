@@ -4,7 +4,6 @@
  * Returns section-specific data for the claims folder
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import {
@@ -615,10 +614,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ section: string }> }
 ) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const authResult = await requireAuth();
+  if (isAuthError(authResult)) return authResult;
+  const { orgId } = authResult;
 
   try {
     const { section } = await params;
@@ -641,7 +639,8 @@ export async function GET(
       return NextResponse.json({ success: true, data: demoData, isDemo: true });
     }
 
-    // Fetch real data based on section
+    // Verify claim belongs to this org before fetching section data
+    await getOrgClaimOrThrow(orgId, claimId);
     let data: unknown = null;
 
     switch (section) {
@@ -719,6 +718,9 @@ export async function GET(
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
+    if (error instanceof OrgScopeError) {
+      return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
+    }
     console.error("Error fetching section data:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch section data" },

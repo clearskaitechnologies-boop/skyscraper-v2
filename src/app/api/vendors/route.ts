@@ -1,16 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
-import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 
 // GET /api/vendors - Fetch vendor network (Phase 2)
 export async function GET(request: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const debug = searchParams.get("debug") === "1";
-
-    const orgCtx = debug ? await getActiveOrgContext({ optional: true }) : null;
 
     const vendorsRaw = await prisma.vendor.findMany({
       where: {
@@ -54,9 +56,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({
         vendors,
         debug: {
-          org: orgCtx?.ok
-            ? { ok: true, orgId: orgCtx.orgId, userId: orgCtx.userId }
-            : { ok: false, reason: orgCtx?.reason || "skipped" },
+          org: { ok: true, orgId, userId },
           count: vendors.length,
         },
       });

@@ -1,32 +1,54 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
 import { getDelegate } from "@/lib/db/modelAliases";
-import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export async function GET(req: Request, { params }: { params: { claimId: string } }) {
-  const user = await currentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
-  const items = await getDelegate("supplementItem").findMany({
-    where: { claimId: params.claimId },
-    orderBy: { createdAt: "desc" },
-  });
+  try {
+    // Verify claim belongs to this org
+    await getOrgClaimOrThrow(orgId, params.claimId);
 
-  return NextResponse.json(items);
+    const items = await getDelegate("supplementItem").findMany({
+      where: { claimId: params.claimId },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(items);
+  } catch (e: any) {
+    if (e instanceof OrgScopeError) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: e.message || "Failed" }, { status: 500 });
+  }
 }
 
 export async function POST(req: Request, { params }: { params: { claimId: string } }) {
-  const user = await currentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
-  const data = await req.json();
-  const item = await getDelegate("supplementItem").create({
-    data: { claimId: params.claimId, ...data },
-  });
+  try {
+    // Verify claim belongs to this org
+    await getOrgClaimOrThrow(orgId, params.claimId);
 
-  return NextResponse.json(item);
+    const data = await req.json();
+    const item = await getDelegate("supplementItem").create({
+      data: { claimId: params.claimId, ...data },
+    });
+
+    return NextResponse.json(item);
+  } catch (e: any) {
+    if (e instanceof OrgScopeError) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+    return NextResponse.json({ error: e.message || "Failed" }, { status: 500 });
+  }
 }

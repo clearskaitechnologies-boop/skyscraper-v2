@@ -8,11 +8,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAdmin } from "@/lib/auth/requireAuth";
 import { generateTemplateThumbnail } from "@/lib/templates/thumbnailService";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Allow up to 60 seconds for thumbnail generation
+export const maxDuration = 60;
 
 interface GenerateThumbnailBody {
   forceRegenerate?: boolean;
@@ -21,6 +22,10 @@ interface GenerateThumbnailBody {
 }
 
 export async function POST(req: NextRequest, { params }: { params: { templateId: string } }) {
+  // Admin-only: template thumbnail generation
+  const auth = await requireAdmin();
+  if (isAuthError(auth)) return auth;
+
   const { templateId } = params;
 
   try {

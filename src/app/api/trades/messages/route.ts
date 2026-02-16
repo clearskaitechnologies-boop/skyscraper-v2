@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by userId/profileId — no cross-tenant risk
+// GET resolves the authenticated user's profile (member or legacy), then queries only
+// messages where fromProfileId or toProfileId matches. POST sends from the user's profile.
+// tradesMessage has no orgId; messaging is cross-org by design (pros message across orgs).
+
 import { auth } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";

@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by claimId — access verified via getPortalClaim(). Claim belongs to one org. No cross-tenant risk.
 // Portal API to list shared documents
 import { NextRequest, NextResponse } from "next/server";
 

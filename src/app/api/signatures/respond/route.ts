@@ -1,8 +1,8 @@
 // /api/signatures/respond
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { notifyDocumentSigned } from "@/lib/notifications/sendNotification";
 import prisma from "@/lib/prisma";
 import { isTestMode } from "@/lib/testMode";
@@ -12,10 +12,9 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId, userId } = auth;
 
     const body = await req.json();
     const { requestId, action } = body;
@@ -24,13 +23,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    // Fetch signature envelope
+    // Fetch signature envelope and verify org ownership via linked claim
     const signatureEnvelope = await prisma.signatureEnvelope.findUnique({
       where: { id: requestId },
     });
 
     if (!signatureEnvelope) {
       return NextResponse.json({ error: "Signature request not found" }, { status: 404 });
+    }
+
+    // If the envelope has a linked claim, verify org ownership
+    if (signatureEnvelope.claimId) {
+      const claim = await prisma.claims.findFirst({
+        where: { id: signatureEnvelope.claimId, orgId },
+      });
+      if (!claim) {
+        return NextResponse.json({ error: "Signature request not found" }, { status: 404 });
+      }
     }
 
     if (signatureEnvelope.status !== "sent" && signatureEnvelope.status !== "viewed") {

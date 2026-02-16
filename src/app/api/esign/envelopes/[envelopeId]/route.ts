@@ -1,11 +1,12 @@
 /**
  * GET /api/esign/envelopes/[id]
  *
- * Get envelope details
+ * Get envelope details — requires auth + org ownership verification
  */
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -16,6 +17,10 @@ export async function GET(
   { params }: { params: Promise<{ envelopeId: string }> }
 ) {
   try {
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
+
     const { envelopeId } = await params;
 
     const envelope = await prisma.signatureEnvelope.findUnique({
@@ -24,6 +29,17 @@ export async function GET(
 
     if (!envelope) {
       return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+    }
+
+    // Org isolation: verify linked claim belongs to this org
+    if (envelope.claimId) {
+      const claim = await prisma.claims.findFirst({
+        where: { id: envelope.claimId, orgId },
+        select: { id: true },
+      });
+      if (!claim) {
+        return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+      }
     }
 
     return NextResponse.json({

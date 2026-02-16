@@ -24,7 +24,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ContentCard } from "@/components/ui/ContentCard";
 import { Label } from "@/components/ui/label";
+import { StatCard } from "@/components/ui/MetricCard";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -597,30 +599,22 @@ export default function VisionLabPage() {
 
               {/* Stats Grid */}
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <div className="text-sm text-muted-foreground">Confidence</div>
-                  <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                    {(results.confidence * 100).toFixed(0)}%
-                  </div>
-                </div>
-                <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <div className="text-sm text-muted-foreground">Damage Items</div>
-                  <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                    {results.objectCount}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <div className="text-sm text-muted-foreground">Processing Time</div>
-                  <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
-                    {(results.processingTime / 1000).toFixed(1)}s
-                  </div>
-                </div>
-                <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <div className="text-sm text-muted-foreground">Condition</div>
-                  <div className="mt-1 text-2xl font-bold capitalize text-slate-900 dark:text-white">
-                    {results.overallCondition || "N/A"}
-                  </div>
-                </div>
+                <StatCard
+                  label="Confidence"
+                  value={`${(results.confidence * 100).toFixed(0)}%`}
+                  intent="success"
+                />
+                <StatCard label="Damage Items" value={results.objectCount} intent="warning" />
+                <StatCard
+                  label="Processing Time"
+                  value={`${(results.processingTime / 1000).toFixed(1)}s`}
+                  intent="info"
+                />
+                <StatCard
+                  label="Condition"
+                  value={results.overallCondition || "N/A"}
+                  intent="default"
+                />
               </div>
 
               {/* Detections List */}
@@ -666,15 +660,11 @@ export default function VisionLabPage() {
 
               {/* Written Report */}
               {results.writtenReport && (
-                <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-                  <h4 className="mb-2 font-semibold text-slate-900 dark:text-white">
-                    <FileText className="mr-2 inline h-4 w-4" />
-                    Written Report
-                  </h4>
+                <ContentCard header="Written Report">
                   <div className="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300">
                     {results.writtenReport}
                   </div>
-                </div>
+                </ContentCard>
               )}
             </CardContent>
           </Card>

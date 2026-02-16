@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { saveSignature } from "@/lib/signatures/saveSignature";
 
 export async function POST(request: NextRequest) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body = await request.json();
     const { documentId, signerName, signerEmail, role, signature } = body;

@@ -5,9 +5,9 @@
  * NOTE: Uses simplified SignatureEnvelope model (esign models not yet implemented)
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -15,10 +15,9 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest, { params }: { params: { envelopeId: string } }) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ ok: false, message: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
 
     const envelopeId = params.envelopeId;
 
@@ -29,6 +28,17 @@ export async function POST(req: NextRequest, { params }: { params: { envelopeId:
 
     if (!envelope) {
       return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+    }
+
+    // Org isolation: verify linked claim belongs to this org
+    if (envelope.claimId) {
+      const claim = await prisma.claims.findFirst({
+        where: { id: envelope.claimId, orgId },
+        select: { id: true },
+      });
+      if (!claim) {
+        return NextResponse.json({ ok: false, message: "Envelope not found" }, { status: 404 });
+      }
     }
 
     // Check if already signed

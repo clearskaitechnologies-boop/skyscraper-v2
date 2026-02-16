@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 
@@ -191,7 +192,10 @@ export async function POST(request: NextRequest) {
       const orderCount = await prisma.materialOrder.count({ where: { orgId: ctx.orgId } });
       const orderNumber = `MO-${new Date().getFullYear()}-${String(orderCount + 1).padStart(3, "0")}`;
 
-      const total = cart.material_cart_items.reduce((s, i) => s + (i.lineTotal ? Number(i.lineTotal) : 0), 0);
+      const total = cart.material_cart_items.reduce(
+        (s, i) => s + (i.lineTotal ? Number(i.lineTotal) : 0),
+        0
+      );
 
       const order = await prisma.materialOrder.create({
         data: {
@@ -288,6 +292,10 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const { searchParams } = new URL(request.url);
     const itemId = searchParams.get("itemId");
     const cartId = searchParams.get("cartId");

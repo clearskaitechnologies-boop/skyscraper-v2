@@ -1,3 +1,4 @@
+// ORG-SCOPE: GET public browse filters by visibility:"public" (cross-org job board by design). Own requests scoped by clientId. No orgId column on ClientWorkRequest.
 /**
  * Client Job Request API
  * Allows clients to post job requests with photos, summary, and requirements

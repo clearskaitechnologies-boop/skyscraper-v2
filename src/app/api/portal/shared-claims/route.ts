@@ -1,3 +1,4 @@
+// ORG-SCOPE: Scoped by userId/clientId — queries clientWorkRequest + leads by client.id. No cross-tenant risk.
 /**
  * Shared Claims API for Client Portal
  * Returns jobs/projects shared with the client via accepted work requests

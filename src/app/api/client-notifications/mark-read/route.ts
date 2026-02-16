@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
 
     if (markAllAsRead) {
       // 1. Mark all ProjectNotifications read for this client's claims
+      // Scoped by client.id (from getClientFromAuth) + userId — no cross-tenant risk
       if (client) {
         const clientClaims = await prisma.claims.findMany({
           where: { clientId: client.id },
@@ -60,22 +61,54 @@ export async function POST(req: NextRequest) {
       if (notificationId.startsWith("msg-")) {
         const messageId = notificationId.replace("msg-", "");
         try {
-          await prisma.message.update({
-            where: { id: messageId },
-            data: { read: true },
-          });
+          // Only mark read if user is a participant in the message's thread
+          if (userId) {
+            const user = await prisma.users.findUnique({
+              where: { clerkUserId: userId },
+              select: { id: true },
+            });
+            if (user) {
+              const msg = await prisma.message.findFirst({
+                where: {
+                  id: messageId,
+                  thread: {
+                    OR: [
+                      { participants: { has: userId } },
+                      { participants: { has: user.id } },
+                      ...(client ? [{ clientId: client.id }] : []),
+                    ],
+                  },
+                },
+              });
+              if (msg) {
+                await prisma.message.update({
+                  where: { id: messageId },
+                  data: { read: true },
+                });
+              }
+            }
+          }
         } catch {
           // Message may not exist or already read
         }
         return NextResponse.json({ success: true });
       }
 
-      // Handle ProjectNotification
+      // Handle ProjectNotification — verify ownership via claim
       try {
-        await prisma.projectNotification.update({
-          where: { id: notificationId },
-          data: { read: true, readAt: new Date() },
+        const whereClause: any = { id: notificationId };
+        if (client) {
+          whereClause.claim = { clientId: client.id };
+        }
+        const notification = await prisma.projectNotification.findFirst({
+          where: whereClause,
         });
+        if (notification) {
+          await prisma.projectNotification.update({
+            where: { id: notificationId },
+            data: { read: true, readAt: new Date() },
+          });
+        }
       } catch {
         // Notification may not exist
       }

@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by groupId + membership check — no cross-tenant risk
+// GET requires groupId param; hidden groups enforce membership verification.
+// POST requires active group membership. DELETE verifies author or admin role.
+// tradesGroupPost has no orgId; groups are cross-org by design.
+
 /**
  * Trades Groups Posts API
  * Handles CRUD operations for posts within groups

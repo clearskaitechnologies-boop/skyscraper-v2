@@ -1,3 +1,9 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design (GET); userId-scoped (POST/DELETE)
+// GET returns all active tradesPost records (public feed with optional filters).
+// POST creates a post scoped to the authenticated user's profile.
+// DELETE verifies authorId === userId before soft-deleting.
+// tradesPost has no orgId; the trades feed is a cross-org social network.
+
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 

@@ -2,13 +2,18 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { arrayUnion, doc, getDoc,setDoc } from "firebase/firestore";
+import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
 import { NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import { db } from "@/lib/firebase";
 
 export async function POST(req: Request) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
+
     const { uid, projectId, product } = await req.json();
 
     if (!uid || !projectId || !product) {

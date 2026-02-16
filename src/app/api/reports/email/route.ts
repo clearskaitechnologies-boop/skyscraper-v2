@@ -5,6 +5,7 @@ export const revalidate = 0;
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // Lazy-load Resend to avoid build-time errors if API key not set
@@ -31,6 +32,9 @@ type EmailRequest = {
 };
 
 export async function POST(req: NextRequest) {
+  const auth = await requireAuth();
+  if (auth instanceof NextResponse) return auth;
+
   try {
     const body: EmailRequest = await req.json();
     const { reportId, recipientEmail, recipientName, pdfBlob, reportData } = body;
@@ -248,6 +252,7 @@ export async function POST(req: NextRequest) {
     try {
       await prisma.emailLog.create({
         data: {
+          orgId: auth.orgId,
           toEmail: recipientEmail,
           subject: emailData.subject,
           templateId: "report_email",

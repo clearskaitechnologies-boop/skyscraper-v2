@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -21,6 +22,9 @@ const ValidateTemplateSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+
   try {
     const body = await req.json();
     const { templateId } = ValidateTemplateSchema.parse(body);

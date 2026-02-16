@@ -7,12 +7,17 @@ import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import path from "path";
 
+import { isAuthError, requireAdmin } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET() {
+  // Admin-only diagnostic endpoint
+  const auth = await requireAdmin();
+  if (isAuthError(auth)) return auth;
+
   try {
     // Fetch all published templates
     const templates = await prisma.template.findMany({

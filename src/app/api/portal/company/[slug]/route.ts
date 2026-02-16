@@ -1,3 +1,4 @@
+// ORG-SCOPE: Public company profile — queries tradesCompany by slug/id. Cross-org by design (public directory).
 /**
  * Public Company API
  * GET /api/portal/company/[slug] — Company profile with team members

@@ -79,6 +79,7 @@ function visitorId(userId: string): string {
 /**
  * Assert that a user has portal access to a claim
  * Throws 403 if access denied
+ * Also verifies org membership to prevent cross-tenant access
  */
 export async function assertPortalAccess({
   userId,
@@ -93,7 +94,17 @@ export async function assertPortalAccess({
     throw new Error("Access denied: No active portal access to this claim");
   }
 
-  return access;
+  // Verify the claim exists and get its orgId for tenant isolation
+  const claim = await prisma.claims.findUnique({
+    where: { id: claimId },
+    select: { orgId: true },
+  });
+
+  if (!claim) {
+    throw new Error("Access denied: Claim not found");
+  }
+
+  return { ...access, orgId: claim.orgId };
 }
 
 /**

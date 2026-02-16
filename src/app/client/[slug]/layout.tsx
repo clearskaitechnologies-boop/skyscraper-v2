@@ -1,5 +1,7 @@
 // src/app/client/[slug]/layout.tsx
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 
 interface ClientLayoutProps {
@@ -7,7 +9,10 @@ interface ClientLayoutProps {
   params: { slug: string };
 }
 
-export default function ClientLayout({ children, params }: ClientLayoutProps) {
+export default async function ClientLayout({ children, params }: ClientLayoutProps) {
+  const { userId } = await auth();
+  if (!userId) redirect("/portal/sign-in");
+
   const { slug } = params;
   const basePath = `/client/${slug}`;
 

@@ -1,3 +1,7 @@
+// ORG-SCOPE: Public marketplace data — cross-org by design
+// Auth-gated but lists all active companies for join-request discovery.
+// tradesCompany has no orgId; pros from any org can discover and request to join companies.
+
 /**
  * Companies Search API
  * GET /api/trades/companies/search — List active companies for join-request discovery

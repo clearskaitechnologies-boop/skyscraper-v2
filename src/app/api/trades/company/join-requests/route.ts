@@ -1,3 +1,8 @@
+// ORG-SCOPE: Scoped by companyId (derived from authenticated user's membership) — no cross-tenant risk
+// GET lists pending join requests for the admin's own company only.
+// POST creates a join request scoped to a specific companyId.
+// PATCH approves/rejects requests within the admin's own company.
+
 /**
  * Join Request API
  * GET  /api/trades/company/join-requests — List pending join requests (admin only)

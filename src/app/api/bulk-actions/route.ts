@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // ITEM 22: Bulk actions API
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { action, entityType, ids, data, orgId } = body;
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
-    if (!action || !entityType || !ids || !orgId) {
+    const body = await req.json();
+    const { action, entityType, ids, data } = body;
+
+    if (!action || !entityType || !ids) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 

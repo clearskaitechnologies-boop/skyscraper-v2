@@ -17,6 +17,11 @@ const EngagementSchema = z.object({
 
 export async function POST(req: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const body = await req.json();
     const { proId, action } = EngagementSchema.parse(body);
 

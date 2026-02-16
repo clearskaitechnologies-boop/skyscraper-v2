@@ -15,40 +15,12 @@ import prisma from "@/lib/prisma";
 // CORE AUTHENTICATION GUARDS (Phase H3)
 // =====================================================
 
+// NOTE: requireAuth has been consolidated to @/lib/auth/requireAuth
+// Import from there instead: import { requireAuth } from "@/lib/auth/requireAuth";
+
 export interface AuthGuardResult {
   userId: string;
   user: any;
-}
-
-/**
- * Require authentication only (no org required)
- * Use for GLOBAL tools that work without org context
- */
-export async function requireAuth(): Promise<AuthGuardResult> {
-  const { userId } = await auth();
-
-  if (!userId) {
-    redirect("/sign-in");
-  }
-
-  const user = await prisma.users.findFirst({
-    where: { clerkUserId: userId },
-    select: {
-      id: true,
-      clerkUserId: true,
-      name: true,
-      email: true,
-    },
-  });
-
-  if (!user) {
-    redirect("/sign-in");
-  }
-
-  return {
-    userId,
-    user,
-  };
 }
 
 export interface OrgGuardResult extends AuthGuardResult {

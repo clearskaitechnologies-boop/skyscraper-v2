@@ -1,19 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 /**
  * POST /api/search/clients
- * Search for clients by email, name, or address
+ * Search for clients by email, name, or address — scoped to user's org
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId } = auth;
 
     const body = await req.json();
     const { query } = body;
@@ -22,9 +20,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Query too short" }, { status: 400 });
     }
 
-    // Search for clients in ClaimClientLink table
+    // Search for clients in ClaimClientLink — only via claims belonging to user's org
     const links = await prisma.claimClientLink.findMany({
       where: {
+        claims: { orgId },
         OR: [
           { clientEmail: { contains: query, mode: "insensitive" } },
           { clientName: { contains: query, mode: "insensitive" } },

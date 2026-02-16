@@ -1,6 +1,7 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+// ORG-SCOPE: Scoped by userId/email — queries client_access by userEmail. No cross-tenant risk.
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -12,15 +13,9 @@ export const dynamic = "force-dynamic";
  */
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ ok: false, error: "Unauthorized", claims: [] }, { status: 401 });
-    }
-
-    // Get user email from Clerk
-    const user = await currentUser();
-    const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId, email: userEmail } = authResult;
 
     if (!userEmail) {
       return NextResponse.json({ ok: true, claims: [] });

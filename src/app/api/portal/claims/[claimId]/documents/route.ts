@@ -1,9 +1,9 @@
 // Portal document upload API - allows EDITOR clients to upload documents to claims
-import { auth } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 import { uploadBuffer } from "@/lib/s3";
 
@@ -21,10 +21,9 @@ const RATE_WINDOW = 10 * 60 * 1000;
  */
 export async function POST(req: NextRequest, { params }: { params: { claimId: string } }) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const { claimId } = params;
 

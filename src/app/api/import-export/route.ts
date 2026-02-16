@@ -1,14 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // ITEM 33: Data import/export
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { format, entityType, data, orgId } = body;
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
-    if (!format || !entityType || !orgId) {
+    const body = await req.json();
+    const { format, entityType, data } = body;
+
+    if (!format || !entityType) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 

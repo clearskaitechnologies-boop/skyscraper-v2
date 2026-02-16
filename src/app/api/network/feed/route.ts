@@ -28,6 +28,7 @@ export async function GET(request: Request) {
     const search = searchParams.get("search") || "";
 
     // Fetch posts from TradesPost
+    // NOTE: tradesPost/trade_reviews have no orgId — intentionally cross-org community feed
     const tradesPosts = await prisma.tradesPost
       .findMany({
         where: {

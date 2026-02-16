@@ -1,3 +1,4 @@
+// ORG-SCOPE: Community feed — queries published trade_reviews. Cross-org by design (public marketplace content).
 /**
  * Community Feed API
  * GET: Fetch posts from the community feed
@@ -7,14 +8,14 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId } = authResult;
 
     const { searchParams } = new URL(req.url);
     const trade = searchParams.get("trade");
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest) {
 
     // Find client
     const client = await prisma.client.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     // Fetch published reviews as feed posts
@@ -109,10 +110,12 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const authResult = await requirePortalAuth();
+    if (isPortalAuthError(authResult)) return authResult;
+    const { userId, email: authEmail } = authResult;
+
+    // Need full Clerk user for profile metadata (firstName, lastName, imageUrl)
     const user = await currentUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
 
     const body = await req.json();
     const { content, type, contractorId, rating, projectType, images } = body;
@@ -123,24 +126,24 @@ export async function POST(req: NextRequest) {
 
     // Find or create client
     let client = await prisma.client.findUnique({
-      where: { userId: user.id },
+      where: { userId },
     });
 
     if (!client) {
-      const email = user.emailAddresses?.[0]?.emailAddress || "";
+      const email = authEmail || user?.emailAddresses?.[0]?.emailAddress || "";
       const displayName =
-        `${user.firstName || ""} ${user.lastName || ""}`.trim() || email.split("@")[0];
+        `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || email.split("@")[0];
 
       client = await prisma.client.create({
         data: {
           id: crypto.randomUUID(),
-          userId: user.id,
-          slug: `client-${user.id.slice(-8)}`,
+          userId,
+          slug: `client-${userId.slice(-8)}`,
           name: displayName,
           email,
-          firstName: user.firstName || null,
-          lastName: user.lastName || null,
-          avatarUrl: user.imageUrl || null,
+          firstName: user?.firstName || null,
+          lastName: user?.lastName || null,
+          avatarUrl: user?.imageUrl || null,
           category: "Homeowner",
           status: "active",
         },

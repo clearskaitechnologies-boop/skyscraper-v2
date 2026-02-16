@@ -16,6 +16,7 @@ export async function GET(req: NextRequest) {
     const allNotifications: any[] = [];
 
     // 1. Claim-based notifications (ProjectNotification)
+    // Scoped by client.id (from getClientFromAuth) + userId — no cross-tenant risk
     try {
       if (client) {
         const clientClaims = await prisma.claims.findMany({

@@ -1,3 +1,7 @@
+// ORG-SCOPE: Scoped by companyId (derived from authenticated user's membership) — no cross-tenant risk
+// GET derives companyId from the requesting user's tradesCompanyMember record,
+// then lists only employees of that same company. PATCH/DELETE verify same-company ownership.
+
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 

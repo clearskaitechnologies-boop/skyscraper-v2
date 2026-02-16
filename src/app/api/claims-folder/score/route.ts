@@ -4,9 +4,10 @@
  * Returns the readiness score for a claim without full assembly
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import {
   calculateReadinessScore,
   fetchClaimData,
@@ -18,10 +19,9 @@ import {
 } from "@/lib/claims-folder/folderAssembler";
 
 export async function GET(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -30,6 +30,9 @@ export async function GET(request: NextRequest) {
     if (!claimId) {
       return NextResponse.json({ success: false, error: "claimId is required" }, { status: 400 });
     }
+
+    // Verify claim belongs to this org
+    await getOrgClaimOrThrow(orgId, claimId);
 
     // Fetch all data in parallel for scoring
     const [weatherData, { coverSheet, inspection }, photos, codeData, scopeData, timeline] =
@@ -78,6 +81,9 @@ export async function GET(request: NextRequest) {
       recommendation: score.recommendation,
     });
   } catch (error) {
+    if (error instanceof OrgScopeError) {
+      return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
+    }
     console.error("Error calculating readiness score:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }

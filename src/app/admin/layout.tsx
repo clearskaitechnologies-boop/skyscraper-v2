@@ -1,3 +1,5 @@
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
 // 🚫 CRITICAL: Force 100% dynamic rendering for ALL admin routes
@@ -8,6 +10,9 @@ export const revalidate = 0;
 export const fetchCache = "force-no-store";
 export const runtime = "nodejs";
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
   return <>{children}</>;
 }

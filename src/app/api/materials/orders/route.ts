@@ -1,15 +1,20 @@
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // ITEM 14: Material orders API
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const { claimId, materialId, quantity, orgId, unitPrice, deliveryAddress } = body;
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
-    if (!claimId || !materialId || !quantity || !orgId) {
+    const body = await req.json();
+    const { claimId, materialId, quantity, unitPrice, deliveryAddress } = body;
+
+    if (!claimId || !materialId || !quantity) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
     }
 
@@ -111,16 +116,15 @@ export async function POST(req: NextRequest) {
 // Get material orders for a claim
 export async function GET(req: NextRequest) {
   try {
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId } = auth;
+
     const { searchParams } = new URL(req.url);
     const claimId = searchParams.get("claimId");
-    const orgId = searchParams.get("orgId");
-
-    if (!claimId && !orgId) {
-      return NextResponse.json({ error: "claimId or orgId required" }, { status: 400 });
-    }
 
     const orders = await prisma.materialOrder.findMany({
-      where: claimId ? { claimId } : { orgId: orgId! },
+      where: claimId ? { claimId, orgId } : { orgId },
       orderBy: { createdAt: "desc" },
       include: {
         MaterialOrderItem: true,

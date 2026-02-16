@@ -6,36 +6,35 @@ export const revalidate = 0;
 // API: RETRY EXPORT JOB
 // ============================================================================
 
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getDelegate } from "@/lib/db/modelAliases";
+import { requireAuth } from "@/lib/auth/requireAuth";
+import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (auth instanceof NextResponse) return auth;
+    const { orgId, userId } = auth;
 
     const jobId = params.id;
 
-    // Get existing job
-    const job = await getDelegate("exportJob").findUnique({
-      where: { id: jobId },
+    // Get existing job — scoped to org
+    const job = await prisma.export_jobs.findFirst({
+      where: { id: jobId, org_id: orgId },
     });
 
     if (!job) {
       return NextResponse.json({ error: "Job not found" }, { status: 404 });
     }
 
-    // Reset status to queued
-    await getDelegate("exportJob").update({
+    // Reset status to queued — scoped to org
+    await prisma.export_jobs.update({
       where: { id: jobId },
       data: {
         status: "queued",
         error: null,
-        updatedAt: new Date(),
+        updated_at: new Date(),
       },
     });
 

@@ -1,8 +1,8 @@
 // src/app/api/claims-folder/homeowner-statement/route.ts
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 const HomeownerStatementSchema = z.object({
@@ -21,10 +21,9 @@ const HomeownerStatementSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
   try {
     const body = await request.json();
@@ -39,9 +38,9 @@ export async function POST(request: NextRequest) {
 
     const { claimId, statement } = parsed.data;
 
-    // Verify claim exists
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Verify claim exists and belongs to this org
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
     });
 
     if (!claim) {
@@ -95,10 +94,9 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await requireAuth();
+  if (isAuthError(auth)) return auth;
+  const { orgId } = auth;
 
   try {
     const { searchParams } = new URL(request.url);
@@ -108,9 +106,9 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "claimId required" }, { status: 400 });
     }
 
-    // Fetch claim and any stored statement
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Fetch claim and any stored statement — org-scoped
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, orgId },
       include: { properties: true },
     });
 

@@ -1,9 +1,11 @@
+// ORG-SCOPE: Public catalog — queries vendor/vendor_products_v2. Cross-org by design (manufacturer marketplace).
 /**
  * Client Products API
  * GET /api/portal/products — Browse manufacturer products, brochures, catalogs
  * Returns manufacturers from VIN with their products and marketing assets.
  */
 
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -14,6 +16,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const trade = searchParams.get("trade");
     const search = searchParams.get("q");

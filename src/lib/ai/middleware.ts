@@ -167,27 +167,8 @@ async function checkProPlan(orgId: string): Promise<boolean> {
   }
 }
 
-/**
- * Simple auth check for endpoints that just need authentication
- * without full rate limiting/billing (e.g., status endpoints)
- */
-export async function requireAuth(): Promise<{
-  authenticated: boolean;
-  userId?: string;
-  orgId?: string | null;
-  error?: NextResponse;
-}> {
-  const { userId, orgId } = await auth();
-
-  if (!userId) {
-    return {
-      authenticated: false,
-      error: NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 }),
-    };
-  }
-
-  return { authenticated: true, userId, orgId };
-}
+// NOTE: requireAuth has been consolidated to @/lib/auth/requireAuth
+// Import from there instead: import { requireAuth } from "@/lib/auth/requireAuth";
 
 /**
  * Rate limit check helper for manual use
