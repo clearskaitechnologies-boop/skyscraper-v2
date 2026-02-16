@@ -96,7 +96,6 @@ export async function executeWorkflow(trigger: string, data: any, orgId: string)
   const results: { workflowId: string; action: string; success: boolean; error?: string }[] = [];
 
   for (const workflow of matchingWorkflows) {
-    console.log(`[WORKFLOW] Executing: ${workflow.actionType} for ${trigger}`);
     const config = (workflow.config as Record<string, any>) || {};
 
     try {
@@ -189,8 +188,6 @@ async function executeSendEmail(
     subject,
     html,
   });
-
-  console.log(`[WORKFLOW] Email sent to ${recipientEmail}`);
 }
 
 async function executeUpdateStatus(
@@ -208,13 +205,11 @@ async function executeUpdateStatus(
       where: { id: data.claimId },
       data: { status: newStatus, updatedAt: new Date() },
     });
-    console.log(`[WORKFLOW] Claim ${data.claimId} status updated to ${newStatus}`);
   } else if (data.jobId) {
     await prisma.jobs.update({
       where: { id: data.jobId },
       data: { status: newStatus, updatedAt: new Date() },
     });
-    console.log(`[WORKFLOW] Job ${data.jobId} status updated to ${newStatus}`);
   }
 }
 
@@ -250,7 +245,6 @@ async function executeCreateTask(
         updated_at: new Date(),
       },
     });
-    console.log(`[WORKFLOW] Task created for claim ${data.claimId}`);
   }
 }
 
@@ -263,7 +257,6 @@ async function executeNotifyTeam(
 
   // ProjectNotification requires a claimId - only create if we have one
   if (!data.claimId) {
-    console.log("[WORKFLOW] No claimId provided, skipping team notification");
     return;
   }
 
@@ -278,8 +271,6 @@ async function executeNotifyTeam(
       sentVia: [],
     },
   });
-
-  console.log(`[WORKFLOW] Team notification created for claim ${data.claimId}`);
 }
 
 async function executeWebhook(
@@ -302,6 +293,4 @@ async function executeWebhook(
   if (!response.ok) {
     throw new Error(`Webhook failed with status ${response.status}`);
   }
-
-  console.log(`[WORKFLOW] Webhook sent to ${config.url}`);
 }

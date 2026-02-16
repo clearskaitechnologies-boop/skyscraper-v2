@@ -186,11 +186,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Organization context missing" }, { status: 403 });
   }
 
-  console.log(`[trades/profile POST] 🚀 Creating profile for user ${userId}, org ${orgId}`, {
-    businessName: body.businessName || body.companyName,
-    tradeType: body.tradeType,
-  });
-
   try {
     // Check if profile already exists
     const existing = await prisma.tradesCompanyMember.findUnique({
@@ -227,7 +222,6 @@ export async function POST(req: Request) {
         include: { company: true },
       });
 
-      console.log(`[trades/profile POST] ✅ Updated existing profile ${updated.id}`);
       await ensureVendorForOrg(orgId);
 
       return NextResponse.json({ profile: updated }, { status: 200 });
@@ -264,11 +258,8 @@ export async function POST(req: Request) {
       include: { company: true },
     });
 
-    console.log(`[trades/profile POST] ✅ Created profile ${profile.id}`);
-
     // Sync to vendor directory
     await ensureVendorForOrg(orgId);
-    console.log(`[trades/profile POST] ✅ Synced to vendor directory for org ${orgId}`);
 
     return NextResponse.json({ profile }, { status: 201 });
   } catch (error: unknown) {
@@ -314,10 +305,6 @@ export async function PATCH(req: Request) {
   }
   const body = parsed.data;
 
-  console.log(`[trades/profile PATCH] 🔄 Updating profile for user ${userId}, org ${orgId}`, {
-    businessName: body.businessName || body.companyName,
-  });
-
   try {
     const existing = await prisma.tradesCompanyMember.findUnique({
       where: { userId },
@@ -357,10 +344,7 @@ export async function PATCH(req: Request) {
       include: { company: true },
     });
 
-    console.log(`[trades/profile PATCH] ✅ Updated profile ${profile.id}`);
-
     await ensureVendorForOrg(orgId);
-    console.log(`[trades/profile PATCH] ✅ Synced to vendor directory for org ${orgId}`);
 
     return NextResponse.json({ profile });
   } catch (error: unknown) {

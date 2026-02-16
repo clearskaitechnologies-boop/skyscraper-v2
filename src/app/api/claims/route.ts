@@ -94,7 +94,6 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     }
 
     const body = await req.json();
-    console.log("[CreateClaim] Received payload:", JSON.stringify(body, null, 2));
 
     let validated;
     try {
@@ -137,7 +136,6 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
           },
         });
         contactId = contact.id;
-        console.log("[CreateClaim] Created new contact:", contactId);
       } else {
         // Create a minimal placeholder contact
         const placeholderContact = await prisma.contacts.create({
@@ -170,7 +168,6 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
         },
       });
       propertyId = newProperty.id;
-      console.log("[CreateClaim] Created new property:", propertyId);
     }
 
     // Verify property exists and belongs to org
@@ -212,8 +209,6 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
       updatedAt: new Date(),
     };
 
-    console.log("[CreateClaim] Creating claim with data:", claimData);
-
     const claim = await timeExecution(
       "claim.create",
       async () => await prisma.claims.create({ data: claimData })
@@ -229,7 +224,6 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     // });
 
     logInfo("claim.created", { claimId: claim.id, orgId });
-    console.log("[CreateClaim] Successfully created claim:", claim.id);
 
     // H-9: Track usage metering
     try {

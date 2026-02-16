@@ -64,17 +64,6 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Log order for vendor API integration
-    // ENHANCEMENT: Integrate with ABC Supply, Beacon, or other vendor APIs
-    console.log(`[MATERIAL ORDER] ====================================`);
-    console.log(`[MATERIAL ORDER] Claim: ${claimId}`);
-    console.log(`[MATERIAL ORDER] Material: ${material.name}`);
-    console.log(`[MATERIAL ORDER] Quantity: ${quantity}`);
-    console.log(`[MATERIAL ORDER] Unit Price: $${price}`);
-    console.log(`[MATERIAL ORDER] Total: $${lineTotal}`);
-    console.log(`[MATERIAL ORDER] Order ID: ${order.id}`);
-    console.log(`[MATERIAL ORDER] ====================================`);
-
     // Create workflow event for job timeline integration
     try {
       await prisma.vendor_workflow_events.create({
@@ -97,7 +86,6 @@ export async function POST(req: NextRequest) {
           },
         },
       });
-      console.log(`[WORKFLOW EVENT] Order timeline event created for claim ${claimId}`);
     } catch (eventError) {
       // Non-blocking - log but don't fail the order
       console.error("[WORKFLOW EVENT] Failed to create event:", eventError);

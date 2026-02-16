@@ -30,12 +30,6 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       return NextResponse.json({ error: "claimId is required" }, { status: 400 });
     }
 
-    console.log("[Enhanced Report Builder] Starting comprehensive report generation:", {
-      claimId,
-      orgId,
-      options,
-    });
-
     // 1. FETCH CLAIM DETAILS
     const claim = await prisma.claims.findUnique({
       where: { id: claimId },
@@ -70,11 +64,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       return NextResponse.json({ error: "No photos found for this claim" }, { status: 400 });
     }
 
-    console.log(`[Enhanced Report Builder] Found ${photos.length} photos`);
-
     // 2. RUN STORM INTAKE PIPELINE
-    console.log("[Enhanced Report Builder] Running AI Storm Intake Pipeline...");
-
     const photoUrls = photos.map((p) => p.publicUrl);
     const analysisResult = await runStormIntakePipeline({
       images: photoUrls,
@@ -97,7 +87,6 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     // 3. FETCH WEATHER DATA (if enabled)
     let weatherData;
     if (options?.includeWeather !== false && claim.dateOfLoss) {
-      console.log("[Enhanced Report Builder] Fetching weather data...");
       // fetchWeatherForDOL returns WeatherData | null
       const lat = 0; // TODO: Get from property if available
       const lng = 0; // TODO: Get from property if available
@@ -105,28 +94,23 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
       if (weatherResult) {
         weatherData = weatherResult;
-        console.log("[Enhanced Report Builder] Weather data retrieved");
       }
     }
 
     // 4. ANNOTATE PHOTOS (if enabled)
     let annotatedPhotos;
     if (options?.includeAnnotations !== false) {
-      console.log("[Enhanced Report Builder] Annotating photos with AI...");
       const photoData = photos.map((p) => ({ id: p.id, url: p.publicUrl }));
       const annotationResult = await annotatePhotos(photoData);
 
       if (annotationResult.success) {
         annotatedPhotos = annotationResult.data;
-        console.log(`[Enhanced Report Builder] ${annotatedPhotos?.length} photos annotated`);
       }
     }
 
     // 5. CHECK CODE COMPLIANCE (if enabled)
     let complianceReport;
     if (options?.includeCompliance !== false && property.yearBuilt) {
-      console.log("[Enhanced Report Builder] Checking code compliance...");
-      // checkCompliance takes (state, county?, damageType?) and returns CodeCheckResult
       const complianceResult = await checkCompliance(
         property.state,
         property.city,
@@ -135,20 +119,17 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
       if (complianceResult.compliant !== undefined) {
         complianceReport = complianceResult;
-        console.log("[Enhanced Report Builder] Compliance report generated");
       }
     }
 
     // 6. GET MATERIAL RECOMMENDATIONS (if enabled)
     let recommendedMaterials;
     if (options?.includeMaterials !== false) {
-      console.log("[Enhanced Report Builder] Finding recommended materials...");
       recommendedMaterials = getRecommendedProducts({
         damageType: analysis.summary.primaryDamageType as "hail" | "wind",
         budget: "standard",
         impactResistance: analysis.summary.primaryDamageType === "hail",
       });
-      console.log(`[Enhanced Report Builder] ${recommendedMaterials.length} products recommended`);
     }
 
     // 7. FETCH COMPANY BRANDING
@@ -172,7 +153,6 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
           website: orgBranding?.website || undefined,
           licenseNumber: orgBranding?.license || undefined,
         };
-        console.log("[Enhanced Report Builder] Branding loaded");
       }
     }
 
@@ -206,10 +186,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     };
 
     // 9. GENERATE COMPREHENSIVE PDF
-    console.log("[Enhanced Report Builder] Generating comprehensive PDF...");
     const pdfBuffer = await generateEnhancedPDFReport(reportData);
-
-    console.log(`[Enhanced Report Builder] PDF generated: ${pdfBuffer.length} bytes`);
 
     // 10. RETURN PDF
     return new NextResponse(new Uint8Array(pdfBuffer), {

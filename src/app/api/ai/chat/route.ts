@@ -52,7 +52,6 @@ interface ChatMessage {
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
-  console.log("[AI_CHAT] 💬 Starting chat request");
 
   try {
     // Rate limiting check (10 requests per minute for AI endpoints)
@@ -61,7 +60,6 @@ export async function POST(request: NextRequest) {
     const allowed = await rateLimiters.ai.check(10, identifier);
 
     if (!allowed) {
-      console.log("[AI_CHAT] ⚠️  Rate limit exceeded for:", identifier);
       return NextResponse.json(
         { error: "Rate limit exceeded. Please wait a moment and try again." },
         { status: 429 }
@@ -79,20 +77,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log("[AI_CHAT] ✅ OpenAI client initialized");
-
     const user = await currentUser();
     if (!user) {
       console.error("[AI_CHAT] ❌ Unauthorized - no user");
       return NextResponse.json(aiFail("Unauthorized", "AUTH"), { status: 401 });
     }
 
-    console.log(`[AI_CHAT] ✅ User authenticated: ${user.id}`);
-
     let body;
     try {
       body = await request.json();
-      console.log(`[AI_CHAT] 📦 Request body:`, JSON.stringify(body).substring(0, 200));
     } catch (jsonError) {
       console.error("[AI_CHAT] ❌ Failed to parse JSON body:", jsonError);
       return NextResponse.json(aiFail("Invalid request body", "BAD_REQUEST"), { status: 400 });
@@ -104,27 +97,16 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(aiFail("Message is required", "BAD_REQUEST"), { status: 400 });
     }
 
-    console.log(
-      `[AI_CHAT] 💬 Message received (${message.length} chars): "${message.substring(0, 50)}..."`
-    );
-
     // Get user's Org ID
     const orgId = (user.publicMetadata?.orgId as string) || user.id;
-    console.log(`[AI_CHAT] 🏢 Organization ID: ${orgId}`);
-
     // Get or create user memory
     const userId = user.id;
     let memory = userMemory.get(userId);
 
     if (!memory || Date.now() - memory.timestamp > 3600000) {
       // 1 hour expiry
-      console.log(`[AI_CHAT] 🆕 Creating new conversation memory for user ${userId}`);
       memory = { messages: [], timestamp: Date.now() };
-    } else {
-      console.log(`[AI_CHAT] 📚 Using existing memory with ${memory.messages.length} messages`);
     }
-
-    console.log("[AI_CHAT] 🔍 Fetching contextual data from database...");
 
     // Gather contextual data from database
     const [orgResult, recentJobs, recentClaims, activeProjects, subscriptionResult] =
@@ -236,8 +218,6 @@ Be conversational, helpful, and specific. Reference real data when available. If
       { role: "user", content: message },
     ];
 
-    console.log(`[AI_CHAT] 🤖 Calling OpenAI with ${messages.length} messages...`);
-
     // Get AI response with retry logic
     let completion;
     try {
@@ -247,9 +227,6 @@ Be conversational, helpful, and specific. Reference real data when available. If
         temperature: 0.7,
         max_tokens: 500,
       });
-      console.log(
-        `[AI_CHAT] ✅ OpenAI response received. Usage: ${completion.usage?.total_tokens} tokens`
-      );
     } catch (openaiError) {
       console.error("[AI_CHAT] ❌ OpenAI API call failed:", openaiError);
       const { message, code } = classifyOpenAiError(openaiError);
@@ -270,10 +247,6 @@ Be conversational, helpful, and specific. Reference real data when available. If
     const assistantResponse =
       completion.choices[0]?.message?.content ||
       "I apologize, but I couldn't generate a response at this time.";
-
-    console.log(
-      `[AI_CHAT] 💬 Assistant response (${assistantResponse.length} chars): "${assistantResponse.substring(0, 100)}..."`
-    );
 
     // Track AI usage for billing
     const tokensUsed = completion.usage?.total_tokens || 0;
@@ -303,8 +276,6 @@ Be conversational, helpful, and specific. Reference real data when available. If
     userMemory.set(userId, memory);
 
     const processingTime = Date.now() - startTime;
-    console.log(`[AI_CHAT] ⏱️ Total processing time: ${processingTime}ms`);
-    console.log(`[AI_CHAT] ✨ Success! Returning response.`);
 
     return NextResponse.json(
       aiOk(
@@ -327,19 +298,7 @@ Be conversational, helpful, and specific. Reference real data when available. If
     );
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error(`[AI_CHAT] 💥 CRITICAL ERROR after ${processingTime}ms:`, error);
-    console.error(
-      "[AI_CHAT] Error type:",
-      error instanceof Error ? error.constructor.name : typeof error
-    );
-    console.error(
-      "[AI_CHAT] Error message:",
-      error instanceof Error ? error.message : String(error)
-    );
-    console.error(
-      "[AI_CHAT] Error stack:",
-      error instanceof Error ? error.stack : "No stack trace"
-    );
+    console.error(`[AI_CHAT] Error after ${processingTime}ms:`, error);
 
     // Provide detailed error information
     const errorDetails = {

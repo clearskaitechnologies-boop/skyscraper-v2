@@ -1,8 +1,8 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { NextRequest,NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
-import { getRateLimitIdentifier,rateLimiters } from "@/lib/rate-limit";
+import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
 
 // Retry configuration for AI service calls
 const MAX_RETRIES = 3;
@@ -12,7 +12,6 @@ const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
-  console.log("[AI_VISION] 🔍 Starting damage analysis request");
 
   try {
     const orgId = await getTenant();
@@ -27,14 +26,11 @@ export async function POST(request: NextRequest) {
     const allowed = await rateLimiters.ai.check(10, identifier);
 
     if (!allowed) {
-      console.log("[AI_VISION] ⚠️  Rate limit exceeded for:", identifier);
       return NextResponse.json(
         { error: "Rate limit exceeded. Please wait a moment and try again." },
         { status: 429 }
       );
     }
-
-    console.log(`[AI_VISION] ✅ Authorized orgId: ${orgId}`);
 
     const formData = await request.formData();
     const image = formData.get("image") as File;
@@ -45,16 +41,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
-    console.log(
-      `[AI_VISION] 📸 Processing image: ${image.name} (${image.size} bytes, ${image.type})`
-    );
-
     // Convert image to base64 for AI service
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes);
     const base64Image = buffer.toString("base64");
-
-    console.log(`[AI_VISION] 🔄 Converted to base64: ${base64Image.length} chars`);
 
     // Verify API configuration
     const endpoint =
@@ -69,19 +59,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log(`[AI_VISION] 🌐 Using endpoint: ${endpoint}`);
-    console.log(`[AI_VISION] 🔑 API key configured: ${apiKey.substring(0, 10)}...`);
-
     let lastError: Error | null = null;
     let aiResponse: Response | null = null;
 
     // Retry loop with exponential backoff
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        console.log(
-          `[AI_VISION] 🚀 Attempt ${attempt}/${MAX_RETRIES} - Calling Dominus AI Vision Service...`
-        );
-
         // Call Dominus AI Vision Service
         aiResponse = await fetch(endpoint, {
           method: "POST",
@@ -102,45 +85,36 @@ export async function POST(request: NextRequest) {
           }),
         });
 
-        console.log(
-          `[AI_VISION] 📡 Response status: ${aiResponse.status} ${aiResponse.statusText}`
-        );
-
         if (aiResponse.ok) {
-          console.log(`[AI_VISION] ✅ Success on attempt ${attempt}`);
           break; // Success!
         }
 
         // Log error response
         const errorText = await aiResponse.text();
-        console.error(
-          `[AI_VISION] ⚠️ Attempt ${attempt} failed: ${aiResponse.status} - ${errorText}`
-        );
+        console.error(`[AI_VISION] Attempt ${attempt} failed: ${aiResponse.status} - ${errorText}`);
         lastError = new Error(`HTTP ${aiResponse.status}: ${errorText}`);
 
         // Retry on 5xx errors or network issues
         if (attempt < MAX_RETRIES && aiResponse.status >= 500) {
           const delay = RETRY_DELAY * Math.pow(2, attempt - 1);
-          console.log(`[AI_VISION] ⏳ Retrying in ${delay}ms...`);
           await sleep(delay);
           continue;
         }
 
         break; // Don't retry on 4xx errors
       } catch (fetchError) {
-        console.error(`[AI_VISION] ❌ Attempt ${attempt} threw error:`, fetchError);
+        console.error(`[AI_VISION] Attempt ${attempt} failed:`, fetchError);
         lastError = fetchError instanceof Error ? fetchError : new Error(String(fetchError));
 
         if (attempt < MAX_RETRIES) {
           const delay = RETRY_DELAY * Math.pow(2, attempt - 1);
-          console.log(`[AI_VISION] ⏳ Retrying after network error in ${delay}ms...`);
           await sleep(delay);
         }
       }
     }
 
     if (!aiResponse || !aiResponse.ok) {
-      console.error(`[AI_VISION] ❌ All retry attempts exhausted. Last error:`, lastError);
+      console.error(`[AI_VISION] All retry attempts exhausted. Last error:`, lastError);
       return NextResponse.json(
         {
           error: "AI Vision service unavailable. Please try again later.",
@@ -151,14 +125,9 @@ export async function POST(request: NextRequest) {
     }
 
     const aiData = await aiResponse.json();
-    console.log(
-      `[AI_VISION] 📊 Received AI analysis data:`,
-      JSON.stringify(aiData).substring(0, 200)
-    );
 
     // Parse and format AI response
     const processingTime = Date.now() - startTime;
-    console.log(`[AI_VISION] ⏱️ Total processing time: ${processingTime}ms`);
 
     const response = {
       success: true,
@@ -180,17 +149,10 @@ export async function POST(request: NextRequest) {
       },
     };
 
-    console.log(
-      `[AI_VISION] ✨ Success! Damage type: ${response.analysis.damageType}, Confidence: ${response.analysis.confidence}`
-    );
     return NextResponse.json(response);
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error(`[AI_VISION] 💥 CRITICAL ERROR after ${processingTime}ms:`, error);
-    console.error(
-      `[AI_VISION] Error stack:`,
-      error instanceof Error ? error.stack : "No stack trace"
-    );
+    console.error(`[AI_VISION] Error after ${processingTime}ms:`, error);
 
     return NextResponse.json(
       {
