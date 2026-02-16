@@ -92,41 +92,43 @@ export default async function PortalLayout({ children }: { children: React.React
         {/* Modern Gradient Header */}
         <header className="sticky top-0 z-50 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 shadow-xl shadow-slate-900/10">
           <nav aria-label="Portal navigation" className="mx-auto max-w-[1400px] px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex items-center gap-6">
-                <Link
-                  href="/portal"
-                  className="flex items-center gap-3 whitespace-nowrap transition-transform hover:scale-[1.02]"
-                >
-                  {logoUrl ? (
-                    <div className="flex items-center gap-2 rounded-lg bg-white/10 p-2">
-                      <Image
-                        src={logoUrl}
-                        alt={companyName}
-                        width={120}
-                        height={40}
-                        className="h-8 w-auto object-contain brightness-0 invert"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Image
-                        src="/brand/client_portal_logo.jpg"
-                        alt="SkaiScraper"
-                        width={160}
-                        height={48}
-                        className="h-10 w-auto object-contain"
-                        priority
-                      />
-                    </div>
-                  )}
-                </Link>
-                <div className="hidden md:block">
-                  <ClientPortalNav />
-                </div>
-                {/* Mobile: show condensed nav below header */}
+            <div className="flex h-10 items-center justify-between gap-4">
+              {/* Left: Logo flush-left + brand name */}
+              <Link
+                href="/portal"
+                className="flex shrink-0 items-center gap-2.5 whitespace-nowrap transition-transform hover:scale-[1.02]"
+              >
+                {logoUrl ? (
+                  <div className="flex items-center gap-2 rounded-lg bg-white/10 p-1.5">
+                    <Image
+                      src={logoUrl}
+                      alt={companyName}
+                      width={120}
+                      height={40}
+                      className="h-8 w-auto object-contain brightness-0 invert"
+                    />
+                  </div>
+                ) : (
+                  <Image
+                    src="/brand/client_portal_logo.jpg"
+                    alt="SkaiScraper"
+                    width={160}
+                    height={48}
+                    className="h-10 w-auto object-contain"
+                    priority
+                  />
+                )}
+                <span className="hidden text-lg font-bold tracking-tight text-white sm:inline">
+                  {companyName}
+                </span>
+              </Link>
+
+              {/* Center: Navigation */}
+              <div className="hidden flex-1 justify-center md:flex">
+                <ClientPortalNav />
               </div>
-              <div className="flex items-center gap-3">
+              {/* Right: Actions */}
+              <div className="flex shrink-0 items-center gap-3">
                 <ThemeToggle />
                 {userId && <NotificationBell variant="client" autoMarkRead />}
                 {userId ? (

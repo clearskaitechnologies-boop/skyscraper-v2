@@ -2,9 +2,9 @@
 
 import { SignedIn, SignedOut, SignInButton } from "@clerk/nextjs";
 import { Moon, Sun } from "lucide-react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 
 import { MobileNav } from "@/components/nav/MobileNav";
 import ProTradesUserMenu from "@/components/nav/ProTradesUserMenu";
@@ -21,14 +21,17 @@ export default function CRMTopbar() {
         {/* Mobile Hamburger */}
         <MobileNav />
 
-        {/* Logo */}
-        <Link href="/dashboard" className="flex items-center space-x-2">
+        {/* Logo + Brand Name */}
+        <Link href="/dashboard" className="flex items-center gap-2.5">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/brand/pro_portal_logo.png"
             alt="SkaiScraper"
             className="h-10 w-auto object-contain"
           />
+          <span className="hidden text-lg font-bold tracking-tight text-slate-900 dark:text-white sm:inline">
+            SkaiScraper
+          </span>
         </Link>
 
         {/* CRM Navigation - Hidden on mobile */}
