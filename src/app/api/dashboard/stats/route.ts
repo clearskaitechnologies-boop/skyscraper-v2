@@ -23,13 +23,41 @@ export async function GET() {
       const ctx = await ensureUserOrgContext(user.id);
       orgId = ctx.orgId;
     } catch {
-      // Fallback: publicMetadata → users table → user.id
-      orgId =
-        (user.publicMetadata?.orgId as string) ||
-        (await prisma.users
+      // Fallback: publicMetadata → users table
+      // NEVER fall back to user.id — it matches zero records and causes all-zero stats
+      const metaOrgId = user.publicMetadata?.orgId as string | undefined;
+      if (metaOrgId) {
+        orgId = metaOrgId;
+      } else {
+        const dbUser = await prisma.users
           .findFirst({ where: { clerkUserId: user.id }, select: { orgId: true } })
-          .then((u) => u?.orgId || user.id)
-          .catch(() => user.id));
+          .catch(() => null);
+        if (dbUser?.orgId) {
+          orgId = dbUser.orgId;
+        } else {
+          console.warn("[DASHBOARD_STATS] No org found for user:", user.id);
+          return NextResponse.json({
+            ok: true,
+            stats: {
+              claimsCount: 0,
+              leadsCount: 0,
+              tradesPostsCount: 0,
+              jobsCount: 0,
+              recentClaims: [],
+              recentLeads: [],
+              claimsTrend: "--",
+              leadsTrend: "--",
+              jobsTrend: "--",
+              postsTrend: "--",
+              pdfReportsCount: 0,
+              videoReportsCount: 0,
+              uniqueClaimsWithReports: 0,
+              totalReportsGenerated: 0,
+              noOrg: true,
+            },
+          });
+        }
+      }
     }
 
     // Also resolve tradesCompanyMember.companyId — some data may be keyed on

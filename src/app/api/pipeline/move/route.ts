@@ -6,6 +6,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -15,6 +16,15 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Tenant isolation: resolve the authenticated user's org
+    let userOrgId: string;
+    try {
+      const ctx = await ensureUserOrgContext(userId);
+      userOrgId = ctx.orgId;
+    } catch {
+      return NextResponse.json({ error: "No organization found" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -33,6 +43,11 @@ export async function POST(req: NextRequest) {
 
       if (!claim) {
         return NextResponse.json({ error: "Claim not found" }, { status: 404 });
+      }
+
+      // Tenant isolation: verify claim belongs to user's org
+      if (claim.orgId !== userOrgId) {
+        return NextResponse.json({ error: "Access denied" }, { status: 403 });
       }
 
       // Map pipeline stage to claim status
@@ -75,6 +90,18 @@ export async function POST(req: NextRequest) {
 
     // Handle lead moves
     if (leadId) {
+      // Tenant isolation: verify lead belongs to user's org
+      const lead = await prisma.leads.findUnique({
+        where: { id: leadId },
+        select: { id: true, orgId: true },
+      });
+      if (!lead) {
+        return NextResponse.json({ error: "Lead not found" }, { status: 404 });
+      }
+      if (lead.orgId !== userOrgId) {
+        return NextResponse.json({ error: "Access denied" }, { status: 403 });
+      }
+
       const updated = await prisma.leads.update({
         where: { id: leadId },
         data: { stage, updatedAt: new Date() },

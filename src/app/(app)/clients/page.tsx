@@ -1,9 +1,10 @@
-import { Search, Users } from "lucide-react";
+import { Search, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import InviteClientButton from "@/components/clients/InviteClientButton";
 import { PageHero } from "@/components/layout/PageHero";
+import { Button } from "@/components/ui/button";
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
 
@@ -55,7 +56,12 @@ export default async function ClientsPage({ searchParams }: PageProps) {
         subtitle="Manage your client contacts and relationships"
         icon={<Users className="h-5 w-5" />}
       >
-        <InviteClientButton />
+        <Button asChild size="sm">
+          <Link href="/leads/new">
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add Client
+          </Link>
+        </Button>
       </PageHero>
 
       {hasError && (
