@@ -7,6 +7,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+import { verifyProClaimAccess } from "@/lib/security";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ claimId: string }> }) {
   try {
@@ -16,6 +17,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     }
 
     const { claimId } = await params;
+
+    // Security: Verify Pro has access to this claim
+    const hasAccess = await verifyProClaimAccess(userId, claimId);
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+
     const body = await req.json();
     const { contactId } = body;
 
@@ -89,9 +97,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
           },
         });
       }
-    } catch (linkError) {
+    } catch {
       // Non-critical — don't fail the whole request
-      console.warn("[ATTACH_CONTACT] ClaimClientLink upsert failed:", linkError);
     }
 
     return NextResponse.json({
@@ -103,8 +110,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
         email: contact.email,
       },
     });
-  } catch (error) {
-    console.error("[ATTACH_CONTACT_ERROR]", error);
+  } catch {
     return NextResponse.json({ error: "Failed to attach contact" }, { status: 500 });
   }
 }

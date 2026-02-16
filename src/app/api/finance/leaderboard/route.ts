@@ -111,13 +111,28 @@ export async function GET(req: Request) {
     }
 
     // Strategy 2: Compute leaderboard from real claims/leads/scopes data
-    // Get all org members
+    // Get all org members from user_organizations AND tradesCompanyMember
     const memberships = await prisma.user_organizations.findMany({
       where: { organizationId: ctx.orgId },
       select: { userId: true },
     });
 
-    const memberIds = memberships.map((m) => m.userId);
+    // Also check tradesCompanyMember for the same org (companyId may equal orgId)
+    const tradeMembers = await prisma.tradesCompanyMember
+      .findMany({
+        where: { companyId: ctx.orgId },
+        select: { userId: true },
+      })
+      .catch(() => []);
+
+    const memberIds = [
+      ...new Set([
+        ...memberships.map((m) => m.userId),
+        ...tradeMembers.map((m) => m.userId),
+        // Always include the current user
+        ctx.userId!,
+      ]),
+    ];
     if (memberIds.length === 0) {
       return NextResponse.json({
         success: true,
@@ -131,7 +146,9 @@ export async function GET(req: Request) {
     }
 
     const users = await prisma.users.findMany({
-      where: { clerkUserId: { in: memberIds } },
+      where: {
+        OR: [{ clerkUserId: { in: memberIds } }, { id: { in: memberIds } }],
+      },
       select: { id: true, clerkUserId: true, name: true, email: true, headshot_url: true },
     });
 
@@ -166,18 +183,16 @@ export async function GET(req: Request) {
       const userClaims = claims.filter(
         (c) => c.createdBy === user.clerkUserId || c.createdBy === user.id
       );
-      // If no claims have createdBy set, split evenly among members
+      // If no claims have createdBy set, attribute all to user (solo org) or split
       const claimsWithCreator = claims.filter((c) => c.createdBy);
-      const effectiveClaims =
-        claimsWithCreator.length > 0 ? userClaims : users.length === 1 ? claims : [];
+      const effectiveClaims = claimsWithCreator.length > 0 ? userClaims : claims;
 
       // Attribute leads by assignedTo
       const userLeads = leads.filter(
         (l) => l.assignedTo === user.clerkUserId || l.assignedTo === user.id
       );
       const leadsWithAssigned = leads.filter((l) => l.assignedTo);
-      const effectiveLeads =
-        leadsWithAssigned.length > 0 ? userLeads : users.length === 1 ? leads : [];
+      const effectiveLeads = leadsWithAssigned.length > 0 ? userLeads : leads;
 
       const approvedClaims = effectiveClaims.filter(
         (c) => c.status === "approved" || c.status === "completed"

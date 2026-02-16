@@ -356,10 +356,6 @@ export const CONTEXT_NAV: Record<string, NavItem[]> = {
     { href: "/reports/claims", label: "Claims PDF" },
     { href: "/reports/retail", label: "Retail Proposal Builder" },
   ],
-  "/weather": [
-    { href: "/weather/dol", label: "DOL Pulls" },
-    { href: "/weather/report", label: "Weather Report" },
-  ],
   "/trades-network": [
     { href: "/trades-network/feed", label: "Trades Feed" },
     { href: "/trades-network/metrics", label: "My Metrics" },

@@ -10,6 +10,8 @@
     "react/forbid-dom-props": "off",
     "react/forbid-component-props": "off",
     "jsx-a11y/aria-proptypes": "off",
+    "no-console": "warn",
+    "@typescript-eslint/no-explicit-any": "warn",
     "no-restricted-imports": [
       "error",
       {
@@ -17,6 +19,13 @@
           {
             "name": "@/src/lib/tokens",
             "message": "❌ Import from '@/src/lib/tokens/index' instead (new usage_tokens system)"
+          }
+        ],
+        "patterns": [
+          {
+            "group": ["@clerk/nextjs/server"],
+            "importNames": ["auth", "currentUser", "clerkClient"],
+            "message": "❌ Do not import auth functions directly from @clerk/nextjs/server. Use the canonical guards from '@/lib/auth/' (requireAuth, safeOrgContext, etc.) to ensure consistent org context resolution."
           }
         ]
       }

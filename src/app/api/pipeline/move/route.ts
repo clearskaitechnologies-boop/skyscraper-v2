@@ -53,10 +53,13 @@ export async function POST(req: NextRequest) {
       // Map pipeline stage to claim status
       const stageToStatus: Record<string, string> = {
         new: "new",
+        draft: "new",
         qualified: "in_progress",
         proposal: "in_progress",
         negotiation: "in_progress",
+        approved: "in_progress",
         won: "completed",
+        closed: "completed",
       };
 
       const stageToLifecycle: Record<string, string> = {

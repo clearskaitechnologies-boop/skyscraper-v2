@@ -290,11 +290,14 @@ export function JobsCategoryBoard({ initialJobs }: JobsCategoryBoardProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error();
+      if (!r.ok) {
+        const errData = await r.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error ${r.status}`);
+      }
       toast.success(`Moved to ${STAGES.find((s) => s.id === to)?.label ?? to}`);
-    } catch {
+    } catch (err: any) {
       setJobs((p) => p.map((j) => (j.id === job.id ? job : j)));
-      toast.error("Failed to move job");
+      toast.error(err?.message || "Failed to move job");
     }
   };
 

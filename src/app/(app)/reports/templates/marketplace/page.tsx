@@ -210,23 +210,24 @@ export default function MarketplacePage() {
   useEffect(() => {
     async function fetchTemplates() {
       try {
-        // Fetch marketplace templates
-        const res = await fetch("/api/templates/marketplace");
-        const data = await res.json();
+        // Fetch marketplace templates and user templates in parallel
+        const [res, userRes] = await Promise.all([
+          fetch("/api/templates/marketplace"),
+          fetch("/api/templates/my-templates").catch(() => null),
+        ]);
 
+        const data = await res.json();
         if (data.ok) {
           setTemplates(data.templates);
         } else {
           setError(data.error || "Failed to load templates");
         }
 
-        // Also fetch user's added templates to show "Added" state
-        try {
-          const userRes = await fetch("/api/templates/my-templates");
-          if (userRes.ok) {
+        // Process user's added templates for "Added" state
+        if (userRes?.ok) {
+          try {
             const userData = await userRes.json();
             if (userData.templates) {
-              // Build set of marketplace template IDs that user has added
               const addedIds = new Set<string>();
               userData.templates.forEach((t: any) => {
                 if (t.marketplaceId) addedIds.add(t.marketplaceId);
@@ -234,13 +235,11 @@ export default function MarketplacePage() {
               });
               setAddedTemplateIds(addedIds);
             }
+          } catch {
+            // User might not be logged in, that's fine
           }
-        } catch (userErr) {
-          // User might not be logged in, that's fine
-          console.log("Could not fetch user templates (user may not be logged in)");
         }
-      } catch (err) {
-        console.error("Failed to fetch templates:", err);
+      } catch {
         setError("Failed to connect to server");
       } finally {
         setLoading(false);
@@ -283,8 +282,36 @@ export default function MarketplacePage() {
           subtitle="Browse and add professional report templates to your workspace"
           icon={<LayoutTemplate className="h-6 w-6" />}
         />
-        <div className="flex h-64 items-center justify-center">
-          <div className="text-slate-600">Loading templates...</div>
+        {/* Skeleton stats row */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse rounded-2xl border bg-slate-50 p-6">
+              <div className="flex items-center gap-4">
+                <div className="h-14 w-14 rounded-xl bg-slate-200" />
+                <div className="space-y-2">
+                  <div className="h-8 w-12 rounded bg-slate-200" />
+                  <div className="h-4 w-24 rounded bg-slate-200" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Skeleton template grid */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Card key={i} className="animate-pulse overflow-hidden">
+              <div className="h-40 bg-slate-200" />
+              <div className="space-y-3 p-4">
+                <div className="h-5 w-3/4 rounded bg-slate-200" />
+                <div className="h-4 w-full rounded bg-slate-100" />
+                <div className="h-4 w-1/2 rounded bg-slate-100" />
+                <div className="flex gap-2 pt-2">
+                  <div className="h-8 w-24 rounded bg-slate-200" />
+                  <div className="h-8 w-20 rounded bg-slate-200" />
+                </div>
+              </div>
+            </Card>
+          ))}
         </div>
       </div>
     );

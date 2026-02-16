@@ -103,11 +103,6 @@ async function fetchContext(
     }
 
     const { context } = await res.json();
-    console.log("[CONTEXT_OK]", {
-      claimId,
-      hasWeather: !!context.weather,
-      photoCount: context.media?.totalPhotos,
-    });
     return context;
   } catch (error) {
     console.error("[CONTEXT_ERROR]", error);
@@ -139,7 +134,6 @@ async function composeContent(
     }
 
     const { composed } = await res.json();
-    console.log("[COMPOSE_OK]", { sectionsGenerated: Object.keys(composed).length });
     return composed;
   } catch (error) {
     console.error("[COMPOSE_ERROR]", error);
@@ -170,7 +164,6 @@ async function htmlToPDF(html: string): Promise<Buffer> {
       timeoutMs: FeatureFlags.PDF_RENDER_TIMEOUT,
     });
 
-    console.log("[PDF_OK]", { size: pdfBuffer.length });
     return Buffer.from(pdfBuffer);
   } catch (error: any) {
     if (error.code === "PDF_RENDER_TIMEOUT") {
@@ -212,8 +205,6 @@ async function uploadPDF(
       throw new Error(`${GenerateError.STORAGE_UPLOAD_FAILED}: ${error.message}`);
     }
 
-    console.log("[UPLOAD_OK]", { path, size: pdfBuffer.length });
-
     // Generate signed URL with configurable expiry
     const { data: signedData, error: signedError } = await supabase.storage
       .from(STORAGE_BUCKET_EXPORTS)
@@ -223,8 +214,6 @@ async function uploadPDF(
       console.error("[SIGN_URL_ERROR]", signedError);
       throw new Error(`${GenerateError.SIGNED_URL_FAILED}: ${signedError?.message}`);
     }
-
-    console.log("[SIGN_URL_OK]", { expiresIn: EXPORT_URL_TTL_SECONDS });
 
     // Create export record in database (non-blocking)
     const exportRecord = (await createExportRecord({
@@ -238,9 +227,7 @@ async function uploadPDF(
       metadata: { pdfSize: pdfBuffer.length, expiresIn: EXPORT_URL_TTL_SECONDS },
     })) as { id: string } | null;
 
-    if (exportRecord) {
-      console.log("[EXPORT_REGISTRY_OK]", { exportId: exportRecord.id });
-    } else {
+    if (!exportRecord) {
       console.warn("⚠️  Failed to create export record (non-critical)");
     }
 
@@ -303,31 +290,13 @@ export async function POST(req: NextRequest) {
 
     const { claimId, templateId, sections } = parsed.data;
 
-    console.log("[REPORT_GENERATE_START]", {
-      claimId,
-      templateId,
-      sections: sections.length,
-      orgId,
-    });
-
     const cookies = req.headers.get("cookie") || "";
 
     // PIPELINE EXECUTION
-    console.log("[GENERATE] Step 1: Fetching context...");
     const context = await fetchContext(claimId, templateId, cookies);
-
-    console.log("[GENERATE] Step 2: Composing AI content...");
     const composed = await composeContent(context, sections, cookies);
-
-    console.log("[GENERATE] Step 3: Rendering HTML...");
-    console.log("[HTML_START]");
     const html = renderHTML(context, composed);
-    console.log("[HTML_OK]", { length: html.length });
-
-    console.log("[GENERATE] Step 4: Converting to PDF...");
     const pdfBuffer = await htmlToPDF(html);
-
-    console.log("[GENERATE] Step 5: Uploading to storage...");
     const { signedUrl, exportId, path } = await uploadPDF(
       pdfBuffer,
       claimId,
@@ -337,12 +306,6 @@ export async function POST(req: NextRequest) {
     );
 
     const duration = Date.now() - startTime;
-
-    console.log(`[REPORT_GENERATE_OK] Complete in ${duration}ms`, {
-      claimId,
-      pdfUrl: signedUrl,
-      exportId,
-    });
 
     // Create notification and send email on successful report generation
     try {

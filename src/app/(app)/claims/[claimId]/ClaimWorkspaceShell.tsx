@@ -1528,7 +1528,10 @@ function DamageSection({ claimId }: { claimId: string }) {
         </p>
 
         <div className="space-y-3">
-          <button className="w-full rounded-lg border-2 border-blue-200 bg-blue-50 p-4 text-left hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:hover:bg-blue-900/30">
+          <a
+            href={`/claims/${claimId}/scope`}
+            className="block w-full rounded-lg border-2 border-blue-200 bg-blue-50 p-4 text-left hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-900/20 dark:hover:bg-blue-900/30"
+          >
             <div className="flex items-center gap-3">
               <Brain className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               <div>
@@ -1540,9 +1543,12 @@ function DamageSection({ claimId }: { claimId: string }) {
                 </p>
               </div>
             </div>
-          </button>
+          </a>
 
-          <button className="w-full rounded-lg border-2 border-slate-200 bg-white p-4 text-left hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700">
+          <a
+            href={`/claims/${claimId}/scope`}
+            className="block w-full rounded-lg border-2 border-slate-200 bg-white p-4 text-left hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700"
+          >
             <div className="flex items-center gap-3">
               <Wrench className="h-6 w-6 text-slate-600 dark:text-slate-400" />
               <div>
@@ -1554,17 +1560,21 @@ function DamageSection({ claimId }: { claimId: string }) {
                 </p>
               </div>
             </div>
-          </button>
+          </a>
         </div>
       </Card>
 
       <Card title="Scope Summary">
         <div className="text-xs text-slate-500 dark:text-slate-400">
           <p>
-            Line items, quantities, and estimated costs will appear here as you build your scope.
-          </p>
-          <p className="mt-2">
-            Integration with Xactimate pricing and material databases coming soon.
+            View and manage your scope of work on the{" "}
+            <a
+              href={`/claims/${claimId}/scope`}
+              className="text-blue-600 underline hover:text-blue-500"
+            >
+              Scope tab
+            </a>
+            .
           </p>
         </div>
       </Card>
@@ -1640,18 +1650,18 @@ function AISection({
           <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
             Generate professional rebuttal letters to carriers based on AI analysis
           </p>
-          <button className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400">
+          <Button variant="link" size="sm" className="h-auto p-0 text-xs">
             Generate Letter →
-          </button>
+          </Button>
         </Card>
 
         <Card title="🏗️ Engineer Report Draft">
           <p className="mb-3 text-xs text-slate-500 dark:text-slate-400">
             Create engineering reports with structural damage analysis
           </p>
-          <button className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400">
+          <Button variant="link" size="sm" className="h-auto p-0 text-xs">
             Draft Report →
-          </button>
+          </Button>
         </Card>
       </div>
     </div>

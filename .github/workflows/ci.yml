@@ -36,6 +36,18 @@ jobs:
       - name: Schema Validation
         run: pnpm validate:schema
 
+      - name: Auth Guard Drift Check
+        run: |
+          echo "Checking for direct Clerk server imports outside canonical guard..."
+          DRIFT_COUNT=$(grep -rl "from \"@clerk/nextjs/server\"" src/ | grep -v "lib/auth" | grep -v middleware.ts | wc -l | tr -d ' ')
+          echo "Found $DRIFT_COUNT files with direct Clerk server imports"
+          if [ "$DRIFT_COUNT" -gt 700 ]; then
+            echo "⚠️ Auth drift detected! Count ($DRIFT_COUNT) exceeds threshold (700)"
+            echo "New files are importing @clerk/nextjs/server directly instead of using @/lib/auth guards"
+            exit 1
+          fi
+          echo "✅ Auth drift within acceptable range"
+
       - name: Type Check
         run: pnpm typecheck
 

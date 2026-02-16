@@ -7,7 +7,7 @@ import { FinancialAnalysisResult } from "@/lib/intel/financial/engine";
 
 export default function ClaimFinancialPage() {
   const params = useParams();
-  const claimId = (params?.id as string) || "";
+  const claimId = (params?.claimId as string) || "";
 
   const [analysis, setAnalysis] = useState<FinancialAnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);

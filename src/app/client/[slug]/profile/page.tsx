@@ -1,9 +1,21 @@
 // src/app/client/[slug]/profile/page.tsx
 "use client";
 
-import { Edit, Home, Loader2, Mail, MapPin, Phone, Save, Share2, User, X } from "lucide-react";
+import {
+  Camera,
+  Edit,
+  Home,
+  Loader2,
+  Mail,
+  MapPin,
+  Phone,
+  Save,
+  Share2,
+  User,
+  X,
+} from "lucide-react";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -44,6 +56,39 @@ export default function ClientProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<ProfileData>>({});
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarUpload = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File must be under 5MB");
+      return;
+    }
+    setUploadingAvatar(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      fd.append("type", "avatar");
+      const res = await fetch("/api/portal/upload-photo", { method: "POST", body: fd });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      if (data.url) {
+        setProfile((prev) => (prev ? { ...prev, avatarUrl: data.url } : prev));
+        toast.success("Avatar updated!");
+      }
+    } catch {
+      toast.error("Failed to upload avatar");
+    } finally {
+      setUploadingAvatar(false);
+      if (avatarInputRef.current) avatarInputRef.current.value = "";
+    }
+  }, []);
 
   useEffect(() => {
     fetchProfile();
@@ -253,8 +298,15 @@ export default function ClientProfilePage() {
             </div>
           ) : (
             <div className="flex items-start gap-6">
-              {/* Avatar */}
-              <div className="flex-shrink-0">
+              {/* Avatar with upload */}
+              <div className="group relative flex-shrink-0">
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
                 {profile?.avatarUrl ? (
                   <img
                     src={profile.avatarUrl}
@@ -267,6 +319,18 @@ export default function ClientProfilePage() {
                     {profile?.lastName?.charAt(0)?.toUpperCase()}
                   </div>
                 )}
+                <button
+                  onClick={() => avatarInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100"
+                  aria-label="Upload avatar"
+                >
+                  {uploadingAvatar ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-white" />
+                  ) : (
+                    <Camera className="h-6 w-6 text-white" />
+                  )}
+                </button>
               </div>
 
               {/* Info */}

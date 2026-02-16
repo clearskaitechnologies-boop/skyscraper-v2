@@ -5,7 +5,6 @@ const PAGES: Array<{ path: string; markers: string[] }> = [
   { path: '/api/health/tenant', markers: ['{"ok":true'] },
   { path: '/claims', markers: ['Claims Workspace', 'Initialize Your Workspace'] },
   { path: '/leads', markers: ['Leads Pipeline', 'Lead Tracking Setup'] },
-  { path: '/weather', markers: ['Weather Intelligence Hub', 'Initialize Weather Intelligence'] },
   { path: '/routes', markers: ['Route Planning Setup', 'route planner'] },
   { path: '/teams', markers: ['Team Setup Required', 'Loaded team members'] },
   { path: '/vendors', markers: ['Vendors & Manufacturers Directory', 'Initialize Vendor Directory'] },
@@ -18,7 +17,6 @@ const PAGES: Array<{ path: string; markers: string[] }> = [
 const RESTRICTED = new Set([
   '/claims',
   '/leads',
-  '/weather',
   '/routes',
   '/teams',
   '/vendors',

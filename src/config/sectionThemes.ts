@@ -201,7 +201,6 @@ const ROUTE_THEME_MAP: [string, SectionTheme][] = [
   ["/trial", "settings"],
 
   // ── Weather / Maps → Claims toolkit ────────────────────────────────
-  ["/weather", "claims"],
   ["/maps", "jobs"],
 
   // ── HOA / Governance ───────────────────────────────────────────────

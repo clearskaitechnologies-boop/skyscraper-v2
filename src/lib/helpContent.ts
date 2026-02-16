@@ -322,16 +322,6 @@ export const helpContentRegistry: Record<string, HelpContent> = {
       "Storm severity ratings help prioritize door-knocking routes",
     ],
   },
-  "/weather": {
-    title: "Weather Intelligence",
-    description: "Access weather data, storm tracking, and date-of-loss verification.",
-    steps: [
-      "Check current weather conditions in your service area",
-      "View historical weather data for date-of-loss verification",
-      "Track active storm systems approaching your area",
-      "Generate weather reports for claim documentation",
-    ],
-  },
   "/weather/quick-dol": {
     title: "Quick Date-of-Loss Lookup",
     description: "Instantly verify weather conditions on a specific date for claims documentation.",

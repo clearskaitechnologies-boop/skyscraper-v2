@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+import { safeOrgContext } from "@/lib/safeOrgContext";
 
 /**
  * GET /api/weather/analytics
@@ -16,21 +16,13 @@ import prisma from "@/lib/prisma";
  */
 export async function GET(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const ctx = await safeOrgContext();
+    if (ctx.status === "unauthenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Resolve user's DB identity
-    const dbUser = await prisma.users.findFirst({
-      where: { clerkUserId: userId },
-      select: { id: true, orgId: true },
-    });
-    const membership = await prisma.tradesCompanyMember.findUnique({
-      where: { userId },
-      select: { companyId: true, orgId: true },
-    });
-    const orgId = dbUser?.orgId || membership?.orgId || membership?.companyId;
+    const userId = ctx.userId as string;
+    const orgId = ctx.orgId;
 
     // ── Weather Reports Summary ──
     const reports = await prisma.weather_reports.findMany({
@@ -176,8 +168,7 @@ export async function GET(req: NextRequest) {
       topRegions,
       recentReports,
     });
-  } catch (err) {
-    console.error("[weather/analytics] Error:", err);
+  } catch {
     return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
   }
 }

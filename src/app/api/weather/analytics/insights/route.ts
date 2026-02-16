@@ -1,8 +1,8 @@
 export const dynamic = "force-dynamic";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+import { safeOrgContext } from "@/lib/safeOrgContext";
 
 /**
  * POST /api/weather/analytics/insights
@@ -14,21 +14,13 @@ import prisma from "@/lib/prisma";
  */
 export async function POST(req: NextRequest) {
   try {
-    const { userId } = await auth();
-    if (!userId) {
+    const ctx = await safeOrgContext();
+    if (ctx.status === "unauthenticated") {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Resolve org
-    const dbUser = await prisma.users.findFirst({
-      where: { clerkUserId: userId },
-      select: { id: true, orgId: true },
-    });
-    const membership = await prisma.tradesCompanyMember.findUnique({
-      where: { userId },
-      select: { companyId: true, orgId: true },
-    });
-    const orgId = dbUser?.orgId || membership?.orgId || membership?.companyId;
+    const userId = ctx.userId as string;
+    const orgId = ctx.orgId;
 
     // Gather all weather reports for this user
     const reports = await prisma.weather_reports.findMany({
@@ -215,8 +207,7 @@ export async function POST(req: NextRequest) {
       serviceAreasCovered: hotspots.length,
       generatedAt: new Date().toISOString(),
     });
-  } catch (err) {
-    console.error("[weather/analytics/insights] Error:", err);
+  } catch {
     return NextResponse.json({ error: "Failed to generate insights" }, { status: 500 });
   }
 }
