@@ -26,7 +26,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface VideoReportPanelProps {
   leadId: string;
@@ -51,7 +51,6 @@ interface VideoJob {
 }
 
 export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
-  const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   const [job, setJob] = useState<VideoJob | null>(null);
   const [error, setError] = useState<string | null>(null);

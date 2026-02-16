@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -45,7 +45,6 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
   const [newSkill, setNewSkill] = useState("");
   const [certifications, setCertifications] = useState<string[]>(initialData?.certifications || []);
   const [newCert, setNewCert] = useState("");
-  const { toast } = useToast();
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),

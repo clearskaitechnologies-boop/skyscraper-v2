@@ -8,7 +8,7 @@
 
 import { useState } from "react";
 
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 export type ExportPdfOptions = {
   mode: "retail" | "claims";
@@ -26,7 +26,6 @@ export type ExportPdfResult = {
 export function usePdfExport() {
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   const exportPdf = async (options: ExportPdfOptions): Promise<ExportPdfResult> => {
     setExporting(true);

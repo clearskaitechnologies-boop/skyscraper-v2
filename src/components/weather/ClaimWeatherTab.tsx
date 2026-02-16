@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { FullWeatherReport } from "@/components/weather/FullWeatherReport";
 import { QuickDOLFinder } from "@/components/weather/QuickDOLFinder";
 import { SavedReportsList } from "@/components/weather/SavedReportsList";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface ClaimWeatherTabProps {
   claimId: string;
@@ -20,7 +20,6 @@ interface ClaimWeatherTabProps {
 export function ClaimWeatherTab({ claimId, propertyAddress, currentDol }: ClaimWeatherTabProps) {
   const [selectedDol, setSelectedDol] = useState<string | null>(currentDol || null);
   const [activeTab, setActiveTab] = useState("quick-dol");
-  const { toast } = useToast();
   const router = useRouter();
 
   const handleSelectDate = async (date: string, candidate: any) => {

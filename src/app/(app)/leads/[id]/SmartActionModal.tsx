@@ -3,7 +3,7 @@
 import { Copy, RefreshCw,X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface SmartActionModalProps {
   title: string;
@@ -22,7 +22,6 @@ export function SmartActionModal({
   onClose,
   onRegenerate,
 }: SmartActionModalProps) {
-  const { toast } = useToast();
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(content);

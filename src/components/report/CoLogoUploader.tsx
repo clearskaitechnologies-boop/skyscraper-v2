@@ -2,11 +2,10 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/useToast";
+import { toast } from "sonner";
 
 export default function CoLogoUploader({ orgId }: { orgId: string }) {
   const [busy, setBusy] = useState(false);
-  const t = useToast();
 
   async function onFile(f?: File | null) {
     if (!f) return;
@@ -29,9 +28,9 @@ export default function CoLogoUploader({ orgId }: { orgId: string }) {
       }
 
       const { url } = await res.json();
-      t.success("Logo uploaded");
+      toast.success("Logo uploaded");
     } catch (err: any) {
-      t.error((err && err.message) || "Upload failed");
+      toast.error((err && err.message) || "Upload failed");
     } finally {
       setBusy(false);
     }

@@ -4,7 +4,7 @@ import { AlertCircle, CheckCircle, Copy, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface ImageAnalysis {
   damageTypes: string[];
@@ -23,7 +23,6 @@ interface DominusVisionModalProps {
 
 export function DominusVisionModal({ image, onClose, leadId }: DominusVisionModalProps) {
   const [regenerating, setRegenerating] = useState(false);
-  const { toast } = useToast();
 
   const copyToClipboard = () => {
     const text = `

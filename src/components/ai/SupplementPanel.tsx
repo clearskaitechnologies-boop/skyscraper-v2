@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface SupplementPanelProps {
   leadId: string;
@@ -64,7 +64,6 @@ export function SupplementPanel({ leadId, claimId, currentScope = [] }: Suppleme
   const [adjusterEmail, setAdjusterEmail] = useState("");
   const [tone, setTone] = useState<"professional" | "firm" | "legal">("professional");
   const [city, setCity] = useState("Phoenix");
-  const { toast } = useToast();
 
   async function generateSupplement() {
     if (!claimId) {

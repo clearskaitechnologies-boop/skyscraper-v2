@@ -14,7 +14,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface TeamMemberActionsProps {
   memberId: string;
@@ -32,7 +32,6 @@ export function TeamMemberActions({
   isCurrentUser,
 }: TeamMemberActionsProps) {
   const router = useRouter();
-  const { toast } = useToast();
   const [isChangingRole, setIsChangingRole] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);

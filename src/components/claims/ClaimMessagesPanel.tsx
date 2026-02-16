@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface Message {
   id: string;
@@ -40,7 +40,6 @@ interface ClaimMessagesPanelProps {
 }
 
 export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
-  const { toast } = useToast();
   const [threads, setThreads] = useState<MessageThread[]>([]);
   const [selectedThread, setSelectedThread] = useState<MessageThread | null>(null);
   const [threadMessages, setThreadMessages] = useState<Message[]>([]);

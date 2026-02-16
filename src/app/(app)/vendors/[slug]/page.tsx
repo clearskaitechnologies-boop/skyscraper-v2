@@ -29,7 +29,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { getVendorResources } from "@/lib/vendors/vendorResources";
 
 import VendorLocationMap from "./_components/VendorLocationMap";
@@ -170,7 +170,6 @@ export default function VendorDetailPage() {
   const slug = params?.slug as string;
   const [vendor, setVendor] = useState<Vendor | null>(null);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
 
   useEffect(() => {
     if (slug) fetchVendor();

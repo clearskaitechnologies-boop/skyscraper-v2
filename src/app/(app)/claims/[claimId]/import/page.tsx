@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 type ImportSource = "adjuster" | "contractor";
 
@@ -31,7 +31,6 @@ interface MatchResult {
 export default function ImportPage() {
   const params = useParams();
   const router = useRouter();
-  const { toast } = useToast();
   const claimId = params?.claimId as string;
 
   const [source, setSource] = useState<ImportSource>("adjuster");

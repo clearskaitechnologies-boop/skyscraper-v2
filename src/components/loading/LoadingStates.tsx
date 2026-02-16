@@ -5,14 +5,11 @@
  * for consistent loading UX across the application.
  */
 
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-/**
- * Generic skeleton loader
- */
-export function Skeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("animate-pulse rounded-md bg-muted", className)} {...props} />;
-}
+// Re-export shadcn Skeleton for backwards compatibility
+export { Skeleton };
 
 /**
  * Claim card skeleton (for claims list)

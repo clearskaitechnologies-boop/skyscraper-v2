@@ -2,7 +2,7 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/useToast";
+import { toast } from "sonner";
 
 export default function MeetTheTeamUploader({
   orgId,
@@ -14,7 +14,6 @@ export default function MeetTheTeamUploader({
   onChange?: (v: any[]) => void;
 }) {
   const [items, setItems] = useState((value || []).slice(0, 3));
-  const t = useToast();
 
   async function upload(index: number, f?: File | null) {
     if (!f) return;
@@ -38,9 +37,9 @@ export default function MeetTheTeamUploader({
       next[index] = { ...(next[index] || {}), photoUrl: url };
       setItems(next);
       onChange?.(next);
-      t.success("Photo uploaded");
+      toast.success("Photo uploaded");
     } catch (err: any) {
-      t.error(err?.message || "Upload failed");
+      toast.error(err?.message || "Upload failed");
     }
   }
 

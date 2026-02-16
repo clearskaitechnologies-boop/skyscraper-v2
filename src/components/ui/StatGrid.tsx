@@ -1,4 +1,4 @@
-import KpiCard from "./KpiCard";
+import KpiCard from "./MetricCard";
 
 export default function StatGrid({
   stats,

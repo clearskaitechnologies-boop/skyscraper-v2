@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
-import ErrorBoundary from "@/components/ErrorBoundary";
+import { ErrorBoundary } from "@/components/system/ErrorBoundary";
 import { PostHogPageview } from "@/lib/analytics.tsx";
 
 export const dynamic = "force-dynamic";

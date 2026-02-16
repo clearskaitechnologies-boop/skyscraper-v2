@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface AvatarUploaderProps {
   currentPhotoUrl?: string | null;
@@ -16,7 +16,6 @@ interface AvatarUploaderProps {
 export function AvatarUploader({ currentPhotoUrl, onUploadComplete, userId }: AvatarUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(currentPhotoUrl || null);
-  const { toast } = useToast();
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

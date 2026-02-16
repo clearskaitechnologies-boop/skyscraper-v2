@@ -6,9 +6,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { LegalGate } from "@/components/legal/LegalGate";
+import NotificationBell from "@/components/notifications/UnifiedNotificationBell";
 import { ClientPortalNav } from "@/components/portal/ClientPortalNav";
 import ClientPortalUserMenu from "@/components/portal/ClientPortalUserMenu";
-import NotificationBell from "@/components/portal/NotificationBell";
 import { PortalErrorBoundary } from "@/components/portal/PortalErrorBoundary";
 import ThemeToggle from "@/components/portal/ThemeToggle";
 import { getBrandingForOrg } from "@/lib/branding/fetchBranding";
@@ -128,7 +128,7 @@ export default async function PortalLayout({ children }: { children: React.React
               </div>
               <div className="flex items-center gap-3">
                 <ThemeToggle />
-                {userId && <NotificationBell />}
+                {userId && <NotificationBell variant="client" autoMarkRead />}
                 {userId ? (
                   <ClientPortalUserMenu />
                 ) : (

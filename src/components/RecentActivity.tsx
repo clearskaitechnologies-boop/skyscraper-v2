@@ -2,9 +2,7 @@
 
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useEffect,useState } from "react";
-
-import GlassCard from "./ui/GlassCard";
+import { useEffect, useState } from "react";
 
 interface Activity {
   id: string;
@@ -21,7 +19,7 @@ interface RecentActivityProps {
 export default function RecentActivity({ activities: propActivities }: RecentActivityProps) {
   const [activities, setActivities] = useState<Activity[]>(propActivities || []);
   const [loading, setLoading] = useState(!propActivities);
-  
+
   const activityIcons: Record<string, string> = {
     claim: "📋",
     report: "📄",
@@ -30,13 +28,13 @@ export default function RecentActivity({ activities: propActivities }: RecentAct
     inspection: "🔍",
     default: "•",
   };
-  
+
   useEffect(() => {
     if (!propActivities) {
       fetchActivities();
     }
   }, [propActivities]);
-  
+
   async function fetchActivities() {
     try {
       const res = await fetch("/api/dashboard/activities");
@@ -52,7 +50,7 @@ export default function RecentActivity({ activities: propActivities }: RecentAct
   }
 
   return (
-    <GlassCard>
+    <div className="rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-lg">
       <div className="mb-4 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Recent Activity</h3>
         <Link href="/dashboard/activity" className="text-sm text-sky-400 hover:underline">
@@ -98,6 +96,6 @@ export default function RecentActivity({ activities: propActivities }: RecentAct
           ))}
         </div>
       )}
-    </GlassCard>
+    </div>
   );
 }

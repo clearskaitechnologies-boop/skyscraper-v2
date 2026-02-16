@@ -11,7 +11,7 @@
 import { Loader2, Wrench } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
-import { EmptyState } from "@/components/portal/EmptyState";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 

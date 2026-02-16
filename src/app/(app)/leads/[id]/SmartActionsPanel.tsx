@@ -18,7 +18,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useAIStream } from "@/hooks/useAIStream";
 
 import { SmartActionModal } from "./SmartActionModal";
@@ -109,7 +109,6 @@ export function SmartActionsPanel({ leadId }: SmartActionsPanelProps) {
     content: string;
     action: ActionType;
   } | null>(null);
-  const { toast } = useToast();
 
   const {
     text: streamingText,

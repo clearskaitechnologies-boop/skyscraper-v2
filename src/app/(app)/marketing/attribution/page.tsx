@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useState } from "react";
 
-import { StatCard } from "@/components/ui/StatCard";
+import { StatCard } from "@/components/ui/MetricCard";
 
 interface Campaign {
   id: string;

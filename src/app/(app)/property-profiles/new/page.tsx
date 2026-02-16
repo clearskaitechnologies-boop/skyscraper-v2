@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const US_STATES = [
   "AL",
@@ -79,7 +79,6 @@ const PROPERTY_TYPES = ["Single Family", "Multi Family", "Condo", "Townhouse", "
 export default function NewPropertyProfilePage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useUser();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     streetAddress: "",

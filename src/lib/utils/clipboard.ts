@@ -2,15 +2,12 @@
  * 🔥 PHASE C: QOL - Copy to Clipboard Utility
  */
 
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 export async function copyToClipboard(text: string, label?: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied!",
-      description: label ? `${label} copied to clipboard` : "Content copied to clipboard",
-    });
+    toast.success(label ? `${label} copied to clipboard` : "Copied to clipboard");
     return true;
   } catch (error) {
     // Fallback for older browsers
@@ -23,18 +20,11 @@ export async function copyToClipboard(text: string, label?: string): Promise<boo
       textArea.select();
       document.execCommand("copy");
       document.body.removeChild(textArea);
-      
-      toast({
-        title: "Copied!",
-        description: label ? `${label} copied to clipboard` : "Content copied to clipboard",
-      });
+
+      toast.success(label ? `${label} copied to clipboard` : "Copied to clipboard");
       return true;
     } catch (fallbackError) {
-      toast({
-        title: "Copy Failed",
-        description: "Could not copy to clipboard",
-        variant: "destructive",
-      });
+      toast.error("Could not copy to clipboard");
       return false;
     }
   }

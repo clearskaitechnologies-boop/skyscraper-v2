@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
-import { StatCard } from "@/components/ui/StatCard";
+import { StatCard } from "@/components/ui/MetricCard";
 
 export default function FinancialReportsPage() {
   const router = useRouter();

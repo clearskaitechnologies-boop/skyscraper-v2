@@ -1,6 +1,6 @@
 import { Activity, AlertCircle, FileText, TrendingUp, Users } from "lucide-react";
 
-import GlassCard from "@/components/ui/GlassCard";
+import GlassCard from "@/components/ui/MetricCard";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
 

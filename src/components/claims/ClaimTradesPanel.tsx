@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface TradePartner {
   id: string;
@@ -36,7 +36,6 @@ interface ClaimTradesPanelProps {
 }
 
 export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
-  const { toast } = useToast();
   const [linkedTrades, setLinkedTrades] = useState<LinkedTrade[]>([]);
   const [allTrades, setAllTrades] = useState<TradePartner[]>([]);
   const [selectedTradeId, setSelectedTradeId] = useState<string>("");

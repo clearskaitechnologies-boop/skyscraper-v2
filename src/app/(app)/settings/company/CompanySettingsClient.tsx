@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const companySchema = z.object({
   businessName: z.string().min(1, "Business name is required"),
@@ -57,7 +57,6 @@ export function CompanySettingsClient({ org, profile }: CompanySettingsClientPro
   const [primaryServices, setPrimaryServices] = useState<string[]>(profile?.primaryServices || []);
   const [newArea, setNewArea] = useState("");
   const [newService, setNewService] = useState("");
-  const { toast } = useToast();
 
   const form = useForm<CompanyFormValues>({
     resolver: zodResolver(companySchema),

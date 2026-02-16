@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useWeather } from "@/hooks/useWeather";
 
 import { PDFPreviewModal } from "./PDFPreviewModal";
@@ -17,7 +17,6 @@ export type WeatherControlsProps = {
 
 export function WeatherControls({ lat, lon, orgId, propertyId }: WeatherControlsProps) {
   const { loading, error, dol, pdfUrl, pullQuickDol, generatePdf } = useWeather();
-  const { toast } = useToast();
   const [showPreview, setShowPreview] = useState(false);
 
   const handlePullDol = async () => {

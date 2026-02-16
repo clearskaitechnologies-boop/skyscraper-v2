@@ -28,7 +28,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface Rule {
   id: string;
@@ -52,7 +52,6 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
   const [loading, setLoading] = useState(true);
   const [editingRule, setEditingRule] = useState<Rule | null>(null);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const { toast } = useToast();
 
   useEffect(() => {
     fetchRules();
@@ -325,7 +324,6 @@ function RuleEditor({ rule, onSave, onCancel }: RuleEditorProps) {
   const [triggerDSL, setTriggerDSL] = useState(JSON.stringify(rule?.trigger || {}, null, 2));
   const [actionDSL, setActionDSL] = useState(JSON.stringify(rule?.action || {}, null, 2));
   const [saving, setSaving] = useState(false);
-  const { toast } = useToast();
 
   const handleSave = async () => {
     try {

@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const COMPONENT_TYPES = [
   "Roof",
@@ -49,7 +49,6 @@ export default function NewInspectionPage() {
 
   const searchParams = useSearchParams();
   const propertyId = searchParams?.get("propertyId");
-  const { toast } = useToast();
 
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);

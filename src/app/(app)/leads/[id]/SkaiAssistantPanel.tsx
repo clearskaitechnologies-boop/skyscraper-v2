@@ -10,7 +10,7 @@ import StormImpactPanel from "@/components/ai/StormImpactPanel";
 import { SupplementPanel } from "@/components/ai/SupplementPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 import { useAIStream } from "@/hooks/useAIStream";
 
 import { DominusInsightCard } from "./DominusInsightCard";
@@ -37,7 +37,6 @@ export function SkaiAssistantPanel({ leadId }: SkaiAssistantPanelProps) {
   const [loading, setLoading] = useState(false);
   const [aiData, setAiData] = useState<AIData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
 
   const {
     text: streamingText,

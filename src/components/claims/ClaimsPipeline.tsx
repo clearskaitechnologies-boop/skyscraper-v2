@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 
-import { triggerNotification } from "@/components/ui/NotificationBell";
+import { triggerNotification } from "@/components/notifications/UnifiedNotificationBell";
 import { card } from "@/lib/theme";
 
 type ClaimStage =

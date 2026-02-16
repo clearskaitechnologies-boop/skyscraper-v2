@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
+import { toast } from "sonner";
 
 interface CarrierCompliancePanelProps {
   leadId: string;
@@ -49,7 +49,6 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
   const [result, setResult] = useState<ComplianceResult | null>(null);
   const [adjusterEmail, setAdjusterEmail] = useState("");
   const [manualCarrier, setManualCarrier] = useState("");
-  const { toast } = useToast();
 
   async function runComplianceCheck() {
     if (currentScope.length === 0) {

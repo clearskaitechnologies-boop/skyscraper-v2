@@ -2,7 +2,7 @@
 
 import { Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer,Tooltip, XAxis, YAxis } from "recharts";
 
-import GlassCard from "./ui/GlassCard";
+import GlassCard from "./ui/MetricCard";
 
 type MonthlyData = {
   month: string;

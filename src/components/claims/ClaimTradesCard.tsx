@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { StandardButton } from "@/components/ui/StandardButton";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 interface TradePartner {
   id: string;
@@ -39,7 +39,6 @@ interface ClaimTradesCardProps {
 }
 
 export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
-  const { toast } = useToast();
   const [linkedTrades, setLinkedTrades] = useState<LinkedTrade[]>([]);
   const [availableTrades, setAvailableTrades] = useState<TradePartner[]>([]);
   const [loading, setLoading] = useState(true);
