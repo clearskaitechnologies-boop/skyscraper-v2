@@ -14,8 +14,10 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -80,12 +82,14 @@ export default function KPIDashboardClient() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-          <p className="text-slate-400">Loading KPI dashboard...</p>
+      <PageContainer maxWidth="7xl">
+        <div className="flex min-h-[400px] items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-teal-500 border-t-transparent"></div>
+            <p className="text-slate-500 dark:text-slate-400">Loading KPI dashboard...</p>
+          </div>
         </div>
-      </div>
+      </PageContainer>
     );
   }
 
@@ -139,21 +143,17 @@ export default function KPIDashboardClient() {
   const data = kpiData || mockData;
 
   return (
-    <div className="min-h-screen space-y-6 bg-slate-950 p-6">
-      {/* Header */}
-      <div className="space-y-2">
-        <h1 className="text-3xl font-bold">
-          <span className="bg-gradient-to-r from-[#117CFF] to-[#FFC838] bg-clip-text text-transparent">
-            KPI
-          </span>{" "}
-          <span className="text-white">Intelligence Dashboard</span>
-        </h1>
-        <p className="text-slate-400">Executive overview and performance analytics</p>
-      </div>
+    <PageContainer maxWidth="7xl">
+      <PageHero
+        title="KPI Intelligence Dashboard"
+        subtitle="Executive overview and performance analytics"
+        icon={<BarChart3 className="h-5 w-5" />}
+        section="command"
+      />
 
       {/* Time Range Selector */}
       <Tabs value={timeRange} onValueChange={(v) => setTimeRange(v as any)} className="w-full">
-        <TabsList className="bg-slate-900">
+        <TabsList>
           <TabsTrigger value="7d">Last 7 Days</TabsTrigger>
           <TabsTrigger value="30d">Last 30 Days</TabsTrigger>
           <TabsTrigger value="90d">Last 90 Days</TabsTrigger>
@@ -194,10 +194,10 @@ export default function KPIDashboardClient() {
           </div>
 
           {/* Claims Pipeline Chart */}
-          <Card className="border-slate-800 bg-slate-900 p-6">
+          <Card className="p-6">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="flex items-center gap-2 text-xl font-semibold text-white">
+                <h2 className="flex items-center gap-2 text-xl font-semibold text-slate-900 dark:text-white">
                   <BarChart3 className="h-5 w-5 text-blue-500" />
                   Claims Per Stage
                 </h2>
@@ -210,10 +210,10 @@ export default function KPIDashboardClient() {
                 {Object.entries(data.claimsPerStage).map(([stage, count]) => (
                   <div key={stage} className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-slate-300">{stage}</span>
-                      <span className="font-mono text-slate-400">{count}</span>
+                      <span className="text-slate-700 dark:text-slate-300">{stage}</span>
+                      <span className="font-mono text-slate-500 dark:text-slate-400">{count}</span>
                     </div>
-                    <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                    <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                       <div
                         className="h-full rounded-full bg-gradient-to-r from-blue-500 to-purple-500"
                         style={{
@@ -229,23 +229,25 @@ export default function KPIDashboardClient() {
 
           {/* Supplements & Material Costs */}
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-            <Card className="border-slate-800 bg-slate-900 p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+            <Card className="p-6">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
                 <Activity className="h-5 w-5 text-orange-500" />
                 Supplement Metrics
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Total Supplements</span>
-                  <span className="text-2xl font-bold text-white">{data.supplementCount}</span>
+                  <span className="text-slate-500 dark:text-slate-400">Total Supplements</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {data.supplementCount}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Supplement Ratio</span>
+                  <span className="text-slate-500 dark:text-slate-400">Supplement Ratio</span>
                   <span className="text-2xl font-bold text-orange-500">
                     {(data.supplementRatio * 100).toFixed(0)}%
                   </span>
                 </div>
-                <div className="border-t border-slate-800 pt-2">
+                <div className="border-t border-slate-200/60 pt-2 dark:border-slate-700/50">
                   <p className="text-xs text-slate-500">
                     {data.supplementRatio < 0.35
                       ? "✅ Within target range"
@@ -255,25 +257,25 @@ export default function KPIDashboardClient() {
               </div>
             </Card>
 
-            <Card className="border-slate-800 bg-slate-900 p-6">
-              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+            <Card className="p-6">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
                 <PieChart className="h-5 w-5 text-green-500" />
                 Material Insights
               </h3>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Avg Roof Size</span>
-                  <span className="text-2xl font-bold text-white">
+                  <span className="text-slate-500 dark:text-slate-400">Avg Roof Size</span>
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
                     {data.avgRoofSize.toLocaleString()} sq ft
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-400">Avg Material Cost</span>
+                  <span className="text-slate-500 dark:text-slate-400">Avg Material Cost</span>
                   <span className="text-2xl font-bold text-green-500">
                     ${data.avgMaterialCost.toLocaleString()}
                   </span>
                 </div>
-                <div className="border-t border-slate-800 pt-2">
+                <div className="border-t border-slate-200/60 pt-2 dark:border-slate-700/50">
                   <p className="text-xs text-slate-500">
                     Cost per sq ft: ${(data.avgMaterialCost / data.avgRoofSize).toFixed(2)}
                   </p>
@@ -283,30 +285,36 @@ export default function KPIDashboardClient() {
           </div>
 
           {/* AI Risk Levels */}
-          <Card className="border-slate-800 bg-slate-900 p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+          <Card className="p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
               <Target className="h-5 w-5 text-purple-500" />
               AI Risk Assessment
             </h3>
             <div className="grid grid-cols-3 gap-4">
-              <div className="rounded-lg border border-green-500/20 bg-green-500/10 p-4 text-center">
-                <div className="text-3xl font-bold text-green-500">{data.aiRiskLevels.low}</div>
-                <div className="mt-1 text-sm text-slate-400">Low Risk</div>
+              <div className="rounded-xl border border-green-500/20 bg-green-500/10 p-4 text-center">
+                <div className="text-3xl font-bold text-green-600 dark:text-green-500">
+                  {data.aiRiskLevels.low}
+                </div>
+                <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">Low Risk</div>
               </div>
-              <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/10 p-4 text-center">
-                <div className="text-3xl font-bold text-yellow-500">{data.aiRiskLevels.medium}</div>
-                <div className="mt-1 text-sm text-slate-400">Medium Risk</div>
+              <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/10 p-4 text-center">
+                <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-500">
+                  {data.aiRiskLevels.medium}
+                </div>
+                <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">Medium Risk</div>
               </div>
-              <div className="rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-center">
-                <div className="text-3xl font-bold text-red-500">{data.aiRiskLevels.high}</div>
-                <div className="mt-1 text-sm text-slate-400">High Risk</div>
+              <div className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-center">
+                <div className="text-3xl font-bold text-red-600 dark:text-red-500">
+                  {data.aiRiskLevels.high}
+                </div>
+                <div className="mt-1 text-sm text-slate-500 dark:text-slate-400">High Risk</div>
               </div>
             </div>
           </Card>
 
           {/* Red Flags */}
-          <Card className="border-slate-800 bg-slate-900 p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
+          <Card className="p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
               <AlertTriangle className="h-5 w-5 text-red-500" />
               AI Red Flag Events
             </h3>
@@ -314,7 +322,7 @@ export default function KPIDashboardClient() {
               {data.redFlags.map((flag, idx) => (
                 <div
                   key={idx}
-                  className="hover:bg-slate-750 flex items-center justify-between rounded-lg bg-slate-800 p-3 transition-colors"
+                  className="flex items-center justify-between rounded-xl bg-slate-100/80 p-3 transition-colors hover:bg-slate-200/80 dark:bg-slate-800/60 dark:hover:bg-slate-800"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -326,7 +334,7 @@ export default function KPIDashboardClient() {
                             : "bg-blue-500"
                       }`}
                     />
-                    <span className="text-slate-300">{flag.type}</span>
+                    <span className="text-slate-700 dark:text-slate-300">{flag.type}</span>
                   </div>
                   <Badge variant={flag.severity === "high" ? "destructive" : "secondary"}>
                     {flag.count} claims
@@ -337,21 +345,21 @@ export default function KPIDashboardClient() {
           </Card>
 
           {/* Revenue by Org */}
-          <Card className="border-slate-800 bg-slate-900 p-6">
-            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-white">
-              <Award className="text-gold-500 h-5 w-5" />
+          <Card className="p-6">
+            <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-slate-900 dark:text-white">
+              <Award className="h-5 w-5 text-amber-500" />
               Revenue by Organization
             </h3>
             <div className="space-y-3">
               {Object.entries(data.revenueByOrg).map(([org, revenue]) => (
                 <div key={org} className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium text-slate-300">{org}</span>
-                    <span className="font-mono text-slate-400">
+                    <span className="font-medium text-slate-700 dark:text-slate-300">{org}</span>
+                    <span className="font-mono text-slate-500 dark:text-slate-400">
                       ${(revenue / 1000).toFixed(0)}K
                     </span>
                   </div>
-                  <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+                  <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                     <div
                       className="h-full rounded-full bg-gradient-to-r from-green-500 to-emerald-500"
                       style={{
@@ -365,7 +373,7 @@ export default function KPIDashboardClient() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </PageContainer>
   );
 }
 
@@ -382,7 +390,7 @@ function MetricCard({ title, value, trend, icon: Icon, color }: MetricCardProps)
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
 
   return (
-    <Card className="border-slate-800 bg-slate-900 p-6">
+    <Card className="p-6">
       <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Icon className={`h-5 w-5 ${color}`} />
@@ -394,8 +402,8 @@ function MetricCard({ title, value, trend, icon: Icon, color }: MetricCardProps)
           </div>
         </div>
         <div>
-          <p className="text-sm text-slate-400">{title}</p>
-          <p className="mt-1 text-2xl font-bold text-white">{value}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{title}</p>
+          <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
         </div>
       </div>
     </Card>

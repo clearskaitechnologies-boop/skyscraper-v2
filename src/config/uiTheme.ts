@@ -53,8 +53,8 @@ export const uiTheme = {
       secondary: "text-slate-400",
     },
     border: {
-      default: "border-slate-700",
-      sidebar: "border-slate-800",
+      default: "border-slate-700/50",
+      sidebar: "border-slate-700/50",
     },
     header: {
       wrapper: "border-b border-slate-700",

@@ -33,35 +33,35 @@ export interface ThemeConfig {
 export const SECTION_THEMES: Record<SectionTheme, ThemeConfig> = {
   command: {
     gradient: "bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700",
-    subtitleColor: "text-blue-100",
+    subtitleColor: "text-blue-200/80",
   },
   jobs: {
-    gradient: "bg-gradient-to-r from-teal-500 via-teal-600 to-cyan-600",
-    subtitleColor: "text-teal-100",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   claims: {
-    gradient: "bg-gradient-to-r from-cyan-500 via-teal-500 to-sky-600",
-    subtitleColor: "text-cyan-100",
+    gradient: "bg-gradient-to-r from-sky-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-sky-200/80",
   },
   trades: {
-    gradient: "bg-gradient-to-r from-orange-500 via-orange-600 to-amber-600",
-    subtitleColor: "text-orange-100",
+    gradient: "bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700",
+    subtitleColor: "text-amber-200/80",
   },
   reports: {
-    gradient: "bg-gradient-to-r from-violet-600 via-purple-600 to-purple-700",
-    subtitleColor: "text-violet-100",
+    gradient: "bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-700",
+    subtitleColor: "text-violet-200/80",
   },
   network: {
-    gradient: "bg-gradient-to-r from-indigo-500 via-indigo-600 to-blue-600",
-    subtitleColor: "text-indigo-100",
+    gradient: "bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-600",
+    subtitleColor: "text-indigo-200/80",
   },
   finance: {
-    gradient: "bg-gradient-to-r from-emerald-500 via-emerald-600 to-green-700",
-    subtitleColor: "text-emerald-100",
+    gradient: "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700",
+    subtitleColor: "text-emerald-200/80",
   },
   settings: {
-    gradient: "bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600",
-    subtitleColor: "text-cyan-100",
+    gradient: "bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800",
+    subtitleColor: "text-slate-300/80",
   },
 };
 

@@ -14,22 +14,7 @@ interface PageHeroProps {
   actions?: ReactNode;
   /** Section-based theme — overrides gradient when set */
   section?: SectionTheme;
-  gradient?:
-    | "blue"
-    | "indigo"
-    | "emerald"
-    | "amber"
-    | "green"
-    | "purple"
-    | "rose"
-    | "violet"
-    | "teal"
-    | "orange"
-    | "red"
-    | "cyan"
-    | "sky"
-    | "slate"
-    | string;
+  gradient?: string;
   children?: ReactNode;
   className?: string;
   size?: "default" | "compact";
@@ -54,7 +39,6 @@ export function PageHero({
   const resolvedSection: SectionTheme = section ?? getSectionTheme(pathname);
 
   // Priority: resolvedSection (explicit or auto-detected) ALWAYS wins.
-  // Legacy `gradient` prop is ignored — route-based auto-detection is canonical.
   const theme = SECTION_THEMES[resolvedSection];
   const gradientClass = theme.gradient;
   const subtitleColor = theme.subtitleColor;
@@ -62,11 +46,11 @@ export function PageHero({
   const rightContent = actions ?? children;
 
   // Size variants
-  const sizeClasses = size === "compact" ? "px-6 py-4" : "p-6";
+  const sizeClasses = size === "compact" ? "px-6 py-4" : "px-6 py-5";
 
   return (
     <div
-      className={cn("mb-6 rounded-2xl text-white shadow-xl", gradientClass, sizeClasses, className)}
+      className={cn("mb-6 rounded-2xl text-white shadow-lg", gradientClass, sizeClasses, className)}
     >
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
@@ -74,7 +58,7 @@ export function PageHero({
           <div>
             <h1
               className={cn(
-                "font-bold",
+                "font-bold tracking-tight",
                 size === "compact" ? "text-lg md:text-xl" : "text-xl md:text-2xl"
               )}
             >
@@ -83,7 +67,7 @@ export function PageHero({
             {effectiveSubtitle && (
               <p
                 className={cn(
-                  "mt-1",
+                  "mt-0.5",
                   subtitleColor,
                   size === "compact" ? "text-xs md:text-sm" : "text-sm"
                 )}

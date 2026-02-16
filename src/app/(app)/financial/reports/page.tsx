@@ -1,11 +1,12 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { Calendar,DollarSign, Download, TrendingDown, TrendingUp } from "lucide-react";
+import { BarChart3, Calendar, DollarSign, Download, TrendingDown, TrendingUp } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/StatCard";
 
@@ -26,26 +27,25 @@ export default function FinancialReportsPage() {
   }
 
   return (
-    <div className="space-y-6 p-8">
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="mb-2 text-3xl font-bold text-[color:var(--text)]">
-            Financial Reporting Suite
-          </h1>
-          <p className="text-gray-600">P&L, cash flow, balance sheets, and forecasting</p>
-        </div>
+    <PageContainer maxWidth="7xl">
+      <PageHero
+        title="Financial Reporting Suite"
+        subtitle="P&L, cash flow, balance sheets, and forecasting"
+        icon={<BarChart3 className="h-5 w-5" />}
+        section="finance"
+      >
         <Button className="gap-2">
-          <Download className="h-5 w-5" />
+          <Download className="h-4 w-4" />
           Export Report
         </Button>
-      </div>
+      </PageHero>
 
       {/* Controls */}
-      <div className="flex items-center gap-4 rounded-lg bg-white p-4 shadow dark:bg-slate-800">
+      <div className="flex items-center gap-4 rounded-2xl border border-slate-200/60 bg-white/80 p-4 shadow-sm backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/60">
         <select
           value={reportType}
           onChange={(e) => setReportType(e.target.value)}
-          className="rounded-lg border px-4 py-2 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+          className="rounded-xl border border-slate-200/60 bg-white px-4 py-2 text-sm dark:border-slate-700/50 dark:bg-slate-800 dark:text-slate-100"
         >
           <option value="profit-loss">Profit & Loss</option>
           <option value="cash-flow">Cash Flow</option>
@@ -55,7 +55,7 @@ export default function FinancialReportsPage() {
         <select
           value={dateRange}
           onChange={(e) => setDateRange(e.target.value)}
-          className="rounded-lg border px-4 py-2"
+          className="rounded-xl border border-slate-200/60 bg-white px-4 py-2 text-sm dark:border-slate-700/50 dark:bg-slate-800 dark:text-slate-100"
         >
           <option value="mtd">Month to Date</option>
           <option value="qtd">Quarter to Date</option>
@@ -65,7 +65,7 @@ export default function FinancialReportsPage() {
       </div>
 
       {/* Summary Cards */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           variant="gradient"
           gradientColor="success"
@@ -104,77 +104,99 @@ export default function FinancialReportsPage() {
       </div>
 
       {/* Detailed Report */}
-      <div className="rounded-lg bg-white shadow dark:bg-slate-800">
-        <div className="border-b p-6 dark:border-slate-700">
-          <h2 className="text-xl font-bold dark:text-slate-100">Profit & Loss Statement</h2>
+      <div className="overflow-hidden rounded-2xl border border-slate-200/60 bg-white/80 shadow-sm backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/60">
+        <div className="border-b border-slate-200/60 p-6 dark:border-slate-700/50">
+          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+            Profit & Loss Statement
+          </h2>
         </div>
         <div className="p-6">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-slate-900">
-                \n{" "}
-                <tr>
-                  \n{" "}
-                  <th className="px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-slate-300">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200/40 dark:border-slate-700/30">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     Account
                   </th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">Amount</th>
-                  <th className="px-4 py-3 text-right text-sm font-medium text-gray-700">
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    Amount
+                  </th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     % of Total
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y">
-                <tr className="bg-blue-50 font-semibold">
-                  <td className="px-4 py-3">Revenue</td>
-                  <td className="px-4 py-3 text-right">$328,450</td>
-                  <td className="px-4 py-3 text-right">100%</td>
+              <tbody className="divide-y divide-slate-100/80 dark:divide-slate-700/30">
+                <tr className="bg-blue-50/60 font-semibold dark:bg-blue-900/10">
+                  <td className="px-4 py-3 text-slate-900 dark:text-slate-100">Revenue</td>
+                  <td className="px-4 py-3 text-right text-slate-900 dark:text-slate-100">
+                    $328,450
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-900 dark:text-slate-100">100%</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 pl-8">Job Revenue</td>
-                  <td className="px-4 py-3 text-right">$312,000</td>
-                  <td className="px-4 py-3 text-right">95%</td>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">Job Revenue</td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $312,000
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">95%</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 pl-8">Other Income</td>
-                  <td className="px-4 py-3 text-right">$16,450</td>
-                  <td className="px-4 py-3 text-right">5%</td>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">
+                    Other Income
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $16,450
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">5%</td>
                 </tr>
-                <tr className="bg-red-50 font-semibold">
-                  <td className="px-4 py-3">Expenses</td>
-                  <td className="px-4 py-3 text-right">$198,230</td>
-                  <td className="px-4 py-3 text-right">60.4%</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 pl-8">Labor</td>
-                  <td className="px-4 py-3 text-right">$89,400</td>
-                  <td className="px-4 py-3 text-right">27.2%</td>
-                </tr>
-                <tr>
-                  <td className="px-4 py-3 pl-8">Materials</td>
-                  <td className="px-4 py-3 text-right">$67,830</td>
-                  <td className="px-4 py-3 text-right">20.7%</td>
+                <tr className="bg-red-50/60 font-semibold dark:bg-red-900/10">
+                  <td className="px-4 py-3 text-slate-900 dark:text-slate-100">Expenses</td>
+                  <td className="px-4 py-3 text-right text-slate-900 dark:text-slate-100">
+                    $198,230
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-900 dark:text-slate-100">60.4%</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 pl-8">Equipment</td>
-                  <td className="px-4 py-3 text-right">$23,000</td>
-                  <td className="px-4 py-3 text-right">7.0%</td>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">Labor</td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $89,400
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">27.2%</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3 pl-8">Other</td>
-                  <td className="px-4 py-3 text-right">$18,000</td>
-                  <td className="px-4 py-3 text-right">5.5%</td>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">Materials</td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $67,830
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">20.7%</td>
                 </tr>
-                <tr className="bg-green-50 font-bold">
-                  <td className="px-4 py-3">Net Profit</td>
-                  <td className="px-4 py-3 text-right text-green-600">$130,220</td>
-                  <td className="px-4 py-3 text-right text-green-600">39.7%</td>
+                <tr>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">Equipment</td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $23,000
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">7.0%</td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-3 pl-8 text-slate-700 dark:text-slate-300">Other</td>
+                  <td className="px-4 py-3 text-right text-slate-700 dark:text-slate-300">
+                    $18,000
+                  </td>
+                  <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">5.5%</td>
+                </tr>
+                <tr className="bg-green-50/60 font-bold dark:bg-green-900/10">
+                  <td className="px-4 py-3 text-slate-900 dark:text-slate-100">Net Profit</td>
+                  <td className="px-4 py-3 text-right text-green-600 dark:text-green-400">
+                    $130,220
+                  </td>
+                  <td className="px-4 py-3 text-right text-green-600 dark:text-green-400">39.7%</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 }

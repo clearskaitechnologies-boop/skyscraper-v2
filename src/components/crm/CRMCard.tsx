@@ -16,8 +16,9 @@ interface CRMCardProps {
 
 const variants = {
   glass:
-    "rounded-2xl border border-slate-200/50 bg-white/80 backdrop-blur-xl dark:border-slate-800/50 dark:bg-slate-900/50",
-  solid: "rounded-2xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900",
+    "rounded-2xl border border-slate-200/60 bg-white/80 backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/60",
+  solid:
+    "rounded-2xl border border-slate-200/60 bg-white dark:border-slate-700/50 dark:bg-slate-900",
   gradient:
     "rounded-2xl border border-slate-200/20 bg-gradient-to-r from-sky-500 to-blue-600 text-white shadow-[0_0_30px_-12px_rgba(0,0,0,0.25)]",
 };
