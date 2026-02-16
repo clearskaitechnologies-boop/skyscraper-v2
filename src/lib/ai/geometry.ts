@@ -1,8 +1,8 @@
 /**
  * PHASE 37: ROOF GEOMETRY & SLOPE DETECTION ENGINE
- * 
+ *
  * Automated slope detection and plane segmentation for carrier-grade reporting
- * 
+ *
  * Features:
  * - Slope angle detection (pitch calculation)
  * - Roof plane segmentation by slope/orientation
@@ -10,14 +10,13 @@
  * - Slope scorecard generation
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
 import { trackPerformance } from "./perf";
 import type { DamageRegion } from "./vision";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 const VISION_MODEL = "gpt-4o";
 
@@ -201,10 +200,7 @@ async function _detectSlopesInternal(imageUrl: string): Promise<SlopeAnalysis> {
 /**
  * Segment damages by roof plane
  */
-export function segmentDamagesByPlane(
-  planes: RoofPlane[],
-  damages: DamageRegion[]
-): RoofPlane[] {
+export function segmentDamagesByPlane(planes: RoofPlane[], damages: DamageRegion[]): RoofPlane[] {
   // In production, this would use spatial analysis to map damages to planes
   // For now, we distribute damages evenly across planes
   const planesWithDamages = planes.map((plane, idx) => ({
@@ -220,10 +216,7 @@ export function segmentDamagesByPlane(
 /**
  * Generate slope scorecard for a plane
  */
-export function generateSlopeScorecard(
-  plane: RoofPlane,
-  damages: DamageRegion[]
-): SlopeScorecard {
+export function generateSlopeScorecard(plane: RoofPlane, damages: DamageRegion[]): SlopeScorecard {
   const planeDamages = damages.filter((dmg) => plane.damages.includes(dmg.id));
 
   // Calculate damage percentage (rough estimate based on bounding boxes)
@@ -236,17 +229,12 @@ export function generateSlopeScorecard(
   const severityWeights = { none: 0, minor: 25, moderate: 60, severe: 100 };
   const severityScore =
     planeDamages.length > 0
-      ? planeDamages.reduce(
-          (sum, dmg) => sum + severityWeights[dmg.severity] * dmg.confidence,
-          0
-        ) / planeDamages.length
+      ? planeDamages.reduce((sum, dmg) => sum + severityWeights[dmg.severity] * dmg.confidence, 0) /
+        planeDamages.length
       : 0;
 
   // Calculate repair priority (1-10)
-  const repairPriority = Math.min(
-    10,
-    Math.ceil((damagePercentage * 0.05 + severityScore * 0.05))
-  );
+  const repairPriority = Math.min(10, Math.ceil(damagePercentage * 0.05 + severityScore * 0.05));
 
   // Estimate materials
   const estimatedMaterials = {

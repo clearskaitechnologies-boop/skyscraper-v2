@@ -5,11 +5,9 @@
  * Generates professional narratives, Xactimate-structured scopes, and carrier rebuttals.
  */
 
-import { OpenAI } from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 interface Lead {
   id: string;

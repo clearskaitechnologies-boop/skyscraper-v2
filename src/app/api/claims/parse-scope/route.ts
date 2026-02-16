@@ -7,15 +7,15 @@
  */
 
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 import pdf from "pdf-parse";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 const SYSTEM_PROMPT = `You are a construction insurance scope-of-work parser for a claims management platform.
 Given a Scope of Work document (photo or text), extract ALL available information into structured JSON.

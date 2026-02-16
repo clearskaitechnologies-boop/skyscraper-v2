@@ -11,13 +11,10 @@
  * NEVER says "may" or "possible" — always asserts facts.
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
+import { CODE_LIBRARY } from "@/types/universal-claims-report";
 
-import { AI_PHOTO_CAPTION_RULES, CODE_LIBRARY } from "@/types/universal-claims-report";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export interface PhotoCaptionInput {
   imageUrl: string;

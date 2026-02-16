@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+
+import { getOpenAI } from "@/lib/ai/client";
 
 /**
  * AI REPORT COMPOSITION ENDPOINT
@@ -18,7 +19,7 @@ import OpenAI from "openai";
  * - If data missing, state "Not observed" or "Data unavailable"
  */
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 const REPORT_WRITER_SYSTEM_PROMPT = `You are a professional report writer specializing in insurance claims and property damage assessments.
 

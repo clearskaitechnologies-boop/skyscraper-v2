@@ -1,15 +1,13 @@
 /**
  * 🔥 PHASE 27: DOMINUS VIDEO AI (v1.5)
- * 
+ *
  * Video Script Generator & Storyboard Engine
  * Converts AI insights + photos into cinematic damage reports
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 interface LeadData {
   id: string;
@@ -80,11 +78,7 @@ export async function generateVideoScript(
     maxDuration?: number; // seconds
   } = {}
 ): Promise<VideoScript> {
-  const {
-    tone = "professional",
-    audience = "homeowner",
-    maxDuration = 60,
-  } = options;
+  const { tone = "professional", audience = "homeowner", maxDuration = 60 } = options;
 
   // Build comprehensive prompt
   const prompt = `You are creating a video script for a professional property damage inspection report.
@@ -198,7 +192,8 @@ export async function generateStoryboard(
       // Determine which photo to use
       let imageUrl: string | undefined;
       if (section.imageRefs && section.imageRefs.length > 0) {
-        const refIndex = parseInt(section.imageRefs[i % section.imageRefs.length].replace("image", "")) - 1;
+        const refIndex =
+          parseInt(section.imageRefs[i % section.imageRefs.length].replace("image", "")) - 1;
         imageUrl = photos[refIndex] || photos[0];
       }
 
@@ -233,11 +228,7 @@ export async function generateStoryboard(
 /**
  * Build video generation prompt for a specific frame
  */
-function buildVideoPrompt(
-  scene: VideoScene,
-  frameIndex: number,
-  totalFrames: number
-): string {
+function buildVideoPrompt(scene: VideoScene, frameIndex: number, totalFrames: number): string {
   const baseStyle = scene.visualStyle;
   const progress = (frameIndex / totalFrames) * 100;
 

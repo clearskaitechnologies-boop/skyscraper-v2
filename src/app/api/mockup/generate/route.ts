@@ -1,6 +1,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+
+import { getOpenAI } from "@/lib/ai/client";
 
 export async function POST(request: NextRequest) {
   try {
@@ -34,65 +35,63 @@ export async function POST(request: NextRequest) {
     console.log(`[Mockup Generate] AI Prompt: ${aiPrompt}`);
 
     // Try OpenAI DALL-E 3 with image editing if available
-    if (process.env.OPENAI_API_KEY) {
-      try {
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    try {
+      const openai = getOpenAI();
 
-        // DALL-E 3 doesn't support image editing directly, so we'll use GPT-4o-mini to describe the transformation
-        // and generate a detailed prompt, then generate a new image
-        const descriptionResponse = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content:
-                "You create detailed image generation prompts for COMPLETED property renovation visualizations. CRITICAL RULES: 1) NEVER describe any damage, wear, deterioration, debris, tarps, missing materials, or current disrepair. 2) ONLY describe what the FINISHED, BRAND-NEW, PRISTINE result looks like after professional installation. 3) Describe clean lines, fresh materials, perfect installation, and beautiful curb appeal. 4) The output should make someone want to hire a contractor.",
-            },
-            {
-              role: "user",
-              content: [
-                {
-                  type: "text",
-                  text: `Look at this property photo for reference on the building's architecture, perspective, and surroundings ONLY. Now create a detailed prompt describing what this property would look like AFTER a completed, professional renovation: ${aiPrompt}. IMPORTANT: Do NOT mention any damage or current condition. Describe ONLY the beautiful finished result with brand-new materials, perfect installation, and pristine condition.`,
-                },
-                {
-                  type: "image_url",
-                  image_url: { url: beforeImageDataUrl },
-                },
-              ],
-            },
-          ],
-          max_tokens: 300,
+      // DALL-E 3 doesn't support image editing directly, so we'll use GPT-4o-mini to describe the transformation
+      // and generate a detailed prompt, then generate a new image
+      const descriptionResponse = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content:
+              "You create detailed image generation prompts for COMPLETED property renovation visualizations. CRITICAL RULES: 1) NEVER describe any damage, wear, deterioration, debris, tarps, missing materials, or current disrepair. 2) ONLY describe what the FINISHED, BRAND-NEW, PRISTINE result looks like after professional installation. 3) Describe clean lines, fresh materials, perfect installation, and beautiful curb appeal. 4) The output should make someone want to hire a contractor.",
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `Look at this property photo for reference on the building's architecture, perspective, and surroundings ONLY. Now create a detailed prompt describing what this property would look like AFTER a completed, professional renovation: ${aiPrompt}. IMPORTANT: Do NOT mention any damage or current condition. Describe ONLY the beautiful finished result with brand-new materials, perfect installation, and pristine condition.`,
+              },
+              {
+                type: "image_url",
+                image_url: { url: beforeImageDataUrl },
+              },
+            ],
+          },
+        ],
+        max_tokens: 300,
+      });
+
+      const enhancedPrompt = descriptionResponse.choices[0]?.message?.content || aiPrompt;
+
+      // Generate the "after" image with DALL-E 3
+      const imageResponse = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: `A stunning, hyper-realistic professional architectural photograph of a beautifully renovated property. Brand new, pristine, freshly installed materials with no damage, no wear, no debris whatsoever: ${enhancedPrompt}. Ultra high quality, photorealistic, natural lighting, sharp details, magazine-worthy real estate photography. The property looks perfect and move-in ready.`,
+        n: 1,
+        size: "1024x1024",
+        quality: "hd",
+      });
+
+      const afterImageUrl = imageResponse.data![0]?.url;
+
+      if (afterImageUrl) {
+        console.log(`[Mockup Generate] SUCCESS via OpenAI DALL-E 3`);
+        return NextResponse.json({
+          success: true,
+          afterImageUrl,
+          projectType,
+          projectDescription,
+          aiPrompt: enhancedPrompt,
+          method: "OpenAI DALL-E 3",
         });
-
-        const enhancedPrompt = descriptionResponse.choices[0]?.message?.content || aiPrompt;
-
-        // Generate the "after" image with DALL-E 3
-        const imageResponse = await openai.images.generate({
-          model: "dall-e-3",
-          prompt: `A stunning, hyper-realistic professional architectural photograph of a beautifully renovated property. Brand new, pristine, freshly installed materials with no damage, no wear, no debris whatsoever: ${enhancedPrompt}. Ultra high quality, photorealistic, natural lighting, sharp details, magazine-worthy real estate photography. The property looks perfect and move-in ready.`,
-          n: 1,
-          size: "1024x1024",
-          quality: "hd",
-        });
-
-        const afterImageUrl = imageResponse.data![0]?.url;
-
-        if (afterImageUrl) {
-          console.log(`[Mockup Generate] SUCCESS via OpenAI DALL-E 3`);
-          return NextResponse.json({
-            success: true,
-            afterImageUrl,
-            projectType,
-            projectDescription,
-            aiPrompt: enhancedPrompt,
-            method: "OpenAI DALL-E 3",
-          });
-        }
-      } catch (error) {
-        console.error("[Mockup Generate] OpenAI error:", error);
-        // Fall through to fallback method
       }
+    } catch (error) {
+      console.error("[Mockup Generate] OpenAI error:", error);
+      // Fall through to fallback method
     }
 
     // Fallback: Return before image with overlay message

@@ -10,13 +10,11 @@
  * - Confidence scoring
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
 import { trackPerformance } from "./perf";
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const VISION_MODEL = "gpt-4o" as const; // Updated to use gpt-4o instead of preview model
 

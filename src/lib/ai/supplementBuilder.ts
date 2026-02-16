@@ -1,7 +1,4 @@
-import OpenAI from "openai";
-const client = process.env.OPENAI_API_KEY
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-  : null;
+import { getOpenAI } from "@/lib/ai/client";
 
 interface SupplementArgs {
   scope: string;
@@ -10,7 +7,7 @@ interface SupplementArgs {
 }
 
 export async function buildSupplement({ scope, photos, letter }: SupplementArgs) {
-  if (!client) return "AI unavailable";
+  const client = getOpenAI();
   const prompt = `You are an expert insurance supplement specialist. Generate a structured supplement list with reasoning.\nScope:\n${scope}\n\nInsurance Letter:\n${letter || "None"}\nPhotos:${photos && photos.length ? " Provided" : " None"}`;
   const res = await client.chat.completions.create({
     model: "gpt-4o-mini",

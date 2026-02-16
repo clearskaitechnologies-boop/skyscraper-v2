@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+
+import { getOpenAI } from "@/lib/ai/client";
 
 // Force Node.js runtime for OpenAI SDK
 export const runtime = "nodejs";
@@ -16,18 +17,8 @@ export async function POST(request: NextRequest) {
     // Get auth - but allow demo claims to work
     const { userId } = await auth();
 
-    // Check for OpenAI API key
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      console.error("[claim-assistant] OPENAI_API_KEY not configured");
-      return NextResponse.json(
-        { error: "AI service unavailable - API key not configured" },
-        { status: 503 }
-      );
-    }
-
     // Initialize OpenAI client
-    const openai = new OpenAI({ apiKey });
+    const openai = getOpenAI();
 
     const systemPrompt = `You are an expert roofing and restoration claim assistant. Help contractors with:
 - Supplement strategy and negotiations

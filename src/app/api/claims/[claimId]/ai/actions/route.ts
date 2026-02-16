@@ -29,7 +29,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { callOpenAI } from "@/lib/ai/client";
+import { callOpenAI, getOpenAI } from "@/lib/ai/client";
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
@@ -198,8 +198,7 @@ Notes: ${claimContext.notes?.length || 0} recorded
   const systemPrompt = `You are an expert insurance claims assistant for SkaiScraper.
 Use ONLY the data provided. NEVER invent data. Be professional and accurate.`;
 
-  const OpenAI = require("openai").default;
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const openai = getOpenAI();
 
   const completion = await openai.chat.completions.create({
     model: "gpt-4o",

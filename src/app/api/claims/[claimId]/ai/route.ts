@@ -8,6 +8,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import { getClaimAIAnalysis, triggerManualAnalysis } from "@/lib/claims/aiHooks";
 import prisma from "@/lib/prisma";
@@ -31,8 +32,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       // If OpenAI is configured, we can generate a lightweight demo reply; otherwise return a canned response
       if (process.env.OPENAI_API_KEY && message) {
         try {
-          const OpenAI = require("openai").default;
-          const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+          const openai = getOpenAI();
           const systemPrompt =
             "You are an expert insurance claims assistant for a demo claim. Be concise and helpful.";
           const contextSummary = `Demo Claim Context\nClaim Number: CLM-DEMO-001\nInsured: John Smith\nProperty: 123 Demo St, Phoenix, AZ 85001\nLoss Date: 2025-12-01\nCarrier: Demo Carrier\nDamage Type: STORM\nStatus: active`;
@@ -185,8 +185,7 @@ CRITICAL RULES:
 Your goal: Help adjusters maximize accurate claim value while maintaining professional integrity.`;
 
       try {
-        const OpenAI = require("openai").default;
-        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        const openai = getOpenAI();
 
         console.log("[CLAIM_AI] Calling OpenAI...");
 

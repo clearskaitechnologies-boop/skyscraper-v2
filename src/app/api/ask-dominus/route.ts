@@ -1,22 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import { z } from "zod";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { saveChatMessage } from "@/lib/dominus/chat";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
-
-let openaiClient: OpenAI | null = null;
-function getOpenAI() {
-  if (!openaiClient) {
-    const key = process.env.OPENAI_API_KEY;
-    if (!key) throw new Error("OPENAI_API_KEY not configured");
-    openaiClient = new OpenAI({ apiKey: key });
-  }
-  return openaiClient;
-}
 
 const RequestSchema = z.object({
   question: z.string().min(1, "Question is required"),

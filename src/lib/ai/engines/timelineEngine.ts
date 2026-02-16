@@ -16,15 +16,12 @@
  * This is the backbone of the Depreciation Builder.
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import prisma from "@/lib/prisma";
 
 import { extractEXIF } from "../../utils/exifExtractor";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 // ============================================================================
 // TYPE DEFINITIONS

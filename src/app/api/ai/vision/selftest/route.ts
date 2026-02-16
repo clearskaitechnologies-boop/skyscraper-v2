@@ -12,29 +12,16 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 async function GET_INNER(_req: Request, ctx: { userId: string; orgId: string | null }) {
   const { userId, orgId } = ctx;
 
-  // Check API key
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) {
-    return NextResponse.json(
-      {
-        ok: false,
-        error: "OPENAI_API_KEY missing from environment",
-        timestamp: new Date().toISOString(),
-      },
-      { status: 500 }
-    );
-  }
-
   // Test Vision API
   try {
-    const client = new OpenAI({ apiKey });
+    const client = getOpenAI();
 
     const response = await client.chat.completions.create({
       model: "gpt-4o-mini",
@@ -87,4 +74,7 @@ async function GET_INNER(_req: Request, ctx: { userId: string; orgId: string | n
   }
 }
 
-export const GET = withAiBilling(createAiConfig("vision_selftest", { costPerRequest: 0 }), GET_INNER);
+export const GET = withAiBilling(
+  createAiConfig("vision_selftest", { costPerRequest: 0 }),
+  GET_INNER
+);

@@ -6,13 +6,11 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 interface LineItem {
   id: string;

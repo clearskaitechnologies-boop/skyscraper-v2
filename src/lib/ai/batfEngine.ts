@@ -1,26 +1,27 @@
 /**
  * PHASE 43: BATF ENGINE (Before-After Transformation Flow)
- * 
+ *
  * AI-powered visual transformation system for roof damage analysis.
  * Generates before/after comparisons, damage overlays, severity maps, and presentations.
- * 
+ *
  * Key Features:
  * - OpenAI Vision API for damage detection
  * - Replicate for AI-generated before/after images
  * - Damage overlay annotation with severity markers
  * - Heatmap generation for damage distribution
  * - Professional PDF presentation generation
- * 
+ *
  * Architecture:
  * 1. Upload photos → 2. Analyze damage → 3. Generate overlays → 4. Create presentation
  */
 
 import { jsPDF } from "jspdf";
-import { OpenAI } from "openai";
 import Replicate from "replicate";
 import sharp from "sharp";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+import { getOpenAI } from "@/lib/ai/client";
+
+const openai = getOpenAI();
 const replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
 // ===========================
@@ -116,15 +117,15 @@ Focus on:
         role: "user",
         content: [
           { type: "text", text: prompt },
-          ...photoUrls.map(url => ({
+          ...photoUrls.map((url) => ({
             type: "image_url" as const,
-            image_url: { url }
-          }))
-        ]
-      }
+            image_url: { url },
+          })),
+        ],
+      },
     ],
     response_format: { type: "json_object" },
-    max_tokens: 2000
+    max_tokens: 2000,
   });
 
   const result = JSON.parse(response.choices[0].message.content || "{}");
@@ -165,17 +166,16 @@ Focus on visible damage that needs annotation.`;
         role: "user",
         content: [
           { type: "text", text: markerPrompt },
-          { type: "image_url", image_url: { url: originalPhotoUrl } }
-        ]
-      }
+          { type: "image_url", image_url: { url: originalPhotoUrl } },
+        ],
+      },
     ],
     response_format: { type: "json_object" },
-    max_tokens: 1500
+    max_tokens: 1500,
   });
 
-  const markers: DamageMarker[] = JSON.parse(
-    markerResponse.choices[0].message.content || "[]"
-  ).markers || [];
+  const markers: DamageMarker[] =
+    JSON.parse(markerResponse.choices[0].message.content || "[]").markers || [];
 
   // Step 2: Download and process image with sharp
   const imageResponse = await fetch(originalPhotoUrl);
@@ -186,16 +186,18 @@ Focus on visible damage that needs annotation.`;
   const height = metadata.height || 1080;
 
   // Step 3: Create SVG overlay with markers
-  const svgMarkers = markers.map(marker => {
-    const px = (marker.x / 100) * width;
-    const py = (marker.y / 100) * height;
-    const color = marker.severity > 7 ? "#FF0000" : marker.severity > 4 ? "#FFA500" : "#FFFF00";
-    
-    return `
+  const svgMarkers = markers
+    .map((marker) => {
+      const px = (marker.x / 100) * width;
+      const py = (marker.y / 100) * height;
+      const color = marker.severity > 7 ? "#FF0000" : marker.severity > 4 ? "#FFA500" : "#FFFF00";
+
+      return `
       <circle cx="${px}" cy="${py}" r="15" fill="${color}" fill-opacity="0.6" stroke="#FFF" stroke-width="2"/>
       <text x="${px}" y="${py + 30}" font-size="14" font-weight="bold" fill="#FFF" text-anchor="middle" stroke="#000" stroke-width="0.5">${marker.label}</text>
     `;
-  }).join("");
+    })
+    .join("");
 
   const svgOverlay = `
     <svg width="${width}" height="${height}">
@@ -209,8 +211,8 @@ Focus on visible damage that needs annotation.`;
       {
         input: Buffer.from(svgOverlay),
         top: 0,
-        left: 0
-      }
+        left: 0,
+      },
     ])
     .jpeg({ quality: 90 })
     .toBuffer();
@@ -233,7 +235,7 @@ export async function generateAIReconstruction(
   roofType: string
 ): Promise<{ aiBeforeUrl: string; aiAfterUrl: string }> {
   // Generate "perfect before" (remove damage)
-  const beforeOutput = await replicate.run(
+  const beforeOutput = (await replicate.run(
     "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
     {
       input: {
@@ -241,13 +243,13 @@ export async function generateAIReconstruction(
         prompt: `pristine ${roofType} roof in perfect condition, brand new installation, no damage, professional photo, high quality`,
         negative_prompt: "damage, wear, cracks, missing shingles, hail marks, stains, debris",
         num_inference_steps: 50,
-        guidance_scale: 7.5
-      }
+        guidance_scale: 7.5,
+      },
     }
-  ) as string[];
+  )) as string[];
 
   // Generate "reconstructed after" (repaired version)
-  const afterOutput = await replicate.run(
+  const afterOutput = (await replicate.run(
     "stability-ai/sdxl:39ed52f2a78e934b3ba6e2a89f5b1c712de7dfea535525255b1aa35c5565e08b",
     {
       input: {
@@ -255,14 +257,14 @@ export async function generateAIReconstruction(
         prompt: `professionally repaired ${roofType} roof, new materials, expert installation, high quality photo`,
         negative_prompt: "damage, old materials, poor installation, mismatched colors",
         num_inference_steps: 50,
-        guidance_scale: 7.5
-      }
+        guidance_scale: 7.5,
+      },
     }
-  ) as string[];
+  )) as string[];
 
   return {
     aiBeforeUrl: beforeOutput[0],
-    aiAfterUrl: afterOutput[0]
+    aiAfterUrl: afterOutput[0],
   };
 }
 
@@ -285,10 +287,10 @@ export async function generateSeverityMap(
   const height = metadata.height || 1080;
 
   // Create zone-based heatmap
-  const zones = analysis.affectedAreas.map(area => ({
+  const zones = analysis.affectedAreas.map((area) => ({
     region: area.region,
     severity: (area.percentage / 100) * 10, // Convert to 0-10 scale
-    color: getHeatmapColor((area.percentage / 100) * 10)
+    color: getHeatmapColor((area.percentage / 100) * 10),
   }));
 
   // Generate SVG heatmap overlay
@@ -307,8 +309,8 @@ export async function generateSeverityMap(
     .composite([
       {
         input: Buffer.from(heatmapSvg),
-        blend: "over"
-      }
+        blend: "over",
+      },
     ])
     .jpeg({ quality: 90 })
     .toBuffer();
@@ -333,19 +335,17 @@ function getHeatmapColor(severity: number): string {
 /**
  * Generate professional PDF presentation with all BATF data
  */
-export async function generateBATFPresentation(
-  reportData: {
-    leadAddress: string;
-    roofType: string;
-    beforePhotos: BATFPhoto[];
-    afterPhotos?: BATFPhoto[];
-    aiBeforeUrl?: string;
-    aiAfterUrl?: string;
-    damageOverlay?: string;
-    severityMap?: string;
-    analysis: DamageAnalysis;
-  }
-): Promise<Buffer> {
+export async function generateBATFPresentation(reportData: {
+  leadAddress: string;
+  roofType: string;
+  beforePhotos: BATFPhoto[];
+  afterPhotos?: BATFPhoto[];
+  aiBeforeUrl?: string;
+  aiAfterUrl?: string;
+  damageOverlay?: string;
+  severityMap?: string;
+  analysis: DamageAnalysis;
+}): Promise<Buffer> {
   const doc = new jsPDF({ format: "letter", unit: "in" });
   let yPos = 1;
 
@@ -390,11 +390,19 @@ export async function generateBATFPresentation(
 
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    doc.text(`Primary Damage: ${reportData.analysis.damageType.replace("_", " ").toUpperCase()}`, 1, yPos);
+    doc.text(
+      `Primary Damage: ${reportData.analysis.damageType.replace("_", " ").toUpperCase()}`,
+      1,
+      yPos
+    );
     yPos += 0.3;
     doc.text(`Severity Score: ${reportData.analysis.severity}/10`, 1, yPos);
     yPos += 0.3;
-    doc.text(`Urgency Level: ${reportData.analysis.estimatedImpact.urgency.toUpperCase()}`, 1, yPos);
+    doc.text(
+      `Urgency Level: ${reportData.analysis.estimatedImpact.urgency.toUpperCase()}`,
+      1,
+      yPos
+    );
   }
 
   // PAGE 4: SEVERITY MAP
@@ -437,12 +445,19 @@ export async function generateBATFPresentation(
 
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal");
-  const recommendation = doc.splitTextToSize(reportData.analysis.estimatedImpact.recommendation, 6.5);
+  const recommendation = doc.splitTextToSize(
+    reportData.analysis.estimatedImpact.recommendation,
+    6.5
+  );
   doc.text(recommendation, 1, yPos);
   yPos += 0.5;
 
   doc.setFont("helvetica", "bold");
-  doc.text(`Estimated Repair Cost: $${reportData.analysis.estimatedImpact.repairCost.toLocaleString()}`, 1, yPos);
+  doc.text(
+    `Estimated Repair Cost: $${reportData.analysis.estimatedImpact.repairCost.toLocaleString()}`,
+    1,
+    yPos
+  );
 
   return Buffer.from(doc.output("arraybuffer"));
 }
@@ -479,7 +494,7 @@ export async function runBATFPipeline(
 }> {
   // Step 1: Analyze damage
   const analysis = await analyzeRoofDamage(
-    beforePhotos.map(p => p.url),
+    beforePhotos.map((p) => p.url),
     roofType
   );
 
@@ -501,7 +516,7 @@ export async function runBATFPipeline(
     aiAfterUrl: aiReconstruction.aiAfterUrl,
     damageOverlay: damageOverlay.overlayUrl,
     severityMap: severityMap.imageUrl,
-    analysis
+    analysis,
   });
 
   return {
@@ -509,6 +524,6 @@ export async function runBATFPipeline(
     damageOverlay,
     aiReconstruction,
     severityMap,
-    presentationPdf
+    presentationPdf,
   };
 }

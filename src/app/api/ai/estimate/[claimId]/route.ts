@@ -10,15 +10,13 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 
 import prisma from "@/lib/prisma";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 async function POST_INNER(
   request: NextRequest,

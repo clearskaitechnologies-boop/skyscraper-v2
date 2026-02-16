@@ -1,8 +1,7 @@
-import OpenAI from "openai";
-const client = process.env.OPENAI_KEY ? new OpenAI({ apiKey: process.env.OPENAI_KEY }) : null;
+import { getOpenAI } from "@/lib/ai/client";
 
 export async function classifyDocument({ text }: { url?: string; text?: string }) {
-  if (!client) return "other";
+  const client = getOpenAI();
   const prompt = `You are an insurance claims AI. Classify this document into one category:
 insurance_letter | estimate | supplement | denial_letter | approval_letter | invoice | damage_photos | weather_report | inspection | adjuster_summary | other
 

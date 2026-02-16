@@ -1,4 +1,5 @@
 // lib/ai/video/createVideoFromScript.ts
+import { getOpenAI } from "@/lib/ai/client";
 import { createPlaceholderVideo } from "./placeholderVideo";
 import type { VideoScript } from "./types";
 
@@ -57,8 +58,7 @@ async function generateWithOpenAI(
   script: VideoScript,
   prompt: string
 ): Promise<Buffer> {
-  const OpenAI = require("openai").default;
-  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  const openai = getOpenAI();
 
   const response = await openai.videos.generate({
     model: process.env.OPENAI_VIDEO_MODEL || "sora-1.0",

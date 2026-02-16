@@ -9,27 +9,27 @@
 ## ✅ PHASE 1 COMPLETE: CLAIMS TREE COLLAPSE
 
 ### Results
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Claims routes | 86 | 32 | **-54 routes (63% reduction)** |
-| Total API routes | 804 | 750 | **-54 routes** |
-| Tests | 79 | 79 | ✅ All passing |
+
+| Metric           | Before | After | Change                         |
+| ---------------- | ------ | ----- | ------------------------------ |
+| Claims routes    | 86     | 32    | **-54 routes (63% reduction)** |
+| Total API routes | 804    | 750   | **-54 routes**                 |
+| Tests            | 79     | 79    | ✅ All passing                 |
 
 ### New Unified Handlers Created
+
 1. **`/api/claims/[claimId]/ai/actions`** - All AI operations
    - `chat`, `summary`, `rebuttal`, `predict`, `carrier_summary`, `analyze`
-   
 2. **`/api/claims/[claimId]/mutate`** - All state mutations
    - `update`, `update_status`, `toggle_visibility`, `invite`, `invite_client`, `attach_contact`, `add_note`, `add_timeline_event`
-   
 3. **`/api/claims/[claimId]/assets`** - All asset operations
    - GET: `type=photos|documents|evidence|artifacts|all`
    - POST: file uploads, artifact creation
-   
 4. **`/api/claims/[claimId]/final-payout/actions`** - All payout operations
    - `generate_packet`, `save_certificate`, `send_certificate`, `capture_signature`, `submit`
 
 ### Routes Deleted (54 total)
+
 ```
 AI Cluster (-5):
 - /ai/summary, /ai/rebuttal, /predict, /carrier-summary, /rebuttal-builder

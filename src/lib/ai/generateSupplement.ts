@@ -5,13 +5,10 @@
  * AI writes NARRATIVE ONLY - no math. All numbers come from deterministic delta engine.
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
+import { computeDeltaStats, Variance } from "@/lib/delta/computeDelta";
 
-import { computeDeltaStats,Variance } from "@/lib/delta/computeDelta";
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export type SupplementSection = {
   title: string;

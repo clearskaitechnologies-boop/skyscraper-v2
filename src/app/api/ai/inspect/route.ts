@@ -5,21 +5,13 @@ export const revalidate = 0;
 // src/app/api/ai/inspect/route.ts
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import prisma from "@/lib/prisma";
-
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    })
-  : null;
 
 export async function POST(request: NextRequest) {
   try {
-    if (!openai) {
-      return NextResponse.json({ error: "AI service is not available" }, { status: 503 });
-    }
+    const openai = getOpenAI();
 
     const user = await currentUser();
     if (!user) {

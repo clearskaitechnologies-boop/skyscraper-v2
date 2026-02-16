@@ -6,18 +6,12 @@ export const revalidate = 0;
 import { currentUser } from "@clerk/nextjs/server";
 import type { claims, jobs, Org, Plan, projects, properties } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { trackAiUsage } from "@/lib/ai/trackUsage";
 import { aiFail, aiOk, classifyOpenAiError } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
-
-const openai = process.env.OPENAI_API_KEY
-  ? new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    })
-  : null;
 
 // Store user conversation memory (in production, use Redis or database)
 const userMemory = new Map<
@@ -67,15 +61,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Critical configuration check
-    if (!openai) {
-      console.error(
-        "[AI_CHAT] ❌ CRITICAL: OpenAI client not initialized - OPENAI_API_KEY missing!"
-      );
-      return NextResponse.json(
-        aiFail("AI service unavailable", "CONFIG", { reason: "OPENAI_API_KEY missing" }),
-        { status: 503 }
-      );
-    }
+    const openai = getOpenAI();
 
     const user = await currentUser();
     if (!user) {

@@ -8,9 +8,9 @@
  * @see https://platform.openai.com/docs/guides/structured-outputs
  */
 
-import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { safeAI } from "@/lib/aiGuard";
 import { aiFail, aiOk, type AiResponse,classifyOpenAiError } from "@/lib/api/aiResponse";
 
@@ -19,23 +19,6 @@ import {
   DamageReportSchema, 
   validateDamageReport 
 } from "./damage-schema";
-
-// =============================================================================
-// CLIENT INITIALIZATION
-// =============================================================================
-
-let client: OpenAI | null = null;
-
-function getClient(): OpenAI {
-  if (!client) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OPENAI_API_KEY environment variable is required");
-    }
-    client = new OpenAI({ apiKey });
-  }
-  return client;
-}
 
 // =============================================================================
 // SYSTEM PROMPTS
@@ -94,7 +77,7 @@ export async function analyzeImage(
     model = "gpt-4o-mini"
   } = options;
 
-  const openai = getClient();
+  const openai = getOpenAI();
 
   // Build user message
   let userMessage = "Analyze this property photo for damage. Provide detailed findings.";

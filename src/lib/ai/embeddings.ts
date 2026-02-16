@@ -5,11 +5,9 @@
  * and storage of vectorized claim content for semantic search.
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 // Model configuration
 const EMBEDDING_MODEL = "text-embedding-3-large";

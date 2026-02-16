@@ -5,13 +5,13 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { OpenAI } from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { ASSISTANT_SYSTEM_PROMPT } from "@/lib/ai/prompts/assistantPrompt";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import prisma from "@/lib/prisma";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 export async function POST(req: NextRequest) {
   try {

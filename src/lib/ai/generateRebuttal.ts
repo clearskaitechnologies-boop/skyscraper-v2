@@ -5,17 +5,14 @@
  * Uses carrier router to apply appropriate tone and emphasis.
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import {
   carrierRouter,
   getEmphasisInstructions,
   getToneDescriptor,
 } from "@/lib/rebuttals/carrierRouter";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export type RebuttalSection = {
   title: string;

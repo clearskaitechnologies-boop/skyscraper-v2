@@ -1,17 +1,12 @@
 import { NextRequest } from "next/server";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { safeAI } from "@/lib/aiGuard";
 import { aiFail } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
 
-// Check for API key at module level
-if (!process.env.OPENAI_API_KEY) {
-  console.error("[AI Assistant] OPENAI_API_KEY is not set");
-}
-
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || "dummy-key" });
+const openai = getOpenAI();
 
 // Use Node.js runtime to allow Prisma access
 export const runtime = "nodejs";

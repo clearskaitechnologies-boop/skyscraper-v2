@@ -3,11 +3,9 @@
  * Uses OpenAI to estimate pricing when manual prices aren't available
  */
 
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 /**
  * Get AI-estimated pricing for a product
@@ -18,13 +16,14 @@ export async function getAIPricing(productId: string): Promise<number | null> {
   try {
     // In a real implementation, you'd fetch the product details first
     // For now, this is a placeholder that returns a reasonable estimate
-    
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content: "You are a roofing materials pricing expert. Provide realistic wholesale pricing estimates in USD cents. Return only the numeric value.",
+          content:
+            "You are a roofing materials pricing expert. Provide realistic wholesale pricing estimates in USD cents. Return only the numeric value.",
         },
         {
           role: "user",

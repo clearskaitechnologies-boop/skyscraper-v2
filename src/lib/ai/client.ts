@@ -1,43 +1,47 @@
 /**
  * 🧠 UNIFIED AI CLIENT
- * 
+ *
  * Mission 3B: Centralized OpenAI helper with:
  * - Consistent error handling
  * - Structured logging
  * - Timeout management
  * - Model standardization
  * - Token limit enforcement
- * 
- * All AI routes should use callOpenAI() for non-streaming requests.
+ *
+ * All AI routes should use callOpenAI() for non-streaming requests,
+ * or getOpenAI() when direct client access is needed (e.g. streaming).
+ *
+ * ⚠️  NEVER instantiate `new OpenAI()` outside this file.
+ *     Use `import { getOpenAI } from "@/lib/ai/client"` instead.
  */
 
 import OpenAI from "openai";
 
 // ============================================================================
-// CLIENT INITIALIZATION (Singleton Pattern)
+// CLIENT INITIALIZATION (Lazy Singleton)
 // ============================================================================
 
-let client: OpenAI | null = null;
+let _client: OpenAI | null = null;
 
-function getClient(): OpenAI {
-  if (!client) {
+/**
+ * Returns the shared OpenAI client instance.
+ * Creates it lazily on first call — no cold-start penalty at module load.
+ *
+ * @throws Error if OPENAI_API_KEY is not set
+ */
+export function getOpenAI(): OpenAI {
+  if (!_client) {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error("[AI] OPENAI_API_KEY environment variable is required");
     }
-    client = new OpenAI({ apiKey });
+    _client = new OpenAI({ apiKey });
   }
-  return client;
+  return _client;
 }
 
-// Legacy exports for backwards compatibility
-export const openai = process.env.OPENAI_API_KEY 
-  ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) 
-  : null;
-
-export function ensureOpenAI() {
-  return getClient();
-}
+/** @deprecated Use `getOpenAI()` instead. Will be removed in v3. */
+export const ensureOpenAI = getOpenAI;
 
 // ============================================================================
 // CONFIGURATION DEFAULTS
@@ -60,44 +64,46 @@ export type AIMessage = {
 export type AiCallOptions<T = unknown> = {
   /** OpenAI model to use. Defaults to gpt-4o-mini or OPENAI_DEFAULT_MODEL env var */
   model?: string;
-  
+
   /** System message to prepend (optional) */
   system?: string;
-  
+
   /** Conversation messages */
   messages: AIMessage[];
-  
+
   /** Maximum tokens for completion. Default: 1200 */
   maxTokens?: number;
-  
+
   /** Temperature (0-2). Default: 0.2 for deterministic outputs */
   temperature?: number;
-  
+
   /** Tag for logging/debugging (e.g. "claim_prediction", "dispute_generation") */
   tag?: string;
-  
+
   /** Request timeout in milliseconds. Default: 30000ms */
   timeoutMs?: number;
-  
+
   /** If true, parse response as JSON and return typed object. If false, return raw string */
   parseJson?: boolean;
-  
+
   /** Additional context for error logging (e.g. claimId, userId) */
   context?: Record<string, any>;
 };
 
-export type AiCallResult<T> = {
-  success: true;
-  data: T;
-  raw: string;
-  model: string;
-  tokensUsed?: number;
-} | {
-  success: false;
-  error: string;
-  code: "TIMEOUT" | "PARSE_ERROR" | "API_ERROR" | "CONFIG_ERROR";
-  raw?: string;
-};
+export type AiCallResult<T> =
+  | {
+      success: true;
+      data: T;
+      raw: string;
+      model: string;
+      tokensUsed?: number;
+    }
+  | {
+      success: false;
+      error: string;
+      code: "TIMEOUT" | "PARSE_ERROR" | "API_ERROR" | "CONFIG_ERROR";
+      raw?: string;
+    };
 
 // ============================================================================
 // MAIN HELPER: callOpenAI()
@@ -105,7 +111,7 @@ export type AiCallResult<T> = {
 
 /**
  * Unified OpenAI completion helper.
- * 
+ *
  * @example
  * ```ts
  * const result = await callOpenAI<PredictionResponse>({
@@ -115,7 +121,7 @@ export type AiCallResult<T> = {
  *   parseJson: true,
  *   context: { claimId: "abc123" }
  * });
- * 
+ *
  * if (result.success) {
  *   console.log(result.data); // Typed as PredictionResponse
  * } else {
@@ -123,9 +129,7 @@ export type AiCallResult<T> = {
  * }
  * ```
  */
-export async function callOpenAI<T = unknown>(
-  opts: AiCallOptions<T>
-): Promise<AiCallResult<T>> {
+export async function callOpenAI<T = unknown>(opts: AiCallOptions<T>): Promise<AiCallResult<T>> {
   const {
     model = DEFAULT_MODEL,
     system,
@@ -139,11 +143,11 @@ export async function callOpenAI<T = unknown>(
   } = opts;
 
   const startTime = Date.now();
-  
+
   try {
     // Get OpenAI client
-    const openaiClient = getClient();
-    
+    const openaiClient = getOpenAI();
+
     // Build full message array
     const fullMessages: AIMessage[] = system
       ? [{ role: "system", content: system }, ...messages]
@@ -198,7 +202,7 @@ export async function callOpenAI<T = unknown>(
             error: parseError,
             ...context,
           });
-          
+
           return {
             success: false,
             error: "Failed to parse AI response as JSON",
@@ -216,10 +220,9 @@ export async function callOpenAI<T = unknown>(
         model,
         tokensUsed,
       };
-
     } catch (apiError: any) {
       clearTimeout(timeoutId);
-      
+
       // Handle timeout
       if (apiError.name === "AbortError" || apiError.code === "ECONNABORTED") {
         console.error("[AI TIMEOUT]", {
@@ -229,7 +232,7 @@ export async function callOpenAI<T = unknown>(
           duration: Date.now() - startTime,
           ...context,
         });
-        
+
         return {
           success: false,
           error: `AI request timed out after ${timeoutMs}ms`,
@@ -253,7 +256,6 @@ export async function callOpenAI<T = unknown>(
         code: "API_ERROR",
       };
     }
-
   } catch (error: any) {
     // Handle configuration errors
     console.error("[AI CONFIG ERROR]", {
@@ -276,7 +278,7 @@ export async function callOpenAI<T = unknown>(
 
 /**
  * TODO: Implement streaming helper for SSE endpoints
- * 
+ *
  * @example
  * ```ts
  * const stream = await callOpenAIStream({
@@ -297,15 +299,15 @@ export async function callOpenAIStream(opts: any): Promise<any> {
 export const AIModels = {
   /** Fast, cost-effective model for most tasks */
   MINI: "gpt-4o-mini" as const,
-  
+
   /** Full GPT-4o for complex reasoning */
   STANDARD: "gpt-4o" as const,
-  
+
   /** For vision tasks (image analysis) */
   VISION: "gpt-4o" as const,
 } as const;
 
-export type AIModel = typeof AIModels[keyof typeof AIModels];
+export type AIModel = (typeof AIModels)[keyof typeof AIModels];
 
 // ============================================================================
 // UTILITY: Token Limit Presets
@@ -314,16 +316,16 @@ export type AIModel = typeof AIModels[keyof typeof AIModels];
 export const TokenLimits = {
   /** Short responses (summaries, tags, categories) */
   SHORT: 400,
-  
+
   /** Medium responses (predictions, analysis) */
   MEDIUM: 800,
-  
+
   /** Standard responses (decision plans, strategies) */
   STANDARD: 1200,
-  
+
   /** Long responses (dispute letters, reports) */
   LONG: 2000,
-  
+
   /** Very long responses (comprehensive documents) */
   VERY_LONG: 3000,
 } as const;

@@ -6,8 +6,8 @@
  */
 
 import { report_templates } from "@prisma/client";
-import OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { getSectionByKey } from "@/lib/reports/templateSections";
 
 import {
@@ -17,9 +17,7 @@ import {
   ReportGenerationContext,
 } from "./reportPrompts";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 /**
  * Section config type - templates store sections in JSON, not a separate table

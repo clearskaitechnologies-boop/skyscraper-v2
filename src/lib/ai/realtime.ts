@@ -1,21 +1,20 @@
 /**
  * PHASE 35: REAL-TIME AI STREAMING ENGINE
- * 
+ *
  * Provides ChatGPT-level token-by-token streaming for all AI functions
  * using Server-Sent Events (SSE) and OpenAI streaming API.
- * 
+ *
  * Performance targets:
  * - Time to first token: <500ms
  * - Perceived speed: 10x improvement vs batch
  * - Reconnection: Exponential backoff with 3 retries
  */
 
-import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { getOpenAI } from "@/lib/ai/client";
+
+const openai = getOpenAI();
 
 export interface StreamOptions {
   model: string;
@@ -29,21 +28,14 @@ export interface StreamOptions {
 
 /**
  * Stream OpenAI completion token-by-token
- * 
+ *
  * Usage:
  *   for await (const chunk of openAIStream(options)) {
  *     console.log(chunk); // Each token as it arrives
  *   }
  */
-export async function* openAIStream(
-  options: StreamOptions
-): AsyncGenerator<string, void, unknown> {
-  const {
-    model,
-    messages,
-    temperature = 0.7,
-    maxTokens = 2000,
-  } = options;
+export async function* openAIStream(options: StreamOptions): AsyncGenerator<string, void, unknown> {
+  const { model, messages, temperature = 0.7, maxTokens = 2000 } = options;
 
   try {
     const stream = await openai.chat.completions.create({
@@ -68,9 +60,9 @@ export async function* openAIStream(
 
 /**
  * Create a ReadableStream for Server-Sent Events (SSE)
- * 
+ *
  * This enables streaming responses from Next.js API routes
- * 
+ *
  * Usage in API route:
  *   const stream = createSSEStream(options);
  *   return new Response(stream, {
@@ -95,7 +87,7 @@ export function createSSEStream(options: StreamOptions): ReadableStream {
         // Stream tokens
         for await (const token of openAIStream(options)) {
           fullText += token;
-          
+
           // Send token event
           const data = JSON.stringify({ token });
           controller.enqueue(encoder.encode(`event: token\\ndata: ${data}\\n\\n`));
@@ -106,9 +98,7 @@ export function createSSEStream(options: StreamOptions): ReadableStream {
 
         // Send complete event
         const completeData = JSON.stringify({ fullText });
-        controller.enqueue(
-          encoder.encode(`event: complete\\ndata: ${completeData}\\n\\n`)
-        );
+        controller.enqueue(encoder.encode(`event: complete\\ndata: ${completeData}\\n\\n`));
 
         // Call complete callback if provided
         options.onComplete?.(fullText);
@@ -116,7 +106,7 @@ export function createSSEStream(options: StreamOptions): ReadableStream {
         controller.close();
       } catch (error) {
         console.error("[SSE Stream] Error:", error);
-        
+
         // Send error event
         const errorData = JSON.stringify({
           error: error instanceof Error ? error.message : "Unknown error",
@@ -136,7 +126,7 @@ export function createSSEStream(options: StreamOptions): ReadableStream {
 
 /**
  * Utility: Convert streaming generator to full text
- * 
+ *
  * Useful when you need the complete response but want to use streaming internally
  */
 export async function streamToText(options: StreamOptions): Promise<string> {
@@ -149,7 +139,7 @@ export async function streamToText(options: StreamOptions): Promise<string> {
 
 /**
  * Utility: Estimate streaming time based on token count
- * 
+ *
  * Assumes ~50 tokens/second streaming rate
  */
 export function estimateStreamDuration(tokens: number): number {
@@ -161,13 +151,7 @@ export function estimateStreamDuration(tokens: number): number {
  * Utility: Check if streaming is supported for a model
  */
 export function supportsStreaming(model: string): boolean {
-  const streamingModels = [
-    "gpt-4o",
-    "gpt-4o-mini",
-    "gpt-4-turbo",
-    "gpt-4",
-    "gpt-3.5-turbo",
-  ];
-  
+  const streamingModels = ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"];
+
   return streamingModels.some((m) => model.includes(m));
 }

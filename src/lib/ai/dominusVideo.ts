@@ -1,19 +1,16 @@
 /**
  * 🔥 PHASE 27.2: DOMINUS VIDEO AI - SCRIPT & STORYBOARD ENGINE
- * 
+ *
  * Converts lead damage data into cinematic video scripts and storyboards
  */
 
-import OpenAI from "openai";
-
 import { withConditionalCache } from "@/lib/ai/cache";
+import { getOpenAI } from "@/lib/ai/client";
 import { withConditionalDedupe } from "@/lib/ai/dedupe";
 import { selectModelForOrg } from "@/lib/ai/modeSelector";
 import { trackPerformance } from "@/lib/ai/perf";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 interface VideoScriptInput {
   leadId: string;
@@ -59,9 +56,7 @@ interface VideoStoryboard {
 /**
  * Internal video script generation (unwrapped)
  */
-async function _generateVideoScriptInternal(
-  input: VideoScriptInput
-): Promise<VideoScript> {
+async function _generateVideoScriptInternal(input: VideoScriptInput): Promise<VideoScript> {
   const {
     leadId,
     address,
@@ -156,7 +151,7 @@ Return ONLY valid JSON in this exact format:
     return script;
   } catch (error: any) {
     console.error("Error generating video script:", error);
-    
+
     // Return safe fallback script
     return {
       title: `Property Damage Report - ${address || "Unknown Address"}`,
@@ -198,16 +193,16 @@ export async function generateVideoScript(
   const model = await selectModelForOrg(orgId);
 
   const result = await withConditionalCache(
-    'dominus-video-script',
+    "dominus-video-script",
     { leadId: input.leadId, photos: input.photos.length },
     async () => {
       return withConditionalDedupe(
-        'dominus-video-script',
+        "dominus-video-script",
         { leadId: input.leadId },
         async () => {
           return trackPerformance(
             {
-              routeName: 'dominus-video-script',
+              routeName: "dominus-video-script",
               orgId,
               leadId: input.leadId,
               model,
@@ -229,9 +224,7 @@ export async function generateVideoScript(
  * 🎬 PHASE 27.3: Enhanced storyboard generation with cinematic motion
  * Generate storyboard from video script with improved visuals
  */
-async function _generateVideoStoryboardInternal(
-  script: VideoScript
-): Promise<VideoStoryboard> {
+async function _generateVideoStoryboardInternal(script: VideoScript): Promise<VideoStoryboard> {
   const scenes: StoryboardScene[] = [];
   let sceneCounter = 0;
 
@@ -239,12 +232,12 @@ async function _generateVideoStoryboardInternal(
     // Create 1-2 scenes per section based on narration length
     const wordCount = section.narration.split(" ").length;
     const scenesPerSection = wordCount > 40 ? 2 : 1;
-    const durationPerScene = Math.ceil((wordCount / 150) * 60 / scenesPerSection); // ~150 words/min
+    const durationPerScene = Math.ceil(((wordCount / 150) * 60) / scenesPerSection); // ~150 words/min
 
     for (let i = 0; i < scenesPerSection; i++) {
       const isFirstScene = i === 0;
       const sceneIndex = i;
-      
+
       // 🎥 PHASE 27.3: Build enhanced cinematic prompt with motion details
       let prompt = "";
       let motion = "";
@@ -252,31 +245,37 @@ async function _generateVideoStoryboardInternal(
       let highlightArea: [number, number, number, number] | null = null;
 
       if (section.id === "intro") {
-        prompt = "Cinematic establishing shot of property exterior, golden hour lighting with warm tones, professional architectural photography, sharp focus on building facade, clear sky background";
+        prompt =
+          "Cinematic establishing shot of property exterior, golden hour lighting with warm tones, professional architectural photography, sharp focus on building facade, clear sky background";
         motion = "slow_pan";
         overlayText = section.label;
       } else if (section.id.includes("damage") || section.id.includes("overview")) {
-        prompt = "Close-up inspection footage of damaged area, shallow depth of field focusing on damage, professional documentation lighting, detailed texture visible, neutral color grading";
+        prompt =
+          "Close-up inspection footage of damaged area, shallow depth of field focusing on damage, professional documentation lighting, detailed texture visible, neutral color grading";
         motion = sceneIndex === 0 ? "push_in" : "slow_pan";
         overlayText = isFirstScene ? section.label : undefined;
         // Highlight central damage area (30-70% of frame)
         highlightArea = [0.3, 0.3, 0.7, 0.7];
       } else if (section.id.includes("urgent") || section.id.includes("concern")) {
-        prompt = "Detailed damage inspection close-up, zoom focus on critical structural issue, high contrast lighting to emphasize severity, documentary style with visible deterioration";
+        prompt =
+          "Detailed damage inspection close-up, zoom focus on critical structural issue, high contrast lighting to emphasize severity, documentary style with visible deterioration";
         motion = "push_in";
         overlayText = isFirstScene ? "⚠️ " + section.label : undefined;
         // Highlight critical area with emphasis
         highlightArea = [0.25, 0.25, 0.75, 0.75];
       } else if (section.id.includes("recommend") || section.id.includes("next")) {
-        prompt = "Clean professional outro screen, fade to branded background with company colors, clear typography for call-to-action, modern minimal design";
+        prompt =
+          "Clean professional outro screen, fade to branded background with company colors, clear typography for call-to-action, modern minimal design";
         motion = "static";
         overlayText = section.label;
       } else if (section.id.includes("finding") || section.id.includes("assessment")) {
-        prompt = "Wide angle assessment shot showing context of damage, environmental factors visible, professional inspection documentation, balanced exposure";
+        prompt =
+          "Wide angle assessment shot showing context of damage, environmental factors visible, professional inspection documentation, balanced exposure";
         motion = "orbit";
         overlayText = isFirstScene ? section.label : undefined;
       } else {
-        prompt = "Professional property inspection footage, smooth cinematic camera movement, well-lit with natural lighting, sharp focus on inspection area, documentation style";
+        prompt =
+          "Professional property inspection footage, smooth cinematic camera movement, well-lit with natural lighting, sharp focus on inspection area, documentation style";
         motion = sceneIndex % 2 === 0 ? "slow_pan" : "static";
         overlayText = isFirstScene ? section.label : undefined;
       }
@@ -306,16 +305,16 @@ export async function generateVideoStoryboard(
   const model = await selectModelForOrg(orgId);
 
   const result = await withConditionalCache(
-    'dominus-video-storyboard',
+    "dominus-video-storyboard",
     { scriptSections: script.sections.length, scriptTitle: script.title },
     async () => {
       return withConditionalDedupe(
-        'dominus-video-storyboard',
+        "dominus-video-storyboard",
         { scriptTitle: script.title },
         async () => {
           return trackPerformance(
             {
-              routeName: 'dominus-video-storyboard',
+              routeName: "dominus-video-storyboard",
               orgId,
               model,
               cacheHit: false,

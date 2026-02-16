@@ -1,9 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
 import puppeteer from "puppeteer";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import { createExportRecord } from "@/lib/exportRegistry";
 
@@ -18,9 +18,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 /**
  * POST /api/mockups/generate

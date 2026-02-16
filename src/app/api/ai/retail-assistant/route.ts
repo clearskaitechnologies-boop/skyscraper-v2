@@ -1,6 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
+
+import { getOpenAI } from "@/lib/ai/client";
 
 // Force Node.js runtime for OpenAI SDK
 export const runtime = "nodejs";
@@ -19,17 +20,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Message required" }, { status: 400 });
     }
 
-    // Check for OpenAI API key
-    if (!process.env.OPENAI_API_KEY) {
-      console.error("[retail-assistant] OPENAI_API_KEY not configured");
-      return NextResponse.json(
-        { error: "AI service unavailable - API key not configured" },
-        { status: 503 }
-      );
-    }
-
     // Initialize OpenAI client
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = getOpenAI();
 
     const systemPrompt = `You are an expert retail roofing and restoration job assistant. Help contractors with:
 - Estimate creation and pricing strategies for out-of-pocket and financed jobs

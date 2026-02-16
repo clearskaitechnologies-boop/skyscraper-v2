@@ -1,8 +1,8 @@
 /**
  * PHASE 45: APPEAL AI ENGINE
- * 
+ *
  * GPT-4o powered appeal generation with legal citations
- * 
+ *
  * Features:
  * - Analyze denial reasons
  * - Generate counter-arguments with code citations
@@ -11,11 +11,11 @@
  * - Tone customization (professional/firm/legal)
  */
 
-import { OpenAI } from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
 import { DenialReason } from "./extractPdfText";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 // ===========================
 // TYPE DEFINITIONS
@@ -54,39 +54,39 @@ const CODE_CITATIONS: Record<string, LegalCitation[]> = {
       type: "code",
       source: "IRC 2021 R905.2.8.5",
       text: "Drip edge shall be provided at eaves and gables of asphalt shingle roofs. Overlap to cover the tops of drip edge flanges along the eaves shall be a minimum of 2 inches.",
-      relevance: "Code-required upgrades cannot be denied as pre-existing conditions"
+      relevance: "Code-required upgrades cannot be denied as pre-existing conditions",
     },
     {
       type: "code",
       source: "IRC 2021 R806.2",
       text: "Minimum net free ventilation area shall be 1/150 of the area of the vented space.",
-      relevance: "Inadequate ventilation is a code violation requiring correction"
-    }
+      relevance: "Inadequate ventilation is a code violation requiring correction",
+    },
   ],
   coverage: [
     {
       type: "policy",
       source: "Standard Homeowners Policy HO-3",
       text: "We insure for direct physical loss to property described in Coverages A and B caused by a peril we do not exclude.",
-      relevance: "Storm damage is a covered peril under standard HO-3 policies"
-    }
+      relevance: "Storm damage is a covered peril under standard HO-3 policies",
+    },
   ],
   depreciation: [
     {
       type: "case_law",
       source: "Leonard v. Nationwide (2007)",
       text: "Carriers must prove actual depreciation, not apply blanket age-based schedules.",
-      relevance: "Age alone is insufficient justification for depreciation"
-    }
+      relevance: "Age alone is insufficient justification for depreciation",
+    },
   ],
   scope: [
     {
       type: "industry_standard",
       source: "Haag Engineering Standards",
       text: "Hail damage to asphalt shingles includes bruising, granule loss, and functional damage even without visible cracks.",
-      relevance: "Industry standards recognize subtle hail damage as functionally impairing"
-    }
-  ]
+      relevance: "Industry standards recognize subtle hail damage as functionally impairing",
+    },
+  ],
 };
 
 // ===========================
@@ -151,7 +151,7 @@ Return JSON format:
         messages: [{ role: "user", content: prompt }],
         response_format: { type: "json_object" },
         temperature: 0.7,
-        max_tokens: 1000
+        max_tokens: 1000,
       });
 
       const result = JSON.parse(response.choices[0].message.content || "{}");
@@ -161,7 +161,7 @@ Return JSON format:
         rebuttal: result.rebuttal,
         citations,
         strength: result.strength || "moderate",
-        recommendation: result.recommendation
+        recommendation: result.recommendation,
       });
     } catch (error) {
       console.error("[REBUTTAL GENERATION ERROR]", error);
@@ -172,7 +172,7 @@ Return JSON format:
         rebuttal: `We respectfully disagree with this denial reason. The documented evidence clearly demonstrates that the damage is a direct result of the covered peril. We request reconsideration based on the attached supporting documentation.`,
         citations,
         strength: "moderate",
-        recommendation: "Provide additional documentation and request re-inspection"
+        recommendation: "Provide additional documentation and request re-inspection",
       });
     }
   }
@@ -214,7 +214,7 @@ Write a 150-200 word summary that:
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
-      max_tokens: 400
+      max_tokens: 400,
     });
 
     return response.choices[0].message.content || "Appeal summary unavailable.";
@@ -261,7 +261,7 @@ Format as plain text email with clear structure.`;
       model: "gpt-4o-mini",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.6,
-      max_tokens: 500
+      max_tokens: 500,
     });
 
     return response.choices[0].message.content || "";
@@ -301,10 +301,11 @@ export function estimateSuccessRate(appealArgs: AppealArgument[]): number {
   const strengthScores = {
     weak: 30,
     moderate: 60,
-    strong: 85
+    strong: 85,
   };
 
-  const avgScore = appealArgs.reduce((sum, arg) => sum + strengthScores[arg.strength], 0) / appealArgs.length;
+  const avgScore =
+    appealArgs.reduce((sum, arg) => sum + strengthScores[arg.strength], 0) / appealArgs.length;
 
   // Adjust based on number of arguments (more = better)
   const countBonus = Math.min(20, appealArgs.length * 5);
@@ -353,6 +354,6 @@ export async function generateFullAppeal(
     arguments,
     emailDraft,
     estimatedSuccessRate,
-    recommendedTone: tone
+    recommendedTone: tone,
   };
 }
