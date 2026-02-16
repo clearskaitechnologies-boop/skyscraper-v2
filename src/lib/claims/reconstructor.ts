@@ -20,11 +20,10 @@
  * 4. Discrepancies - where reality diverged from ideal
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import prisma from "@/lib/prisma";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = getOpenAI();
 
 // ==========================================
 // TYPES

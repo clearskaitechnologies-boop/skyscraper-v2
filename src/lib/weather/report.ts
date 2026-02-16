@@ -1,15 +1,8 @@
 // src/lib/weather/report.ts
-import OpenAI from "openai";
-
-let _client: OpenAI | null = null;
+import { getOpenAI } from "@/lib/ai/client";
 
 function getOpenAIClient() {
-  if (!_client) {
-    _client = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY!,
-    });
-  }
-  return _client;
+  return getOpenAI();
 }
 
 export async function aiSummarizeWeather({

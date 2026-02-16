@@ -4,17 +4,14 @@
  * Detects leaks, damage, cracks, rust, hazards, and more
  */
 
-import OpenAI from 'openai';
+import { getOpenAI } from "@/lib/ai/client";
+import { safeAI } from "@/lib/aiGuard";
 
-import { safeAI } from '@/lib/aiGuard';
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const openai = getOpenAI();
 
 export interface InspectionDetection {
   type: string;
-  severity: 'Low' | 'Medium' | 'High' | 'Critical';
+  severity: "Low" | "Medium" | "High" | "Critical";
   location: string;
   confidence: number;
   description: string;
@@ -22,7 +19,7 @@ export interface InspectionDetection {
 }
 
 export interface InspectionAnalysis {
-  overallCondition: 'Excellent' | 'Good' | 'Fair' | 'Poor' | 'Critical';
+  overallCondition: "Excellent" | "Good" | "Fair" | "Poor" | "Critical";
   conditionScore: number;
   detections: InspectionDetection[];
   summary: string;
@@ -47,23 +44,24 @@ export async function analyzeInspectionPhoto(
   try {
     const prompt = buildInspectionPrompt(componentType, componentName);
 
-    const ai = await safeAI('inspection-photo', () =>
+    const ai = await safeAI("inspection-photo", () =>
       openai.chat.completions.create({
-        model: 'gpt-4o',
+        model: "gpt-4o",
         messages: [
           {
-            role: 'system',
-            content: 'You are an expert property inspector analyzing photos for damage, defects, and safety hazards.',
+            role: "system",
+            content:
+              "You are an expert property inspector analyzing photos for damage, defects, and safety hazards.",
           },
           {
-            role: 'user',
+            role: "user",
             content: [
               {
-                type: 'text',
+                type: "text",
                 text: prompt,
               },
               {
-                type: 'image_url',
+                type: "image_url",
                 image_url: {
                   url: imageUrl,
                 },
@@ -81,11 +79,11 @@ export async function analyzeInspectionPhoto(
     }
 
     const response = ai.result;
-    const analysisText = response.choices[0].message.content || '';
+    const analysisText = response.choices[0].message.content || "";
     return parseAIInspectionResponse(analysisText, componentType);
   } catch (error) {
-    console.error('Error analyzing inspection photo:', error);
-    throw new Error('Failed to analyze inspection photo');
+    console.error("Error analyzing inspection photo:", error);
+    throw new Error("Failed to analyze inspection photo");
   }
 }
 
@@ -209,14 +207,14 @@ function parseAIInspectionResponse(
     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
     if (jsonMatch) {
       const parsed = JSON.parse(jsonMatch[0]);
-      
+
       // Calculate issue counts
       const issuesSummary = {
-        leaksDetected: parsed.detections.filter((d: any) => d.type === 'leak').length,
-        damageDetected: parsed.detections.filter((d: any) => d.type === 'damage').length,
-        cracksDetected: parsed.detections.filter((d: any) => d.type === 'crack').length,
-        rustDetected: parsed.detections.filter((d: any) => d.type === 'rust').length,
-        hazardsDetected: parsed.detections.filter((d: any) => d.type === 'hazard').length,
+        leaksDetected: parsed.detections.filter((d: any) => d.type === "leak").length,
+        damageDetected: parsed.detections.filter((d: any) => d.type === "damage").length,
+        cracksDetected: parsed.detections.filter((d: any) => d.type === "crack").length,
+        rustDetected: parsed.detections.filter((d: any) => d.type === "rust").length,
+        hazardsDetected: parsed.detections.filter((d: any) => d.type === "hazard").length,
       };
 
       return {
@@ -225,16 +223,16 @@ function parseAIInspectionResponse(
       };
     }
   } catch (error) {
-    console.error('Error parsing AI response:', error);
+    console.error("Error parsing AI response:", error);
   }
 
   // Fallback response
   return {
-    overallCondition: 'Fair',
+    overallCondition: "Fair",
     conditionScore: 50,
     detections: [],
-    summary: 'Unable to fully analyze the image. Manual inspection recommended.',
-    recommendations: ['Conduct manual inspection', 'Retake photos with better lighting'],
+    summary: "Unable to fully analyze the image. Manual inspection recommended.",
+    recommendations: ["Conduct manual inspection", "Retake photos with better lighting"],
     issuesSummary: {
       leaksDetected: 0,
       damageDetected: 0,
@@ -251,10 +249,10 @@ function parseAIInspectionResponse(
 function aggregateInspectionAnalyses(analyses: InspectionAnalysis[]): InspectionAnalysis {
   if (analyses.length === 0) {
     return {
-      overallCondition: 'Fair',
+      overallCondition: "Fair",
       conditionScore: 50,
       detections: [],
-      summary: 'No photos analyzed',
+      summary: "No photos analyzed",
       recommendations: [],
       issuesSummary: {
         leaksDetected: 0,
@@ -275,17 +273,18 @@ function aggregateInspectionAnalyses(analyses: InspectionAnalysis[]): Inspection
   );
 
   // Determine overall condition (worst case)
-  const conditionPriority = ['Critical', 'Poor', 'Fair', 'Good', 'Excellent'];
-  const worstCondition = analyses.reduce((worst, a) => {
-    const currentPriority = conditionPriority.indexOf(a.overallCondition);
-    const worstPriority = conditionPriority.indexOf(worst);
-    return currentPriority < worstPriority ? a.overallCondition : worst;
-  }, 'Excellent' as InspectionAnalysis['overallCondition']);
+  const conditionPriority = ["Critical", "Poor", "Fair", "Good", "Excellent"];
+  const worstCondition = analyses.reduce(
+    (worst, a) => {
+      const currentPriority = conditionPriority.indexOf(a.overallCondition);
+      const worstPriority = conditionPriority.indexOf(worst);
+      return currentPriority < worstPriority ? a.overallCondition : worst;
+    },
+    "Excellent" as InspectionAnalysis["overallCondition"]
+  );
 
   // Aggregate recommendations (unique)
-  const allRecommendations = Array.from(
-    new Set(analyses.flatMap((a) => a.recommendations))
-  );
+  const allRecommendations = Array.from(new Set(analyses.flatMap((a) => a.recommendations)));
 
   // Aggregate issue counts
   const issuesSummary = {
@@ -324,13 +323,13 @@ export async function estimateRepairCosts(
 }> {
   // This would integrate with repair cost database
   // For now, return basic estimates based on severity
-  
+
   let totalLow = 0;
   let totalAvg = 0;
   let totalHigh = 0;
-  let maxUrgency = 'Low';
+  let maxUrgency = "Low";
 
-  const urgencyPriority = ['Low', 'Medium', 'High', 'Critical'];
+  const urgencyPriority = ["Low", "Medium", "High", "Critical"];
 
   for (const detection of detections) {
     const costMultiplier = {
@@ -350,16 +349,16 @@ export async function estimateRepairCosts(
   }
 
   const urgencyMapping: Record<string, string> = {
-    Critical: 'Immediate',
-    High: '1-3 Months',
-    Medium: '3-6 Months',
-    Low: '6+ Months',
+    Critical: "Immediate",
+    High: "1-3 Months",
+    Medium: "3-6 Months",
+    Low: "6+ Months",
   };
 
   return {
     lowEstimate: Math.round(totalLow),
     avgEstimate: Math.round(totalAvg),
     highEstimate: Math.round(totalHigh),
-    urgency: urgencyMapping[maxUrgency] || '6+ Months',
+    urgency: urgencyMapping[maxUrgency] || "6+ Months",
   };
 }

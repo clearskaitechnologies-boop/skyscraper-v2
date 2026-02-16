@@ -3,27 +3,15 @@
  * Uses OpenAI GPT-4o to generate proposal sections (summary, scope, terms, notes)
  */
 
-import OpenAI from "openai";
-
+import { getOpenAI } from "@/lib/ai/client";
 import { safeAI } from "@/lib/aiGuard";
 
-import type { AIDraftSections, PacketType,ProposalContext } from "./types";
+import type { AIDraftSections, PacketType, ProposalContext } from "./types";
 
 const MODEL = "gpt-4o-mini"; // Fast and cost-effective for structured content
 const TOKEN_COST = 2; // Costs 2 tokens per proposal generation
 
 export type TonePreset = "homeowner" | "gc" | "carrier" | "pa-legal";
-
-// Lazy-load OpenAI client to avoid build-time initialization
-let openaiClient: OpenAI | null = null;
-function getOpenAI(): OpenAI {
-  if (!openaiClient) {
-    openaiClient = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
-  }
-  return openaiClient;
-}
 
 /**
  * Generate AI-drafted proposal sections based on context and packet type

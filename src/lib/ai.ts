@@ -1,17 +1,7 @@
-import OpenAI from "openai";
+import { getOpenAI } from "@/lib/ai/client";
 
-// Lazy initialization to avoid build-time errors
-let client: OpenAI | null = null;
-
-function getOpenAIClient(): OpenAI {
-  if (!client) {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      throw new Error("OPENAI_API_KEY environment variable is not set");
-    }
-    client = new OpenAI({ apiKey });
-  }
-  return client;
+function getOpenAIClient() {
+  return getOpenAI();
 }
 
 // Example: create structured report text

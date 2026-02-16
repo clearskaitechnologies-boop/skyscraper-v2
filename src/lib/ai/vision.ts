@@ -10,6 +10,7 @@
  * - Confidence scoring
  */
 
+import { getOpenAI } from "@/lib/ai/client";
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
 import { trackPerformance } from "./perf";
@@ -128,6 +129,7 @@ async function _analyzeImageInternal(
 }`;
 
   try {
+    const openai = getOpenAI();
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
