@@ -1,5 +1,3 @@
-import { logger } from "@/lib/logger";
-
 /**
  * Structured Logging with Context
  * Provides consistent logging across the application

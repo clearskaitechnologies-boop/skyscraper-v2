@@ -479,3 +479,60 @@ export async function queueReport(input: QueueReportInput) {
 
   return { success: true, queueItem: { id: queueItem.id } };
 }
+
+/**
+ * Start generating a report
+ */
+export async function startReport(queueId: string) {
+  const queueItem = await prisma.reportQueue.update({
+    where: { id: queueId },
+    data: { status: "processing", startedAt: new Date() },
+  });
+
+  return { success: true, queueItem };
+}
+
+/**
+ * Mark report generation as finished
+ */
+export async function finishReport(queueId: string, reportId: string) {
+  const queueItem = await prisma.reportQueue.update({
+    where: { id: queueId },
+    data: {
+      status: "completed",
+      completedAt: new Date(),
+      reportId,
+    },
+  });
+
+  return { success: true, queueItem };
+}
+
+/**
+ * Regenerate an existing report
+ */
+export async function regenerateReport(reportId: string, userId: string) {
+  const report = await prisma.ai_reports.findUnique({
+    where: { id: reportId },
+    select: { claimId: true, orgId: true, reportType: true },
+  });
+
+  if (!report) {
+    return { success: false, error: "Report not found" };
+  }
+
+  // Queue a new generation
+  const queueItem = await prisma.reportQueue.create({
+    data: {
+      claimId: report.claimId,
+      orgId: report.orgId,
+      reportType: report.reportType || "standard",
+      priority: "high",
+      createdBy: userId,
+      status: "queued",
+      regenerateFrom: reportId,
+    },
+  });
+
+  return { success: true, queueItem: { id: queueItem.id } };
+}

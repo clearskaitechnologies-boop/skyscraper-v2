@@ -9,8 +9,8 @@
 
 // Import logging utilities
 // Static imports for all AI modules (fixes Next.js ES module issue)
-import * as aiAssistant from "./aiAssistant";
 import { logger } from "@/lib/logger";
+import * as aiAssistant from "./aiAssistant";
 import * as automation from "./automation";
 import * as autoTimeline from "./autoTimeline";
 import * as callGPT4 from "./callGPT4";
@@ -34,8 +34,7 @@ import * as estimates from "./estimates";
 import * as estimatorEngine from "./estimatorEngine";
 import * as jsonSanitizer from "./jsonSanitizer";
 import * as lineItemsGenerator from "./line-items-generator";
-import { logError,logSuccess } from "./logger";
-import * as logger from "./logger";
+import { logError, logSuccess } from "./logger";
 import * as messageAssistant from "./messageAssistant";
 import * as openaiVision from "./openai-vision";
 import * as photoAnnotator from "./photo-annotator";

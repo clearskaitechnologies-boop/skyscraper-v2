@@ -79,13 +79,13 @@ async function handlePOST(req: NextRequest) {
   try {
     capRows = await fetchCAPAlerts({ bbox, startIso, endIso });
   } catch (error) {
-    logger.warn("[weather/verify] CAP alerts fetch failed:", error);
+    log.warn("[weather/verify] CAP alerts fetch failed:", error);
   }
 
   try {
     mesRows = await fetchMesonetReports({ bbox, startIso, endIso });
   } catch (error) {
-    logger.warn("[weather/verify] Mesonet reports fetch failed:", error);
+    log.warn("[weather/verify] Mesonet reports fetch failed:", error);
   }
 
   const events = [...capToEvents(capRows), ...mesonetToEvents(mesRows)];

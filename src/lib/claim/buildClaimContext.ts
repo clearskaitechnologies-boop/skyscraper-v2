@@ -5,10 +5,9 @@
  */
 
 import { getCachedClaimContext, setCachedClaimContext } from "@/lib/cache/claimContextCache";
+import { computeVariances, Variance } from "@/lib/delta/computeDelta";
 import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
-import { computeVariances, Variance } from "@/lib/delta/computeDelta";
-import { logger } from "@/lib/observability/logger";
 import { carrierRouter } from "@/lib/rebuttals/carrierRouter";
 import { formatWeatherForAI } from "@/lib/weather/openMeteo";
 

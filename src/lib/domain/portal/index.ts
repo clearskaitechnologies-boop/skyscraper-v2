@@ -404,3 +404,48 @@ export async function sendJobInvite(input: SendJobInviteInput) {
 
   return { success: true, invitation: { id: invitation.id } };
 }
+
+// ============================================================================
+// Share Claim With Client
+// ============================================================================
+
+export interface ShareClaimWithClientInput {
+  claimId: string;
+  orgId: string;
+  userId: string;
+  clientEmail: string;
+  message?: string;
+  accessLevel?: "view" | "comment" | "upload";
+}
+
+/**
+ * Share a claim with a client
+ */
+export async function shareClaimWithClient(input: ShareClaimWithClientInput) {
+  const { claimId, orgId, userId, clientEmail, message, accessLevel } = input;
+
+  // Create or update client access
+  const access = await prisma.clientAccess.upsert({
+    where: {
+      claimId_email: { claimId, email: clientEmail },
+    },
+    create: {
+      claimId,
+      email: clientEmail,
+      accessLevel: accessLevel || "view",
+      sharedBy: userId,
+      message,
+      status: "pending",
+    },
+    update: {
+      accessLevel: accessLevel || "view",
+      sharedBy: userId,
+      message,
+      updatedAt: new Date(),
+    },
+  });
+
+  // TODO: Send email notification via queue
+
+  return { success: true, access: { id: access.id } };
+}
