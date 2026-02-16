@@ -5,7 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
 import type { ReactNode } from "react";
 
-import { PostHogProvider } from "@/components/providers/PostHogProvider";
+import { PHProvider } from "@/lib/analytics.tsx";
 import { ThemeProvider } from "@/modules/ui/theme/ThemeProvider";
 
 // Note: Clerk validation moved to runtime API health checks
@@ -109,9 +109,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           >
             Skip to main content
           </a>
-          <PostHogProvider>
+          <PHProvider>
             <ThemeProvider>{children}</ThemeProvider>
-          </PostHogProvider>
+          </PHProvider>
         </body>
       </html>
     </ClerkProvider>
