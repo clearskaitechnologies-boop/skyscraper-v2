@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /**
  * Service Worker for Push Notifications
  * Handles background push notifications for SkaiScrape
