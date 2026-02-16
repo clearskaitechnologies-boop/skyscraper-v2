@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 import twilio from "twilio";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -37,7 +38,7 @@ export async function notifyClient({
         html: `<p>${message}</p>`,
       });
     } catch (e) {
-      console.error("Email send error", e);
+      logger.error("Email send error", e);
     }
   }
 
@@ -49,7 +50,7 @@ export async function notifyClient({
         to: client.phone,
       });
     } catch (e) {
-      console.error("SMS send error", e);
+      logger.error("SMS send error", e);
     }
   }
 

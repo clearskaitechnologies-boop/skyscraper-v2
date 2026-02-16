@@ -9,6 +9,7 @@
  */
 
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -108,7 +109,7 @@ async function POST_INNER(
       },
     });
   } catch (error: any) {
-    console.error("Contractor Dispatch Error:", error);
+    logger.error("Contractor Dispatch Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to dispatch contractor" },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, connection: updated });
   } catch (error) {
-    console.error("POST /api/connections/accept error:", error);
+    logger.error("POST /api/connections/accept error:", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }

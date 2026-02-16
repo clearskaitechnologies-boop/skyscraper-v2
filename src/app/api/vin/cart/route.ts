@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[VIN Cart] Error:", error);
+    logger.error("[VIN Cart] Error:", error);
     return NextResponse.json({ error: "Failed to fetch carts" }, { status: 500 });
   }
 }
@@ -256,7 +257,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
-    console.error("[VIN Cart] Error:", error);
+    logger.error("[VIN Cart] Error:", error);
     return NextResponse.json({ error: "Failed to process cart action" }, { status: 500 });
   }
 }
@@ -285,7 +286,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ success: true, item });
   } catch (error) {
-    console.error("[VIN Cart] Update error:", error);
+    logger.error("[VIN Cart] Update error:", error);
     return NextResponse.json({ error: "Failed to update item" }, { status: 500 });
   }
 }
@@ -312,7 +313,7 @@ export async function DELETE(request: NextRequest) {
 
     return NextResponse.json({ error: "itemId or cartId required" }, { status: 400 });
   } catch (error) {
-    console.error("[VIN Cart] Delete error:", error);
+    logger.error("[VIN Cart] Delete error:", error);
     return NextResponse.json({ error: "Failed to delete" }, { status: 500 });
   }
 }

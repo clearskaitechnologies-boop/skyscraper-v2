@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
     });
     return NextResponse.json({ ok: true, client });
   } catch (e: any) {
-    console.error("[clients:create]", e);
+    logger.error("[clients:create]", e);
     return NextResponse.json({ error: e.message || "Server error" }, { status: 500 });
   }
 }

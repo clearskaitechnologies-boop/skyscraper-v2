@@ -1,5 +1,6 @@
 // src/app/api/claims-folder/generate/cause-of-loss/route.ts
 import { NextResponse, type NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Cause of loss generation error:", error);
+    logger.error("Cause of loss generation error:", error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

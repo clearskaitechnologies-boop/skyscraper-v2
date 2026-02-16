@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { isBetaMode } from "@/lib/beta";
@@ -34,7 +35,7 @@ export async function GET() {
     try {
       const isAdmin = await isPlatformAdmin();
       if (isAdmin) {
-        console.log("[BILLING STATUS] Platform admin - returning unlimited status");
+        logger.debug("[BILLING STATUS] Platform admin - returning unlimited status");
         return NextResponse.json({
           plan: "Admin (Forever Free)",
           planTier: "enterprise",
@@ -51,12 +52,12 @@ export async function GET() {
         });
       }
     } catch (adminError) {
-      console.warn("[BILLING STATUS] Admin check failed:", adminError);
+      logger.warn("[BILLING STATUS] Admin check failed:", adminError);
     }
 
     // BETA MODE: Return unlimited access
     if (isBetaMode()) {
-      console.log("[BILLING STATUS] Beta mode active - returning unlimited status");
+      logger.debug("[BILLING STATUS] Beta mode active - returning unlimited status");
       return NextResponse.json({
         plan: "Beta Access",
         planTier: "enterprise",
@@ -135,7 +136,7 @@ export async function GET() {
       aiCreditsLimit: limits.aiCreditsLimit,
     });
   } catch (error) {
-    console.error("Billing status error:", error);
+    logger.error("Billing status error:", error);
     return NextResponse.json({ error: "Failed to fetch billing status" }, { status: 500 });
   }
 }

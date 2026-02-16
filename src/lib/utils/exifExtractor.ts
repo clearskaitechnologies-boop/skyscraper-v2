@@ -6,6 +6,7 @@
  */
 
 import ExifReader from 'exifreader';
+import { logger } from "@/lib/logger";
 
 export interface EXIFData {
   dateTime: Date | null;
@@ -69,7 +70,7 @@ export async function extractEXIF(urlOrBuffer: string | Buffer): Promise<EXIFDat
       height: tags.file?.['Image Height']?.value as number,
     };
   } catch (error) {
-    console.warn('EXIF extraction failed:', error);
+    logger.warn('EXIF extraction failed:', error);
     return {
       dateTime: null,
       dateTimeOriginal: null,

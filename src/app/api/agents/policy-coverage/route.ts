@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[policy-coverage] Error:", error);
+    logger.error("[policy-coverage] Error:", error);
     return NextResponse.json({ error: "Failed to analyze policy coverage" }, { status: 500 });
   }
 }

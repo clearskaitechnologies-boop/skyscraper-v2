@@ -4,6 +4,7 @@
  */
 
 import { headers } from "next/headers";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";
@@ -64,12 +65,12 @@ export async function POST(req: NextRequest) {
         break;
 
       default:
-        console.log(`Unhandled webhook event: ${payload.event}`);
+        logger.debug(`Unhandled webhook event: ${payload.event}`);
     }
 
     return NextResponse.json({ success: true, event: payload.event });
   } catch (error: any) {
-    console.error("Trades webhook error:", error);
+    logger.error("Trades webhook error:", error);
     return NextResponse.json(
       { error: error.message || "Webhook processing failed" },
       { status: 500 }
@@ -91,7 +92,7 @@ async function handleConnectionRequested(data: WebhookPayload["data"]) {
     });
 
     if (!user) {
-      console.log("User not found for trade connection request");
+      logger.debug("User not found for trade connection request");
       return;
     }
 
@@ -139,7 +140,7 @@ async function handleConnectionRequested(data: WebhookPayload["data"]) {
       `[Trades Webhook] Connection request from ${user.email} to pro ${proClerkId} for ${serviceType || "a project"}`
     );
   } catch (error) {
-    console.error("Failed to create lead from trade connection:", error);
+    logger.error("Failed to create lead from trade connection:", error);
     throw error;
   }
 }
@@ -176,7 +177,7 @@ async function handleConnectionAccepted(data: WebhookPayload["data"]) {
       `[Trades Webhook] Connection accepted: pro ${proClerkId} accepted client ${clientClerkId} for connection ${connectionId}`
     );
   } catch (error) {
-    console.error("Failed to update lead from trade acceptance:", error);
+    logger.error("Failed to update lead from trade acceptance:", error);
     throw error;
   }
 }
@@ -186,12 +187,12 @@ async function handleConnectionAccepted(data: WebhookPayload["data"]) {
  */
 async function handleProfileCreated(data: WebhookPayload["data"]) {
   // Could track in analytics, update user metadata, etc.
-  console.log("New trade profile created:", data.profileId);
+  logger.debug("New trade profile created:", data.profileId);
 }
 
 /**
  * Handle new review - could update contractor reputation in CRM
  */
 async function handleReviewCreated(data: WebhookPayload["data"]) {
-  console.log("New trade review created:", data.reviewId);
+  logger.debug("New trade review created:", data.reviewId);
 }

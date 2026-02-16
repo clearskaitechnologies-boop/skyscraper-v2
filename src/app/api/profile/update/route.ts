@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -51,7 +52,7 @@ export async function PUT(request: NextRequest) {
 
     return NextResponse.json({ ok: true, user: updated });
   } catch (error) {
-    console.error("PUT /api/profile/update error:", error);
+    logger.error("PUT /api/profile/update error:", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }

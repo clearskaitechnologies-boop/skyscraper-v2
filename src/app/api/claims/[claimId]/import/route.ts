@@ -8,6 +8,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       { status: 501 }
     );
   } catch (error) {
-    console.error("Import error:", error);
+    logger.error("Import error:", error);
     return NextResponse.json(
       {
         error: "Failed to import estimate",
@@ -124,7 +125,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
       message: "Import feature not yet implemented - scopeLineItem model was removed",
     });
   } catch (error) {
-    console.error("Fetch error:", error);
+    logger.error("Fetch error:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch line items",

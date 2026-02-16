@@ -1,5 +1,6 @@
 // src/app/api/weather/quick-dol/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { QuickDolInput, runQuickDol } from "@/lib/ai/weather";
@@ -133,7 +134,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(response, { status: 200 });
   } catch (err) {
-    console.error("Error in /api/weather/quick-dol:", err);
+    logger.error("Error in /api/weather/quick-dol:", err);
     return NextResponse.json({ error: "Failed to run Quick DOL." }, { status: 500 });
   }
 }

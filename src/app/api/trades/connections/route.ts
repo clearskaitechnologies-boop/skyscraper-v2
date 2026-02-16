@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -70,7 +71,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ connections: connectionsWithProfiles });
   } catch (error) {
-    console.error("GET /api/trades/connections error:", error);
+    logger.error("GET /api/trades/connections error:", error);
     return NextResponse.json({ error: "Failed to fetch connections" }, { status: 500 });
   }
 }
@@ -123,7 +124,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ connection }, { status: 201 });
   } catch (error) {
-    console.error("POST /api/trades/connections error:", error);
+    logger.error("POST /api/trades/connections error:", error);
     return NextResponse.json({ error: "Failed to create connection" }, { status: 500 });
   }
 }
@@ -175,7 +176,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ connection: updated });
   } catch (error) {
-    console.error("PATCH /api/trades/connections error:", error);
+    logger.error("PATCH /api/trades/connections error:", error);
     return NextResponse.json({ error: "Failed to update connection" }, { status: 500 });
   }
 }
@@ -218,7 +219,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/trades/connections error:", error);
+    logger.error("DELETE /api/trades/connections error:", error);
     return NextResponse.json({ error: "Failed to delete connection" }, { status: 500 });
   }
 }

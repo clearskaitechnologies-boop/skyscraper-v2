@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -144,7 +145,7 @@ async function handleCheckout(request: NextRequest) {
       checkoutUrl: session.url,
     });
   } catch (error) {
-    console.error("[STRIPE_CHECKOUT] Error:", error);
+    logger.error("[STRIPE_CHECKOUT] Error:", error);
     return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { logger } from "@/lib/logger";
 import { AlertCircle,CheckCircle, Clock, FileText, XCircle } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
@@ -27,7 +28,7 @@ export const JobHistoryPanel: React.FC = () => {
         setJobs(data.jobs || []);
       }
     } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+      logger.error("Failed to fetch jobs:", error);
     } finally {
       setLoading(false);
     }

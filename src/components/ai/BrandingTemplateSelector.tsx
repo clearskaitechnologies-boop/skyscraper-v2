@@ -2,6 +2,7 @@
 "use client";
 
 import { FileCheck, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import {
@@ -47,7 +48,7 @@ export function BrandingTemplateSelector({ onApplyTemplate }: BrandingTemplateSe
           }
         }
       } catch (error) {
-        console.error("Failed to fetch templates:", error);
+        logger.error("Failed to fetch templates:", error);
       } finally {
         setLoading(false);
       }

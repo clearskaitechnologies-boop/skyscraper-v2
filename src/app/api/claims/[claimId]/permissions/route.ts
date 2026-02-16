@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
 import { getClaimPermissions } from "@/lib/auth/permissions";
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
-    console.error("[permissions] Error:", error);
+    logger.error("[permissions] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch permissions" },
       { status: 500 }

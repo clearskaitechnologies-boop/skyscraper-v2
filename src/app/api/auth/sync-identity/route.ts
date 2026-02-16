@@ -13,6 +13,7 @@
  */
 
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getUserIdentity } from "@/lib/identity/userIdentity";
@@ -67,7 +68,7 @@ export async function POST() {
 
     return response;
   } catch (error: any) {
-    console.error("[/api/auth/sync-identity] Error:", error);
+    logger.error("[/api/auth/sync-identity] Error:", error);
     return NextResponse.json(
       { error: "Failed to sync identity", message: error.message },
       { status: 500 }

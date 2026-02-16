@@ -1,6 +1,7 @@
 // app/api/video/create/route.ts
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { buildClaimVideoScript } from "@/lib/ai/video/buildClaimVideoScript";
@@ -74,7 +75,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url });
   } catch (err: any) {
-    console.error("Video generation error:", err);
+    logger.error("Video generation error:", err);
     return NextResponse.json({ error: err.message || "Failed to create video" }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 // src/app/api/contacts/[contactId]/route.ts
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { withOrgScope } from "@/lib/auth/tenant";
@@ -52,7 +53,7 @@ export const GET = withOrgScope(
         },
       });
     } catch (error: any) {
-      console.error("[GET /api/contacts/:id] Error:", error);
+      logger.error("[GET /api/contacts/:id] Error:", error);
       return NextResponse.json(
         { error: error.message || "Failed to fetch contact" },
         { status: 500 }
@@ -138,7 +139,7 @@ export const PATCH = withOrgScope(
         },
       });
     } catch (error: any) {
-      console.error("[PATCH /api/contacts/:id] Error:", error);
+      logger.error("[PATCH /api/contacts/:id] Error:", error);
       return NextResponse.json(
         { error: error.message || "Failed to update contact" },
         { status: 500 }

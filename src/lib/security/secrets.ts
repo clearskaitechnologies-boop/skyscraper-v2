@@ -6,6 +6,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 /**
  * Required environment variables for production
@@ -60,7 +61,7 @@ export function getSecret(key: string, fallback?: string): string {
 
   if (!value) {
     if (fallback) {
-      console.warn(`⚠️ Using fallback for ${key}`);
+      logger.warn(`⚠️ Using fallback for ${key}`);
       return fallback;
     }
     throw new Error(`Missing required secret: ${key}`);
@@ -225,7 +226,7 @@ export function getEnvironmentConfig(): EnvironmentConfig {
   }
 
   if (validation.warnings.length > 0 && isProduction()) {
-    console.warn(`⚠️ Missing recommended environment variables: ${validation.warnings.join(", ")}`);
+    logger.warn(`⚠️ Missing recommended environment variables: ${validation.warnings.join(", ")}`);
   }
 
   return {

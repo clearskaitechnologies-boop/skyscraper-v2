@@ -7,6 +7,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   Brain,
@@ -20,7 +21,7 @@ import {
   TrendingUp,
   Zap,
 } from "lucide-react";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AIControlPanelProps {
   claimId: string;
@@ -117,7 +118,7 @@ export function AIControlPanel({
         updateTasksFromAnalysis(data.analysis);
       }
     } catch (error) {
-      console.error("[AIControlPanel] Failed to fetch analysis:", error);
+      logger.error("[AIControlPanel] Failed to fetch analysis:", error);
     }
   };
 
@@ -176,7 +177,7 @@ export function AIControlPanel({
         throw new Error(data.error);
       }
     } catch (error: any) {
-      console.error(`[AIControlPanel] Task ${taskId} failed:`, error);
+      logger.error(`[AIControlPanel] Task ${taskId} failed:`, error);
       setTasks((prev) =>
         prev.map((t) => (t.id === taskId ? { ...t, status: "error" as const } : t))
       );
@@ -207,7 +208,7 @@ export function AIControlPanel({
           setPhotoCount(data.photos?.length || 0);
         }
       } catch (error) {
-        console.error("[AIControlPanel] Failed to check photos:", error);
+        logger.error("[AIControlPanel] Failed to check photos:", error);
       } finally {
         setPhotoCheckComplete(true);
       }
@@ -226,7 +227,7 @@ export function AIControlPanel({
     setGeneratingReport(true);
 
     try {
-      console.log("[AIControlPanel] Fetching photos for claim:", claimId);
+      logger.debug("[AIControlPanel] Fetching photos for claim:", claimId);
 
       // Fetch photos for the claim
       const photosResponse = await fetch(`/api/claims/${claimId}/photos`);
@@ -236,7 +237,7 @@ export function AIControlPanel({
       }
 
       const photosData = await photosResponse.json();
-      console.log("[AIControlPanel] Photos response:", photosData);
+      logger.debug("[AIControlPanel] Photos response:", photosData);
 
       // Map to photo URLs (handle both photoUrl and publicUrl field names)
       const images =
@@ -248,7 +249,7 @@ export function AIControlPanel({
         return;
       }
 
-      console.log("[AIControlPanel] Generating report with", images.length, "images");
+      logger.debug("[AIControlPanel] Generating report with", images.length, "images");
 
       const response = await fetch("/api/ai/report-builder", {
         method: "POST",
@@ -265,7 +266,7 @@ export function AIControlPanel({
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-      console.log("[AIControlPanel] Report generated, opening PDF...");
+      logger.debug("[AIControlPanel] Report generated, opening PDF...");
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -286,7 +287,7 @@ export function AIControlPanel({
       // Cleanup object URL after a delay
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error: any) {
-      console.error("[AIControlPanel] Report generation failed:", error);
+      logger.error("[AIControlPanel] Report generation failed:", error);
       alert(
         `Failed to generate report: ${error.message || "Unknown error"}\n\nPlease check that photos are uploaded and try again.`
       );
@@ -303,7 +304,7 @@ export function AIControlPanel({
     setGeneratingEnhanced(true);
 
     try {
-      console.log("[AIControlPanel] Generating enhanced professional report...");
+      logger.debug("[AIControlPanel] Generating enhanced professional report...");
 
       const response = await fetch("/api/ai/enhanced-report-builder", {
         method: "POST",
@@ -324,7 +325,7 @@ export function AIControlPanel({
         throw new Error(errorData.error || `Server error: ${response.status}`);
       }
 
-      console.log("[AIControlPanel] Enhanced report generated, opening PDF...");
+      logger.debug("[AIControlPanel] Enhanced report generated, opening PDF...");
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
@@ -345,7 +346,7 @@ export function AIControlPanel({
       // Cleanup object URL after a delay
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error: any) {
-      console.error("[AIControlPanel] Enhanced report generation failed:", error);
+      logger.error("[AIControlPanel] Enhanced report generation failed:", error);
       alert(
         `Failed to generate enhanced report: ${error.message || "Unknown error"}\n\nPlease check that photos are uploaded and property details are complete.`
       );

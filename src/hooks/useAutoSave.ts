@@ -19,6 +19,7 @@
  */
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -55,7 +56,7 @@ export function useAutoSave({
   // Start draft (creates packet and returns packetId)
   const startDraft = async (): Promise<string | null> => {
     if (!userId) {
-      console.warn("[useAutoSave] No userId, skipping start draft");
+      logger.warn("[useAutoSave] No userId, skipping start draft");
       return null;
     }
 
@@ -81,7 +82,7 @@ export function useAutoSave({
       setPacketId(result.packetId);
       return result.packetId;
     } catch (err) {
-      console.error("[useAutoSave] Start draft error:", err);
+      logger.error("[useAutoSave] Start draft error:", err);
       toast.error("Failed to create draft", {
         description: err instanceof Error ? err.message : String(err),
       });
@@ -93,12 +94,12 @@ export function useAutoSave({
   // Save fragment (merges data into existing packet)
   const saveFragment = async (targetPacketId: string): Promise<void> => {
     if (!userId) {
-      console.warn("[useAutoSave] No userId, skipping save");
+      logger.warn("[useAutoSave] No userId, skipping save");
       return;
     }
 
     if (Object.keys(data).length === 0) {
-      console.warn("[useAutoSave] Empty data, skipping save");
+      logger.warn("[useAutoSave] Empty data, skipping save");
       return;
     }
 
@@ -133,7 +134,7 @@ export function useAutoSave({
       setSavedAt(result.savedAt);
       hasUnsavedChangesRef.current = false;
     } catch (err) {
-      console.error("[useAutoSave] Save error:", err);
+      logger.error("[useAutoSave] Save error:", err);
       toast.error("Autosave failed", {
         description: "Your changes weren't saved. Please try again.",
       });

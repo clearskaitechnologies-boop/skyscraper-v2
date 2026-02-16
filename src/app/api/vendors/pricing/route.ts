@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import {
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error) {
-    console.error("Vendor pricing error:", error);
+    logger.error("Vendor pricing error:", error);
     return NextResponse.json({ error: "Failed to fetch pricing" }, { status: 500 });
   }
 }

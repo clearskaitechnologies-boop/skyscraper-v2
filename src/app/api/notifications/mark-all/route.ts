@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -35,7 +36,7 @@ export async function POST() {
       markedRead: result.count,
     });
   } catch (error: any) {
-    console.error("[POST /api/notifications/mark-all] Error:", error);
+    logger.error("[POST /api/notifications/mark-all] Error:", error);
     return NextResponse.json({ error: "Failed to mark notifications" }, { status: 500 });
   }
 }

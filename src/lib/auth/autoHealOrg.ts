@@ -12,6 +12,7 @@
  */
 
 import { ensureOrgForUser } from "@/lib/auth/ensureOrgForUser";
+import { logger } from "@/lib/logger";
 import { inspectOrgContext, type OrgContextReport } from "@/lib/auth/inspectOrgContext";
 import prisma from "@/lib/prisma";
 
@@ -55,7 +56,7 @@ export async function autoHealOrg(): Promise<HealResult> {
     switch (report.status) {
       case "no-clerk-user":
         // Can't heal - user needs to sign in
-        console.log("[AutoHeal] ⚠️ No Clerk user - cannot heal");
+        logger.debug("[AutoHeal] ⚠️ No Clerk user - cannot heal");
         return {
           healed: false,
           actions,
@@ -63,7 +64,7 @@ export async function autoHealOrg(): Promise<HealResult> {
         };
 
       case "db-user-missing":
-        console.log("[AutoHeal] 🔧 Creating missing database user...");
+        logger.debug("[AutoHeal] 🔧 Creating missing database user...");
 
         if (!report.email || !report.userId) {
           throw new Error("Cannot create user without email/userId");
@@ -90,7 +91,7 @@ export async function autoHealOrg(): Promise<HealResult> {
         continue; // Re-run inspection
 
       case "no-org":
-        console.log("[AutoHeal] 🏢 No org found - creating new organization...");
+        logger.debug("[AutoHeal] 🏢 No org found - creating new organization...");
 
         if (!report.userId) {
           throw new Error("Cannot create org without userId");
@@ -101,11 +102,11 @@ export async function autoHealOrg(): Promise<HealResult> {
 
         actions.push("created-org");
         actions.push("created-membership");
-        console.log("[AutoHeal] ✅ Created org:", org.id);
+        logger.debug("[AutoHeal] ✅ Created org:", org.id);
         continue; // Re-run inspection
 
       case "membership-broken":
-        console.log("[AutoHeal] 🔗 Fixing broken membership (legacy orgId)...");
+        logger.debug("[AutoHeal] 🔗 Fixing broken membership (legacy orgId)...");
 
         if (!report.userId || !report.orgId) {
           throw new Error("Cannot fix membership without userId/orgId");
@@ -137,7 +138,7 @@ export async function autoHealOrg(): Promise<HealResult> {
         continue; // Re-run inspection
 
       case "multiple-orgs":
-        console.log("[AutoHeal] 🧹 Cleaning duplicate org memberships...");
+        logger.debug("[AutoHeal] 🧹 Cleaning duplicate org memberships...");
 
         if (!report.orgIds || report.orgIds.length < 2) {
           throw new Error("multiple-orgs status but no orgIds");
@@ -155,11 +156,11 @@ export async function autoHealOrg(): Promise<HealResult> {
         });
 
         actions.push(`removed-${deleteOrgIds.length}-duplicate-memberships`);
-        console.log("[AutoHeal] ✅ Kept org:", keepOrgId, "Removed:", deleteOrgIds.length);
+        logger.debug("[AutoHeal] ✅ Kept org:", keepOrgId, "Removed:", deleteOrgIds.length);
         continue; // Re-run inspection
 
       case "org-missing":
-        console.log("[AutoHeal] 🗑️ Cleaning orphaned membership...");
+        logger.debug("[AutoHeal] 🗑️ Cleaning orphaned membership...");
 
         // Delete the broken membership
         await prisma.user_organizations.deleteMany({
@@ -183,7 +184,7 @@ export async function autoHealOrg(): Promise<HealResult> {
   }
 
   // Max attempts reached
-  console.error("[AutoHeal] ❌ Max heal attempts reached");
+  logger.error("[AutoHeal] ❌ Max heal attempts reached");
   const finalReport = await inspectOrgContext();
   return {
     healed: false,

@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, Image as ImageIcon, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -65,7 +66,7 @@ export function CompletionUploadZone({
         toast.success(`${urls.length} ${type}(s) uploaded successfully`);
         if (onUploadComplete) onUploadComplete();
       } catch (error: unknown) {
-        console.error("Upload error:", error);
+        logger.error("Upload error:", error);
         toast.error(`Upload failed: ${error instanceof Error ? error.message : "Unknown error"}`);
       } finally {
         setUploading(false);

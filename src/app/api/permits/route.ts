@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
 
     return apiOk({ permits, summary });
   } catch (err: any) {
-    console.error("[permits-get]", err);
+    logger.error("[permits-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -122,7 +123,7 @@ export async function POST(req: NextRequest) {
 
     return apiOk({ permit }, { status: 201 });
   } catch (err: any) {
-    console.error("[permits-post]", err);
+    logger.error("[permits-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

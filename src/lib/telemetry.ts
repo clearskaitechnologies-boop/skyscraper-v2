@@ -1,11 +1,12 @@
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
 type JsonValue = any;
 
 async function safe<T>(label: string, fn: () => Promise<T>): Promise<T | null> {
   try {
     return await fn();
   } catch (error) {
-    console.warn(`[telemetry] ${label} failed`, error);
+    logger.warn(`[telemetry] ${label} failed`, error);
     return null;
   }
 }

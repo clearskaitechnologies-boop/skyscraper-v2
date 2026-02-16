@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -40,7 +41,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     return NextResponse.json({ activity });
   } catch (error) {
-    console.error(`[GET /api/network/clients/${slug}/activity]`, error);
+    logger.error(`[GET /api/network/clients/${slug}/activity]`, error);
     return NextResponse.json({ error: "Failed to fetch activity" }, { status: 500 });
   }
 }
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest, { params }: Params) {
 
     return NextResponse.json({ activity }, { status: 201 });
   } catch (error) {
-    console.error(`[POST /api/network/clients/${slug}/activity]`, error);
+    logger.error(`[POST /api/network/clients/${slug}/activity]`, error);
     return NextResponse.json({ error: "Failed to create activity" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 // lib/ai/video/placeholderVideo.ts
 
 import type { VideoScript } from "./types";
+import { logger } from "@/lib/logger";
 
 /**
  * Creates a simple placeholder video when no real video provider is available.
@@ -12,7 +13,7 @@ import type { VideoScript } from "./types";
  * - Integration with simpler video services
  */
 export async function createPlaceholderVideo(script: VideoScript): Promise<Buffer> {
-  console.log("[Placeholder Video] Generating fallback video...");
+  logger.debug("[Placeholder Video] Generating fallback video...");
 
   // For now, return a minimal MP4 buffer that represents "video in progress"
   // In a real implementation, you would:
@@ -35,7 +36,7 @@ export async function createPlaceholderVideo(script: VideoScript): Promise<Buffe
   // For now, we'll create a small valid MP4 file header + metadata
   const mp4Header = createMinimalMP4(jsonString);
 
-  console.log("[Placeholder Video] Generated placeholder MP4");
+  logger.debug("[Placeholder Video] Generated placeholder MP4");
   return mp4Header;
 }
 

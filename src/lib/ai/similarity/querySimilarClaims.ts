@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * Find similar claims using cosine similarity
@@ -14,7 +15,7 @@ export async function findSimilarClaims(
   limit = 5
 ): Promise<{ claimId: string; score: number }[]> {
   // claimsEmbedding model doesn't exist in schema
-  console.log(`[similarity] Would find similar claims to ${queryClaimId}`);
+  logger.debug(`[similarity] Would find similar claims to ${queryClaimId}`);
   return [];
 }
 
@@ -26,7 +27,7 @@ export async function findSimilarClaimsByText(
   limit = 5
 ): Promise<{ claimId: string; score: number }[]> {
   // claimsEmbedding model doesn't exist in schema
-  console.log(`[similarity] Would find similar claims by text query`);
+  logger.debug(`[similarity] Would find similar claims by text query`);
   return [];
 }
 

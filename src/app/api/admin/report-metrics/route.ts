@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getReportMetrics } from "@/lib/analytics/reportMetrics";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(metrics);
   } catch (error) {
-    console.error("[Admin Report Metrics] Error:", error);
+    logger.error("[Admin Report Metrics] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

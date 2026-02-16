@@ -1,6 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
+import { logger } from "@/lib/logger";
 import { AlertTriangle, Calendar, Loader2, MapPin } from "lucide-react";
 import { useState } from "react";
 
@@ -106,7 +107,7 @@ export function QuickDOLFinder({
       setCandidates(normalized);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to search for DOL candidates");
-      console.error("Quick DOL search error:", err);
+      logger.error("Quick DOL search error:", err);
     } finally {
       setLoading(false);
     }

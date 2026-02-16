@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to fetch team members";
-    console.error("[GET /api/team/members] Error:", error);
+    logger.error("[GET /api/team/members] Error:", error);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

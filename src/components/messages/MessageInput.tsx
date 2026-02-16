@@ -1,6 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -36,11 +37,11 @@ export default function MessageInput({ threadId, onMessageSent }: MessageInputPr
         onMessageSent?.();
       } else {
         const error = await res.json().catch(() => ({ error: "Unknown error" }));
-        console.error("[MessageInput] Send failed:", error);
+        logger.error("[MessageInput] Send failed:", error);
         toast.error(error.error || "Failed to send message");
       }
     } catch (error) {
-      console.error("Send message error:", error);
+      logger.error("Send message error:", error);
       toast.error("Failed to send message. Please try again.");
     } finally {
       setSending(false);

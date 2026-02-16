@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { CompanyBranding,getBrandingForUser } from "./branding";
 import { getSupabaseAdmin } from "./supabaseAdmin";
@@ -44,7 +45,7 @@ export async function loadWizardContext({
         lead = data;
       }
     } catch (err) {
-      console.error("[loadWizardContext] Error loading lead:", err);
+      logger.error("[loadWizardContext] Error loading lead:", err);
     }
   }
 
@@ -58,7 +59,7 @@ export async function loadWizardContext({
         job = data;
       }
     } catch (err) {
-      console.error("[loadWizardContext] Error loading job:", err);
+      logger.error("[loadWizardContext] Error loading job:", err);
     }
   }
 

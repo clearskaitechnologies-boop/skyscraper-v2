@@ -5,6 +5,7 @@
  */
 
 import { withConditionalCache } from "@/lib/ai/cache";
+import { logger } from "@/lib/logger";
 import { getOpenAI } from "@/lib/ai/client";
 import { withConditionalDedupe } from "@/lib/ai/dedupe";
 import { selectModelForOrg } from "@/lib/ai/modeSelector";
@@ -150,7 +151,7 @@ Return ONLY valid JSON in this exact format:
 
     return script;
   } catch (error: any) {
-    console.error("Error generating video script:", error);
+    logger.error("Error generating video script:", error);
 
     // Return safe fallback script
     return {

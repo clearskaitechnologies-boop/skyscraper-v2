@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { assembleClaimFolder } from "@/lib/claims-folder/folderAssembler";
@@ -436,7 +437,7 @@ export async function POST(request: NextRequest) {
       warnings: result.warnings,
     });
   } catch (error) {
-    console.error("Error in claims folder assembly:", error);
+    logger.error("Error in claims folder assembly:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }

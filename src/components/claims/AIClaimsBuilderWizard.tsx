@@ -1,4 +1,5 @@
 "use client";
+import { logger } from "@/lib/logger";
 import {
   ClipboardList,
   CloudRain,
@@ -224,7 +225,7 @@ export function AIClaimsBuilderWizard({
         });
         setNarratives(n);
       } catch (e) {
-        console.warn("Narratives generation failed", e);
+        logger.warn("Narratives generation failed", e);
       } finally {
         setNarrativesLoading(false);
       }

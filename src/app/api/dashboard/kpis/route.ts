@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -37,7 +38,7 @@ export async function GET() {
           select: { amount: true },
         })
         .catch((err) => {
-          console.error("[KPI] MTD revenue calculation failed:", err);
+          logger.error("[KPI] MTD revenue calculation failed:", err);
           return [] as { amount: any }[];
         }),
       // Claims metrics
@@ -52,7 +53,7 @@ export async function GET() {
           },
         })
         .catch((err) => {
-          console.error("[KPI] Claims metrics calculation failed:", err);
+          logger.error("[KPI] Claims metrics calculation failed:", err);
           return [] as { id: string; status: string | null; createdAt: Date; updatedAt: Date }[];
         }),
     ]);
@@ -102,7 +103,7 @@ export async function GET() {
 
     return NextResponse.json(kpis);
   } catch (err) {
-    console.error("[KPI_ERROR]", err);
+    logger.error("[KPI_ERROR]", err);
     return NextResponse.json({ error: "Failed to load KPIs" }, { status: 500 });
   }
 }

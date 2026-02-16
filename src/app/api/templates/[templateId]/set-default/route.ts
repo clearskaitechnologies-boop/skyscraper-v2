@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { prismaMaybeModel } from "@/lib/db/prismaModel";
@@ -54,7 +55,7 @@ export async function POST(request: Request, { params }: { params: { templateId:
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Failed to set default template:", error);
+    logger.error("Failed to set default template:", error);
     return NextResponse.json({ error: "Failed to set default template" }, { status: 500 });
   }
 }

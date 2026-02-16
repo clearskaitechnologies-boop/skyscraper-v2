@@ -6,6 +6,7 @@
  */
 
 import { callAI, getAIConfig } from "@/lib/ai/aiAssistant";
+import { logger } from "@/lib/logger";
 import { logAIAction } from "@/lib/ai/feedback/logAction";
 
 export interface EstimateRequest {
@@ -121,7 +122,7 @@ export async function generateCostEstimate(request: EstimateRequest): Promise<Co
 
     return final;
   } catch (error) {
-    console.error("Cost estimation failed:", error);
+    logger.error("Cost estimation failed:", error);
     throw new Error("Failed to generate cost estimate");
   }
 }
@@ -189,7 +190,7 @@ Return as JSON with this structure:
     // Calculate subtotals and totals
     return calculateTotals(estimate);
   } catch (error) {
-    console.error("AI estimate generation failed:", error);
+    logger.error("AI estimate generation failed:", error);
 
     // Return basic fallback estimate
     return generateFallbackEstimate(request);

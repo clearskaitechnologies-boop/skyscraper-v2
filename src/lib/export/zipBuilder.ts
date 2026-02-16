@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * ZIP Builder Stub
  *
@@ -16,7 +18,7 @@ export interface ZipEntry {
  * Stub implementation
  */
 export async function createZip(entries: ZipEntry[]): Promise<Buffer> {
-  console.log(`[ZipBuilder] Stub: Would create ZIP with ${entries.length} entries`);
+  logger.debug(`[ZipBuilder] Stub: Would create ZIP with ${entries.length} entries`);
   // Return empty buffer - actual implementation would use archiver or similar
   return Buffer.from([]);
 }
@@ -25,14 +27,14 @@ export async function createZip(entries: ZipEntry[]): Promise<Buffer> {
  * Add file to ZIP archive
  */
 export function addFileToZip(archive: any, name: string, content: Buffer | string): void {
-  console.log(`[ZipBuilder] Stub: Would add ${name} to ZIP`);
+  logger.debug(`[ZipBuilder] Stub: Would add ${name} to ZIP`);
 }
 
 /**
  * Finalize and get ZIP buffer
  */
 export async function finalizeZip(archive: any): Promise<Buffer> {
-  console.log("[ZipBuilder] Stub: Would finalize ZIP");
+  logger.debug("[ZipBuilder] Stub: Would finalize ZIP");
   return Buffer.from([]);
 }
 
@@ -47,7 +49,7 @@ export async function buildEstimateZip(
     includePDFs?: boolean;
   }
 ): Promise<Buffer> {
-  console.log(`[ZipBuilder] Building estimate ZIP for claim ${claimId}`);
+  logger.debug(`[ZipBuilder] Building estimate ZIP for claim ${claimId}`);
   const entries: ZipEntry[] = [];
   // Stub: would gather files based on options
   return createZip(entries);
@@ -65,7 +67,7 @@ export async function buildClaimZip(
     includePhotos?: boolean;
   }
 ): Promise<Buffer> {
-  console.log(`[ZipBuilder] Building claim ZIP for claim ${claimId}, org ${orgId}`);
+  logger.debug(`[ZipBuilder] Building claim ZIP for claim ${claimId}, org ${orgId}`);
   const entries: ZipEntry[] = [];
   // Stub: would gather claim files based on options
   return createZip(entries);

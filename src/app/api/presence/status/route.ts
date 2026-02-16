@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -112,7 +113,7 @@ export async function PATCH(req: NextRequest) {
     });
     return NextResponse.json({ ok: true, ...updated });
   } catch (error) {
-    console.error("[presence/status PATCH]", error);
+    logger.error("[presence/status PATCH]", error);
     return NextResponse.json({ error: "Failed to update status" }, { status: 500 });
   }
 }

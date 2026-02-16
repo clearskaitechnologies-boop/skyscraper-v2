@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
@@ -29,7 +30,7 @@ export async function GET() {
 
     return NextResponse.json({ branding: branding ?? null });
   } catch (error: any) {
-    console.error("[Branding GET] Error:", error);
+    logger.error("[Branding GET] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -87,7 +88,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ branding: created });
     }
   } catch (error: any) {
-    console.error("[Branding POST] Error:", error);
+    logger.error("[Branding POST] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@
  */
 
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext, type OrgContextResult } from "@/lib/org/getActiveOrgContext";
 
@@ -20,7 +21,7 @@ export async function getOrgContextSafe(): Promise<OrgContextResult> {
     if (isRedirectError(error)) {
       throw error;
     }
-    console.error("[getOrgContextSafe] Unexpected error:", error);
+    logger.error("[getOrgContextSafe] Unexpected error:", error);
     return {
       ok: false,
       reason: "error",

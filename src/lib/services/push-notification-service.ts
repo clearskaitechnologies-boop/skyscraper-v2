@@ -9,10 +9,11 @@ let webpush: any = null;
 try {
   webpush = require("web-push");
 } catch {
-  console.log("web-push not installed - push notifications disabled");
+  logger.debug("web-push not installed - push notifications disabled");
 }
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Configure web-push (these should be set in environment)
 const VAPID_PUBLIC_KEY = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "";
@@ -33,7 +34,7 @@ if (webpush && isValidVapidKey(VAPID_PUBLIC_KEY) && isValidVapidKey(VAPID_PRIVAT
     webpush.setVapidDetails(VAPID_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
     vapidConfigured = true;
   } catch (error) {
-    console.warn("Failed to configure VAPID keys:", error);
+    logger.warn("Failed to configure VAPID keys:", error);
   }
 }
 
@@ -112,7 +113,7 @@ class PushNotificationService {
 
       return { success: true, subscriptionId: result[0].id };
     } catch (error) {
-      console.error("Error subscribing to push:", error);
+      logger.error("Error subscribing to push:", error);
       return { success: false };
     }
   }
@@ -129,7 +130,7 @@ class PushNotificationService {
       `;
       return { success: true };
     } catch (error) {
-      console.error("Error unsubscribing from push:", error);
+      logger.error("Error unsubscribing from push:", error);
       return { success: false };
     }
   }
@@ -143,7 +144,7 @@ class PushNotificationService {
   ): Promise<{ success: boolean; sent: number }> {
     try {
       if (!webpush || !vapidConfigured) {
-        console.warn("Web push not configured, storing notification only");
+        logger.warn("Web push not configured, storing notification only");
         // Still store the notification even if we can't send push
         await this.storeNotification(userId, payload);
         return { success: true, sent: 0 };
@@ -197,13 +198,13 @@ class PushNotificationService {
           if (error.statusCode === 410 || error.statusCode === 404) {
             await this.unsubscribe(sub.endpoint);
           }
-          console.error("Error sending push to subscription:", error);
+          logger.error("Error sending push to subscription:", error);
         }
       }
 
       return { success: true, sent };
     } catch (error) {
-      console.error("Error sending push notification:", error);
+      logger.error("Error sending push notification:", error);
       return { success: false, sent: 0 };
     }
   }
@@ -233,7 +234,7 @@ class PushNotificationService {
         VALUES (${userId}, ${payload.type}, ${payload.title}, ${payload.body}, ${JSON.stringify(payload.data || {})}::jsonb)
       `;
     } catch (error) {
-      console.error("Error storing notification:", error);
+      logger.error("Error storing notification:", error);
     }
   }
 
@@ -265,7 +266,7 @@ class PushNotificationService {
 
       return notifications;
     } catch (error) {
-      console.error("Error getting notifications:", error);
+      logger.error("Error getting notifications:", error);
       return [];
     }
   }
@@ -281,7 +282,7 @@ class PushNotificationService {
         WHERE id = ${notificationId} AND user_id = ${userId}
       `;
     } catch (error) {
-      console.error("Error marking notification as read:", error);
+      logger.error("Error marking notification as read:", error);
     }
   }
 
@@ -296,7 +297,7 @@ class PushNotificationService {
         WHERE user_id = ${userId} AND read = false
       `;
     } catch (error) {
-      console.error("Error marking all notifications as read:", error);
+      logger.error("Error marking all notifications as read:", error);
     }
   }
 
@@ -311,7 +312,7 @@ class PushNotificationService {
       `) as any[];
       return parseInt(result[0]?.count || "0", 10);
     } catch (error) {
-      console.error("Error getting unread count:", error);
+      logger.error("Error getting unread count:", error);
       return 0;
     }
   }

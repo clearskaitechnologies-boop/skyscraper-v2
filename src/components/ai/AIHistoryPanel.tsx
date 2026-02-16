@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 import { ChevronRight, Clock, Loader2 } from "lucide-react";
 import { useEffect,useState } from "react";
 
@@ -39,7 +40,7 @@ export function AIHistoryPanel({ type, onRestore, limit = 10 }: AIHistoryPanelPr
       const data = await res.json();
       setHistory(data.history || []);
     } catch (err) {
-      console.error("Failed to fetch AI history:", err);
+      logger.error("Failed to fetch AI history:", err);
       setError("Failed to load history");
       setHistory([]);
     } finally {

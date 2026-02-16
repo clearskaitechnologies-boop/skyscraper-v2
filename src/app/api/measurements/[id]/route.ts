@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -36,7 +37,7 @@ export async function GET(_req: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ ok: true, order });
   } catch (error) {
-    console.error("[MEASUREMENTS_GET_ERROR]", error);
+    logger.error("[MEASUREMENTS_GET_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed" },
       { status: 500 }
@@ -82,7 +83,7 @@ export async function PATCH(req: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ ok: true, order: updated });
   } catch (error) {
-    console.error("[MEASUREMENTS_UPDATE_ERROR]", error);
+    logger.error("[MEASUREMENTS_UPDATE_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed" },
       { status: 500 }
@@ -117,7 +118,7 @@ export async function DELETE(_req: NextRequest, { params }: RouteContext) {
 
     return NextResponse.json({ ok: true, message: "Order cancelled" });
   } catch (error) {
-    console.error("[MEASUREMENTS_DELETE_ERROR]", error);
+    logger.error("[MEASUREMENTS_DELETE_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed" },
       { status: 500 }

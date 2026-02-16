@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface CreateNotificationData {
   userId: string;
@@ -35,7 +36,7 @@ export async function createNotification(data: CreateNotificationData): Promise<
     });
     return notification.id;
   } catch (error) {
-    console.error("[CreateNotification] Error:", error);
+    logger.error("[CreateNotification] Error:", error);
     return null;
   }
 }
@@ -64,7 +65,7 @@ export async function createNotificationsForUsers(
     );
     return results.filter((r) => r.status === "fulfilled").length;
   } catch (error) {
-    console.error("[CreateNotification] Bulk create error:", error);
+    logger.error("[CreateNotification] Bulk create error:", error);
     return 0;
   }
 }

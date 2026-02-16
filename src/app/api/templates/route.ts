@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 // Universal Artifact System + Legacy Templates API
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -88,7 +89,7 @@ export async function POST(req: NextRequest) {
       userName,
       action: "TEMPLATE_SAVE",
       metadata: { templateName: name, isDefault: setAsDefault || false },
-    }).catch((err) => console.warn("[Templates] Failed to log save:", err));
+    }).catch((err) => logger.warn("[Templates] Failed to log save:", err));
 
     return NextResponse.json({
       success: true,

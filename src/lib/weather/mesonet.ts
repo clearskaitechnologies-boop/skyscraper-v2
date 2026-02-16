@@ -4,6 +4,7 @@
  */
 
 import type { WeatherEvent } from "@/types/weather";
+import { logger } from "@/lib/logger";
 
 const MESONET_API_BASE =
   process.env.MESONET_API_BASE || "https://mesonet.agron.iastate.edu/geojson";
@@ -51,13 +52,13 @@ export async function fetchMesonetReports(opts: {
     });
 
     if (!res.ok) {
-      console.warn(`Mesonet fetch failed: ${res.status} ${res.statusText}`);
+      logger.warn(`Mesonet fetch failed: ${res.status} ${res.statusText}`);
       return [];
     }
 
     const text = await res.text();
     if (!text || text.trim().length === 0) {
-      console.warn("Mesonet returned empty response");
+      logger.warn("Mesonet returned empty response");
       return [];
     }
 
@@ -77,7 +78,7 @@ export async function fetchMesonetReports(opts: {
       return lon >= minLon && lon <= maxLon && lat >= minLat && lat <= maxLat;
     });
   } catch (error) {
-    console.error("Mesonet fetch error:", error);
+    logger.error("Mesonet fetch error:", error);
     return [];
   }
 }

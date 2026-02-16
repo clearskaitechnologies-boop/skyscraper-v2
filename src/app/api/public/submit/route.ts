@@ -13,6 +13,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { handlePublicSubmit } from "@/lib/trades/public-intake";
 
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.error("[POST /api/public/submit] Error:", error);
+    logger.error("[POST /api/public/submit] Error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

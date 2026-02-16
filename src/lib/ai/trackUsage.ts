@@ -7,6 +7,7 @@
  */
 
 import prisma from "@/lib/prisma"; // Re-enabled for compile
+import { logger } from "@/lib/logger";
 
 export interface AiUsageParams {
   orgId: string;
@@ -38,7 +39,7 @@ export async function trackAiUsage(params: AiUsageParams): Promise<void> {
   //     },
   //   });
   // } catch (error) {
-  //   console.error("Failed to track AI usage:", error);
+  //   logger.error("Failed to track AI usage:", error);
   // }
 }
 

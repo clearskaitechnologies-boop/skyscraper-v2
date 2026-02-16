@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOrCreatePortalThread } from "@/lib/messages/getOrCreatePortalThread";
@@ -88,7 +89,7 @@ export async function GET(req: NextRequest) {
       messages: formattedMessages,
     });
   } catch (error: any) {
-    console.error("[GET /api/portal/messages] Error:", error);
+    logger.error("[GET /api/portal/messages] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch messages" },
       { status: 500 }
@@ -180,7 +181,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[POST /api/portal/messages] Error:", error);
+    logger.error("[POST /api/portal/messages] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to send message" }, { status: 500 });
   }
 }

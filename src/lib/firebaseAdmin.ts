@@ -1,4 +1,5 @@
 import { cert, getApps, initializeApp } from "firebase-admin/app";
+import { logger } from "@/lib/logger";
 import { getStorage } from "firebase-admin/storage";
 
 // Check if storage is enabled and all required env vars are present
@@ -39,7 +40,7 @@ if (isStorageEnabled && hasRequiredEnvs) {
   }
 } else {
   // Storage disabled or missing env vars - create no-op stubs
-  console.info("Firebase Storage disabled or not configured - running in degraded mode");
+  logger.info("Firebase Storage disabled or not configured - running in degraded mode");
 }
 
 // Export stubs that won't crash the app if storage is disabled

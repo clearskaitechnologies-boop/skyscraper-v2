@@ -1,4 +1,5 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { pool } from "@/server/db";
@@ -10,7 +11,7 @@ export async function loadBrandingForOrg(orgId: string | null) {
   try {
     return await prisma.org.findUnique({ where: { id: orgId } });
   } catch (err) {
-    console.error("loadBrandingForOrg error", err);
+    logger.error("loadBrandingForOrg error", err);
     return null;
   }
 }
@@ -67,7 +68,7 @@ export async function getBranding(orgId: string): Promise<OrgBranding | null> {
       updatedAt: row.updatedAt,
     };
   } catch (error) {
-    console.error("[getBranding] Error:", error);
+    logger.error("[getBranding] Error:", error);
     return null;
   }
 }
@@ -123,7 +124,7 @@ export async function loadBranding(): Promise<Branding | null> {
     .maybeSingle();
 
   if (error) {
-    console.error("loadBranding error", error);
+    logger.error("loadBranding error", error);
     return null;
   }
   return data as any;
@@ -137,7 +138,7 @@ export async function loadBrandingWithFallback(): Promise<Branding> {
     const b = await loadBranding();
     if (b) return b as Branding;
   } catch (e) {
-    console.warn("loadBrandingWithFallback: error loading remote branding", e);
+    logger.warn("loadBrandingWithFallback: error loading remote branding", e);
   }
   // map DefaultBrand shape to Branding
   return {
@@ -179,7 +180,7 @@ export interface CompanyBranding {
 export async function getBrandingForUser(clerkUserId: string): Promise<CompanyBranding | null> {
   try {
     if (!supabaseAdmin) {
-      console.warn("[getBrandingForUser] Supabase admin client not available");
+      logger.warn("[getBrandingForUser] Supabase admin client not available");
       return null;
     }
 
@@ -190,7 +191,7 @@ export async function getBrandingForUser(clerkUserId: string): Promise<CompanyBr
       .maybeSingle();
 
     if (error) {
-      console.error("[getBrandingForUser] Error:", error);
+      logger.error("[getBrandingForUser] Error:", error);
       return null;
     }
 
@@ -209,7 +210,7 @@ export async function getBrandingForUser(clerkUserId: string): Promise<CompanyBr
         }
       : null;
   } catch (err) {
-    console.error("[getBrandingForUser] Unexpected error:", err);
+    logger.error("[getBrandingForUser] Unexpected error:", err);
     return null;
   }
 }

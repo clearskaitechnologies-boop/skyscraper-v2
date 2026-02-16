@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -48,7 +49,7 @@ export async function GET() {
 
     return NextResponse.json({ data, total });
   } catch (error) {
-    console.error("Analytics API error (claims-status):", error);
+    logger.error("Analytics API error (claims-status):", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

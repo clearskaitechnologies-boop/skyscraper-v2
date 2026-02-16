@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -142,7 +143,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ connections: pros });
   } catch (error: any) {
-    console.error("[client/connections] Error:", error);
+    logger.error("[client/connections] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch connections" },
       { status: 500 }

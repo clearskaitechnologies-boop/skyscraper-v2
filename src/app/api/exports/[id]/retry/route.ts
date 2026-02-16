@@ -7,6 +7,7 @@ export const revalidate = 0;
 // ============================================================================
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("[Export Retry]", error);
+    logger.error("[Export Retry]", error);
     return NextResponse.json({ error: error.message || "Failed to retry export" }, { status: 500 });
   }
 }

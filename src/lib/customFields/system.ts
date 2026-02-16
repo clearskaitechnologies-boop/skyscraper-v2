@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type FieldType =
   | "TEXT"
@@ -97,7 +98,7 @@ export async function createCustomField(
 
     return field;
   } catch (error) {
-    console.error("Failed to create custom field:", error);
+    logger.error("Failed to create custom field:", error);
     throw error;
   }
 }
@@ -136,7 +137,7 @@ export async function updateCustomField(
 
     return field;
   } catch (error) {
-    console.error("Failed to update custom field:", error);
+    logger.error("Failed to update custom field:", error);
     throw error;
   }
 }
@@ -206,7 +207,7 @@ export async function setFieldValue(
 
     return fieldValue;
   } catch (error) {
-    console.error("Failed to set field value:", error);
+    logger.error("Failed to set field value:", error);
     throw error;
   }
 }
@@ -263,7 +264,7 @@ export async function bulkSetFieldValues(
       }
     }
   } catch (error) {
-    console.error("Failed to bulk set field values:", error);
+    logger.error("Failed to bulk set field values:", error);
     throw error;
   }
 }
@@ -406,7 +407,7 @@ export async function reorderCustomFields(
       });
     }
   } catch (error) {
-    console.error("Failed to reorder custom fields:", error);
+    logger.error("Failed to reorder custom fields:", error);
     throw error;
   }
 }
@@ -487,7 +488,7 @@ export async function getFieldUsageStats(fieldId: string): Promise<{
       topValues,
     };
   } catch (error) {
-    console.error("Failed to get field usage stats:", error);
+    logger.error("Failed to get field usage stats:", error);
     throw error;
   }
 }

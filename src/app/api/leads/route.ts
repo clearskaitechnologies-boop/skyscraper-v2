@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -87,7 +88,7 @@ const baseGET = async (request: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching leads:", error);
+    logger.error("Error fetching leads:", error);
     return apiError(
       500,
       "INTERNAL_ERROR",
@@ -120,7 +121,7 @@ const basePOST = async (request: NextRequest) => {
       }
     }
     if (!effectiveOrgId) {
-      console.error("[POST /api/leads] No orgId resolved after fallback");
+      logger.error("[POST /api/leads] No orgId resolved after fallback");
       return Response.json(
         { error: "Organization not found. Please contact support.", code: "NO_ORG" },
         { status: 403 }
@@ -259,7 +260,7 @@ const basePOST = async (request: NextRequest) => {
             address: fullAddress,
           });
         } catch (propError) {
-          console.warn("[POST /api/leads] Failed to create property profile:", propError);
+          logger.warn("[POST /api/leads] Failed to create property profile:", propError);
           // Don't fail the lead creation if property creation fails
         }
       }
@@ -323,13 +324,13 @@ const basePOST = async (request: NextRequest) => {
         },
       });
     } catch (activityError) {
-      console.warn("[POST /api/leads] Failed to create activity:", activityError);
+      logger.warn("[POST /api/leads] Failed to create activity:", activityError);
       // Don't fail the request
     }
 
     return Response.json({ lead, performance: { createMs } }, { status: 201 });
   } catch (error) {
-    console.error("Error creating lead:", error);
+    logger.error("Error creating lead:", error);
 
     // Provide more specific error messages
     if (error instanceof Error) {
@@ -454,7 +455,7 @@ const basePUT = async (request: NextRequest) => {
       lead,
     });
   } catch (error) {
-    console.error("Error converting lead:", error);
+    logger.error("Error converting lead:", error);
     return Response.json({ error: "Failed to convert lead" }, { status: 500 });
   }
 };

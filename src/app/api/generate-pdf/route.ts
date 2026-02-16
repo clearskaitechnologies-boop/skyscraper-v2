@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { makePdfContent } from "@/lib/ai";
 
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
     const content = await makePdfContent(prompt);
     return new Response(JSON.stringify({ data: { type: "pdf-text", content } }), { status: 200 });
   } catch (error) {
-    console.error("[GENERATE-PDF] Error:", error);
+    logger.error("[GENERATE-PDF] Error:", error);
     return new Response(JSON.stringify({ error: "PDF generation failed" }), { status: 500 });
   }
 }

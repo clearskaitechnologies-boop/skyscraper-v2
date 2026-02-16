@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import type { ReportType } from "@/lib/intelligence/report-builder";
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       report,
     });
   } catch (err: any) {
-    console.error("Error generating intelligence report:", err);
+    logger.error("Error generating intelligence report:", err);
     return NextResponse.json(
       { error: err.message || "Failed to generate intelligence report" },
       { status: 500 }

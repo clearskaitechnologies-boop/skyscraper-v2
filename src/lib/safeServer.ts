@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * SAFE SERVER WRAPPER
  *
@@ -14,7 +16,7 @@ export async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
     return await fn();
   } catch (err) {
-    console.error("[SAFE_SERVER] Caught error in server component:", err);
+    logger.error("[SAFE_SERVER] Caught error in server component:", err);
     return fallback;
   }
 }
@@ -26,7 +28,7 @@ export function safeSync<T>(fn: () => T, fallback: T): T {
   try {
     return fn();
   } catch (err) {
-    console.error("[SAFE_SERVER_SYNC] Caught error:", err);
+    logger.error("[SAFE_SERVER_SYNC] Caught error:", err);
     return fallback;
   }
 }

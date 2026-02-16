@@ -21,6 +21,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { OrgResolutionError, resolveOrg } from "@/lib/org/resolveOrg";
 
@@ -81,7 +82,7 @@ export function withOrgGuard(handler: GuardedHandler, opts?: { requiredRole?: st
 
       // ── 3. Audit log (writes only) ─────────────────────────────────
       if (method !== "GET" && method !== "HEAD" && method !== "OPTIONS") {
-        console.log(`[OrgGuard] ${method} ${path} | org=${orgId} user=${userId} role=${role}`);
+        logger.debug(`[OrgGuard] ${method} ${path} | org=${orgId} user=${userId} role=${role}`);
       }
 
       // ── 4. Execute handler ──────────────────────────────────────────
@@ -94,7 +95,7 @@ export function withOrgGuard(handler: GuardedHandler, opts?: { requiredRole?: st
       }
 
       // Unknown errors → 500 with logging
-      console.error(`[OrgGuard] ${method} ${path} — UNHANDLED ERROR:`, err);
+      logger.error(`[OrgGuard] ${method} ${path} — UNHANDLED ERROR:`, err);
       return NextResponse.json({ ok: false, error: "Internal Server Error" }, { status: 500 });
     }
   };

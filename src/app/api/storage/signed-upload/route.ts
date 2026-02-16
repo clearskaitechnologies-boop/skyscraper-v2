@@ -12,6 +12,7 @@ export const revalidate = 0;
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
-      console.error("Supabase configuration missing");
+      logger.error("Supabase configuration missing");
       return NextResponse.json(
         {
           error: "Storage not configured. Contact administrator.",
@@ -87,7 +88,7 @@ export async function POST(req: Request) {
       .createSignedUploadUrl(key);
 
     if (error) {
-      console.error("Failed to create signed upload URL:", error);
+      logger.error("Failed to create signed upload URL:", error);
       return NextResponse.json(
         {
           error: error.message || "Failed to generate upload URL",
@@ -105,7 +106,7 @@ export async function POST(req: Request) {
       expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 min
     });
   } catch (error: any) {
-    console.error("Signed upload URL generation failed:", error);
+    logger.error("Signed upload URL generation failed:", error);
 
     // Handle auth errors
     if (error.message?.includes("Unauthorized") || error.message?.includes("organization")) {

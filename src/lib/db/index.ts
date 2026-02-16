@@ -9,6 +9,7 @@
  */
 
 import { Pool, PoolClient, QueryResultRow } from "pg";
+import { logger } from "@/lib/logger";
 
 // =============================================================================
 // SINGLETON POOL (Vercel/Serverless Safe)
@@ -27,7 +28,7 @@ function makePool(): Pool {
       throw new Error("DATABASE_URL is not set");
     }
 
-    console.warn("[DB] DATABASE_URL missing — running in stub mode (local only)");
+    logger.warn("[DB] DATABASE_URL missing — running in stub mode (local only)");
     const stubError = new Error("DATABASE_URL is not set. Provide it to enable database access.");
 
     const stub: Partial<Pool> & { __stub: true } = {
@@ -69,7 +70,7 @@ function makePool(): Pool {
 const _pgPool: Pool = global.__pgPool ?? makePool();
 if (!global.__pgPool) {
   global.__pgPool = _pgPool;
-  console.log("✅ PostgreSQL singleton pool initialized");
+  logger.debug("✅ PostgreSQL singleton pool initialized");
 }
 
 // Primary export (recommended)
@@ -81,7 +82,7 @@ export const db: Pool = _pgPool; // Alias for pool (used in some API routes)
 
 // Log pool errors
 pgPool.on("error", (err) => {
-  console.error("❌ Unexpected database pool error:", err);
+  logger.error("❌ Unexpected database pool error:", err);
 });
 
 // =============================================================================
@@ -223,7 +224,7 @@ export async function closePool(): Promise<void> {
     // eslint-disable-next-line no-restricted-syntax
     await pgPool.end();
     global.__pgPool = undefined;
-    console.log("✅ PostgreSQL pool closed");
+    logger.debug("✅ PostgreSQL pool closed");
   }
 }
 

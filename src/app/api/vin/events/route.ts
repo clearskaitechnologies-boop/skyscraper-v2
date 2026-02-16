@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[VIN Events] Error:", error);
+    logger.error("[VIN Events] Error:", error);
     return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }
 }

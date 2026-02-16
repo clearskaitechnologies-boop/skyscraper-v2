@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -101,7 +102,7 @@ export async function POST() {
     if (auth instanceof NextResponse) return auth;
     const { orgId, userId } = auth;
 
-    console.info("[TEST_DOCX] Generating retail packet with sample photos...");
+    logger.info("[TEST_DOCX] Generating retail packet with sample photos...");
 
     const blob = await generateClaimPacket({
       data: SAMPLE_RETAIL_DATA,
@@ -114,7 +115,7 @@ export async function POST() {
     const arrayBuffer = await blob.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    console.info(`[TEST_DOCX] Generation successful (${buffer.length} bytes)`);
+    logger.info(`[TEST_DOCX] Generation successful (${buffer.length} bytes)`);
 
     return new NextResponse(buffer, {
       status: 200,
@@ -124,7 +125,7 @@ export async function POST() {
       },
     });
   } catch (error) {
-    console.error("[TEST_DOCX] Generation failed:", error);
+    logger.error("[TEST_DOCX] Generation failed:", error);
 
     Sentry.captureException(error, {
       tags: { component: "test-docx-generator" },

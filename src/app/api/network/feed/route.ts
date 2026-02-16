@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -174,7 +175,7 @@ export async function GET(request: Request) {
       total: feedItems.length,
     });
   } catch (error: any) {
-    console.error("[Network Feed] Error:", error);
+    logger.error("[Network Feed] Error:", error);
     return NextResponse.json({ error: "Failed to fetch feed" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { Briefcase,Mail, Phone, Plus, Trash2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -64,7 +65,7 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
         setAllTrades(data.trades || []);
       }
     } catch (error) {
-      console.error("Failed to fetch trades:", error);
+      logger.error("Failed to fetch trades:", error);
       toast({
         title: "Error",
         description: "Failed to load trade partners",
@@ -113,7 +114,7 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
         });
       }
     } catch (error) {
-      console.error("Failed to assign trade:", error);
+      logger.error("Failed to assign trade:", error);
       toast({
         title: "Error",
         description: "Failed to assign trade partner",
@@ -146,7 +147,7 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
         });
       }
     } catch (error) {
-      console.error("Failed to unassign trade:", error);
+      logger.error("Failed to unassign trade:", error);
       toast({
         title: "Error",
         description: "Failed to unassign trade partner",

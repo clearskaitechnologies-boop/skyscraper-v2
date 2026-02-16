@@ -4,6 +4,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getContentPolicy, moderateContent, quickCheck } from "@/lib/services/content-moderation";
@@ -44,7 +45,7 @@ export async function POST(req: NextRequest) {
       sanitizedContent: result.sanitizedContent,
     });
   } catch (error) {
-    console.error("[ContentModeration POST] Error:", error);
+    logger.error("[ContentModeration POST] Error:", error);
     return NextResponse.json({ error: "Moderation check failed" }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface WorkflowTrigger {
   type: string;
@@ -39,7 +40,7 @@ export interface StageContext {
 export async function triggerStage(context: StageContext): Promise<WorkflowResult> {
   const { leadId, orgId, stageName, eventType, metadata } = context;
 
-  console.log(`[WorkflowEngine] Triggering stage: ${stageName} for lead: ${leadId}`);
+  logger.debug(`[WorkflowEngine] Triggering stage: ${stageName} for lead: ${leadId}`);
 
   // Find pending workflow actions for this lead and action type
   const workflowActions = await prisma.workflowAction.findMany({
@@ -76,7 +77,7 @@ export async function triggerStage(context: StageContext): Promise<WorkflowResul
           break;
         default:
           // Execute generic stage action
-          console.log(`[WorkflowEngine] Executing generic action: ${workflow.actionType}`);
+          logger.debug(`[WorkflowEngine] Executing generic action: ${workflow.actionType}`);
       }
 
       // Update workflow action status
@@ -108,7 +109,7 @@ export async function triggerStage(context: StageContext): Promise<WorkflowResul
         },
       });
     } catch (error) {
-      console.error(`[WorkflowEngine] Failed: ${workflow.actionType}`, error);
+      logger.error(`[WorkflowEngine] Failed: ${workflow.actionType}`, error);
 
       // Update workflow action with failure
       await prisma.workflowAction.update({
@@ -140,7 +141,7 @@ export async function triggerStage(context: StageContext): Promise<WorkflowResul
  * Trigger workflows based on event type
  */
 export async function triggerWorkflows(trigger: WorkflowTrigger): Promise<WorkflowResult> {
-  console.log(`[WorkflowEngine] Triggering workflows for ${trigger.type}`);
+  logger.debug(`[WorkflowEngine] Triggering workflows for ${trigger.type}`);
 
   return triggerStage({
     leadId: trigger.entityId,
@@ -251,7 +252,7 @@ async function executeEmailAction(
   });
 
   if (!claim) {
-    console.warn(`[WorkflowEngine] Claim not found for email: ${leadId}`);
+    logger.warn(`[WorkflowEngine] Claim not found for email: ${leadId}`);
     return;
   }
 
@@ -266,7 +267,7 @@ async function executeEmailAction(
   }
 
   if (!recipientEmail) {
-    console.warn(`[WorkflowEngine] No recipient email for ${leadId}`);
+    logger.warn(`[WorkflowEngine] No recipient email for ${leadId}`);
     return;
   }
 
@@ -280,7 +281,7 @@ async function executeEmailAction(
     ON CONFLICT DO NOTHING
   `;
 
-  console.log(`[WorkflowEngine] Email queued to ${recipientEmail}`);
+  logger.debug(`[WorkflowEngine] Email queued to ${recipientEmail}`);
 }
 
 async function executeStatusUpdate(leadId: string, config: { status?: string }) {
@@ -291,7 +292,7 @@ async function executeStatusUpdate(leadId: string, config: { status?: string }) 
     data: { status: config.status, updatedAt: new Date() },
   });
 
-  console.log(`[WorkflowEngine] Status updated to ${config.status}`);
+  logger.debug(`[WorkflowEngine] Status updated to ${config.status}`);
 }
 
 async function executeCreateTask(
@@ -319,7 +320,7 @@ async function executeCreateTask(
     },
   });
 
-  console.log(`[WorkflowEngine] Task created: ${config.title}`);
+  logger.debug(`[WorkflowEngine] Task created: ${config.title}`);
 }
 
 async function executeNotifyTeam(
@@ -344,7 +345,7 @@ async function executeNotifyTeam(
     `;
   }
 
-  console.log(`[WorkflowEngine] Team notified (${recipients.length} users)`);
+  logger.debug(`[WorkflowEngine] Team notified (${recipients.length} users)`);
 }
 
 async function executeWebhookAction(
@@ -353,7 +354,7 @@ async function executeWebhookAction(
   metadata?: Record<string, any>
 ) {
   if (!config.url) {
-    console.warn("[WorkflowEngine] No webhook URL specified");
+    logger.warn("[WorkflowEngine] No webhook URL specified");
     return;
   }
 
@@ -370,5 +371,5 @@ async function executeWebhookAction(
     throw new Error(`Webhook failed: ${response.status}`);
   }
 
-  console.log(`[WorkflowEngine] Webhook sent to ${config.url}`);
+  logger.debug(`[WorkflowEngine] Webhook sent to ${config.url}`);
 }

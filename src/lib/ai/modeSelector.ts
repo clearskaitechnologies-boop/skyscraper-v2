@@ -13,6 +13,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import type { AIModel } from "./perf";
 
@@ -43,12 +44,12 @@ export async function selectModel(mode: AIMode, orgId: string): Promise<AIModel>
 
   // Low balance - use cheap model
   if (balance < AUTO_THRESHOLD) {
-    console.log(`[AI Mode] AUTO → CHEAP (balance: ${balance} < ${AUTO_THRESHOLD})`);
+    logger.debug(`[AI Mode] AUTO → CHEAP (balance: ${balance} < ${AUTO_THRESHOLD})`);
     return "gpt-4o-mini";
   }
 
   // Sufficient balance - use smart model
-  console.log(`[AI Mode] AUTO → SMART (balance: ${balance})`);
+  logger.debug(`[AI Mode] AUTO → SMART (balance: ${balance})`);
   return "gpt-4o";
 }
 
@@ -65,7 +66,7 @@ export async function getOrgAIMode(orgId: string): Promise<AIMode> {
     const mode = org?.aiModeDefault as AIMode;
     return mode || "auto";
   } catch (error) {
-    console.error("[AI Mode] Error getting Org mode:", error);
+    logger.error("[AI Mode] Error getting Org mode:", error);
     return "auto";
   }
 }
@@ -133,7 +134,7 @@ export async function isCachingEnabled(orgId: string): Promise<boolean> {
 
     return org?.aiCacheEnabled !== false; // Default true
   } catch (error) {
-    console.error("[AI Mode] Error checking cache settings:", error);
+    logger.error("[AI Mode] Error checking cache settings:", error);
     return true; // Default enabled
   }
 }
@@ -150,7 +151,7 @@ export async function isDedupeEnabled(orgId: string): Promise<boolean> {
 
     return org?.aiDedupeEnabled !== false; // Default true
   } catch (error) {
-    console.error("[AI Mode] Error checking dedupe settings:", error);
+    logger.error("[AI Mode] Error checking dedupe settings:", error);
     return true; // Default enabled
   }
 }
@@ -167,7 +168,7 @@ export async function getCacheTTL(orgId: string): Promise<number> {
 
     return org?.aiCacheTTL || 604800; // Default 7 days
   } catch (error) {
-    console.error("[AI Mode] Error getting cache TTL:", error);
+    logger.error("[AI Mode] Error getting cache TTL:", error);
     return 604800;
   }
 }

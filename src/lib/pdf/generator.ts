@@ -5,6 +5,7 @@
  */
 
 import puppeteer from "puppeteer";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -260,7 +261,7 @@ export async function generateReportPDF(reportData: any, options?: PDFOptions): 
  */
 export async function mergePDFs(pdfs: Buffer[]): Promise<Buffer> {
   // TODO: Implement PDF merging with pdf-lib
-  console.log("PDF merging not implemented");
+  logger.debug("PDF merging not implemented");
   return pdfs[0];
 }
 
@@ -277,7 +278,7 @@ export async function addWatermarkToPDF(
   }
 ): Promise<Buffer> {
   // TODO: Implement watermark with pdf-lib
-  console.log("Watermark not implemented");
+  logger.debug("Watermark not implemented");
   return pdf;
 }
 
@@ -286,7 +287,7 @@ export async function addWatermarkToPDF(
  */
 export async function extractTextFromPDF(pdf: Buffer): Promise<string> {
   // TODO: Implement text extraction with pdf-parse
-  console.log("Text extraction not implemented");
+  logger.debug("Text extraction not implemented");
   return "";
 }
 

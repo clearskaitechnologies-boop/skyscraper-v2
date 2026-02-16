@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
       isComplete,
     });
   } catch (error) {
-    console.error("Error saving branding setup:", error);
+    logger.error("Error saving branding setup:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching branding setup:", error);
+    logger.error("Error fetching branding setup:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

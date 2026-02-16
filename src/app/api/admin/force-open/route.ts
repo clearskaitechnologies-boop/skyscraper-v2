@@ -1,4 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
 
     const { forceOpen } = await req.json();
 
-    console.log(`Admin ${userId} attempting to ${forceOpen ? "enable" : "disable"} force open`);
+    logger.debug(`Admin ${userId} attempting to ${forceOpen ? "enable" : "disable"} force open`);
 
     // Note: This is a mock implementation since we can't actually change environment variables at runtime
     // In production, you might:
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
       note: "This is a mock implementation - implement persistent storage for production use",
     });
   } catch (error) {
-    console.error("Force open toggle error:", error);
+    logger.error("Force open toggle error:", error);
     return NextResponse.json({ error: "Failed to toggle force open" }, { status: 500 });
   }
 }

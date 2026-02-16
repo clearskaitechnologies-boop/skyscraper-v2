@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useEffect, useRef,useState } from "react";
 
 /**
@@ -45,7 +46,7 @@ export function useAutoInit() {
           setInitialized(true); // Mark as initialized even on error to prevent loop
         }
       } catch (err) {
-        console.error("[AUTO_INIT] Error:", err);
+        logger.error("[AUTO_INIT] Error:", err);
         setError(err instanceof Error ? err.message : "Unknown error");
         setInitialized(true); // Mark as initialized even on error to prevent loop
       } finally {

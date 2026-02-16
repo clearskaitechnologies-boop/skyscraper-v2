@@ -10,6 +10,7 @@ export const revalidate = 0;
 // =====================================================
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -34,14 +35,14 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     // NOTE: Update status to 'declined' when Prisma schema supports it
     // For now, just acknowledge the decline
-    console.log(`Report ${report.id} declined by client. Reason:`, reason);
+    logger.debug(`Report ${report.id} declined by client. Reason:`, reason);
 
     return NextResponse.json({
       ok: true,
       description: "Report declined",
     });
   } catch (error) {
-    console.error("Decline report error:", error);
+    logger.error("Decline report error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Decline failed" },
       { status: 500 }

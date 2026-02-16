@@ -15,6 +15,7 @@
  */
 
 import { redirect } from "next/navigation";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgSafe } from "@/lib/auth/getActiveOrgSafe";
 
@@ -85,11 +86,11 @@ export async function getOrg(options: GetOrgOptions = {}): Promise<OrgResult> {
 
   if (mode === "required") {
     if (reason === "unauthenticated") {
-      console.log("[getOrg] Required mode: redirecting to /sign-in");
+      logger.debug("[getOrg] Required mode: redirecting to /sign-in");
       redirect("/sign-in");
     }
     // no_org after auto-create failed - redirect to onboarding
-    console.log("[getOrg] Required mode: no org after auto-create, redirecting to /onboarding");
+    logger.debug("[getOrg] Required mode: no org after auto-create, redirecting to /onboarding");
     redirect("/onboarding");
   }
 

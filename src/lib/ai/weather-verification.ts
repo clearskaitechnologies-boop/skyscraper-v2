@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * WEATHER VERIFICATION AUTO-INSERT
  *
@@ -31,7 +33,7 @@ export async function fetchWeatherDataForDOL(
   request: WeatherDataRequest
 ): Promise<WeatherVerificationData | null> {
   try {
-    console.log("[WEATHER_VERIFY] Fetching data for DOL:", request.dateOfLoss);
+    logger.debug("[WEATHER_VERIFY] Fetching data for DOL:", request.dateOfLoss);
 
     // TODO: Integrate with your existing weather API
     // For now, return placeholder structure
@@ -50,7 +52,7 @@ export async function fetchWeatherDataForDOL(
       additionalNotes: "Multiple hail reports confirmed within 5-mile radius",
     };
   } catch (error) {
-    console.error("[WEATHER_VERIFY_ERROR]", error);
+    logger.error("[WEATHER_VERIFY_ERROR]", error);
     return null;
   }
 }

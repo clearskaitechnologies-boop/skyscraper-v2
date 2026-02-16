@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { duplicateTemplate } from "@/lib/reports/duplicateTemplate";
@@ -20,7 +21,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(newTemplate);
   } catch (error) {
-    console.error("Duplicate template error:", error);
+    logger.error("Duplicate template error:", error);
     return NextResponse.json({ error: "Failed to duplicate template" }, { status: 500 });
   }
 }

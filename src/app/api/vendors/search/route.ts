@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { compose, safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
 import { getCurrentUserPermissions } from "@/lib/permissions";
@@ -73,7 +74,7 @@ const baseGET = async (req: NextRequest) => {
       },
     });
   } catch (error) {
-    console.error("[vendors/search] Error:", error);
+    logger.error("[vendors/search] Error:", error);
     return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 };

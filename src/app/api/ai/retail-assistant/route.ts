@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -68,7 +69,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Retail Assistant Error:", error);
+    logger.error("Retail Assistant Error:", error);
     return NextResponse.json({ error: "Failed to process request" }, { status: 500 });
   }
 }

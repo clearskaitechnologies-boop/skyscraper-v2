@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
@@ -100,7 +101,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[Portal Claims Assets] Error:", error);
+    logger.error("[Portal Claims Assets] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       },
     });
   } catch (error) {
-    console.error("[Portal Claims Assets Upload] Error:", error);
+    logger.error("[Portal Claims Assets Upload] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

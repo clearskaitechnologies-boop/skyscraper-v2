@@ -1,12 +1,13 @@
 /**
  * PHASE 47: CLAIM PREDICTION PANEL
- * 
+ *
  * Visual display of AI-powered claim lifecycle prediction.
  * The feature that sells SkaiScraper.
  */
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertTriangle,
   Brain,
@@ -67,7 +68,7 @@ export function PredictionPanel({ claimId }: PredictionPanelProps) {
         setPrediction(data.prediction);
       }
     } catch (err) {
-      console.error("Failed to fetch prediction:", err);
+      logger.error("Failed to fetch prediction:", err);
     } finally {
       setLoading(false);
     }
@@ -83,7 +84,7 @@ export function PredictionPanel({ claimId }: PredictionPanelProps) {
       const data = await response.json();
       setPrediction(data.prediction);
     } catch (err) {
-      console.error("Failed to generate prediction:", err);
+      logger.error("Failed to generate prediction:", err);
       alert("Failed to generate prediction. Please try again.");
     } finally {
       setGenerating(false);
@@ -247,8 +248,8 @@ export function PredictionPanel({ claimId }: PredictionPanelProps) {
                 step.priority === "high"
                   ? "border-rose-200 bg-rose-50"
                   : step.priority === "medium"
-                  ? "border-amber-200 bg-amber-50"
-                  : "border-blue-200 bg-blue-50"
+                    ? "border-amber-200 bg-amber-50"
+                    : "border-blue-200 bg-blue-50"
               }`}
             >
               <div className="flex items-start justify-between gap-4">
@@ -262,8 +263,8 @@ export function PredictionPanel({ claimId }: PredictionPanelProps) {
                     step.priority === "high"
                       ? "bg-rose-200 text-rose-800"
                       : step.priority === "medium"
-                      ? "bg-amber-200 text-amber-800"
-                      : "bg-blue-200 text-blue-800"
+                        ? "bg-amber-200 text-amber-800"
+                        : "bg-blue-200 text-blue-800"
                   }`}
                 >
                   {step.priority.toUpperCase()}
@@ -332,7 +333,9 @@ function ProbabilityCard({
   return (
     <div className={`rounded-lg border bg-card p-6 ${isMax ? "ring-2 ring-primary" : ""}`}>
       <div className="mb-4 flex items-center justify-between">
-        <div className={`bg- h-10 w-10 rounded-full${color}-100 text- flex items-center justify-center${color}-600`}>
+        <div
+          className={`bg- h-10 w-10 rounded-full${color}-100 text- flex items-center justify-center${color}-600`}
+        >
           {icon}
         </div>
         {isMax && (

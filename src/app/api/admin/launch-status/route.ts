@@ -1,4 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -85,7 +86,7 @@ export async function GET() {
       activity,
     });
   } catch (error) {
-    console.error("Launch status error:", error);
+    logger.error("Launch status error:", error);
     return NextResponse.json({ error: "Failed to get launch status" }, { status: 500 });
   }
 }

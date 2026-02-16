@@ -15,6 +15,7 @@
  */
 
 import { Download, FileText, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 // Types for damage detection results
@@ -103,7 +104,7 @@ export function useAIClaimsBuilder(): UseAIClaimsBuilderReturn {
 
       return results;
     } catch (error) {
-      console.error("Photo analysis error:", error);
+      logger.error("Photo analysis error:", error);
       setAIState({ ...aiState, isAnalyzing: false });
       throw error;
     }
@@ -145,7 +146,7 @@ export function useAIClaimsBuilder(): UseAIClaimsBuilderReturn {
 
       return lineItems;
     } catch (error) {
-      console.error("Line item generation error:", error);
+      logger.error("Line item generation error:", error);
       setAIState({ ...aiState, isGeneratingLineItems: false });
       throw error;
     }
@@ -219,7 +220,7 @@ export function useAIClaimsBuilder(): UseAIClaimsBuilderReturn {
 
       setAIState({ ...aiState, isSaving: false });
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       setAIState({ ...aiState, isSaving: false });
       throw error;
     }
@@ -273,7 +274,7 @@ export function useAIClaimsBuilder(): UseAIClaimsBuilderReturn {
 
       setAIState({ ...aiState, isGeneratingPDF: false });
     } catch (error) {
-      console.error("PDF generation error:", error);
+      logger.error("PDF generation error:", error);
       setAIState({ ...aiState, isGeneratingPDF: false });
       throw error;
     }

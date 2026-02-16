@@ -4,6 +4,7 @@
  */
 
 import fs from "fs/promises";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
@@ -145,11 +146,11 @@ export async function POST(req: NextRequest) {
       pdfThemeCss = await fs.readFile(pdfThemePath, "utf-8");
       templateHtml = templateHtml.replace("/* INJECT: pdf-theme.css */", pdfThemeCss);
     } catch (error) {
-      console.warn("PDF theme CSS not found, continuing without it");
+      logger.warn("PDF theme CSS not found, continuing without it");
     }
 
     // Generate PDF
-    console.log(`[TEMPLATE_GENERATE] Rendering PDF for template ${templateId}...`);
+    logger.debug(`[TEMPLATE_GENERATE] Rendering PDF for template ${templateId}...`);
     const pdfBuffer = await renderTemplateToPdf(templateHtml, templateData, {
       format: "Letter",
       margin: {
@@ -200,7 +201,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(`[TEMPLATE_GENERATE] ✅ Generated report ${artifact.id}`);
+    logger.debug(`[TEMPLATE_GENERATE] ✅ Generated report ${artifact.id}`);
 
     return NextResponse.json({
       success: true,
@@ -213,7 +214,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[TEMPLATE_GENERATE] Error:", error);
+    logger.error("[TEMPLATE_GENERATE] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to generate PDF",

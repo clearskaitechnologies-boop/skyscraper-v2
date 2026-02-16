@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -83,7 +84,7 @@ export function LeadRoutingDropdown({ leadId, currentCategory }: LeadRoutingDrop
         router.push(`/jobs/retail/${leadId}`);
       }
     } catch (error) {
-      console.error("Route error:", error);
+      logger.error("Route error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to route lead");
     } finally {
       setIsLoading(false);

@@ -6,6 +6,7 @@
 // =====================================================
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { redirect } from "next/navigation";
 
 import { getOrg } from "@/lib/org/getOrg";
@@ -155,7 +156,7 @@ export async function requireOrgActive() {
   });
 
   if (!org) {
-    console.error("[requireOrgActive] CRITICAL: Org from getOrg not in DB");
+    logger.error("[requireOrgActive] CRITICAL: Org from getOrg not in DB");
     redirect("/org-error");
   }
 

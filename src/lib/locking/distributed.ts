@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type LockType = "exclusive" | "shared";
 export type LockStatus = "active" | "expired" | "released";
@@ -323,7 +324,7 @@ export async function withLock<T>(
       try {
         await releaseLock(lock.id, holder);
       } catch (error) {
-        console.error("Failed to release lock:", error);
+        logger.error("Failed to release lock:", error);
       }
     }
   }

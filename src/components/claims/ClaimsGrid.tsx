@@ -3,6 +3,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { logger } from "@/lib/logger";
 import { Calendar, ChevronRight, DollarSign, FileText, MapPin } from "lucide-react";
 import Link from "next/link";
 
@@ -30,7 +31,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export function ClaimsGrid({ claims, publicMode }: { claims: ClaimItem[]; publicMode?: boolean }) {
   // 🔥 DEBUG: Log claims data
-  console.log("[ClaimsGrid] Rendering with claims:", claims.length);
+  logger.debug("[ClaimsGrid] Rendering with claims:", claims.length);
   if (claims.length > 0) {
     console.log("[ClaimsGrid] First claim:", {
       id: claims[0].id,

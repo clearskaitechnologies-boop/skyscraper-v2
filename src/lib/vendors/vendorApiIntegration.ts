@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Vendor API Integration Layer
  *
@@ -125,7 +127,7 @@ export async function getVendorPricing(
   const config = VENDOR_CONFIGS[vendorCode];
 
   if (!config) {
-    console.warn(`[VendorAPI] Unknown vendor: ${vendorCode}`);
+    logger.warn(`[VendorAPI] Unknown vendor: ${vendorCode}`);
     return [];
   }
 
@@ -159,7 +161,7 @@ export async function checkVendorInventory(
     return {};
   }
 
-  console.log(`[VendorAPI] Checking inventory at ${config.name} for zip ${zipCode}`);
+  logger.debug(`[VendorAPI] Checking inventory at ${config.name} for zip ${zipCode}`);
 
   // Simulation: All items available
   const result: Record<string, { available: boolean; quantity: number; nearestBranch?: string }> =
@@ -259,7 +261,7 @@ async function callVendorApi(
       status: "confirmed",
     };
   } catch (error) {
-    console.error(`[VendorAPI] ${config.name} API error:`, error);
+    logger.error(`[VendorAPI] ${config.name} API error:`, error);
     return {
       success: false,
       status: "error",

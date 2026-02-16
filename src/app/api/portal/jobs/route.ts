@@ -8,6 +8,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getClientFromAuth } from "@/lib/portal/getClientFromAuth";
@@ -205,7 +206,7 @@ export async function GET(req: NextRequest) {
       source: "claims_legacy",
     });
   } catch (error) {
-    console.error("[api/portal/jobs GET] Error:", error);
+    logger.error("[api/portal/jobs GET] Error:", error);
     return NextResponse.json({ error: "Failed to fetch jobs" }, { status: 500 });
   }
 }
@@ -290,7 +291,7 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      console.log(`[api/portal/jobs POST] Created ClientJob: ${job.id} for client: ${client.id}`);
+      logger.debug(`[api/portal/jobs POST] Created ClientJob: ${job.id} for client: ${client.id}`);
 
       return NextResponse.json(
         {
@@ -355,7 +356,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(`[api/portal/jobs POST] Created claim-job: ${job.id} for client: ${client.id}`);
+    logger.debug(`[api/portal/jobs POST] Created claim-job: ${job.id} for client: ${client.id}`);
 
     return NextResponse.json(
       {
@@ -376,7 +377,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[api/portal/jobs POST] Error:", error);
+    logger.error("[api/portal/jobs POST] Error:", error);
     return NextResponse.json({ error: "Failed to create job" }, { status: 500 });
   }
 }
@@ -431,7 +432,7 @@ export async function PATCH(req: NextRequest) {
       },
     });
 
-    console.log(`[api/portal/jobs PATCH] Updated job: ${jobId} for client: ${client.id}`);
+    logger.debug(`[api/portal/jobs PATCH] Updated job: ${jobId} for client: ${client.id}`);
 
     return NextResponse.json({
       job: {
@@ -449,7 +450,7 @@ export async function PATCH(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[api/portal/jobs PATCH] Error:", error);
+    logger.error("[api/portal/jobs PATCH] Error:", error);
     return NextResponse.json({ error: "Failed to update job" }, { status: 500 });
   }
 }
@@ -484,11 +485,11 @@ export async function DELETE(req: NextRequest) {
       },
     });
 
-    console.log(`[api/portal/jobs DELETE] Deleted job: ${jobId} for client: ${client.id}`);
+    logger.debug(`[api/portal/jobs DELETE] Deleted job: ${jobId} for client: ${client.id}`);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[api/portal/jobs DELETE] Error:", error);
+    logger.error("[api/portal/jobs DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to delete job" }, { status: 500 });
   }
 }

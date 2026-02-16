@@ -10,6 +10,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { type ScopeLineItem } from "./carrierComplianceEngine";
 
 const openai = getOpenAI();
@@ -96,7 +97,7 @@ Return ONLY valid JSON array, no other text.`,
     const result = JSON.parse(completion.choices[0]?.message?.content || "{}");
     return result.lineItems || [];
   } catch (error) {
-    console.error("Failed to parse carrier scope:", error);
+    logger.error("Failed to parse carrier scope:", error);
     return [];
   }
 }

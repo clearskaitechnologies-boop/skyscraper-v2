@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -45,7 +46,7 @@ export async function GET(
     });
 
   } catch (error: any) {
-    console.error("[API] Get damage assessment error:", error);
+    logger.error("[API] Get damage assessment error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch damage assessment" },
       { status: 500 }
@@ -92,7 +93,7 @@ export async function DELETE(
     });
 
   } catch (error: any) {
-    console.error("[API] Delete damage assessment error:", error);
+    logger.error("[API] Delete damage assessment error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to delete damage assessment" },
       { status: 500 }

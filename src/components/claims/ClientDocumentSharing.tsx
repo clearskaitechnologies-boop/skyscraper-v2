@@ -6,6 +6,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 import { Eye, FileText, Image as ImageIcon, Share, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -69,7 +70,7 @@ export default function ClientDocumentSharing({
       const data = await response.json();
       setDocuments(data.documents || []);
     } catch (error) {
-      console.error("Error loading documents:", error);
+      logger.error("Error loading documents:", error);
       toast.error("Failed to load documents");
     } finally {
       setLoading(false);
@@ -108,7 +109,7 @@ export default function ClientDocumentSharing({
         )
       );
     } catch (error) {
-      console.error("Error toggling document sharing:", error);
+      logger.error("Error toggling document sharing:", error);
       toast.error("Failed to update document sharing");
     }
   };

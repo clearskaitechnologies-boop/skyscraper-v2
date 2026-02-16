@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Performance Monitoring Configuration
  * 
@@ -55,7 +57,7 @@ export function logPerformanceMetric(
 ) {
   if (process.env.NODE_ENV === 'development') {
     const status = value <= threshold ? '✅' : '⚠️';
-    console.log(`${status} Performance [${metric}]: ${value}ms (target: ${threshold}ms)`);
+    logger.debug(`${status} Performance [${metric}]: ${value}ms (target: ${threshold}ms)`);
   }
 }
 
@@ -74,7 +76,7 @@ export async function withPerformanceMonitoring<T>(
     return result;
   } catch (error) {
     const duration = Date.now() - start;
-    console.error(`❌ Performance [${operationName}]: Failed after ${duration}ms`, error);
+    logger.error(`❌ Performance [${operationName}]: Failed after ${duration}ms`, error);
     throw error;
   }
 }

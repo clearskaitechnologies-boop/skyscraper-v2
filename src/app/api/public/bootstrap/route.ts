@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -185,7 +186,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[BOOTSTRAP] Error:", error);
+    logger.error("[BOOTSTRAP] Error:", error);
     return NextResponse.json(
       {
         ok: false,

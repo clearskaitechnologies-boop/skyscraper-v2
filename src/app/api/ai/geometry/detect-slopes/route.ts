@@ -3,6 +3,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 
@@ -45,7 +46,7 @@ async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
     //   scorecards,
     // });
   } catch (error) {
-    console.error("[Geometry API] Error:", error);
+    logger.error("[Geometry API] Error:", error);
     return NextResponse.json({ error: "Analysis failed" }, { status: 500 });
   }
 }

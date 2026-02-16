@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,7 +58,7 @@ export async function getBatchSignedUrls(
         const url = await getSignedUrl({ path, expiresIn });
         return { path, url };
       } catch (error) {
-        console.error(`Failed to sign ${path}:`, error);
+        logger.error(`Failed to sign ${path}:`, error);
         return { path, url: null };
       }
     })

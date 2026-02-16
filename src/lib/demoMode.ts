@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Demo Mode Configuration
  *
@@ -25,11 +27,11 @@ export const isDemoOrg = (orgName?: string | null, clerkOrgId?: string | null): 
  */
 export const shouldSendEmail = (orgName?: string | null): boolean => {
   if (isDemoMode()) {
-    console.log("📧 [DEMO MODE] Email sending blocked for demo org");
+    logger.debug("📧 [DEMO MODE] Email sending blocked for demo org");
     return false;
   }
   if (isDemoOrg(orgName)) {
-    console.log("📧 [DEMO ORG] Email sending blocked for demo org");
+    logger.debug("📧 [DEMO ORG] Email sending blocked for demo org");
     return false;
   }
   return true;
@@ -40,11 +42,11 @@ export const shouldSendEmail = (orgName?: string | null): boolean => {
  */
 export const shouldSendSMS = (orgName?: string | null): boolean => {
   if (isDemoMode()) {
-    console.log("📱 [DEMO MODE] SMS sending blocked for demo org");
+    logger.debug("📱 [DEMO MODE] SMS sending blocked for demo org");
     return false;
   }
   if (isDemoOrg(orgName)) {
-    console.log("📱 [DEMO ORG] SMS sending blocked for demo org");
+    logger.debug("📱 [DEMO ORG] SMS sending blocked for demo org");
     return false;
   }
   return true;

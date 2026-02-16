@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
       hasMore: offset + jobRequests.length < total,
     });
   } catch (error) {
-    console.error("Error fetching job requests:", error);
+    logger.error("Error fetching job requests:", error);
     return NextResponse.json({ error: "Failed to fetch job requests" }, { status: 500 });
   }
 }
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
       jobRequest,
     });
   } catch (error) {
-    console.error("Error creating job request:", error);
+    logger.error("Error creating job request:", error);
     return NextResponse.json({ error: "Failed to create job request" }, { status: 500 });
   }
 }

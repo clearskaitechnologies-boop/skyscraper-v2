@@ -1,4 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -33,12 +34,12 @@ export async function POST(req: NextRequest) {
     // Guard against undefined/empty values
     if (path && typeof path === "string" && path.trim()) {
       revalidatePath(path);
-      console.log(`[Revalidate] Purged path: ${path}`);
+      logger.debug(`[Revalidate] Purged path: ${path}`);
     }
 
     if (tag && typeof tag === "string" && tag.trim()) {
       revalidateTag(tag);
-      console.log(`[Revalidate] Purged tag: ${tag}`);
+      logger.debug(`[Revalidate] Purged tag: ${tag}`);
     }
 
     return NextResponse.json(
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error: any) {
-    console.error("[Revalidate] Error:", error);
+    logger.error("[Revalidate] Error:", error);
     return NextResponse.json(
       { error: error.message || "Revalidation failed" },
       { status: 500, headers: { "Cache-Control": "no-store" } }

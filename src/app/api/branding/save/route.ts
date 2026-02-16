@@ -49,6 +49,7 @@ export const revalidate = 0;
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -61,7 +62,7 @@ export async function POST(req: Request) {
   try {
     const user = await currentUser();
     if (!user) {
-      console.error("[branding/save] ❌ Unauthorized - no user");
+      logger.error("[branding/save] ❌ Unauthorized - no user");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -114,7 +115,7 @@ export async function POST(req: Request) {
         }
       } catch (e) {
         // Non-fatal: proceed with save; migration best-effort
-        console.warn("[branding/save] legacy orgId migration skipped:", e);
+        logger.warn("[branding/save] legacy orgId migration skipped:", e);
       }
     }
 
@@ -180,7 +181,7 @@ export async function POST(req: Request) {
     revalidatePath("/settings/branding");
     revalidatePath("/", "layout"); // Revalidate root layout for header branding
 
-    console.log(`[branding/save] ✅ Successfully saved branding for org ${resolvedOrgId}`);
+    logger.debug(`[branding/save] ✅ Successfully saved branding for org ${resolvedOrgId}`);
     return NextResponse.json({ ok: true });
   } catch (error: any) {
     console.error("[branding/save] ❌ Error saving branding:", {

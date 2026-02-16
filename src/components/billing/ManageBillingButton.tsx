@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -38,7 +39,7 @@ export function ManageBillingButton({ orgId, hasSubscription }: ManageBillingBut
         throw new Error("No portal URL returned");
       }
     } catch (error) {
-      console.error("Billing portal error:", error);
+      logger.error("Billing portal error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to open billing portal");
     } finally {
       setIsLoading(false);

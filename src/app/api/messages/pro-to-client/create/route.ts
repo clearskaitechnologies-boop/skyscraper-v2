@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";
@@ -218,7 +219,7 @@ export async function POST(req: NextRequest) {
               updatedAt: new Date(),
             },
           });
-          console.log(`[pro-to-client/create] Auto-created contact card for client ${client.id}`);
+          logger.debug(`[pro-to-client/create] Auto-created contact card for client ${client.id}`);
         }
       }
     } catch (contactErr) {
@@ -236,7 +237,7 @@ export async function POST(req: NextRequest) {
       clientName: client.name,
     });
   } catch (error: any) {
-    console.error("[messages/pro-to-client/create] Error:", error);
+    logger.error("[messages/pro-to-client/create] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },
       { status: 500 }

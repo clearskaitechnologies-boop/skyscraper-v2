@@ -1,5 +1,6 @@
 // MODULE 2: Notifications - Helper functions
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { v4 as uuidv4 } from "uuid";
 
 type NotificationType =
@@ -81,5 +82,5 @@ export type NotificationTrigger =
   | { type: "message_received"; claimId: string; body: string };
 
 export async function enqueueNotification(trigger: NotificationTrigger) {
-  console.log("[notify]", trigger.type, trigger);
+  logger.debug("[notify]", trigger.type, trigger);
 }

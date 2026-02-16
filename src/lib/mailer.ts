@@ -5,6 +5,7 @@
 // =====================================================
 
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import AcceptanceReceiptEmail from "@/email-templates/acceptance-receipt";
@@ -71,7 +72,7 @@ export async function sendAcceptanceReceiptEmail(opts: {
       }),
     });
   } catch (error) {
-    console.error("Email sending error:", error);
+    logger.error("Email sending error:", error);
     Sentry.captureException(error, {
       tags: { component: "email-sending", email_type: "acceptance_receipt" },
       extra: { reportId, to, orgName },
@@ -109,7 +110,7 @@ export async function sendTeamInviteEmail(opts: {
       }),
     });
   } catch (error) {
-    console.error("[mailer] Team invite email error:", error);
+    logger.error("[mailer] Team invite email error:", error);
     Sentry.captureException(error, {
       tags: { component: "email-sending", email_type: "team_invite" },
       extra: { to, companyName, inviterName },
@@ -151,7 +152,7 @@ export async function sendNotificationEmail(opts: {
       `,
     });
   } catch (error) {
-    console.error("[mailer] Notification email error:", error);
+    logger.error("[mailer] Notification email error:", error);
     Sentry.captureException(error, {
       tags: { component: "email-sending", email_type: "notification" },
       extra: { to, subject },

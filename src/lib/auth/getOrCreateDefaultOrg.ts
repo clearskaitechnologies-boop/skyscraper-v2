@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -62,7 +63,7 @@ export async function getOrCreateDefaultOrg() {
         },
       });
 
-      console.log(`[Auto-Onboard] Linked existing Org ${legacyOrg.id} to user ${user.id}`);
+      logger.debug(`[Auto-Onboard] Linked existing Org ${legacyOrg.id} to user ${user.id}`);
       return legacyOrg;
     }
   }
@@ -106,6 +107,6 @@ export async function getOrCreateDefaultOrg() {
     },
   });
 
-  console.log(`[Auto-Onboard] Created Org ${Org.id} for user ${user.id}`);
+  logger.debug(`[Auto-Onboard] Created Org ${Org.id} for user ${user.id}`);
   return Org;
 }

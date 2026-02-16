@@ -15,6 +15,7 @@
  */
 
 import { differenceInBusinessDays, differenceInDays } from "date-fns";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -306,7 +307,7 @@ export async function detectBadFaith(claimId: string): Promise<BadFaithAnalysis>
       summary,
     };
   } catch (error: any) {
-    console.error("[BAD FAITH DETECTION ERROR]", error);
+    logger.error("[BAD FAITH DETECTION ERROR]", error);
     return {
       hasBadFaithIndicators: false,
       indicators: [],

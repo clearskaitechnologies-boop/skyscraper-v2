@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ClaimsIntegrityLog {
   orgId: string;
@@ -44,7 +45,7 @@ export async function logClaimsIntegrity(
       where: { orgId },
     });
   } catch (error) {
-    console.error("[CLAIMS_DIAG] Failed to count claims:", error);
+    logger.error("[CLAIMS_DIAG] Failed to count claims:", error);
   }
 
   const log: ClaimsIntegrityLog = {

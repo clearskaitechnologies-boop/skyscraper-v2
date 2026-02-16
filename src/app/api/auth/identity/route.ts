@@ -13,6 +13,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { determineUserType, getUserIdentity } from "@/lib/identity/userIdentity";
@@ -83,7 +84,7 @@ export async function GET() {
 
     return response;
   } catch (error: any) {
-    console.error("[/api/auth/identity] Error:", error);
+    logger.error("[/api/auth/identity] Error:", error);
     return NextResponse.json(
       { error: "Failed to get identity", message: error.message },
       { status: 500 }

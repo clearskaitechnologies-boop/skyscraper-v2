@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
       );
     }
 
-    console.error(`[POST /api/claims/${params.claimId}/supplements] Error:`, error);
+    logger.error(`[POST /api/claims/${params.claimId}/supplements] Error:`, error);
     return NextResponse.json(
       { error: error.message || "Failed to create supplement" },
       { status: 500 }
@@ -132,7 +133,7 @@ export async function GET(req: NextRequest, { params }: { params: { claimId: str
 
     return NextResponse.json({ supplements }, { headers: { "Cache-Control": "no-store" } });
   } catch (error: any) {
-    console.error(`[GET /api/claims/${params.claimId}/supplements] Error:`, error);
+    logger.error(`[GET /api/claims/${params.claimId}/supplements] Error:`, error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch supplements" },
       { status: 500 }

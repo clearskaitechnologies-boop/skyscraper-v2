@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
 
       // Note: ClientJob requires a clientId - for now we log the intent
       // Full integration would require creating/linking a Client record
-      console.log(`Linking company ${tradesCompanyId} to claim ${claimId}`);
+      logger.debug(`Linking company ${tradesCompanyId} to claim ${claimId}`);
     }
 
     // Store vendor recommendations (could be expanded to VendorRecommendation table)
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
       vendorRecommendations: recommendations,
     });
   } catch (error) {
-    console.error("Network integration error:", error);
+    logger.error("Network integration error:", error);
     return NextResponse.json({ error: "Failed to integrate networks" }, { status: 500 });
   }
 }
@@ -144,7 +145,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("Error fetching network connections:", error);
+    logger.error("Error fetching network connections:", error);
     return NextResponse.json({ error: "Failed to fetch network connections" }, { status: 500 });
   }
 }

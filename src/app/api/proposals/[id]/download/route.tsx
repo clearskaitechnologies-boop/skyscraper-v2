@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { renderToStream } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -72,7 +73,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       },
     });
   } catch (error) {
-    console.error("[Proposals] Error downloading proposal:", error);
+    logger.error("[Proposals] Error downloading proposal:", error);
     return NextResponse.json({ error: "Failed to download proposal" }, { status: 500 });
   }
 }

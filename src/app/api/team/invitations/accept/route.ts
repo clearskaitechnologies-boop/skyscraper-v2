@@ -1,4 +1,5 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { prismaMaybeModel } from "@/lib/db/prismaModel";
@@ -132,7 +133,7 @@ export async function POST(request: Request) {
           },
         });
       } catch (activityError) {
-        console.warn("Failed to log activity:", activityError);
+        logger.warn("Failed to log activity:", activityError);
       }
     }
 
@@ -145,7 +146,7 @@ export async function POST(request: Request) {
           orgName,
           role: invitation.role,
         });
-        console.log(`✅ Welcome email sent to ${userEmail}`);
+        logger.debug(`✅ Welcome email sent to ${userEmail}`);
       } catch (emailError) {
         console.error("Failed to send welcome email:", emailError);
         // Don't fail the request if email fails
@@ -158,7 +159,7 @@ export async function POST(request: Request) {
       role: invitation.role,
     });
   } catch (error) {
-    console.error("Failed to accept invitation:", error);
+    logger.error("Failed to accept invitation:", error);
     return NextResponse.json({ error: "Failed to accept invitation" }, { status: 500 });
   }
 }

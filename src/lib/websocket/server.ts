@@ -10,6 +10,7 @@
  */
 
 import { Server as HTTPServer } from "http";
+import { logger } from "@/lib/logger";
 import { Server as SocketIOServer } from "socket.io";
 
 let io: SocketIOServer | null = null;
@@ -25,22 +26,22 @@ export function initializeWebSocket(server: HTTPServer) {
   });
 
   io.on("connection", (socket) => {
-    console.log(`[WebSocket] Client connected: ${socket.id}`);
+    logger.debug(`[WebSocket] Client connected: ${socket.id}`);
 
     // Join claim-specific room
     socket.on("join:claim", (claimId: string) => {
       socket.join(`claim:${claimId}`);
-      console.log(`[WebSocket] ${socket.id} joined claim:${claimId}`);
+      logger.debug(`[WebSocket] ${socket.id} joined claim:${claimId}`);
     });
 
     // Leave claim-specific room
     socket.on("leave:claim", (claimId: string) => {
       socket.leave(`claim:${claimId}`);
-      console.log(`[WebSocket] ${socket.id} left claim:${claimId}`);
+      logger.debug(`[WebSocket] ${socket.id} left claim:${claimId}`);
     });
 
     socket.on("disconnect", () => {
-      console.log(`[WebSocket] Client disconnected: ${socket.id}`);
+      logger.debug(`[WebSocket] Client disconnected: ${socket.id}`);
     });
   });
 

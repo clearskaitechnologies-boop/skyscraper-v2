@@ -6,6 +6,7 @@
 "use client";
 
 import { Check,Save, Upload } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Image from "next/image";
 import { useEffect,useState } from "react";
 
@@ -94,9 +95,9 @@ export function CoverPageEditor({ claimId, initialData, orgData }: CoverPageEdit
       if (!response.ok) throw new Error("Save failed");
 
       setLastSaved(new Date());
-      console.log("[COVER_PAGE] Auto-saved");
+      logger.debug("[COVER_PAGE] Auto-saved");
     } catch (error) {
-      console.error("[COVER_PAGE] Save error:", error);
+      logger.error("[COVER_PAGE] Save error:", error);
     } finally {
       setIsSaving(false);
     }

@@ -8,6 +8,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
       },
     });
   } catch (error) {
-    console.error("[Client Profile GET] Error:", error);
+    logger.error("[Client Profile GET] Error:", error);
     return NextResponse.json({ error: "Failed to fetch profile" }, { status: 500 });
   }
 }
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
       },
     });
   } catch (error) {
-    console.error("[Client Profile POST] Error:", error);
+    logger.error("[Client Profile POST] Error:", error);
     return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
   }
 }

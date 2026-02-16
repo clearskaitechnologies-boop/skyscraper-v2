@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
       });
     } catch (e) {
       // Job schedule table may not exist yet
-      console.log("[Calendar] job_schedules table not available:", (e as Error).message ?? e);
+      logger.debug("[Calendar] job_schedules table not available:", (e as Error).message ?? e);
     }
 
     // Transform tasks to calendar events
@@ -118,7 +119,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err: any) {
-    console.error("[Calendar API Error]:", err);
+    logger.error("[Calendar API Error]:", err);
     return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }
 }

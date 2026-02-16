@@ -6,6 +6,7 @@
 // For now, the service is stubbed to prevent runtime errors.
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 interface WebhookPayload {
   event: string;
@@ -70,7 +71,7 @@ export class WebhookService {
   static async sendWebhook(_event: string, _data: any, _orgId: string): Promise<void> {
     // Enhancement: Implement when Webhook and WebhookLog models are added to schema
     // For now, log and return silently
-    console.log(`[WEBHOOK_STUB] Would send webhook event: ${_event} for org: ${_orgId}`);
+    logger.debug(`[WEBHOOK_STUB] Would send webhook event: ${_event} for org: ${_orgId}`);
     return;
   }
 

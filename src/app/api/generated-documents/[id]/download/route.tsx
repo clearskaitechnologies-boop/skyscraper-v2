@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { renderToStream } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -171,7 +172,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
       },
     });
   } catch (error) {
-    console.error("Document download error:", error);
+    logger.error("Document download error:", error);
     return NextResponse.json({ error: "Failed to download document" }, { status: 500 });
   }
 }

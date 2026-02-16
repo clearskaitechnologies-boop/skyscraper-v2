@@ -1,6 +1,7 @@
 "use client";
 
 import { Camera, Loader2, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -67,7 +68,7 @@ export default function PhotoUploader({
         onPhotosChange(newPhotos);
         toast.success(`${urls.length} photo(s) uploaded successfully`);
       } catch (error: any) {
-        console.error("Upload error:", error);
+        logger.error("Upload error:", error);
         toast.error(error.message || "Failed to upload photos");
       } finally {
         setUploading(false);

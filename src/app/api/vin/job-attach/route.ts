@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[VIN] Error fetching job vendors:", error);
+    logger.error("[VIN] Error fetching job vendors:", error);
     return NextResponse.json({ error: "Failed to fetch job vendors" }, { status: 500 });
   }
 }
@@ -113,7 +114,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, attachment });
   } catch (error) {
-    console.error("[VIN] Error attaching vendor:", error);
+    logger.error("[VIN] Error attaching vendor:", error);
     return NextResponse.json({ error: "Failed to attach vendor" }, { status: 500 });
   }
 }

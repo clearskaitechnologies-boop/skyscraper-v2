@@ -21,6 +21,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { aiFail, aiOk } from "@/lib/api/aiResponse";
@@ -137,7 +138,7 @@ export async function POST(req: Request) {
       } as any
     );
 
-    console.log(`Proposal ${proposalId} queued for generation (job: ${jobId})`);
+    logger.debug(`Proposal ${proposalId} queued for generation (job: ${jobId})`);
 
     // Return success response
     return NextResponse.json(
@@ -151,7 +152,7 @@ export async function POST(req: Request) {
       })
     );
   } catch (error: any) {
-    console.error("AI Proposals Run failed:", error);
+    logger.error("AI Proposals Run failed:", error);
 
     // Handle auth errors
     if (error.message?.includes("Unauthorized") || error.message?.includes("organization")) {

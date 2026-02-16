@@ -6,6 +6,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useCallback, useEffect, useState } from "react";
 
 // Get the VAPID public key from environment
@@ -57,7 +58,7 @@ export function usePushNotifications() {
       await navigator.serviceWorker.ready;
       return registration;
     } catch (error) {
-      console.error("Service worker registration failed:", error);
+      logger.error("Service worker registration failed:", error);
       return null;
     }
   }, []);
@@ -69,7 +70,7 @@ export function usePushNotifications() {
       const subscription = await registration.pushManager.getSubscription();
       return subscription !== null;
     } catch (error) {
-      console.error("Error checking subscription:", error);
+      logger.error("Error checking subscription:", error);
       return false;
     }
   }, []);
@@ -112,7 +113,7 @@ export function usePushNotifications() {
       setState((prev) => ({ ...prev, permission }));
       return permission;
     } catch (error) {
-      console.error("Error requesting permission:", error);
+      logger.error("Error requesting permission:", error);
       return "denied";
     }
   }, [checkSupport]);
@@ -180,7 +181,7 @@ export function usePushNotifications() {
 
       return true;
     } catch (error: any) {
-      console.error("Error subscribing to push:", error);
+      logger.error("Error subscribing to push:", error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -219,7 +220,7 @@ export function usePushNotifications() {
 
       return true;
     } catch (error: any) {
-      console.error("Error unsubscribing from push:", error);
+      logger.error("Error unsubscribing from push:", error);
       setState((prev) => ({
         ...prev,
         isLoading: false,
@@ -232,7 +233,7 @@ export function usePushNotifications() {
   // Send a test notification
   const sendTestNotification = useCallback(async () => {
     if (Notification.permission !== "granted") {
-      console.warn("Notification permission not granted");
+      logger.warn("Notification permission not granted");
       return;
     }
 

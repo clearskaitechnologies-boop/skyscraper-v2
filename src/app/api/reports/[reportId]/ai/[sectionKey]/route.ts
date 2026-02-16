@@ -9,6 +9,7 @@ export const revalidate = 0;
 // Returns: AISectionState for the given section
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -56,7 +57,7 @@ export async function GET(
 
     return NextResponse.json(state);
   } catch (error: any) {
-    console.error("[AI Section API]", error);
+    logger.error("[AI Section API]", error);
     return NextResponse.json({ error: error.message || "Failed to get section" }, { status: 500 });
   }
 }
@@ -86,7 +87,7 @@ export async function POST(
       .catch(() => null);
     if (!report) {
       // Report doesn't exist yet - this is okay for draft suggestions
-      console.log(`[AI Section] No existing report ${reportId}, generating suggestion anyway`);
+      logger.debug(`[AI Section] No existing report ${reportId}, generating suggestion anyway`);
     }
 
     // Build payload for report generation
@@ -112,7 +113,7 @@ export async function POST(
     return NextResponse.json({ sectionKey: key, content });
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : "Internal error";
-    console.error("[AI Section Suggest] Failure", e);
+    logger.error("[AI Section Suggest] Failure", e);
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

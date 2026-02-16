@@ -10,6 +10,7 @@
  */
 
 import { NegotiationSuggestion } from "../types";
+import { logger } from "@/lib/logger";
 
 // Default negotiation patterns by carrier type (stub data)
 const DEFAULT_STRATEGIES: Record<
@@ -113,5 +114,5 @@ export async function learnFromSuccess(carrier: string, successfulActions: strin
   // Analyze what worked and update strategy
   // This would aggregate patterns from AIActions with positive outcomes
   // Placeholder for now
-  console.log(`Learning from success with ${carrier}:`, successfulActions);
+  logger.debug(`Learning from success with ${carrier}:`, successfulActions);
 }

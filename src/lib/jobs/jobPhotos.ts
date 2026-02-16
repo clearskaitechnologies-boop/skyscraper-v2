@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export type PhotoCategory =
@@ -86,7 +87,7 @@ export async function uploadJobPhoto(
 
     return photo as JobPhoto;
   } catch (error) {
-    console.error("Failed to upload job photo:", error);
+    logger.error("Failed to upload job photo:", error);
     throw error;
   }
 }
@@ -192,7 +193,7 @@ export async function updatePhoto(
       description: updates.caption || "Photo details updated",
     });
   } catch (error) {
-    console.error("Failed to update photo:", error);
+    logger.error("Failed to update photo:", error);
     throw error;
   }
 }
@@ -225,7 +226,7 @@ export async function deletePhoto(photoId: string, orgId: string, userId: string
       action: "Photo Deleted",
     });
   } catch (error) {
-    console.error("Failed to delete photo:", error);
+    logger.error("Failed to delete photo:", error);
     throw error;
   }
 }

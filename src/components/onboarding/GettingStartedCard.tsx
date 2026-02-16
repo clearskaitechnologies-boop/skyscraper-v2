@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, Circle, ExternalLink, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -82,7 +83,7 @@ export default function GettingStartedCard() {
         setTasks(initialTasks);
       }
     } catch (error) {
-      console.error("Failed to load onboarding tasks:", error);
+      logger.error("Failed to load onboarding tasks:", error);
       const initialTasks = ONBOARDING_TASKS.map((task) => ({
         ...task,
         completed: false,

@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
       });
     } catch (dbError) {
       // Table might not exist yet - create it
-      console.log("Creating email_subscribers table...");
+      logger.debug("Creating email_subscribers table...");
       await db.query(`
         CREATE TABLE IF NOT EXISTS email_subscribers (
           id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -133,7 +134,7 @@ export async function POST(req: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Error subscribing to email:", error);
+    logger.error("Error subscribing to email:", error);
     return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }
@@ -164,14 +165,14 @@ export async function DELETE(req: NextRequest) {
         message: "Successfully unsubscribed",
       });
     } catch (error) {
-      console.log("Table may not exist:", error);
+      logger.debug("Table may not exist:", error);
       return NextResponse.json({
         success: true,
         message: "Successfully unsubscribed",
       });
     }
   } catch (error) {
-    console.error("Error unsubscribing:", error);
+    logger.error("Error unsubscribing:", error);
     return NextResponse.json({ error: "Failed to unsubscribe" }, { status: 500 });
   }
 }
@@ -209,11 +210,11 @@ export async function GET(req: NextRequest) {
         preferences: result.rows[0].preferences,
       });
     } catch (error) {
-      console.log("Table may not exist:", error);
+      logger.debug("Table may not exist:", error);
       return NextResponse.json({ subscribed: false });
     }
   } catch (error) {
-    console.error("Error checking subscription:", error);
+    logger.error("Error checking subscription:", error);
     return NextResponse.json({ subscribed: false });
   }
 }

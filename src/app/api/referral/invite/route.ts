@@ -8,6 +8,7 @@ export const revalidate = 0;
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -111,12 +112,12 @@ SkaiScraper™ - AI-Powered Operations for Trades Pros
         // Continue even if email fails - referral is still tracked
       }
     } else {
-      console.warn("[Referral] RESEND_API_KEY not configured - email not sent");
+      logger.warn("[Referral] RESEND_API_KEY not configured - email not sent");
     }
 
     return NextResponse.json({ ok: true, url, emailSent: !!resend });
   } catch (error) {
-    console.error("[Referral Invite Error]", error);
+    logger.error("[Referral Invite Error]", error);
     return NextResponse.json({ error: "Failed to send invite" }, { status: 500 });
   }
 }

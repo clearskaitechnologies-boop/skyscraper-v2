@@ -1,12 +1,13 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   CheckCircleIcon,
   ClipboardDocumentIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
-import React, { useCallback,useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 interface DenialReason {
@@ -52,7 +53,9 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
   const [generating, setGenerating] = useState(false);
   const [denialResponse, setDenialResponse] = useState<DenialResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTone, setSelectedTone] = useState<"professional" | "firm" | "legal">("professional");
+  const [selectedTone, setSelectedTone] = useState<"professional" | "firm" | "legal">(
+    "professional"
+  );
 
   useEffect(() => {
     fetchDenialResponse();
@@ -70,49 +73,52 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
         setDenialResponse(null);
       }
     } catch (err) {
-      console.error("Error fetching denial response:", err);
+      logger.error("Error fetching denial response:", err);
       setError("Failed to load denial response");
     } finally {
       setLoading(false);
     }
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length === 0) return;
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      if (acceptedFiles.length === 0) return;
 
-    const file = acceptedFiles[0];
-    if (!file.type.includes("pdf")) {
-      setError("Please upload a PDF file");
-      return;
-    }
-
-    try {
-      setGenerating(true);
-      setError(null);
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("tone", selectedTone);
-
-      const response = await fetch(`/api/denial/${claimId}`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to generate appeal");
+      const file = acceptedFiles[0];
+      if (!file.type.includes("pdf")) {
+        setError("Please upload a PDF file");
+        return;
       }
 
-      const data = await response.json();
-      setDenialResponse(data);
-    } catch (err: any) {
-      console.error("Error generating appeal:", err);
-      setError(err.message || "Failed to generate appeal");
-    } finally {
-      setGenerating(false);
-    }
-  }, [claimId, selectedTone]);
+      try {
+        setGenerating(true);
+        setError(null);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("tone", selectedTone);
+
+        const response = await fetch(`/api/denial/${claimId}`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Failed to generate appeal");
+        }
+
+        const data = await response.json();
+        setDenialResponse(data);
+      } catch (err: any) {
+        logger.error("Error generating appeal:", err);
+        setError(err.message || "Failed to generate appeal");
+      } finally {
+        setGenerating(false);
+      }
+    },
+    [claimId, selectedTone]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -188,18 +194,14 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
         <div
           {...getRootProps()}
           className={`cursor-pointer rounded-lg border-2 border-dashed p-12 text-center transition-colors ${
-            isDragActive
-              ? "border-blue-500 bg-blue-50"
-              : "border-gray-300 hover:border-gray-400"
+            isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300 hover:border-gray-400"
           } ${generating ? "cursor-not-allowed opacity-50" : ""}`}
         >
           <input {...getInputProps()} />
           <DocumentTextIcon className="mx-auto h-16 w-16 text-gray-400" />
           <h3 className="mt-4 text-lg font-semibold text-gray-900">Upload Denial Letter</h3>
           <p className="mt-2 text-gray-600">
-            {isDragActive
-              ? "Drop the PDF here..."
-              : "Drag & drop a denial PDF, or click to select"}
+            {isDragActive ? "Drop the PDF here..." : "Drag & drop a denial PDF, or click to select"}
           </p>
           <p className="mt-1 text-sm text-gray-500">PDF files only</p>
           {generating && (
@@ -228,12 +230,17 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
           <p className="mt-1 text-gray-600">AI-powered appeal generation</p>
         </div>
         <div className="flex gap-2">
-          <span className={`rounded-full px-3 py-1 text-sm font-medium ${
-            denialResponse.status === "approved" ? "bg-green-100 text-green-800" :
-            denialResponse.status === "denied" ? "bg-red-100 text-red-800" :
-            denialResponse.status === "sent" ? "bg-blue-100 text-blue-800" :
-            "bg-gray-100 text-gray-800"
-          }`}>
+          <span
+            className={`rounded-full px-3 py-1 text-sm font-medium ${
+              denialResponse.status === "approved"
+                ? "bg-green-100 text-green-800"
+                : denialResponse.status === "denied"
+                  ? "bg-red-100 text-red-800"
+                  : denialResponse.status === "sent"
+                    ? "bg-blue-100 text-blue-800"
+                    : "bg-gray-100 text-gray-800"
+            }`}
+          >
             {denialResponse.status.toUpperCase()}
           </span>
         </div>
@@ -255,10 +262,7 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
         <h3 className="mb-4 text-lg font-semibold text-gray-900">Denial Reasons Identified</h3>
         <div className="space-y-3">
           {denialResponse.denialReasons.map((reason, idx) => (
-            <div
-              key={idx}
-              className={`rounded-lg border p-4 ${getSeverityColor(reason.severity)}`}
-            >
+            <div key={idx} className={`rounded-lg border p-4 ${getSeverityColor(reason.severity)}`}>
               <div className="flex items-start gap-3">
                 <ExclamationCircleIcon className="mt-0.5 h-5 w-5" />
                 <div className="flex-1">
@@ -284,7 +288,9 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
             <div key={idx} className="rounded-lg border border-gray-200 p-4">
               <div className="mb-3 flex items-start justify-between">
                 <p className="font-semibold text-gray-900">{arg.reason}</p>
-                <span className={`rounded-full px-2 py-1 text-xs capitalize ${getStrengthColor(arg.strength)}`}>
+                <span
+                  className={`rounded-full px-2 py-1 text-xs capitalize ${getStrengthColor(arg.strength)}`}
+                >
                   {arg.strength}
                 </span>
               </div>
@@ -317,7 +323,9 @@ export default function DenialResponsePanel({ claimId }: { claimId: string }) {
                   <span className="rounded bg-blue-100 px-2 py-0.5 text-xs font-medium uppercase text-blue-700">
                     {citation.type}
                   </span>
-                  <span className="font-mono text-sm font-semibold text-gray-900">{citation.reference}</span>
+                  <span className="font-mono text-sm font-semibold text-gray-900">
+                    {citation.reference}
+                  </span>
                 </div>
                 <p className="mt-2 text-sm text-gray-700">{citation.text}</p>
                 <p className="mt-1 text-xs text-gray-500">Relevance: {citation.relevance}</p>

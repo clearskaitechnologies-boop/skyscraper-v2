@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -108,7 +109,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(data);
   } catch (error) {
-    console.error("Failed to export data:", error);
+    logger.error("Failed to export data:", error);
     return NextResponse.json({ error: "Failed to export data" }, { status: 500 });
   }
 }

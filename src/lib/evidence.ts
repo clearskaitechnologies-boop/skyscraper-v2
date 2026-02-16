@@ -1,4 +1,5 @@
 import { arrayUnion,doc, setDoc } from "firebase/firestore";
+import { logger } from "@/lib/logger";
 
 import { db } from "@/lib/firebase";
 
@@ -41,9 +42,9 @@ export async function saveEvidencePair(
       { merge: true }
     );
 
-    console.log("Evidence pair saved successfully");
+    logger.debug("Evidence pair saved successfully");
   } catch (error) {
-    console.error("Failed to save evidence pair:", error);
+    logger.error("Failed to save evidence pair:", error);
     throw new Error("Failed to save evidence to project");
   }
 }

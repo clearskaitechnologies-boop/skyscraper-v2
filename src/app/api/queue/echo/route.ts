@@ -18,6 +18,7 @@ export const revalidate = 0;
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { enqueue } from "@/lib/queue";
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
-    console.error("Failed to enqueue echo job:", error);
+    logger.error("Failed to enqueue echo job:", error);
 
     return NextResponse.json(
       {

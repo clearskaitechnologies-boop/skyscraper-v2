@@ -5,6 +5,7 @@
  */
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -92,7 +93,7 @@ export async function fetchActiveStorms(): Promise<NOAAStormReport[]> {
     
     return storms;
   } catch (error) {
-    console.error('Failed to fetch active storms:', error);
+    logger.error('Failed to fetch active storms:', error);
     return [];
   }
 }
@@ -242,7 +243,7 @@ export async function createStormEvent(
     },
   });
   
-  console.log(`✅ Storm event created: ${stormEvent.id}`);
+  logger.debug(`✅ Storm event created: ${stormEvent.id}`);
   
   return stormEvent.id;
 }
@@ -340,12 +341,12 @@ async function analyzeStormImpact(
 // ============================================
 
 export async function runStormListener(orgId: string): Promise<string[]> {
-  console.log('🌪️ Storm listener active...');
+  logger.debug('🌪️ Storm listener active...');
   
   try {
     return await detectStormsInServiceArea(orgId);
   } catch (error) {
-    console.error('Storm listener error:', error);
+    logger.error('Storm listener error:', error);
     return [];
   }
 }

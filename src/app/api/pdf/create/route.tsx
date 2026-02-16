@@ -1,6 +1,7 @@
 // app/api/pdf/create/route.ts
 
 import { renderToBuffer } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ClaimsReportPDF } from "@/components/pdf/ClaimsReportPDF";
@@ -64,7 +65,7 @@ export async function POST(req: Request) {
       title: reports.title,
     });
   } catch (error: any) {
-    console.error("PDF generation error:", error);
+    logger.error("PDF generation error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

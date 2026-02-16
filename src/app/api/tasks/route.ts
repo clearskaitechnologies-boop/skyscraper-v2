@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching tasks:", error);
+    logger.error("Error fetching tasks:", error);
     return Response.json({ error: "Failed to fetch tasks" }, { status: 500 });
   }
 }
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
 
     return Response.json(task, { status: 201 });
   } catch (error) {
-    console.error("Error creating tasks:", error);
+    logger.error("Error creating tasks:", error);
     return Response.json({ error: "Failed to create tasks" }, { status: 500 });
   }
 }

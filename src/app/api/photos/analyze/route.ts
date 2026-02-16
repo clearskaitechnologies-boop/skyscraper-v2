@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { analyzeImage } from "@/lib/ai/openai-vision";
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
       itemCount: report.items.length,
     });
   } catch (error: any) {
-    console.error("[photos/analyze] Error:", error);
+    logger.error("[photos/analyze] Error:", error);
 
     // If OpenAI key is missing, return a clear message
     if (error.message?.includes("OPENAI_API_KEY")) {

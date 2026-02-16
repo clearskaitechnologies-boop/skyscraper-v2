@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest, { params }: { params: { taskId: str
       task: updatedTask,
     });
   } catch (error: any) {
-    console.error("Error completing task:", error);
+    logger.error("Error completing task:", error);
     return NextResponse.json(
       { error: "Failed to complete task", details: error.message },
       { status: 500 }

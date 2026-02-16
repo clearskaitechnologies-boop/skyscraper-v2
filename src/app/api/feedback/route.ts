@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { safeSendEmail } from "@/lib/mail";
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest) {
             });
           }
 
-          console.log(`Added 10 bonus AI tokens to org ${user.Org.name} for beta feedback`);
+          logger.debug(`Added 10 bonus AI tokens to org ${user.Org.name} for beta feedback`);
 
           // Log for admin dashboard
           console.log("Feedback bonus awarded:", {
@@ -176,7 +177,7 @@ export async function POST(req: NextRequest) {
       description: "Thank you for your feedback! It helps us improve SkaiScraper™.",
     });
   } catch (error) {
-    console.error("Feedback submission error:", error);
+    logger.error("Feedback submission error:", error);
     return NextResponse.json({ error: "Failed to submit feedback" }, { status: 500 });
   }
 }

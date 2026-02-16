@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import {
   exchangeCodeForTokens,
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
     const error = url.searchParams.get("error");
 
     if (error) {
-      console.error("[QB] OAuth error:", error);
+      logger.error("[QB] OAuth error:", error);
       return NextResponse.redirect(
         new URL("/settings/integrations?qb=error&reason=" + error, req.url)
       );
@@ -48,7 +49,7 @@ export async function GET(req: Request) {
 
     return NextResponse.redirect(new URL("/settings/integrations?qb=success", req.url));
   } catch (err: any) {
-    console.error("[QB] Callback error:", err);
+    logger.error("[QB] Callback error:", err);
     return NextResponse.redirect(
       new URL("/settings/integrations?qb=error&reason=exchange_failed", req.url)
     );
@@ -68,7 +69,7 @@ export async function POST() {
     const authUrl = getAuthorizationUrl(ctx.orgId);
     return NextResponse.json({ success: true, authUrl });
   } catch (err: any) {
-    console.error("[QB] Auth URL error:", err);
+    logger.error("[QB] Auth URL error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

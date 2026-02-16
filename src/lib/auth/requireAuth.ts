@@ -32,6 +32,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import { NextResponse } from "next/server";
 
@@ -99,7 +100,7 @@ export async function requireAuth(options?: RequireAuthOptions): Promise<AuthRes
     }
 
     // Unknown error — log and return 500
-    console.error("[requireAuth] Unexpected error:", err);
+    logger.error("[requireAuth] Unexpected error:", err);
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message: "Authentication check failed" },
       { status: 500 }

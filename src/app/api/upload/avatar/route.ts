@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ url: publicUrl, storage: "supabase" });
       }
 
-      console.error("[Avatar Upload] Supabase error:", error);
+      logger.error("[Avatar Upload] Supabase error:", error);
     }
 
     // Firebase fallback
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
         });
 
         const downloadUrl = await getDownloadURL(storageRef);
-        console.log("[Avatar Upload] Firebase success:", { firebasePath, downloadUrl });
+        logger.debug("[Avatar Upload] Firebase success:", { firebasePath, downloadUrl });
         return NextResponse.json({ url: downloadUrl, storage: "firebase" });
       }
     } catch (firebaseError) {
@@ -118,7 +119,7 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   } catch (error: any) {
-    console.error("Avatar upload error:", error);
+    logger.error("Avatar upload error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

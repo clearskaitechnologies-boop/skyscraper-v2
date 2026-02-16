@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 interface BrandingBannerProps {
@@ -47,7 +48,7 @@ export function BrandingBanner({ brandingCompleted, onboardingCompleted }: Brand
         // Silently handle error - don't block demo
       }
     } catch (error) {
-      console.error("[BrandingBanner] Network error:", error);
+      logger.error("[BrandingBanner] Network error:", error);
       // Silently handle error - don't block demo
     } finally {
       setInitializing(false);
@@ -58,11 +59,11 @@ export function BrandingBanner({ brandingCompleted, onboardingCompleted }: Brand
   const shouldHideBanner = brandingCompleted && onboardingCompleted;
 
   if (shouldHideBanner || dismissed || !showBanner) {
-    console.log("[BrandingBanner] Hidden:", { shouldHideBanner, dismissed, showBanner });
+    logger.debug("[BrandingBanner] Hidden:", { shouldHideBanner, dismissed, showBanner });
     return null;
   }
 
-  console.log("[BrandingBanner] Visible:", { brandingCompleted, onboardingCompleted });
+  logger.debug("[BrandingBanner] Visible:", { brandingCompleted, onboardingCompleted });
 
   // Determine banner message based on completion state
   const title = !brandingCompleted ? "Finish your company branding" : "Complete account setup";

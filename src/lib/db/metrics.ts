@@ -4,6 +4,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import { pool } from "@/server/db";
 
@@ -69,7 +70,7 @@ export async function getOrgMetrics(orgId: string): Promise<OrgMetrics> {
       inspectionsCompleted: 0,
     };
   } catch (error) {
-    console.error("[getOrgMetrics] Error:", error);
+    logger.error("[getOrgMetrics] Error:", error);
     // Return zeros on error to prevent dashboard crash
     return {
       totalLeads: 0,
@@ -98,7 +99,7 @@ export async function getOrgProfile(orgId: string) {
 
     return result.rows[0] || null;
   } catch (error) {
-    console.error("[getOrgProfile] Error:", error);
+    logger.error("[getOrgProfile] Error:", error);
     return null;
   }
 }

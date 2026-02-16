@@ -6,6 +6,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,7 @@ export function AttachToClaimDialog({
         setClaims(data.claims || []);
       }
     } catch (error) {
-      console.error("Failed to load claims:", error);
+      logger.error("Failed to load claims:", error);
     }
   }
 

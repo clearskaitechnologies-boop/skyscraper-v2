@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiOrg, verifyClaimAccess } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -228,7 +229,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[Supplement Export PDF Error]", error);
+    logger.error("[Supplement Export PDF Error]", error);
     return NextResponse.json({ error: error.message || "Failed to export PDF" }, { status: 500 });
   }
 }

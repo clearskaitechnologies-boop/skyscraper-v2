@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface NotificationData {
   userId: string;
@@ -20,21 +21,21 @@ export interface NotificationData {
  * Send a notification to a user
  */
 export async function sendNotification(data: NotificationData): Promise<void> {
-  console.log(`[NotificationHelper] Stub: Would send notification to ${data.userId}`);
+  logger.debug(`[NotificationHelper] Stub: Would send notification to ${data.userId}`);
 }
 
 /**
  * Mark notification as read
  */
 export async function markNotificationRead(notificationId: string, userId: string): Promise<void> {
-  console.log(`[NotificationHelper] Marking notification ${notificationId} as read`);
+  logger.debug(`[NotificationHelper] Marking notification ${notificationId} as read`);
   try {
     await prisma.projectNotification.update({
       where: { id: notificationId },
       data: { read: true, readAt: new Date() },
     });
   } catch (error) {
-    console.error("[NotificationHelper] Error marking as read:", error);
+    logger.error("[NotificationHelper] Error marking as read:", error);
   }
 }
 
@@ -42,7 +43,7 @@ export async function markNotificationRead(notificationId: string, userId: strin
  * Mark all notifications as read for an org
  */
 export async function markAllNotificationsRead(orgId: string): Promise<number> {
-  console.log(`[NotificationHelper] Marking all notifications read for org ${orgId}`);
+  logger.debug(`[NotificationHelper] Marking all notifications read for org ${orgId}`);
   try {
     const result = await prisma.projectNotification.updateMany({
       where: { orgId, read: false },
@@ -50,7 +51,7 @@ export async function markAllNotificationsRead(orgId: string): Promise<number> {
     });
     return result.count;
   } catch (error) {
-    console.error("[NotificationHelper] Error marking all as read:", error);
+    logger.error("[NotificationHelper] Error marking all as read:", error);
     return 0;
   }
 }

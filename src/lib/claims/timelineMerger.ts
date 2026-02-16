@@ -6,6 +6,7 @@
  */
 
 import { type TimelineEvent } from "@/lib/claims/reconstructor";
+import { logger } from "@/lib/logger";
 
 export interface EventStream {
   source: string;
@@ -25,7 +26,7 @@ export interface MergedTimelineResult {
  * Merge multiple event streams into one unified timeline
  */
 export function mergeEventStreams(streams: EventStream[]): MergedTimelineResult {
-  console.log(`[TimelineMerger] Merging ${streams.length} event streams...`);
+  logger.debug(`[TimelineMerger] Merging ${streams.length} event streams...`);
 
   const allEvents: TimelineEvent[] = [];
   const sourceCount: Record<string, number> = {};
@@ -45,7 +46,7 @@ export function mergeEventStreams(streams: EventStream[]): MergedTimelineResult 
     });
   });
 
-  console.log(`[TimelineMerger] Total events before dedup: ${allEvents.length}`);
+  logger.debug(`[TimelineMerger] Total events before dedup: ${allEvents.length}`);
 
   // Sort chronologically
   allEvents.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
@@ -53,7 +54,7 @@ export function mergeEventStreams(streams: EventStream[]): MergedTimelineResult 
   // Remove duplicates
   const deduplicated = deduplicateEvents(allEvents);
 
-  console.log(`[TimelineMerger] Events after dedup: ${deduplicated.length}`);
+  logger.debug(`[TimelineMerger] Events after dedup: ${deduplicated.length}`);
 
   // Calculate statistics
   const confidenceSum = deduplicated.reduce((sum, event) => sum + event.confidence, 0);

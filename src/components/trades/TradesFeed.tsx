@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { format } from "date-fns";
 import {
   AtSign,
@@ -83,7 +84,7 @@ export function TradesFeed({ isAuthenticated }: TradesFeedProps) {
       const data = await response.json();
       setPosts(data.posts || []);
     } catch (error) {
-      console.error("Load posts error:", error);
+      logger.error("Load posts error:", error);
     } finally {
       setIsLoading(false);
     }
@@ -179,7 +180,7 @@ export function TradesFeed({ isAuthenticated }: TradesFeedProps) {
       setNewPostContent("");
       toast.success("Post shared to the network!");
     } catch (error) {
-      console.error("Create post error:", error);
+      logger.error("Create post error:", error);
       toast.error("Failed to create post");
     } finally {
       setIsPosting(false);

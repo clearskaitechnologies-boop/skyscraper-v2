@@ -4,6 +4,7 @@
  */
 
 import { cert, getApps, initializeApp } from "firebase-admin/app";
+import { logger } from "@/lib/logger";
 
 let firebaseAdmin: any = null;
 
@@ -51,7 +52,7 @@ export function getFirebaseAdmin() {
 
     return firebaseAdmin;
   } catch (error) {
-    console.error("[Firebase Admin] Initialization failed:", error);
+    logger.error("[Firebase Admin] Initialization failed:", error);
     throw error;
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useOrganization } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { Clock, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -30,7 +31,7 @@ export default function TrialBanner() {
           setTrialInfo(data);
         }
       } catch (error) {
-        console.error("Failed to fetch trial info:", error);
+        logger.error("Failed to fetch trial info:", error);
       }
     };
 

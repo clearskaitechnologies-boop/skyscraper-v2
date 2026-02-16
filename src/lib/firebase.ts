@@ -1,5 +1,6 @@
 // Firebase client configuration for frontend
 import { getAnalytics, isSupported } from "firebase/analytics";
+import { logger } from "@/lib/logger";
 import { getApps, initializeApp } from "firebase/app";
 import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { connectFirestoreEmulator, getFirestore } from "firebase/firestore";
@@ -23,7 +24,7 @@ let app: ReturnType<typeof initializeApp> | null = null;
 try {
   app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 } catch (error) {
-  console.warn("Firebase initialization failed (likely during build):", error);
+  logger.warn("Firebase initialization failed (likely during build):", error);
   // Will be null, lazy initialization will be attempted when services are accessed
 }
 
@@ -116,7 +117,7 @@ if (
     if (d) connectFirestoreEmulator(d, "localhost", 8080);
     if (f) connectFunctionsEmulator(f, "localhost", 5001);
   } catch (error) {
-    console.log("Firebase emulators already connected or not available");
+    logger.debug("Firebase emulators already connected or not available");
   }
 }
 

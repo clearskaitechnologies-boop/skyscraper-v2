@@ -25,6 +25,7 @@ export const revalidate = 0;
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { enqueue } from "@/lib/queue";
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
     const allowed = await rateLimiters.weather.check(30, identifier);
 
     if (!allowed) {
-      console.log("[WEATHER] ⚠️  Rate limit exceeded for:", identifier);
+      logger.debug("[WEATHER] ⚠️  Rate limit exceeded for:", identifier);
       return NextResponse.json(
         { error: "Rate limit exceeded. Please wait a moment and try again." },
         { status: 429 }
@@ -65,13 +66,13 @@ export async function POST(req: Request) {
       },
     ]);
 
-    console.log(`Weather analysis job enqueued: ${jobId}`);
+    logger.debug(`Weather analysis job enqueued: ${jobId}`);
 
     return NextResponse.json({
       jobId,
     });
   } catch (error: any) {
-    console.error("Error enqueuing weather analysis job:", error);
+    logger.error("Error enqueuing weather analysis job:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

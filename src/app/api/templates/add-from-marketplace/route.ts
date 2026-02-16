@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Missing templateId" }, { status: 400 });
     }
 
-    console.log(`[ADD_TEMPLATE] User ${ctx.userId} adding template ${templateId} to org ${orgId}`);
+    logger.debug(`[ADD_TEMPLATE] User ${ctx.userId} adding template ${templateId} to org ${orgId}`);
 
     // Find the template by ID or slug in database
     let template = await prisma.template.findFirst({
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     // If template not in DB, try to create it from registry
     if (!template) {
-      console.log(`[ADD_TEMPLATE] Template ${templateId} not in DB, checking registry...`);
+      logger.debug(`[ADD_TEMPLATE] Template ${templateId} not in DB, checking registry...`);
 
       // Check registry by slug first, then by id
       const registryTemplate = getTemplateBySlug(templateId) || getTemplateById(templateId);
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
           sections: [],
         },
       });
-      console.log(`[ADD_TEMPLATE] Created template ${template.slug} in database`);
+      logger.debug(`[ADD_TEMPLATE] Created template ${template.slug} in database`);
     }
 
     // Check if already added to this org
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     if (existing) {
       // Already exists - just return success
-      console.log(`[ADD_TEMPLATE] Template ${template.slug} already in org ${orgId}`);
+      logger.debug(`[ADD_TEMPLATE] Template ${template.slug} already in org ${orgId}`);
       return NextResponse.json({
         success: true,
         templateId: template.id,
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log(`[ADD_TEMPLATE] ✅ Added template ${template.slug} to org ${orgId}`);
+    logger.debug(`[ADD_TEMPLATE] ✅ Added template ${template.slug} to org ${orgId}`);
 
     return NextResponse.json({
       success: true,
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
       message: "Template added to your library",
     });
   } catch (error: any) {
-    console.error("[ADD_TEMPLATE] Error:", error);
+    logger.error("[ADD_TEMPLATE] Error:", error);
 
     // Capture error in Sentry
     Sentry.captureException(error, {

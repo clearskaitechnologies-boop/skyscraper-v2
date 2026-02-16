@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("[Branding Upload] Supabase error:", error);
+      logger.error("[Branding Upload] Supabase error:", error);
       return NextResponse.json({ error: "Upload failed: " + error.message }, { status: 500 });
     }
 
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: publicUrl, storage: "supabase" });
   } catch (error: any) {
-    console.error("[Branding Upload] Error:", error);
+    logger.error("[Branding Upload] Error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type OrgBranding = {
   id: string;
@@ -28,7 +29,7 @@ export type OrgBranding = {
  */
 export async function getBrandingForOrg(orgId: string): Promise<OrgBranding | null> {
   if (!orgId) {
-    console.warn("[PDF Branding] No orgId provided");
+    logger.warn("[PDF Branding] No orgId provided");
     return null;
   }
 

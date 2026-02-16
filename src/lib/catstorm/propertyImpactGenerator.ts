@@ -4,6 +4,7 @@
  */
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -56,7 +57,7 @@ export async function generatePropertyImpacts(
     impactIds.push(impactId);
   }
 
-  console.log(`✅ Generated ${properties.length} property impact assessments`);
+  logger.debug(`✅ Generated ${properties.length} property impact assessments`);
   
   return impactIds;
 }
@@ -378,7 +379,7 @@ NOTES
     },
   });
 
-  console.log('✅ Impact packet generated');
+  logger.debug('✅ Impact packet generated');
 
   return packetUrl;
 }

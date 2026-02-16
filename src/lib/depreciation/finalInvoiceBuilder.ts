@@ -12,6 +12,7 @@
  */
 
 import { generateFinancialAnalysis } from "@/lib/intel/financial/generateFinancial";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export interface FinalInvoice {
@@ -79,7 +80,7 @@ export interface FinalInvoice {
 }
 
 export async function buildFinalInvoice(claim_id: string, orgId: string): Promise<FinalInvoice> {
-  console.log(`[Final Invoice Builder] Building for claim ${claimId}`);
+  logger.debug(`[Final Invoice Builder] Building for claim ${claimId}`);
 
   // Fetch claim with all related data
   const claim = await prisma.claims.findFirst({
@@ -199,8 +200,8 @@ export async function buildFinalInvoice(claim_id: string, orgId: string): Promis
     generatedDate: new Date().toISOString().split("T")[0],
   };
 
-  console.log(`[Final Invoice Builder] Invoice total: $${finalInvoiceTotal.toFixed(2)}`);
-  console.log(`[Final Invoice Builder] Depreciation owed: $${depreciationOwed.toFixed(2)}`);
+  logger.debug(`[Final Invoice Builder] Invoice total: $${finalInvoiceTotal.toFixed(2)}`);
+  logger.debug(`[Final Invoice Builder] Depreciation owed: $${depreciationOwed.toFixed(2)}`);
 
   return invoice;
 }

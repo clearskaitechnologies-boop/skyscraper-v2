@@ -6,6 +6,7 @@
  */
 
 import { ExplanationPayload, RuleDefinition } from "../types";
+import { logger } from "@/lib/logger";
 
 export interface ExplanationContext {
   claimId: string;
@@ -74,7 +75,7 @@ export function buildExplanation(ctx: ExplanationContext): ExplanationPayload {
  */
 export async function saveExplanation(actionId: string, explanation: ExplanationPayload) {
   // aIExplanation model doesn't exist in schema
-  console.log(`[explanations] Would save explanation for action ${actionId}`);
+  logger.debug(`[explanations] Would save explanation for action ${actionId}`);
   return null;
 }
 
@@ -84,7 +85,7 @@ export async function saveExplanation(actionId: string, explanation: Explanation
  */
 export async function getExplanation(actionId: string) {
   // aIExplanation model doesn't exist in schema
-  console.log(`[explanations] Would get explanation for action ${actionId}`);
+  logger.debug(`[explanations] Would get explanation for action ${actionId}`);
   return null;
 }
 

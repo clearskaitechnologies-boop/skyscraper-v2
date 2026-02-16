@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "itemId and toCategory are required" }, { status: 400 });
     }
 
-    console.log(`[Move Job] Moving ${itemType} ${itemId} from ${fromCategory} to ${toCategory}`);
+    logger.debug(`[Move Job] Moving ${itemType} ${itemId} from ${fromCategory} to ${toCategory}`);
 
     if (itemType === "lead") {
       // Moving a lead to a different category
@@ -187,7 +188,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: "Invalid itemType" }, { status: 400 });
   } catch (error: any) {
-    console.error("[Move Job] Error:", error);
+    logger.error("[Move Job] Error:", error);
     return NextResponse.json(
       { error: "Failed to move job", details: error.message },
       { status: 500 }

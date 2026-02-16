@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -46,7 +47,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("[API] commission-plans PUT error:", err);
+    logger.error("[API] commission-plans PUT error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -71,7 +72,7 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("[API] commission-plans DELETE error:", err);
+    logger.error("[API] commission-plans DELETE error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

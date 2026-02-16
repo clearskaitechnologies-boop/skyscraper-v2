@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -96,7 +97,7 @@ export async function POST(req: NextRequest) {
       order,
     });
   } catch (error) {
-    console.error("Material order error:", error);
+    logger.error("Material order error:", error);
     return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
   }
 }
@@ -121,7 +122,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ orders });
   } catch (error) {
-    console.error("Material order fetch error:", error);
+    logger.error("Material order fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch orders" }, { status: 500 });
   }
 }

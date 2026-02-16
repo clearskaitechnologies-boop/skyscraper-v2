@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { VENDORS } from "@/data/vendors";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -50,7 +51,7 @@ async function GET_INNER(_req: unknown, ctx: { userId: string; orgId: string }) 
       },
     });
   } catch (error) {
-    console.error("Error fetching product context:", error);
+    logger.error("Error fetching product context:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch product context" },
       { status: 500 }

@@ -8,6 +8,7 @@ export const revalidate = 0;
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { FROM_EMAIL, getResend, REPLY_TO_EMAIL, TEMPLATES } from "@/lib/email/resend";
@@ -91,7 +92,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
             });
             emailsSentCount++;
           } catch (err) {
-            console.error(`Failed to send proposal email to ${recipientEmail}:`, err);
+            logger.error(`Failed to send proposal email to ${recipientEmail}:`, err);
           }
         });
 
@@ -119,7 +120,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[API] /api/proposals/[id]/publish error:", error);
+    logger.error("[API] /api/proposals/[id]/publish error:", error);
     return NextResponse.json(
       {
         error: "Failed to publish proposal",

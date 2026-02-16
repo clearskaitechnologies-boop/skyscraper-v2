@@ -3,6 +3,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -59,7 +60,7 @@ export async function verifyProClaimAccess(userId: string, claimId: string): Pro
     // For now, we'll allow access (rely on frontend auth)
     return true;
   } catch (error) {
-    console.error("[VERIFY_PRO_ACCESS_ERROR]", error);
+    logger.error("[VERIFY_PRO_ACCESS_ERROR]", error);
     return false;
   }
 }
@@ -79,7 +80,7 @@ export async function verifyClientClaimAccess(userId: string, claimId: string): 
 
     return !!link;
   } catch (error) {
-    console.error("[VERIFY_CLIENT_ACCESS_ERROR]", error);
+    logger.error("[VERIFY_CLIENT_ACCESS_ERROR]", error);
     return false;
   }
 }

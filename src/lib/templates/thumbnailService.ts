@@ -6,6 +6,7 @@
  */
 
 import { chromium } from "playwright";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { supabaseServer } from "@/lib/supabase-server";
@@ -129,7 +130,7 @@ export async function generateTemplateThumbnail(
         }
       } catch {
         // URL not accessible, regenerate
-        console.log(`[ThumbnailService] Existing URL not accessible, regenerating: ${templateId}`);
+        logger.debug(`[ThumbnailService] Existing URL not accessible, regenerating: ${templateId}`);
       }
     }
 
@@ -159,7 +160,7 @@ export async function generateTemplateThumbnail(
       data: { thumbnailUrl },
     });
 
-    console.log(`[ThumbnailService] Generated thumbnail for ${templateId}: ${thumbnailUrl}`);
+    logger.debug(`[ThumbnailService] Generated thumbnail for ${templateId}: ${thumbnailUrl}`);
 
     return {
       success: true,
@@ -167,7 +168,7 @@ export async function generateTemplateThumbnail(
       cached: false,
     };
   } catch (error) {
-    console.error(`[ThumbnailService] Error generating thumbnail for ${templateId}:`, error);
+    logger.error(`[ThumbnailService] Error generating thumbnail for ${templateId}:`, error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "UNKNOWN_ERROR",

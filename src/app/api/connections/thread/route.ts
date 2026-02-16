@@ -3,6 +3,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, thread });
   } catch (error) {
-    console.error("[POST /api/connections/thread] Error:", error);
+    logger.error("[POST /api/connections/thread] Error:", error);
     return NextResponse.json({ error: "Failed to create thread" }, { status: 500 });
   }
 }

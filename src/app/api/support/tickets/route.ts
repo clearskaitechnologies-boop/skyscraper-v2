@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { pool } from "@/server/db";
@@ -85,7 +86,7 @@ export async function POST(req: Request) {
         }).catch((err) => console.error("Failed to send ticket confirmation email:", err));
       }
     } catch (error) {
-      console.error("Failed to send support ticket email:", error);
+      logger.error("Failed to send support ticket email:", error);
       // Don't fail the request if email fails
     }
 
@@ -95,7 +96,7 @@ export async function POST(req: Request) {
       createdAt: ticket.created_at,
     });
   } catch (error) {
-    console.error("[SUPPORT_TICKET] Error:", error);
+    logger.error("[SUPPORT_TICKET] Error:", error);
     return NextResponse.json({ error: "Failed to create support ticket" }, { status: 500 });
   }
 }
@@ -128,7 +129,7 @@ export async function GET() {
 
     return NextResponse.json({ tickets: result.rows });
   } catch (error) {
-    console.error("[SUPPORT_TICKETS_GET] Error:", error);
+    logger.error("[SUPPORT_TICKETS_GET] Error:", error);
     return NextResponse.json({ tickets: [] });
   }
 }

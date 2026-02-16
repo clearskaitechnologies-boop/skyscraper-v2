@@ -1,5 +1,6 @@
 // src/app/api/contacts/search/route.ts
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { withOrgScope } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -48,7 +49,7 @@ export const GET = withOrgScope(async (req, { orgId }) => {
       })),
     });
   } catch (error: any) {
-    console.error("[GET /api/contacts/search] Error:", error);
+    logger.error("[GET /api/contacts/search] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to search contacts" },
       { status: 500 }

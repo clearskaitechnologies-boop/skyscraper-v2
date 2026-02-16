@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Form Instrumentation Utility
  *
@@ -29,7 +31,7 @@ const MAX_BUFFER_SIZE = 50;
 
 function logEvent(event: FormEvent) {
   // Always log to console for debugging
-  console.log(`[FormTracker:${event.form}] ${event.event}`, event.data || "");
+  logger.debug(`[FormTracker:${event.form}] ${event.event}`, event.data || "");
 
   // Buffer for debugging
   eventBuffer.push(event);

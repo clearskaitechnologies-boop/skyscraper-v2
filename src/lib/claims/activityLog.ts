@@ -4,6 +4,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -63,10 +64,10 @@ export async function logClaimActivity(params: LogActivityParams) {
       },
     });
 
-    console.log(`[CLAIM_ACTIVITY_LOGGED] ${type} for claim ${claimId}`);
+    logger.debug(`[CLAIM_ACTIVITY_LOGGED] ${type} for claim ${claimId}`);
     return event;
   } catch (error) {
-    console.error("[LOG_ACTIVITY_ERROR]", error);
+    logger.error("[LOG_ACTIVITY_ERROR]", error);
     return null;
   }
 }
@@ -99,7 +100,7 @@ export async function getClaimActivity(
       actorId: e.actor_id,
     }));
   } catch (error) {
-    console.error("[GET_ACTIVITY_ERROR]", error);
+    logger.error("[GET_ACTIVITY_ERROR]", error);
     return [];
   }
 }

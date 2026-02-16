@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell, CheckCheck, ExternalLink, Mail, MessageCircle, UserPlus, Users } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -69,7 +70,7 @@ export function NotificationCenter() {
         setUnreadCount(data.unreadCount ?? items.filter((n) => !n.read).length);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      logger.error("Failed to fetch notifications:", error);
     } finally {
       setLoading(false);
     }
@@ -100,7 +101,7 @@ export function NotificationCenter() {
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
-      console.error("Failed to mark notification as read:", error);
+      logger.error("Failed to mark notification as read:", error);
     }
   };
 
@@ -121,7 +122,7 @@ export function NotificationCenter() {
         )
       );
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      logger.error("Failed to mark all as read:", error);
       // Re-fetch to get accurate state on failure
       fetchNotifications();
     }

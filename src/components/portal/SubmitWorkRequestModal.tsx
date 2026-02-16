@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Upload, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -82,7 +83,7 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
         setSavedPros(data.savedPros || []);
       }
     } catch (error) {
-      console.error("Failed to load saved pros:", error);
+      logger.error("Failed to load saved pros:", error);
     }
   }
 
@@ -148,7 +149,7 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
       setFormData({ type: "", jobCategory: "", address: "", description: "" });
       setPhotos([]);
     } catch (error) {
-      console.error("Failed to submit work request:", error);
+      logger.error("Failed to submit work request:", error);
       toast.error("Failed to submit work request");
     } finally {
       setLoading(false);

@@ -1,4 +1,5 @@
 import { promises as fs } from "fs";
+import { logger } from "@/lib/logger";
 import path from "path";
 
 import { Prisma } from "@prisma/client";
@@ -24,7 +25,7 @@ export async function GET() {
         .filter(Boolean);
     }
   } catch (error) {
-    console.warn("[deploy-info] Unable to read binaryTargets", error);
+    logger.warn("[deploy-info] Unable to read binaryTargets", error);
   }
 
   return NextResponse.json({

@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(photo);
   } catch (error: any) {
-    console.error("[Completion Photo Upload Error]", error);
+    logger.error("[Completion Photo Upload Error]", error);
     return NextResponse.json({ error: error.message || "Failed to upload photo" }, { status: 500 });
   }
 }
@@ -137,7 +138,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(photos);
   } catch (error: any) {
-    console.error("[Completion Photos Get Error]", error);
+    logger.error("[Completion Photos Get Error]", error);
     return NextResponse.json({ error: error.message || "Failed to get photos" }, { status: 500 });
   }
 }

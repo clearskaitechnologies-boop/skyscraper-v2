@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * OpenAI Integration
  * Centralized API client for GPT-4
@@ -37,7 +39,7 @@ export async function callOpenAI({
 
     return content;
   } catch (error) {
-    console.error("OpenAI API error:", error);
+    logger.error("OpenAI API error:", error);
 
     // Capture to Sentry (no prompts/completions)
     if (typeof window === "undefined") {
@@ -86,7 +88,7 @@ export async function callOpenAIJSON<T = any>({
 
     return JSON.parse(content);
   } catch (error) {
-    console.error("OpenAI JSON API error:", error);
+    logger.error("OpenAI JSON API error:", error);
     throw error;
   }
 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -122,7 +123,7 @@ Return a JSON object with section IDs as keys and generated content as values.
     try {
       composedSections = JSON.parse(content);
     } catch (error) {
-      console.error("[COMPOSE] JSON parse failed:", error);
+      logger.error("[COMPOSE] JSON parse failed:", error);
       return NextResponse.json({ error: "AI_RESPONSE_INVALID_JSON" }, { status: 500 });
     }
 
@@ -130,7 +131,7 @@ Return a JSON object with section IDs as keys and generated content as values.
     const missingSections = sections.filter((id) => !composedSections[id]);
 
     if (missingSections.length > 0) {
-      console.warn("[COMPOSE] Missing sections:", missingSections);
+      logger.warn("[COMPOSE] Missing sections:", missingSections);
     }
 
     return NextResponse.json({
@@ -141,7 +142,7 @@ Return a JSON object with section IDs as keys and generated content as values.
       model: response.model,
     });
   } catch (error) {
-    console.error("[COMPOSE] Error:", error);
+    logger.error("[COMPOSE] Error:", error);
     return NextResponse.json(
       {
         ok: false,

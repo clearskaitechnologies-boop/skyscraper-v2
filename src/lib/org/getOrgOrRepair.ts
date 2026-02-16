@@ -17,6 +17,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { redirect } from "next/navigation";
 
 import prisma from "@/lib/prisma";
@@ -59,7 +60,7 @@ export async function getOrgOrRepair(): Promise<OrgContext> {
   }
 
   // Slow path: repair org
-  console.log("[getOrgOrRepair] No org found, initiating repair...");
+  logger.debug("[getOrgOrRepair] No org found, initiating repair...");
 
   try {
     org = await repairOrgInline(userId, clerkOrgId);
@@ -184,7 +185,7 @@ async function repairOrgInline(
       },
     });
 
-    console.log("[getOrgOrRepair] Repaired org inline:", org.id);
+    logger.debug("[getOrgOrRepair] Repaired org inline:", org.id);
 
     return org;
   });

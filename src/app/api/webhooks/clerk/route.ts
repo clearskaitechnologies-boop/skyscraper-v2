@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 /**
  * Clerk User Webhook Handler
  *
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
   }
   if (!webhookSecret) {
-    console.error("[Webhook] CLERK_WEBHOOK_SECRET not configured");
+    logger.error("[Webhook] CLERK_WEBHOOK_SECRET not configured");
     return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
   }
 
@@ -59,13 +60,13 @@ export async function POST(req: NextRequest) {
         "svix-signature": svix_signature,
       });
     } catch (err) {
-      console.error("[Webhook] Verification failed:", err);
+      logger.error("[Webhook] Verification failed:", err);
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     // Handle different event types
     const eventType = evt.type;
-    console.log(`[Webhook] Received event: ${eventType}`);
+    logger.debug(`[Webhook] Received event: ${eventType}`);
 
     // User created event
     if (eventType === "user.created") {
@@ -80,7 +81,7 @@ export async function POST(req: NextRequest) {
         (e: any) => e.id === primary_email_address_id
       )?.email_address;
 
-      console.log(`[Webhook] New user created: ${userId} (${primaryEmail})`);
+      logger.debug(`[Webhook] New user created: ${userId} (${primaryEmail})`);
 
       // Bootstrap user with default Org
       try {
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
             orgId: Org.id,
           },
         });
-        console.log(`[Webhook] ✅ User record created in users table`);
+        logger.debug(`[Webhook] ✅ User record created in users table`);
 
         // Now bootstrap (creates userOrganization, team_members, tokens, etc.)
         const result = await bootstrapNewOrg(userId, Org.id, {
@@ -124,12 +125,12 @@ export async function POST(req: NextRequest) {
         });
 
         if (result.success) {
-          console.log(`[Webhook] ✅ User ${userId} fully bootstrapped`);
+          logger.debug(`[Webhook] ✅ User ${userId} fully bootstrapped`);
         } else {
           console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
         }
       } catch (error) {
-        console.error(`[Webhook] ❌ Bootstrap failed for user ${userId}:`, error);
+        logger.error(`[Webhook] ❌ Bootstrap failed for user ${userId}:`, error);
         // Don't return error - allow signup to continue
       }
     }
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
     if (eventType === "organization.created") {
       const { id: orgId, created_by: userId } = evt.data;
 
-      console.log(`[Webhook] New Org created: ${orgId} by user ${userId}`);
+      logger.debug(`[Webhook] New Org created: ${orgId} by user ${userId}`);
 
       // Bootstrap organization
       try {
@@ -149,18 +150,18 @@ export async function POST(req: NextRequest) {
         });
 
         if (result.success) {
-          console.log(`[Webhook] ✅ Org ${orgId} bootstrapped successfully`);
+          logger.debug(`[Webhook] ✅ Org ${orgId} bootstrapped successfully`);
         } else {
           console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
         }
       } catch (error) {
-        console.error(`[Webhook] ❌ Bootstrap failed for Org ${orgId}:`, error);
+        logger.error(`[Webhook] ❌ Bootstrap failed for Org ${orgId}:`, error);
       }
     }
 
     return NextResponse.json({ success: true, eventType });
   } catch (error) {
-    console.error("[Webhook] Handler error:", error);
+    logger.error("[Webhook] Handler error:", error);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

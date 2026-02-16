@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { StarRating } from "./StarRating";
@@ -50,7 +51,7 @@ export function ReviewList({ contractorId, limit = 10 }: ReviewListProps) {
         setTotalReviews(data.totalReviews);
       }
     } catch (error) {
-      console.error("Error loading reviews:", error);
+      logger.error("Error loading reviews:", error);
     } finally {
       setLoading(false);
     }

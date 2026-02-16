@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ clients: enrichedClients });
   } catch (error) {
-    console.error("[GET /api/network/clients]", error);
+    logger.error("[GET /api/network/clients]", error);
     return NextResponse.json({ error: "Failed to fetch client networks" }, { status: 500 });
   }
 }
@@ -139,7 +140,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error) {
-    console.error("[POST /api/network/clients]", error);
+    logger.error("[POST /api/network/clients]", error);
     return NextResponse.json({ error: "Failed to create client network" }, { status: 500 });
   }
 }

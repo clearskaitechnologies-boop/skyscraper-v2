@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
@@ -93,7 +94,7 @@ export async function POST() {
       message: "Sample data created successfully! Check your claims to get started.",
     });
   } catch (error) {
-    console.error("[CREATE_SAMPLE] Error:", error);
+    logger.error("[CREATE_SAMPLE] Error:", error);
     return NextResponse.json({ error: "Failed to create sample data" }, { status: 500 });
   }
 }
@@ -142,7 +143,7 @@ export async function DELETE() {
       message: "Sample data deleted successfully",
     });
   } catch (error) {
-    console.error("[DELETE_SAMPLE] Error:", error);
+    logger.error("[DELETE_SAMPLE] Error:", error);
     return NextResponse.json({ error: "Failed to delete sample data" }, { status: 500 });
   }
 }

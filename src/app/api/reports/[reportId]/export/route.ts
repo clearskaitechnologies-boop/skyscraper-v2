@@ -7,6 +7,7 @@ export const revalidate = 0;
 // ============================================================================
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import {
@@ -93,7 +94,7 @@ export async function POST(
 
     return NextResponse.json({ error: "No file generated" }, { status: 500 });
   } catch (error: any) {
-    console.error("[Export API] Error:", error);
+    logger.error("[Export API] Error:", error);
     return NextResponse.json(
       { error: error.message || "Internal server error", stack: error.stack },
       { status: 500 }

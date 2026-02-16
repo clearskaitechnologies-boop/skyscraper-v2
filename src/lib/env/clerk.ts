@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 // =====================================================
 // CLERK ENVIRONMENT VALIDATION
 // =====================================================
@@ -105,19 +107,19 @@ export function logClerkValidation(): void {
   const result = validateClerkEnvironment();
 
   if (result.errors.length > 0) {
-    console.error("❌ CLERK VALIDATION FAILED:");
+    logger.error("❌ CLERK VALIDATION FAILED:");
     result.errors.forEach((err) => console.error(`   - ${err}`));
     // Don't throw - just log. Throwing breaks the build.
     // Auth will fail gracefully at runtime if misconfigured.
   }
 
   if (result.warnings.length > 0 && IS_DEV) {
-    console.warn("⚠️  CLERK CONFIGURATION WARNINGS:");
+    logger.warn("⚠️  CLERK CONFIGURATION WARNINGS:");
     result.warnings.forEach((warn) => console.warn(`   - ${warn}`));
   }
 
   if (result.valid && result.warnings.length === 0) {
-    console.log("✅ Clerk environment validated");
+    logger.debug("✅ Clerk environment validated");
   }
 }
 

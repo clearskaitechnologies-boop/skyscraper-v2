@@ -10,6 +10,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import fs from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
@@ -244,7 +245,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
           },
         });
       } catch (fileError) {
-        console.error(`[PDF_PROXY] Local file not found: ${filePath}`);
+        logger.error(`[PDF_PROXY] Local file not found: ${filePath}`);
         return await servePremiumStaticPreview({
           category: templateCategory,
           slug: templateSlug,
@@ -266,7 +267,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
       cacheControl: "public, max-age=3600",
     });
   } catch (error) {
-    console.error("[PDF_PROXY] Error:", error);
+    logger.error("[PDF_PROXY] Error:", error);
     // Demo hardening: never return 500 for PDF embeds
     return await servePremiumStaticPreview({
       category: null,

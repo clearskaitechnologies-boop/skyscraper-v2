@@ -19,6 +19,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface CodeRequirement {
   code: string; // e.g., "IRC R905.2.8.5"
@@ -45,7 +46,7 @@ export interface CodeSummary {
  */
 export async function generateCodeSummary(claimId: string): Promise<CodeSummary> {
   try {
-    console.log(`[code] Generating code summary for claim ${claimId}`);
+    logger.debug(`[code] Generating code summary for claim ${claimId}`);
 
     // Fetch claim with property details
     const claim = await prisma.claims.findUnique({
@@ -93,7 +94,7 @@ export async function generateCodeSummary(claimId: string): Promise<CodeSummary>
     // Calculate total estimated cost
     const totalEstimatedCost = missingItems.reduce((sum, item) => sum + (item.estimatedCost || 0), 0);
 
-    console.log(`[code] Found ${missingItems.length} missing code items, total cost: $${totalEstimatedCost}`);
+    logger.debug(`[code] Found ${missingItems.length} missing code items, total cost: $${totalEstimatedCost}`);
 
     return {
       requiredItems,
@@ -105,7 +106,7 @@ export async function generateCodeSummary(claimId: string): Promise<CodeSummary>
       generatedAt: new Date(),
     };
   } catch (error) {
-    console.error("[code] Generation failed:", error);
+    logger.error("[code] Generation failed:", error);
     throw new Error(`Failed to generate code summary: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }

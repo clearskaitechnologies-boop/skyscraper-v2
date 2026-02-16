@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -76,7 +77,7 @@ export async function GET() {
 
     return NextResponse.json({ received });
   } catch (error: any) {
-    console.error("[GET /api/connections/received]", error);
+    logger.error("[GET /api/connections/received]", error);
     return NextResponse.json({ error: "Failed to load received connections" }, { status: 500 });
   }
 }

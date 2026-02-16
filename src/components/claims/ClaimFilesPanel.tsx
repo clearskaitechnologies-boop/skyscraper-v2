@@ -1,6 +1,7 @@
 "use client";
 
 import { DownloadIcon, FileIcon, Trash2Icon, UploadIcon } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export function ClaimFilesPanel({ claimId, orgId, initialFiles }: ClaimFilesPane
       // Refresh the page to show new files
       window.location.reload();
     } catch (error: any) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       setUploadError(error.message || "Failed to upload files");
     } finally {
       setUploading(false);
@@ -122,7 +123,7 @@ export function ClaimFilesPanel({ claimId, orgId, initialFiles }: ClaimFilesPane
         prev.map((f) => (f.id === fileId ? { ...f, visibleToClient: newValue } : f))
       );
     } catch (error) {
-      console.error("Toggle visibility error:", error);
+      logger.error("Toggle visibility error:", error);
       setUploadError("Failed to update file visibility. Please try again.");
       // Revert UI after a moment
       setTimeout(() => setUploadError(null), 3000);

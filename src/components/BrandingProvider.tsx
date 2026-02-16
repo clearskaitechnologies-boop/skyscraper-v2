@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 interface BrandingData {
@@ -45,7 +46,7 @@ export default function BrandingProvider({ children }: { children: React.ReactNo
         // Remove any localStorage flags that might force banner display
         localStorage.removeItem("show-branding-banner");
       } catch (error) {
-        console.error("Failed to load branding:", error);
+        logger.error("Failed to load branding:", error);
         // Still mark as complete to prevent white screens on error
         const root = document.documentElement;
         root.classList.add("branding-complete");

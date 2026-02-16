@@ -4,6 +4,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { safeAI } from "@/lib/aiGuard";
 import type { DOLResult, PropertyContext, ScoredEvent } from "@/types/weather";
 
@@ -88,7 +89,7 @@ Generate a claims-ready weather impact summary.`;
 
     return summary.trim();
   } catch (error) {
-    console.error("[AI] Weather summary generation failed:", error);
+    logger.error("[AI] Weather summary generation failed:", error);
 
     // Fallback summary (no AI)
     return buildFallbackSummary(opts);

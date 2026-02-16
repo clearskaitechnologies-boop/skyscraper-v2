@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -38,11 +39,11 @@ export async function POST(req: NextRequest) {
       await chatService.markAsRead(conversationId, user.id, messageIds);
       return NextResponse.json({ success: true });
     } catch (error) {
-      console.log("Chat tables may not exist:", error);
+      logger.debug("Chat tables may not exist:", error);
       return NextResponse.json({ success: true });
     }
   } catch (error) {
-    console.error("Error marking messages as read:", error);
+    logger.error("Error marking messages as read:", error);
     return NextResponse.json({ error: "Failed to mark messages as read" }, { status: 500 });
   }
 }

@@ -15,6 +15,7 @@
  */
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 import { io, Socket } from "socket.io-client";
 
 import { APP_URL } from "@/lib/env";
@@ -41,46 +42,46 @@ export function useClaimWebSocket(claimId: string | null) {
     });
 
     socketIO.on("connect", () => {
-      console.log("[WebSocket] Connected");
+      logger.debug("[WebSocket] Connected");
       setConnected(true);
       socketIO.emit("join:claim", claimId);
     });
 
     socketIO.on("disconnect", () => {
-      console.log("[WebSocket] Disconnected");
+      logger.debug("[WebSocket] Disconnected");
       setConnected(false);
     });
 
     // Listen for claim-specific events
     socketIO.on("timeline:new", (data: any) => {
-      console.log("[WebSocket] New timeline event:", data);
+      logger.debug("[WebSocket] New timeline event:", data);
       setEvents((prev) => ({ ...prev, timeline: data }));
     });
 
     socketIO.on("note:new", (data: any) => {
-      console.log("[WebSocket] New note:", data);
+      logger.debug("[WebSocket] New note:", data);
       setEvents((prev) => ({ ...prev, note: data }));
     });
 
     socketIO.on("document:new", (data: any) => {
-      console.log("[WebSocket] New document:", data);
+      logger.debug("[WebSocket] New document:", data);
       setEvents((prev) => ({ ...prev, document: data }));
     });
 
     socketIO.on("photo:new", (data: any) => {
-      console.log("[WebSocket] New photo:", data);
+      logger.debug("[WebSocket] New photo:", data);
       setEvents((prev) => ({ ...prev, photo: data }));
     });
 
     socketIO.on("claim:updated", (data: any) => {
-      console.log("[WebSocket] Claim updated:", data);
+      logger.debug("[WebSocket] Claim updated:", data);
       setEvents((prev) => ({ ...prev, claimUpdate: data }));
     });
 
     setSocket(socketIO);
 
     return () => {
-      console.log("[WebSocket] Cleaning up");
+      logger.debug("[WebSocket] Cleaning up");
       if (claimId) {
         socketIO.emit("leave:claim", claimId);
       }

@@ -5,6 +5,7 @@
  */
 
 import { ApiVersion } from "../api/versioning";
+import { logger } from "@/lib/logger";
 
 export interface ApiEndpoint {
   id: string;
@@ -280,7 +281,7 @@ function generateJavaScriptSnippet(endpoint: ApiEndpoint, example?: ApiExample):
 
   snippet += `});\n\n`;
   snippet += `const data = await response.json();\n`;
-  snippet += `console.log(data);`;
+  snippet += `logger.debug("data", { data });`;
 
   return snippet;
 }

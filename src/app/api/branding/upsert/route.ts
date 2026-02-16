@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Company name is required" }, { status: 400 });
     }
 
-    console.log("Using finalOrgId:", finalOrgId);
+    logger.debug("Using finalOrgId:", finalOrgId);
 
     const branding = await prisma.org_branding.upsert({
       where: {
@@ -78,11 +79,11 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log("Branding upsert successful:", branding.id);
+    logger.debug("Branding upsert successful:", branding.id);
 
     return NextResponse.json({ success: true, branding });
   } catch (error) {
-    console.error("Branding upsert error:", error);
+    logger.error("Branding upsert error:", error);
 
     // Get detailed error info
     const errorMessage = error instanceof Error ? error.message : "Unknown error";

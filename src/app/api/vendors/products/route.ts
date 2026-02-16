@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions, type Permission, requirePermission } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
@@ -38,7 +39,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ items: products });
   } catch (error: unknown) {
-    console.error("Error fetching products:", error);
+    logger.error("Error fetching products:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json({ error: message }, { status: 500 });
   }
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    console.error("Error creating product:", error);
+    logger.error("Error creating product:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       { status: 201 }
     );
   } catch (error) {
-    console.error("Error regenerating artifact:", error);
+    logger.error("Error regenerating artifact:", error);
     return NextResponse.json({ error: "Failed to regenerate artifact" }, { status: 500 });
   }
 }

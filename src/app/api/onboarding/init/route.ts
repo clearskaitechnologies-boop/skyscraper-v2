@@ -62,6 +62,7 @@ export const revalidate = 0;
  */
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
@@ -76,11 +77,11 @@ export async function POST() {
     const { userId, orgId: clerkOrgId } = await auth();
 
     if (!userId) {
-      console.error("[onboarding/init] ❌ Unauthorized - no userId");
+      logger.error("[onboarding/init] ❌ Unauthorized - no userId");
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log(`[onboarding/init] 🚀 Starting onboard for user ${userId}`);
+    logger.debug(`[onboarding/init] 🚀 Starting onboard for user ${userId}`);
 
     // Check if user already has an organization
     const existingOrg = await prisma.org.findFirst({
@@ -94,14 +95,14 @@ export async function POST() {
     });
 
     if (existingOrg) {
-      console.log(`[onboarding/init] ℹ️ User ${userId} already has org ${existingOrg.id}`);
+      logger.debug(`[onboarding/init] ℹ️ User ${userId} already has org ${existingOrg.id}`);
 
       // Ensure membership exists (idempotent safety)
       const membership = await prisma.user_organizations.findFirst({
         where: { userId: userId, organizationId: existingOrg.id },
       });
       if (!membership) {
-        console.log(`[onboarding/init] 🔗 Creating missing membership for user ${userId}`);
+        logger.debug(`[onboarding/init] 🔗 Creating missing membership for user ${userId}`);
         await prisma.user_organizations.create({
           data: {
             id: `uo_${existingOrg.id}_${userId}`,
@@ -118,7 +119,7 @@ export async function POST() {
       });
     }
 
-    console.log(`[onboarding/init] 🆕 No existing org found - creating new one`);
+    logger.debug(`[onboarding/init] 🆕 No existing org found - creating new one`);
 
     // Create new blank organization
     // Use Clerk Org ID if available, otherwise create independent Org
@@ -134,7 +135,7 @@ export async function POST() {
       },
     });
 
-    console.log(`[onboarding/init] ✅ Created org ${Org.id} with clerkOrgId ${Org.clerkOrgId}`);
+    logger.debug(`[onboarding/init] ✅ Created org ${Org.id} with clerkOrgId ${Org.clerkOrgId}`);
 
     // Create user record if doesn't exist
     // Resolve real email from Clerk
@@ -142,9 +143,9 @@ export async function POST() {
     try {
       const clerkUser = await clerkClient.users.getUser(userId);
       userEmail = clerkUser.emailAddresses?.[0]?.emailAddress || null;
-      console.log(`[onboarding/init] 📧 Fetched email from Clerk: ${userEmail}`);
+      logger.debug(`[onboarding/init] 📧 Fetched email from Clerk: ${userEmail}`);
     } catch (e) {
-      console.warn("[onboarding/init] ⚠️ Could not fetch Clerk user email", e);
+      logger.warn("[onboarding/init] ⚠️ Could not fetch Clerk user email", e);
     }
 
     await prisma.users.upsert({
@@ -161,7 +162,7 @@ export async function POST() {
       },
     });
 
-    console.log(`[onboarding/init] 👤 Created/updated user record for ${userId}`);
+    logger.debug(`[onboarding/init] 👤 Created/updated user record for ${userId}`);
 
     // CRITICAL: Create UserOrganization membership record (used by safeOrgContext)
     await prisma.user_organizations.create({
@@ -173,7 +174,7 @@ export async function POST() {
       },
     });
 
-    console.log(`[onboarding/init] 🔗 Created user_organizations membership`);
+    logger.debug(`[onboarding/init] 🔗 Created user_organizations membership`);
 
     // Create blank branding settings (no logo, no colors)
     await prisma.billingSettings.create({
@@ -184,14 +185,14 @@ export async function POST() {
       },
     });
 
-    console.log(`[onboarding/init] 💳 Created billingSettings for org ${Org.id}`);
+    logger.debug(`[onboarding/init] 💳 Created billingSettings for org ${Org.id}`);
 
     // 🛡️ HARDEN: Ensure all workspace primitives exist (catches edge cases)
     await ensureWorkspaceForOrg({ orgId: Org.id, userId }).catch((err) => {
-      console.error("[onboarding/init] ensureWorkspace warning (non-fatal):", err);
+      logger.error("[onboarding/init] ensureWorkspace warning (non-fatal):", err);
     });
 
-    console.log(`[onboarding/init] ✅ Onboarding complete for user ${userId}`);
+    logger.debug(`[onboarding/init] ✅ Onboarding complete for user ${userId}`);
 
     return NextResponse.json({
       ok: true,

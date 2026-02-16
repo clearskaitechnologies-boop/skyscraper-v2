@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { LEGAL_DOCUMENTS } from "@/lib/legal/config";
@@ -7,16 +8,16 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request) {
   try {
     const { userId } = await auth();
-    console.log("[Legal Accept] Starting - userId:", userId);
+    logger.debug("[Legal Accept] Starting - userId:", userId);
 
     if (!userId) {
-      console.error("[Legal Accept] No userId - unauthorized");
+      logger.error("[Legal Accept] No userId - unauthorized");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await req.json().catch(() => null);
     if (!body) {
-      console.error("[Legal Accept] Invalid JSON body");
+      logger.error("[Legal Accept] Invalid JSON body");
       return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
@@ -29,7 +30,7 @@ export async function POST(req: Request) {
         : [];
 
     if (documents.length === 0) {
-      console.error("[Legal Accept] No documents provided");
+      logger.error("[Legal Accept] No documents provided");
       return NextResponse.json({ error: "Missing documentId or version" }, { status: 400 });
     }
 
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
     }
 
     // Upsert all acceptances
-    console.log("[Legal Accept] Upserting", documents.length, "acceptances...");
+    logger.debug("[Legal Accept] Upserting", documents.length, "acceptances...");
     const acceptances = [];
     for (const doc of documents) {
       const acceptance = await prisma.legal_acceptances.upsert({

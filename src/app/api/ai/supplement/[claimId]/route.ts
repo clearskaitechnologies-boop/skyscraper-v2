@@ -9,6 +9,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -126,10 +127,10 @@ Be assertive but professional.
     const generatedSupplement = completion.choices[0].message.content;
 
     // Log supplement generation (metadata updates handled elsewhere)
-    console.log(`[AI Supplement] Generated for claim ${claimId}, type: ${pushbackType}`);
+    logger.debug(`[AI Supplement] Generated for claim ${claimId}, type: ${pushbackType}`);
 
     // AI action logging (tracked via billing middleware)
-    console.log(`[AI Supplement] Action logged for claim ${claimId}`);
+    logger.debug(`[AI Supplement] Action logged for claim ${claimId}`);
 
     // Automation event logging
     console.log(
@@ -145,7 +146,7 @@ Be assertive but professional.
       pushbackType,
     });
   } catch (error: any) {
-    console.error("AI Supplement Generation Error:", error);
+    logger.error("AI Supplement Generation Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate supplement" },
       { status: 500 }

@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { CODE_LIBRARY, UniversalClaimsReport } from "@/types/universal-claims-report";
 
 import { generatePhotoCaptionsBatch } from "./photo-caption-generator";
@@ -17,7 +18,7 @@ export async function generateUniversalReport(
   claimId: string,
   userId: string
 ): Promise<UniversalClaimsReport> {
-  console.log(`[REPORT_GEN] Starting report generation for claim ${claimId}`);
+  logger.debug(`[REPORT_GEN] Starting report generation for claim ${claimId}`);
 
   // 1. Fetch all required data
   const claim = await prisma.claims.findUnique({
@@ -207,7 +208,7 @@ export async function generateUniversalReport(
     },
   };
 
-  console.log(`[REPORT_GEN] Report generation complete for claim ${claimId}`);
+  logger.debug(`[REPORT_GEN] Report generation complete for claim ${claimId}`);
   return report;
 }
 

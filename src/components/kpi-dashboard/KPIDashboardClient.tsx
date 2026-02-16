@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   Activity,
   AlertTriangle,
@@ -74,7 +75,7 @@ export default function KPIDashboardClient() {
         setKpiData(data);
       }
     } catch (error) {
-      console.error("Failed to fetch KPIs:", error);
+      logger.error("Failed to fetch KPIs:", error);
     } finally {
       setLoading(false);
     }

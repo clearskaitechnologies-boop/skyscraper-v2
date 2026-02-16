@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ClientReportData {
   homeowner: {
@@ -168,7 +169,7 @@ export async function fetchClientReportData(
 
     return { success: true, data: clientData };
   } catch (error) {
-    console.error("[Client Data] Failed to fetch:", error);
+    logger.error("[Client Data] Failed to fetch:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

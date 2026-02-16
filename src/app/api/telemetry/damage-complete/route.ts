@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { emitEvent, pushNotification, recordToolRun } from "@/lib/telemetry";
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("Telemetry error:", error);
+    logger.error("Telemetry error:", error);
     return NextResponse.json({ error: error.message || "Telemetry failed" }, { status: 500 });
   }
 }

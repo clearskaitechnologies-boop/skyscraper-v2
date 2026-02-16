@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle,Calendar, CheckCircle, FileCheck } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useEffect,useState } from "react";
 
@@ -24,7 +25,7 @@ export function LegalStatusWidget() {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Failed to load legal status:", error);
+        logger.error("Failed to load legal status:", error);
         setLoading(false);
       });
   }, []);

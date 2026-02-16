@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import { APP_URL } from "@/lib/env";
 import prisma from "@/lib/prisma";
 
@@ -76,7 +77,7 @@ export async function generateMagicLink(
 
     return { token, link };
   } catch (error) {
-    console.error("Magic link generation failed:", error);
+    logger.error("Magic link generation failed:", error);
     throw error;
   }
 }
@@ -145,7 +146,7 @@ export async function verifyMagicLink(token: string): Promise<ClientSession | nu
       expiresAt,
     };
   } catch (error) {
-    console.error("Magic link verification failed:", error);
+    logger.error("Magic link verification failed:", error);
     return null;
   }
 }
@@ -194,7 +195,7 @@ export async function logoutClientSession(sessionId: string): Promise<void> {
       where: { sessionId },
     });
   } catch (error) {
-    console.error("Logout failed:", error);
+    logger.error("Logout failed:", error);
   }
 }
 
@@ -226,7 +227,7 @@ This link will expire in 24 hours.
 
     return true;
   } catch (error) {
-    console.error("Magic link email failed:", error);
+    logger.error("Magic link email failed:", error);
     return false;
   }
 }

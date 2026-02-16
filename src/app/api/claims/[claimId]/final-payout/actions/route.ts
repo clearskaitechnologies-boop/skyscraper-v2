@@ -28,6 +28,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
@@ -131,7 +132,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
-    console.error("[Final Payout Actions] Error:", error);
+    logger.error("[Final Payout Actions] Error:", error);
     return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
   }
 }
@@ -179,7 +180,7 @@ async function handleGeneratePacket(
       },
     });
   } catch (error: any) {
-    console.error("[generate_packet] Error:", error);
+    logger.error("[generate_packet] Error:", error);
     return NextResponse.json(
       { error: "Failed to generate packet", details: error.message },
       { status: 500 }

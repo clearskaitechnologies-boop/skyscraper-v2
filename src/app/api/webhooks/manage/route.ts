@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -30,7 +31,7 @@ export async function GET() {
 
     return NextResponse.json(webhooks);
   } catch (error) {
-    console.error("Failed to fetch webhooks:", error);
+    logger.error("Failed to fetch webhooks:", error);
     return NextResponse.json({ error: "Failed to fetch webhooks" }, { status: 500 });
   }
 }
@@ -86,7 +87,7 @@ export async function POST(request: Request) {
       status: webhook.status,
     });
   } catch (error) {
-    console.error("Failed to create webhook:", error);
+    logger.error("Failed to create webhook:", error);
     return NextResponse.json({ error: "Failed to create webhook" }, { status: 500 });
   }
 }

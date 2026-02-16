@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { compose, safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
@@ -47,7 +48,7 @@ const baseGET = async (request: NextRequest, { params }: { params: { id: string 
       count: events.length,
     });
   } catch (err: any) {
-    console.error("[Timeline API Error]:", err);
+    logger.error("[Timeline API Error]:", err);
     return NextResponse.json({ error: "Failed to fetch timeline" }, { status: 500 });
   }
 };

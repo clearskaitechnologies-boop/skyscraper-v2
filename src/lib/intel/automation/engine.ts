@@ -13,6 +13,7 @@
  */
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 import { type DetectedTrigger, detectTriggersForClaim, saveTriggers } from "./detectTriggers";
@@ -41,7 +42,7 @@ export async function runDominusAutomations(
   claimId: string,
   orgId: string
 ): Promise<AutomationResult> {
-  console.log(`\n🔥 [DOMINUS] Starting automation pipeline for claim ${claimId}\n`);
+  logger.debug(`\n🔥 [DOMINUS] Starting automation pipeline for claim ${claimId}\n`);
 
   const results: any[] = [];
   const errors: any[] = [];
@@ -50,11 +51,11 @@ export async function runDominusAutomations(
     // ========================================
     // STEP 1: DETECT TRIGGERS
     // ========================================
-    console.log("[DOMINUS] STEP 1: Detecting triggers...");
+    logger.debug("[DOMINUS] STEP 1: Detecting triggers...");
     const triggers = await detectTriggersForClaim(claimId, orgId);
 
     if (triggers.length === 0) {
-      console.log("[DOMINUS] No triggers detected - claim is healthy");
+      logger.debug("[DOMINUS] No triggers detected - claim is healthy");
       return {
         success: true,
         triggersDetected: [],
@@ -64,7 +65,7 @@ export async function runDominusAutomations(
       };
     }
 
-    console.log(`[DOMINUS] Found ${triggers.length} triggers:`);
+    logger.debug(`[DOMINUS] Found ${triggers.length} triggers:`);
     triggers.forEach((t) => console.log(`  - ${t.type} (${t.severity}): ${t.reason}`));
 
     // Save triggers to database
@@ -74,11 +75,11 @@ export async function runDominusAutomations(
     // STEP 2: MAP & EXECUTE ACTIONS
     // ========================================
     for (const trigger of triggers) {
-      console.log(`\n[DOMINUS] Processing trigger: ${trigger.type}`);
+      logger.debug(`\n[DOMINUS] Processing trigger: ${trigger.type}`);
 
       // Get mapped actions
       const actions = getSortedActions(trigger.type);
-      console.log(`[DOMINUS] ${actions.length} actions mapped`);
+      logger.debug(`[DOMINUS] ${actions.length} actions mapped`);
 
       // Create trigger record
       const triggerRecord = await getDelegate("automation_triggers").create({
@@ -95,7 +96,7 @@ export async function runDominusAutomations(
       // Execute each action
       for (const action of actions) {
         try {
-          console.log(`[DOMINUS] Executing: ${action.type}`);
+          logger.debug(`[DOMINUS] Executing: ${action.type}`);
 
           // Create action record
           const actionRecord = await getDelegate("automation_actions").create({
@@ -121,9 +122,9 @@ export async function runDominusAutomations(
           });
 
           results.push({ action: action.type, result });
-          console.log(`[DOMINUS] ✅ ${action.type} completed`);
+          logger.debug(`[DOMINUS] ✅ ${action.type} completed`);
         } catch (error) {
-          console.error(`[DOMINUS] ❌ ${action.type} failed:`, error);
+          logger.error(`[DOMINUS] ❌ ${action.type} failed:`, error);
           errors.push({ action: action.type, error: String(error) });
 
           // Update action record with error - find by triggerId and actionType
@@ -175,7 +176,7 @@ export async function runDominusAutomations(
       },
     });
 
-    console.log(`\n🔥 [DOMINUS] Automation complete - ${results.length} actions executed\n`);
+    logger.debug(`\n🔥 [DOMINUS] Automation complete - ${results.length} actions executed\n`);
 
     return {
       success: true,
@@ -185,7 +186,7 @@ export async function runDominusAutomations(
       errors,
     };
   } catch (error) {
-    console.error("[DOMINUS] Pipeline failed:", error);
+    logger.error("[DOMINUS] Pipeline failed:", error);
     return {
       success: false,
       triggersDetected: [],

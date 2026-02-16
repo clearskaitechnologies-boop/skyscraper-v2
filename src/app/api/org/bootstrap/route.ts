@@ -15,6 +15,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
       : "User";
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || `${userId}@skaiscrape.com`;
 
-    console.log("[bootstrap] Starting for user:", userId, "clerkOrgId:", clerkOrgId);
+    logger.debug("[bootstrap] Starting for user:", userId, "clerkOrgId:", clerkOrgId);
 
     // Use a transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
 
       const orphanedMemberships = allMemberships.filter((m) => !m.Org);
       if (orphanedMemberships.length > 0) {
-        console.log("[bootstrap] Cleaning up", orphanedMemberships.length, "orphaned memberships");
+        logger.debug("[bootstrap] Cleaning up", orphanedMemberships.length, "orphaned memberships");
         await tx.user_organizations.deleteMany({
           where: {
             id: { in: orphanedMemberships.map((m) => m.id) },
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
             select: { id: true, name: true, clerkOrgId: true },
           });
           created = org.id === newOrgId; // Only true if we actually created it
-          console.log("[bootstrap] Upserted org for Clerk org:", org.id, "created:", created);
+          logger.debug("[bootstrap] Upserted org for Clerk org:", org.id, "created:", created);
         }
       } else {
         // No Clerk org - check existing VALID membership (after cleanup)
@@ -104,7 +105,7 @@ export async function POST(req: Request) {
             select: { id: true, name: true, clerkOrgId: true },
           });
           if (org) {
-            console.log("[bootstrap] Found existing org:", org.id);
+            logger.debug("[bootstrap] Found existing org:", org.id);
           }
         }
 
@@ -122,7 +123,7 @@ export async function POST(req: Request) {
             },
           });
           created = true;
-          console.log("[bootstrap] Created new personal org:", org.id);
+          logger.debug("[bootstrap] Created new personal org:", org.id);
         }
       }
 
@@ -154,7 +155,7 @@ export async function POST(req: Request) {
     // STEP 4: Seed demo claim (outside transaction - non-critical)
     await seedDemoClaimForOrg(result.org.id);
 
-    console.log("[bootstrap] Complete. OrgId:", result.org.id, "Created:", result.created);
+    logger.debug("[bootstrap] Complete. OrgId:", result.org.id, "Created:", result.created);
 
     return NextResponse.json({
       ok: true,
@@ -163,7 +164,7 @@ export async function POST(req: Request) {
       created: result.created,
     });
   } catch (error: any) {
-    console.error("[bootstrap] Error:", error);
+    logger.error("[bootstrap] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Bootstrap failed" },
       { status: 500 }
@@ -186,7 +187,7 @@ async function seedDemoClaimForOrg(orgId: string) {
       select: { id: true },
     });
     if (existing) {
-      console.log("[seedDemoClaimForOrg] Demo claim already exists:", demoClaimId);
+      logger.debug("[seedDemoClaimForOrg] Demo claim already exists:", demoClaimId);
       return;
     }
 
@@ -247,9 +248,9 @@ async function seedDemoClaimForOrg(orgId: string) {
       },
     });
 
-    console.log("[seedDemoClaimForOrg] Created demo claim:", demoClaimId);
+    logger.debug("[seedDemoClaimForOrg] Created demo claim:", demoClaimId);
   } catch (error) {
     // Non-fatal - log and continue
-    console.error("[seedDemoClaimForOrg] Error (non-fatal):", error);
+    logger.error("[seedDemoClaimForOrg] Error (non-fatal):", error);
   }
 }

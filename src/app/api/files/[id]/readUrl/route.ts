@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from '@/lib/db/modelAliases';
@@ -22,7 +23,7 @@ async function createTempUrlFromStorageKey(storageKey: string): Promise<string> 
     });
     return url;
   } catch (error) {
-    console.error("Failed to generate signed URL:", error);
+    logger.error("Failed to generate signed URL:", error);
     // Fallback placeholder
     return "about:blank";
   }
@@ -58,7 +59,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     const url = await createTempUrlFromStorageKey(file.storageKey);
     return NextResponse.json({ url });
   } catch (error) {
-    console.error("Failed to generate file URL:", error);
+    logger.error("Failed to generate file URL:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

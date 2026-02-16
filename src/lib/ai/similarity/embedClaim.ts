@@ -6,6 +6,7 @@
  */
 
 import { callOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 /**
@@ -69,7 +70,7 @@ export async function createOrUpdateClaimEmbedding(claimId: string) {
     const text = await generateClaimText(claimId);
 
     if (!text || text.length < 10) {
-      console.warn(`Insufficient text for claim ${claimId} embedding`);
+      logger.warn(`Insufficient text for claim ${claimId} embedding`);
       return null;
     }
 
@@ -95,7 +96,7 @@ export async function createOrUpdateClaimEmbedding(claimId: string) {
       updatedAt: new Date(),
     };
   } catch (error) {
-    console.error(`Error creating embedding for claim ${claimId}:`, error);
+    logger.error(`Error creating embedding for claim ${claimId}:`, error);
     return null;
   }
 }

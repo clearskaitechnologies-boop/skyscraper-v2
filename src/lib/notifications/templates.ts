@@ -5,6 +5,7 @@
  */
 
 import { sendNotification } from "./sendNotification";
+import { logger } from "@/lib/logger";
 
 export const NOTIFICATION_TEMPLATES = {
   TASK_ASSIGNED: {
@@ -46,7 +47,7 @@ export async function sendTemplatedNotification(
 ): Promise<boolean> {
   const template = NOTIFICATION_TEMPLATES[templateName];
   if (!template) {
-    console.error(`[NotificationTemplates] Unknown template: ${templateName}`);
+    logger.error(`[NotificationTemplates] Unknown template: ${templateName}`);
     return false;
   }
 

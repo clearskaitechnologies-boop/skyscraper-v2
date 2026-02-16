@@ -17,6 +17,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 import { extractEXIF } from "../../utils/exifExtractor";
@@ -112,7 +113,7 @@ export async function sortPhotosByTime(photos: any[]): Promise<PhotoAnalysis[]> 
       const exif = await extractEXIF(photo.url);
       timestamp = exif.dateTime || exif.dateTimeOriginal || null;
     } catch (err) {
-      console.warn(`EXIF extraction failed for photo ${photo.id}:`, err);
+      logger.warn(`EXIF extraction failed for photo ${photo.id}:`, err);
     }
 
     // Fallback to createdAt or uploadedAt
@@ -210,7 +211,7 @@ Respond in JSON format:
       description: result.description || "",
     };
   } catch (error) {
-    console.error("Build stage classification error:", error);
+    logger.error("Build stage classification error:", error);
     return {
       stage: "unknown",
       confidence: 0,
@@ -283,7 +284,7 @@ If no supplements detected, return: { "supplements": [] }`;
     const result = JSON.parse(response.choices[0].message.content || '{"supplements": []}');
     return result.supplements || [];
   } catch (error) {
-    console.error("Supplement detection error:", error);
+    logger.error("Supplement detection error:", error);
     return [];
   }
 }
@@ -329,7 +330,7 @@ Example formats:
 
     return response.choices[0].message.content?.trim() || "";
   } catch (error) {
-    console.error("Narrative generation error:", error);
+    logger.error("Narrative generation error:", error);
     return `${stage} phase completed with ${photos.length} photos documented.`;
   }
 }
@@ -342,7 +343,7 @@ Example formats:
  * MAIN FUNCTION: Build complete AI timeline from photos
  */
 export async function buildPhotoTimeline(claim_id: string): Promise<BuildTimeline> {
-  console.log(`[TimelineEngine] Building timeline for claim ${claim_id}`);
+  logger.debug(`[TimelineEngine] Building timeline for claim ${claim_id}`);
 
   // 1. Fetch all photos for this claim
   const PhotoMeta = prismaModel<any>(
@@ -365,16 +366,16 @@ export async function buildPhotoTimeline(claim_id: string): Promise<BuildTimelin
     throw new Error("No photos found for timeline generation");
   }
 
-  console.log(`[TimelineEngine] Found ${photos.length} photos`);
+  logger.debug(`[TimelineEngine] Found ${photos.length} photos`);
 
   // 2. Sort photos by timestamp
   let analyzed = await sortPhotosByTime(photos);
-  console.log(`[TimelineEngine] Photos sorted by timestamp`);
+  logger.debug(`[TimelineEngine] Photos sorted by timestamp`);
 
   // 3. Classify each photo's build stage using AI Vision
   for (let i = 0; i < analyzed.length; i++) {
     const photo = analyzed[i];
-    console.log(`[TimelineEngine] Analyzing photo ${i + 1}/${analyzed.length}: ${photo.fileName}`);
+    logger.debug(`[TimelineEngine] Analyzing photo ${i + 1}/${analyzed.length}: ${photo.fileName}`);
 
     const classification = await classifyBuildStage(photo.url);
     photo.buildStage = classification.stage;
@@ -389,7 +390,7 @@ export async function buildPhotoTimeline(claim_id: string): Promise<BuildTimelin
 
   // 4. Detect supplements from each photo
   for (const photo of analyzed) {
-    console.log(`[TimelineEngine] Detecting supplements in ${photo.fileName}`);
+    logger.debug(`[TimelineEngine] Detecting supplements in ${photo.fileName}`);
 
     const supplements = await detectSupplementsFromPhoto(photo.url, photo.buildStage);
     photo.supplementFlags = supplements.map((s) => ({
@@ -490,7 +491,7 @@ export async function buildPhotoTimeline(claim_id: string): Promise<BuildTimelin
     }
   }
 
-  console.log(`[TimelineEngine] Timeline generation complete!`);
+  logger.debug(`[TimelineEngine] Timeline generation complete!`);
   return {
     claimId,
     timeline,
@@ -530,7 +531,7 @@ export async function saveTimelineToDatabase(
       status: "draft",
     },
   });
-  console.log(`[TimelineEngine] Timeline saved to database: ${timelineRecord.id}`);
+  logger.debug(`[TimelineEngine] Timeline saved to database: ${timelineRecord.id}`);
   return timelineRecord.id;
 }
 

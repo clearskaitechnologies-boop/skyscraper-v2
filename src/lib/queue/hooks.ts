@@ -6,6 +6,7 @@
  */
 
 import type { Job } from "pg-boss";
+import { logger } from "@/lib/logger";
 
 import { pool } from "../db/index.js";
 
@@ -38,7 +39,7 @@ export async function recordJobEvent(
     (job as any).attempts || 0,
   ]);
 
-  console.log(`Job event recorded: ${job.name} (${job.id}) → ${status}`);
+  logger.debug(`Job event recorded: ${job.name} (${job.id}) → ${status}`);
 }
 
 /**
@@ -70,5 +71,5 @@ export async function spendTokens(
     { at: new Date().toISOString() },
   ]);
 
-  console.log(`Token spend recorded: ${feature} → ${delta} tokens (org: ${orgId})`);
+  logger.debug(`Token spend recorded: ${feature} → ${delta} tokens (org: ${orgId})`);
 }

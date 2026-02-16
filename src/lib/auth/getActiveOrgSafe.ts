@@ -11,6 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -66,7 +67,7 @@ async function tryCreateOrgMinimal(params: {
 }): Promise<{ id: string; name: string; clerkOrgId: string | null }> {
   const { name, clerkOrgId, userId } = params;
 
-  console.log("[ORG_SAFE] Attempting org creation:", { name, hasClerkOrgId: !!clerkOrgId });
+  logger.debug("[ORG_SAFE] Attempting org creation:", { name, hasClerkOrgId: !!clerkOrgId });
 
   // Use transaction for atomic create
   try {
@@ -86,7 +87,7 @@ async function tryCreateOrgMinimal(params: {
         select: { id: true, name: true, clerkOrgId: true },
       });
 
-      console.log("[ORG_SAFE] ✅ Created org (full schema):", org.id);
+      logger.debug("[ORG_SAFE] ✅ Created org (full schema):", org.id);
 
       // Create membership with ADMIN role (delegate-aware)
       const txDynamic = tx as unknown as PrismaWithUserOrgs;
@@ -103,7 +104,7 @@ async function tryCreateOrgMinimal(params: {
             role: "ADMIN",
           },
         });
-        console.log("[ORG_SAFE] ✅ Created membership via user_organizations (role: ADMIN)");
+        logger.debug("[ORG_SAFE] ✅ Created membership via user_organizations (role: ADMIN)");
       } else {
         // Fallback: link via users.orgId (legacy schema)
         try {
@@ -117,7 +118,7 @@ async function tryCreateOrgMinimal(params: {
               where: { clerkUserId: userId },
               data: { orgId: org.id, role: "ADMIN" },
             });
-            console.log("[ORG_SAFE] ✅ Linked user to org via users.orgId (updated)");
+            logger.debug("[ORG_SAFE] ✅ Linked user to org via users.orgId (updated)");
           } else {
             await tx.users.create({
               data: {
@@ -129,7 +130,7 @@ async function tryCreateOrgMinimal(params: {
                 orgId: org.id,
               },
             });
-            console.log("[ORG_SAFE] ✅ Linked user to org via users.orgId (created)");
+            logger.debug("[ORG_SAFE] ✅ Linked user to org via users.orgId (created)");
           }
         } catch (linkError: unknown) {
           console.error(
@@ -148,7 +149,7 @@ async function tryCreateOrgMinimal(params: {
           updatedAt: new Date(),
         },
       });
-      console.log("[ORG_SAFE] ✅ Created BillingSettings for org:", org.id);
+      logger.debug("[ORG_SAFE] ✅ Created BillingSettings for org:", org.id);
 
       return org;
     });
@@ -165,7 +166,7 @@ async function tryCreateOrgMinimal(params: {
           updatedAt: new Date(),
         },
       });
-      console.log("[ORG_SAFE] ✅ Created org_branding for org:", result.id);
+      logger.debug("[ORG_SAFE] ✅ Created org_branding for org:", result.id);
     } catch (brandingErr: unknown) {
       // Non-fatal - table may not exist in all environments
       console.warn(
@@ -198,7 +199,7 @@ export async function getActiveOrgSafe(opts?: {
   try {
     // Guard: Verify prisma is initialized
     if (!prisma || typeof prisma?.org?.findFirst !== "function") {
-      console.error("[ORG_SAFE] PRISMA_UNDEFINED: Database client not available");
+      logger.error("[ORG_SAFE] PRISMA_UNDEFINED: Database client not available");
       return {
         ok: false,
         reason: "PRISMA_UNDEFINED",
@@ -210,7 +211,7 @@ export async function getActiveOrgSafe(opts?: {
     const { userId, orgId: clerkOrgId } = await auth();
 
     if (!userId) {
-      console.warn("[ORG_SAFE] NO_SESSION: User not authenticated");
+      logger.warn("[ORG_SAFE] NO_SESSION: User not authenticated");
       return {
         ok: false,
         reason: "NO_SESSION",
@@ -218,7 +219,7 @@ export async function getActiveOrgSafe(opts?: {
       };
     }
 
-    console.log("[ORG_SAFE] userId:", userId, "clerkOrgId:", clerkOrgId || "null");
+    logger.debug("[ORG_SAFE] userId:", userId, "clerkOrgId:", clerkOrgId || "null");
 
     // STRATEGY 1: If Clerk orgId exists, find/create DB org with that clerkOrgId
     if (clerkOrgId) {
@@ -230,7 +231,7 @@ export async function getActiveOrgSafe(opts?: {
           });
 
         if (org) {
-          console.log("[ORG_SAFE] ✅ Found org via Clerk orgId:", org.id);
+          logger.debug("[ORG_SAFE] ✅ Found org via Clerk orgId:", org.id);
           return {
             ok: true,
             org: { ...org, clerkOrgId: org.clerkOrgId ?? "" },
@@ -241,7 +242,7 @@ export async function getActiveOrgSafe(opts?: {
 
         // Clerk org exists but not in DB - auto-create if allowed
         if (allowAutoCreate) {
-          console.log("[ORG_SAFE] Clerk org not in DB, creating...");
+          logger.debug("[ORG_SAFE] Clerk org not in DB, creating...");
           org = await tryCreateOrgMinimal({
             name: "My Organization",
             clerkOrgId: clerkOrgId!,
@@ -286,7 +287,7 @@ export async function getActiveOrgSafe(opts?: {
         const validMembership = memberships.find((m: OrgMembership) => m.Org);
 
         if (validMembership?.Org) {
-          console.log("[ORG_SAFE] ✅ Found org via DB membership:", validMembership.Org.id);
+          logger.debug("[ORG_SAFE] ✅ Found org via DB membership:", validMembership.Org.id);
 
           // Clean up any orphaned memberships in the background
           const orphanedMemberships = memberships.filter((m: OrgMembership) => !m.Org);
@@ -340,7 +341,7 @@ export async function getActiveOrgSafe(opts?: {
           select: { id: true, name: true, clerkOrgId: true },
         });
         if (org) {
-          console.warn("[ORG_SAFE] Fallback activated: using users.orgId linkage");
+          logger.warn("[ORG_SAFE] Fallback activated: using users.orgId linkage");
           return {
             ok: true,
             org,
@@ -359,14 +360,14 @@ export async function getActiveOrgSafe(opts?: {
     // STRATEGY 3: No org found - auto-create if allowed
     if (allowAutoCreate) {
       try {
-        console.log("[ORG_SAFE] No org found, creating default org for user...");
+        logger.debug("[ORG_SAFE] No org found, creating default org for user...");
         const org = await tryCreateOrgMinimal({
           name: "My Organization",
           clerkOrgId: clerkOrgId || null,
           userId,
         });
 
-        console.log("[ORG_SAFE] ✅ Auto-created org:", org.id);
+        logger.debug("[ORG_SAFE] ✅ Auto-created org:", org.id);
         return {
           ok: true,
           org,
@@ -386,7 +387,7 @@ export async function getActiveOrgSafe(opts?: {
     }
 
     // No org and auto-create disabled
-    console.warn("[ORG_SAFE] No org found and auto-create disabled");
+    logger.warn("[ORG_SAFE] No org found and auto-create disabled");
     return {
       ok: false,
       reason: "DB_ERROR",
@@ -394,7 +395,7 @@ export async function getActiveOrgSafe(opts?: {
       userId,
     };
   } catch (error: unknown) {
-    console.error("[ORG_SAFE] Unexpected error:", error);
+    logger.error("[ORG_SAFE] Unexpected error:", error);
     return {
       ok: false,
       reason: "DB_ERROR",

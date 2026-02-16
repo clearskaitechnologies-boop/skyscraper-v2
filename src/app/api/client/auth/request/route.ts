@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import prisma from "@/lib/prisma";
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
       description: "Access link sent successfully",
     });
   } catch (error: any) {
-    console.error("[CLIENT AUTH REQUEST ERROR]", error);
+    logger.error("[CLIENT AUTH REQUEST ERROR]", error);
     return NextResponse.json(
       {
         ok: false,

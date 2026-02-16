@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -185,7 +186,7 @@ export async function GET(request: NextRequest) {
       totalResults: results.length,
     });
   } catch (error) {
-    console.error("Global search error:", error);
+    logger.error("Global search error:", error);
     return NextResponse.json(
       { error: "Search failed", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }

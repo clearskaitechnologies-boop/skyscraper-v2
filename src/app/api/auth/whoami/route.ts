@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function GET() {
         },
       });
     } catch (e) {
-      console.error("Error fetching user_registry:", e);
+      logger.error("Error fetching user_registry:", e);
     }
 
     // Check org membership (THE KEY INDICATOR OF PRO STATUS)
@@ -73,7 +74,7 @@ export async function GET() {
         },
       });
     } catch (e) {
-      console.error("Error fetching org membership:", e);
+      logger.error("Error fetching org membership:", e);
     }
 
     // Check organization details if membership exists
@@ -93,7 +94,7 @@ export async function GET() {
           },
         });
       } catch (e) {
-        console.error("Error fetching organization:", e);
+        logger.error("Error fetching organization:", e);
       }
     }
 
@@ -140,7 +141,7 @@ export async function GET() {
       expectedRoute: isPro ? "/dashboard" : isClient ? "/portal" : "/onboarding/select-type",
     });
   } catch (error) {
-    console.error("whoami error:", error);
+    logger.error("whoami error:", error);
     return NextResponse.json(
       {
         ok: false,

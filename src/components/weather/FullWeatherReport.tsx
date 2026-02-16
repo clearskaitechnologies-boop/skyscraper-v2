@@ -1,6 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
+import { logger } from "@/lib/logger";
 import { AlertTriangle, Cloud, Download, Droplets, FileText, Loader2, Thermometer,Wind } from "lucide-react";
 import { useState } from "react";
 
@@ -87,7 +88,7 @@ export function FullWeatherReport({ claimId, leadId, initialDol, onReportGenerat
       onReportGenerated?.(data.id);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to generate weather report");
-      console.error("Weather report error:", err);
+      logger.error("Weather report error:", err);
     } finally {
       setLoading(false);
     }
@@ -113,7 +114,7 @@ export function FullWeatherReport({ claimId, leadId, initialDol, onReportGenerat
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error("PDF export error:", err);
+      logger.error("PDF export error:", err);
       alert("Failed to export PDF. Please try again.");
     }
   };

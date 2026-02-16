@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { generatePortalToken } from "@/lib/portalAuth";
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
     const tokenRecord = await generatePortalToken(clientId, orgId);
     return NextResponse.json({ ok: true, token: tokenRecord.token, id: tokenRecord.id });
   } catch (e: any) {
-    console.error("[portal:generate-access]", e);
+    logger.error("[portal:generate-access]", e);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

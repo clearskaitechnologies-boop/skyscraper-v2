@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Home, RefreshCw } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -27,7 +28,7 @@ export default function PortalErrorBoundary({
   title?: string;
 }) {
   useEffect(() => {
-    console.error("[Portal Error]", error);
+    logger.error("[Portal Error]", error);
   }, [error]);
 
   return (

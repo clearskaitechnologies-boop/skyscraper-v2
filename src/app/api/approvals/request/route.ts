@@ -1,5 +1,6 @@
 // MODULE 4: Approvals - Request approval from client
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
       { status: 501 }
     );
   } catch (error) {
-    console.error("[APPROVAL_REQUEST]", error);
+    logger.error("[APPROVAL_REQUEST]", error);
     return NextResponse.json({ error: "Failed to create approval request" }, { status: 500 });
   }
 }

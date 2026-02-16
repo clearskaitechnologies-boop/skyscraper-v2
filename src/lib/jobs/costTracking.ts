@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export interface JobFinancials {
@@ -234,7 +235,7 @@ export async function getJobFinancials(jobId: string, orgId: string): Promise<Jo
       lastUpdated: new Date(),
     };
   } catch (error) {
-    console.error("Failed to get job financials:", error);
+    logger.error("Failed to get job financials:", error);
     throw error;
   }
 }
@@ -258,7 +259,7 @@ async function updateJobFinancials(jobId: string, orgId: string): Promise<void> 
       })
       .catch(() => {});
   } catch (error) {
-    console.error("Failed to update job financials:", error);
+    logger.error("Failed to update job financials:", error);
   }
 }
 

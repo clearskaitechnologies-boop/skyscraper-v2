@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle,Send, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -52,7 +53,7 @@ export function SubmitReportModal({
       onSuccess?.();
       onClose();
     } catch (error: any) {
-      console.error("Submit error:", error);
+      logger.error("Submit error:", error);
       toast.error(error.message || "Failed to submit report");
     } finally {
       setIsSubmitting(false);

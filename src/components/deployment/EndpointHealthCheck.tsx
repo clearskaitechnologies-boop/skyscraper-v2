@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 import {
   checkEndpoints,
@@ -40,7 +41,7 @@ export function EndpointHealthCheck() {
       setOptionalResults(optional);
       setLastCheck(new Date());
     } catch (error) {
-      console.error("Health check failed:", error);
+      logger.error("Health check failed:", error);
     } finally {
       setChecking(false);
     }

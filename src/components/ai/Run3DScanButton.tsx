@@ -7,6 +7,7 @@
 "use client";
 
 import { AlertCircle,Box, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface Run3DScanButtonProps {
@@ -47,7 +48,7 @@ export function Run3DScanButton({
 
       onComplete?.(data);
     } catch (err: any) {
-      console.error("[Run3DScan] Error:", err);
+      logger.error("[Run3DScan] Error:", err);
       setError(err.message);
     } finally {
       setIsScanning(false);

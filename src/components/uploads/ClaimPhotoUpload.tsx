@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle, Loader2, Upload, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -84,7 +85,7 @@ export function ClaimPhotoUpload({ claimId, onUploadComplete }: ClaimPhotoUpload
         setProgress(0);
       }, 2000);
     } catch (err: unknown) {
-      console.error("Upload error:", err);
+      logger.error("Upload error:", err);
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
       setUploading(false);

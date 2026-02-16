@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { renderToStream } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ claimI
       userId,
       documentName,
     }).catch((err) => {
-      console.error("Rebuttal generation failed:", err);
+      logger.error("Rebuttal generation failed:", err);
     });
 
     return NextResponse.json({
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ claimI
       carrier: claimData.carrier_name,
     });
   } catch (error) {
-    console.error("Rebuttal generation error:", error);
+    logger.error("Rebuttal generation error:", error);
     return NextResponse.json({ error: "Failed to generate rebuttal" }, { status: 500 });
   }
 }
@@ -229,9 +230,9 @@ async function generateRebuttalAsync(params: {
       estimatedCostCents: result.estimatedCostCents,
     });
 
-    console.log(`Rebuttal ${generatedDocumentId} generated successfully`);
+    logger.debug(`Rebuttal ${generatedDocumentId} generated successfully`);
   } catch (error) {
-    console.error("Rebuttal async generation error:", error);
+    logger.error("Rebuttal async generation error:", error);
 
     // Update document status to error
     await updateDocumentStatus(generatedDocumentId, "error", {

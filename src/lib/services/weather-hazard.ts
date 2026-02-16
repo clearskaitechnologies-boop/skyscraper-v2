@@ -5,6 +5,7 @@
  */
 
 import { fetchSafe } from '@/lib/fetchSafe';
+import { logger } from "@/lib/logger";
 
 interface HazardScores {
   hailRiskScore: number; // 0-100
@@ -93,7 +94,7 @@ export async function fetchNOAAWeather(
       })) || [],
     };
   } catch (error) {
-    console.error("NOAA API error:", error);
+    logger.error("NOAA API error:", error);
     return {};
   }
 }
@@ -108,7 +109,7 @@ export async function fetchWildfireRisk(
   const firstStreetApiKey = process.env.FIRST_STREET_API_KEY;
 
   if (!firstStreetApiKey) {
-    console.warn("First Street API key not configured");
+    logger.warn("First Street API key not configured");
     return 0;
   }
 
@@ -133,7 +134,7 @@ export async function fetchWildfireRisk(
     const riskScore = (data.wildfire?.riskScore || 0) * 10;
     return Math.min(100, Math.max(0, riskScore));
   } catch (error) {
-    console.error("First Street API error:", error);
+    logger.error("First Street API error:", error);
     return 0;
   }
 }
@@ -148,7 +149,7 @@ export async function fetchHailRisk(
   const coreLogicApiKey = process.env.CORELOGIC_HAZARD_API_KEY;
 
   if (!coreLogicApiKey) {
-    console.warn("CoreLogic Hazard API key not configured");
+    logger.warn("CoreLogic Hazard API key not configured");
     return 0;
   }
 
@@ -178,7 +179,7 @@ export async function fetchHailRisk(
     const hailFrequency = data.hailFrequency || 0;
     return Math.min(100, hailFrequency * 10);
   } catch (error) {
-    console.error("CoreLogic Hazard API error:", error);
+    logger.error("CoreLogic Hazard API error:", error);
     return 0;
   }
 }
@@ -225,7 +226,7 @@ export async function fetchWindRisk(
     const riskScore = Math.min(100, recentEvents.length * 10);
     return riskScore;
   } catch (error) {
-    console.error("Wind risk calculation error:", error);
+    logger.error("Wind risk calculation error:", error);
     return 50; // Default moderate risk
   }
 }
@@ -258,7 +259,7 @@ export async function fetchFloodZone(
     
     return floodZone;
   } catch (error) {
-    console.error("FEMA flood zone error:", error);
+    logger.error("FEMA flood zone error:", error);
     return "UNKNOWN";
   }
 }
@@ -290,7 +291,7 @@ export async function fetchEarthquakeZone(
     if (pga < 0.40) return "High";
     return "Very High";
   } catch (error) {
-    console.error("USGS earthquake zone error:", error);
+    logger.error("USGS earthquake zone error:", error);
     return "UNKNOWN";
   }
 }
@@ -350,7 +351,7 @@ export async function getHazardScores(
       tornadoRiskScore: tornadoScore,
     };
   } catch (error) {
-    console.error("Failed to fetch hazard scores:", error);
+    logger.error("Failed to fetch hazard scores:", error);
     
     // Return default values on error
     return {
@@ -398,7 +399,7 @@ export async function geocodeAddress(
       longitude: coordinates.x,
     };
   } catch (error) {
-    console.error("Geocoding error:", error);
+    logger.error("Geocoding error:", error);
     return null;
   }
 }

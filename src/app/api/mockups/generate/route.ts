@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "claimId and photoId required" }, { status: 400 });
     }
 
-    console.log("🎨 MOCKUP_GENERATE_START:", { claimId, photoId });
+    logger.debug("🎨 MOCKUP_GENERATE_START:", { claimId, photoId });
 
     // Get claim context
     const context = (await buildClaimContext(claimId)) as any;
@@ -91,7 +92,7 @@ Describe what repairs would be needed to restore this to its original condition.
 
     const analysis = visionResponse.choices[0]?.message?.content || "No analysis available";
 
-    console.log("[MOCKUP] Generating side-by-side PDF...");
+    logger.debug("[MOCKUP] Generating side-by-side PDF...");
 
     // Generate side-by-side HTML
     const html = `
@@ -218,7 +219,7 @@ Describe what repairs would be needed to restore this to its original condition.
         margin: { top: "0.5in", right: "0.5in", bottom: "0.5in", left: "0.5in" },
       });
 
-      console.log("[MOCKUP_PDF_OK]", { size: pdfBuffer.length });
+      logger.debug("[MOCKUP_PDF_OK]", { size: pdfBuffer.length });
 
       // Upload to Supabase
       const filename = `mockup-${claimId}-${photoId}-${Date.now()}.pdf`;
@@ -241,7 +242,7 @@ Describe what repairs would be needed to restore this to its original condition.
         throw new Error(`Signed URL failed: ${signedError?.message}`);
       }
 
-      console.log("✅ MOCKUP_GENERATE_OK:", { claimId, photoId, url: signedData.signedUrl });
+      logger.debug("✅ MOCKUP_GENERATE_OK:", { claimId, photoId, url: signedData.signedUrl });
 
       // Create export record in database (non-blocking)
       const exportRecord = (await createExportRecord({
@@ -261,9 +262,9 @@ Describe what repairs would be needed to restore this to its original condition.
       })) as { id: string } | null;
 
       if (exportRecord) {
-        console.log("📝 EXPORT_REGISTRY_OK:", { exportId: exportRecord.id });
+        logger.debug("📝 EXPORT_REGISTRY_OK:", { exportId: exportRecord.id });
       } else {
-        console.warn("⚠️  Failed to create export record (non-critical)");
+        logger.warn("⚠️  Failed to create export record (non-critical)");
       }
 
       return NextResponse.json({
@@ -280,7 +281,7 @@ Describe what repairs would be needed to restore this to its original condition.
       if (browser) await browser.close();
     }
   } catch (error: any) {
-    console.error("❌ MOCKUP_GENERATE_ERROR:", error);
+    logger.error("❌ MOCKUP_GENERATE_ERROR:", error);
 
     return NextResponse.json(
       {

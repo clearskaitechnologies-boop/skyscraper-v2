@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { calculatePricePerHome, calculateTotalPrice } from "@/lib/pricing/batchProposalPricing";
@@ -94,7 +95,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error("[BatchProposal Create Error]", error);
+    logger.error("[BatchProposal Create Error]", error);
     return NextResponse.json({ error: "Failed to create batch job" }, { status: 500 });
   }
 }

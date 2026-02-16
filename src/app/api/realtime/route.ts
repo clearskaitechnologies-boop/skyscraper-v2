@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
     // Log for Pusher/Socket.io integration (when configured)
     if (process.env.PUSHER_APP_ID && process.env.PUSHER_KEY) {
       // Pusher integration would go here
-      console.log(`[REAL-TIME] Pusher configured, would push: ${event}`);
+      logger.debug(`[REAL-TIME] Pusher configured, would push: ${event}`);
     }
 
     console.log(
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest) {
       notification,
     });
   } catch (error) {
-    console.error("Real-time notification error:", error);
+    logger.error("Real-time notification error:", error);
     return NextResponse.json({ error: "Failed to send notification" }, { status: 500 });
   }
 }

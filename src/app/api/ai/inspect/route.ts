@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 // src/app/api/ai/inspect/route.ts
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -119,7 +120,7 @@ Format your response as a structured analysis with clear sections. Be specific a
         });
         inspectionId = inspectionRecord.id;
       } catch (error) {
-        console.error("Failed to store inspection record:", error);
+        logger.error("Failed to store inspection record:", error);
         // Continue without storing - don't fail the analysis
       }
     }
@@ -135,7 +136,7 @@ Format your response as a structured analysis with clear sections. Be specific a
       },
     });
   } catch (error) {
-    console.error("AI Inspect Error:", error);
+    logger.error("AI Inspect Error:", error);
     return NextResponse.json({ error: "Failed to analyze image" }, { status: 500 });
   }
 }

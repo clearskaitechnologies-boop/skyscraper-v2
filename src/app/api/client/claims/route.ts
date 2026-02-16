@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -62,7 +63,7 @@ export async function GET() {
       claims: result,
     });
   } catch (error) {
-    console.error("[CLIENT_CLAIMS_ERROR]", error);
+    logger.error("[CLIENT_CLAIMS_ERROR]", error);
     return NextResponse.json({ error: "Failed to fetch claims" }, { status: 500 });
   }
 }

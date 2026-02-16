@@ -4,6 +4,7 @@
  */
 
 import chromium from "@sparticuz/chromium";
+import { logger } from "@/lib/logger";
 import puppeteer from "puppeteer-core";
 
 import { uploadBufferToFirebase } from "@/lib/storage/firebase-admin";
@@ -106,7 +107,7 @@ export async function renderWeatherPDF(opts: PDFRenderOptions): Promise<string> 
 
     return publicUrl;
   } catch (error) {
-    console.error("[PDF] Weather PDF generation failed:", error);
+    logger.error("[PDF] Weather PDF generation failed:", error);
     throw error;
   } finally {
     if (browser) {

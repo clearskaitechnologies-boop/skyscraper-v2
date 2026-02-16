@@ -4,6 +4,7 @@
 // the trades marketplace search is intentionally cross-org for public discovery.
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -273,7 +274,7 @@ export async function GET(request: NextRequest) {
       ...results,
     });
   } catch (error) {
-    console.error("GET /api/trades/search error:", error);
+    logger.error("GET /api/trades/search error:", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
 }

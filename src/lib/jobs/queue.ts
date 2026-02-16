@@ -5,6 +5,7 @@
  */
 
 import { createRedisClientSafely } from "@/lib/upstash";
+import { logger } from "@/lib/logger";
 
 export interface JobOptions {
   /** Job type identifier */
@@ -50,7 +51,7 @@ const IDEMPOTENCY_TTL = 86400; // 24 hours
 export async function enqueueJob(options: JobOptions): Promise<string> {
   const redis = createRedisClientSafely();
   if (!redis) {
-    console.warn("[QUEUE] Redis unavailable, job will not be queued");
+    logger.warn("[QUEUE] Redis unavailable, job will not be queued");
     return `fallback_${Date.now()}`;
   }
 
@@ -59,7 +60,7 @@ export async function enqueueJob(options: JobOptions): Promise<string> {
     if (options.idempotencyKey) {
       const existing = await redis.get(`${IDEMPOTENCY_PREFIX}${options.idempotencyKey}`);
       if (existing) {
-        console.log(`[QUEUE] Duplicate job detected, returning existing: ${existing}`);
+        logger.debug(`[QUEUE] Duplicate job detected, returning existing: ${existing}`);
         return existing as string;
       }
     }
@@ -90,10 +91,10 @@ export async function enqueueJob(options: JobOptions): Promise<string> {
       await redis.setex(`${IDEMPOTENCY_PREFIX}${options.idempotencyKey}`, IDEMPOTENCY_TTL, jobId);
     }
 
-    console.log(`[QUEUE] Enqueued job ${jobId} (type: ${options.type}, priority: ${score})`);
+    logger.debug(`[QUEUE] Enqueued job ${jobId} (type: ${options.type}, priority: ${score})`);
     return jobId;
   } catch (error) {
-    console.error("[QUEUE] Failed to enqueue job:", error);
+    logger.error("[QUEUE] Failed to enqueue job:", error);
     return `fallback_${Date.now()}`;
   }
 }
@@ -123,7 +124,7 @@ export async function dequeueJob(type: string): Promise<Job | null> {
     // Fetch job details
     const jobData = await redis.get(jobId);
     if (!jobData) {
-      console.warn(`[QUEUE] Job ${jobId} not found`);
+      logger.warn(`[QUEUE] Job ${jobId} not found`);
       return null;
     }
 
@@ -138,7 +139,7 @@ export async function dequeueJob(type: string): Promise<Job | null> {
 
     return job;
   } catch (error) {
-    console.error("[QUEUE] Failed to dequeue job:", error);
+    logger.error("[QUEUE] Failed to dequeue job:", error);
     return null;
   }
 }
@@ -160,12 +161,12 @@ export async function completeJob(jobId: string): Promise<void> {
 
     await redis.set(jobId, JSON.stringify(job));
 
-    console.log(`[QUEUE] Job ${jobId} completed after ${job.attempts} attempts`);
+    logger.debug(`[QUEUE] Job ${jobId} completed after ${job.attempts} attempts`);
 
     // Schedule cleanup (delete after 1 hour)
     await redis.expire(jobId, 3600);
   } catch (error) {
-    console.error("[QUEUE] Failed to complete job:", error);
+    logger.error("[QUEUE] Failed to complete job:", error);
   }
 }
 
@@ -222,7 +223,7 @@ export async function failJob(
       return false;
     }
   } catch (error) {
-    console.error("[QUEUE] Failed to process job failure:", error);
+    logger.error("[QUEUE] Failed to process job failure:", error);
     return false;
   }
 }
@@ -240,7 +241,7 @@ export async function getJobStatus(jobId: string): Promise<Job | null> {
 
     return JSON.parse(jobData as string);
   } catch (error) {
-    console.error("[QUEUE] Failed to get job status:", error);
+    logger.error("[QUEUE] Failed to get job status:", error);
     return null;
   }
 }
@@ -270,7 +271,7 @@ export async function getQueueStats(type: string): Promise<{
       failed: 0,
     };
   } catch (error) {
-    console.error("[QUEUE] Failed to get queue stats:", error);
+    logger.error("[QUEUE] Failed to get queue stats:", error);
     return { pending: 0, processing: 0, completed: 0, failed: 0 };
   }
 }
@@ -290,7 +291,7 @@ export async function processJobs(
 ): Promise<void> {
   const { maxConcurrent = 1, pollIntervalMs = 1000, stopAfterOne = false } = options;
 
-  console.log(`[QUEUE] Starting worker for ${type} (max concurrent: ${maxConcurrent})`);
+  logger.debug(`[QUEUE] Starting worker for ${type} (max concurrent: ${maxConcurrent})`);
 
   let running = true;
   let activeJobs = 0;
@@ -327,7 +328,7 @@ export async function processJobs(
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
     } catch (error) {
-      console.error("[QUEUE] Worker error:", error);
+      logger.error("[QUEUE] Worker error:", error);
       await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
     }
   }

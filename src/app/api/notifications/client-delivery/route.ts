@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -46,7 +47,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, notifications });
   } catch (err: any) {
-    console.error("[API] client-delivery GET error:", err);
+    logger.error("[API] client-delivery GET error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
@@ -90,7 +91,7 @@ export async function POST(req: Request) {
       notification: { id: notification.id, title: notification.title },
     });
   } catch (err: any) {
-    console.error("[API] client-delivery POST error:", err);
+    logger.error("[API] client-delivery POST error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

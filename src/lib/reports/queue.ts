@@ -19,6 +19,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { Prisma } from "@prisma/client";
 import { nanoid } from "nanoid";
 
@@ -93,7 +94,7 @@ export async function queueReport(params: QueueReportParams): Promise<string> {
     },
   });
 
-  console.log(`[ReportQueue] Queued report ${id} for claim ${claimId}`);
+  logger.debug(`[ReportQueue] Queued report ${id} for claim ${claimId}`);
 
   return id;
 }
@@ -361,7 +362,7 @@ async function notifyReportComplete(
       `[ReportQueue] Report ${reportId} ready - would notify ${email} with URL: ${pdfUrl}`
     );
   } catch (error) {
-    console.error(`[ReportQueue] Failed to queue notification email:`, error);
+    logger.error(`[ReportQueue] Failed to queue notification email:`, error);
   }
 }
 

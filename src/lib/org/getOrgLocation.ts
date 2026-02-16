@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface OrgLocation {
   lat: number;
@@ -26,14 +27,14 @@ const DEFAULT_LOCATION: OrgLocation = {
 export async function getOrgLocation(orgId: string | null | undefined): Promise<OrgLocation> {
   // 🚑 Guard: bail if no orgId
   if (!orgId) {
-    console.warn("[getOrgLocation] No orgId provided, returning default location");
+    logger.warn("[getOrgLocation] No orgId provided, returning default location");
     return DEFAULT_LOCATION;
   }
 
   try {
     // TODO: Add location fields to TradeProfile or Organization models
     // For now, always return default Phoenix location
-    console.log("[getOrgLocation] Using default location for orgId:", orgId);
+    logger.debug("[getOrgLocation] Using default location for orgId:", orgId);
     return DEFAULT_LOCATION;
 
     /* FUTURE: When location fields are added to schema
@@ -59,7 +60,7 @@ export async function getOrgLocation(orgId: string | null | undefined): Promise<
     }
     */
   } catch (error) {
-    console.error("[getOrgLocation] Error fetching location:", error);
+    logger.error("[getOrgLocation] Error fetching location:", error);
     return DEFAULT_LOCATION;
   }
 }
@@ -69,6 +70,6 @@ export async function getOrgLocation(orgId: string | null | undefined): Promise<
  * Simplified to just return default for now
  */
 export async function getCurrentUserLocation(userId: string): Promise<OrgLocation> {
-  console.log("[getCurrentUserLocation] Returning default location for userId:", userId);
+  logger.debug("[getCurrentUserLocation] Returning default location for userId:", userId);
   return DEFAULT_LOCATION;
 }

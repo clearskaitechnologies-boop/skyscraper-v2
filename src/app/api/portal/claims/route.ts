@@ -1,5 +1,6 @@
 // ORG-SCOPE: Scoped by userId/email — queries client_access by userEmail. No cross-tenant risk.
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ ok: true, claims });
   } catch (error) {
-    console.error("[GET /api/portal/claims] Fatal Error:", error);
+    logger.error("[GET /api/portal/claims] Fatal Error:", error);
     return NextResponse.json(
       { ok: false, error: "Internal server error", claims: [] },
       { status: 500 }

@@ -7,6 +7,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type ReportActivityType =
   | "REPORT_CREATED"
@@ -55,7 +56,7 @@ export async function logReportActivity({
       `[ReportActivity] Logged ${type} for claim ${claimId} by user ${userId || "system"}`
     );
   } catch (error) {
-    console.error("[ReportActivity] Failed to log activity:", error);
+    logger.error("[ReportActivity] Failed to log activity:", error);
     // Don't throw - activity logging should never block the main flow
   }
 }

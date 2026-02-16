@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
@@ -157,7 +158,7 @@ export async function POST(request: NextRequest) {
       subscriberId: subscriber.id,
     });
   } catch (error) {
-    console.error("Subscription error:", error);
+    logger.error("Subscription error:", error);
     return NextResponse.json({ error: "Failed to subscribe. Please try again." }, { status: 500 });
   }
 }
@@ -202,7 +203,7 @@ export async function DELETE(request: NextRequest) {
       message: "You have been unsubscribed. We're sorry to see you go!",
     });
   } catch (error) {
-    console.error("Unsubscribe error:", error);
+    logger.error("Unsubscribe error:", error);
     return NextResponse.json(
       { error: "Failed to unsubscribe. Please try again." },
       { status: 500 }
@@ -245,7 +246,7 @@ export async function GET(request: NextRequest) {
       subscribedAt: subscriber.subscribedAt,
     });
   } catch (error) {
-    console.error("Check subscription error:", error);
+    logger.error("Check subscription error:", error);
     return NextResponse.json({ error: "Failed to check subscription status" }, { status: 500 });
   }
 }
@@ -289,7 +290,7 @@ export async function PATCH(request: NextRequest) {
       preferences: updated,
     });
   } catch (error) {
-    console.error("Update preferences error:", error);
+    logger.error("Update preferences error:", error);
     return NextResponse.json({ error: "Failed to update preferences" }, { status: 500 });
   }
 }

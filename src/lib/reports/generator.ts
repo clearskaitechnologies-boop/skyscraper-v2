@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type ReportType =
   | "CLAIM_SUMMARY"
@@ -81,7 +82,7 @@ export async function generateReport(config: ReportConfig): Promise<GeneratedRep
 
     return report;
   } catch (error) {
-    console.error("Report generation failed:", error);
+    logger.error("Report generation failed:", error);
     throw new Error("Failed to generate report");
   }
 }

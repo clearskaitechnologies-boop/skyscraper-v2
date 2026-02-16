@@ -12,6 +12,7 @@
  */
 
 import NextImage, { ImageProps as NextImageProps } from "next/image";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -43,7 +44,7 @@ export function OptimizedImage({
   };
 
   const handleError = () => {
-    console.error(`[OptimizedImage] Failed to load image: ${currentSrc}`);
+    logger.error(`[OptimizedImage] Failed to load image: ${currentSrc}`);
     setError(true);
     setIsLoading(false);
 

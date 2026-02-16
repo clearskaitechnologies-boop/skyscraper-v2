@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { emitEvent, pushNotification, recordToolRun } from "@/lib/telemetry";
@@ -52,7 +53,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error("Failed to log wizard completion:", error);
+    logger.error("Failed to log wizard completion:", error);
     return NextResponse.json({ error: "Failed to log completion" }, { status: 500 });
   }
 }

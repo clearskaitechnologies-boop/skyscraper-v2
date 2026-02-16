@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getAdminMetrics, getTokenUsageByUser } from "@/lib/metrics";
@@ -36,7 +37,7 @@ export async function GET(req: Request) {
       userUsage,
     });
   } catch (error) {
-    console.error("Admin metrics error:", error);
+    logger.error("Admin metrics error:", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to fetch metrics",

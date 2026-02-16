@@ -7,6 +7,7 @@
  * Tracks progress and provides guidance for getting started.
  */
 
+import { logger } from "@/lib/logger";
 import {
   Building2,
   Camera,
@@ -270,7 +271,7 @@ export function useOnboardingProgress(orgId: string) {
       try {
         setCompletedSteps(JSON.parse(stored));
       } catch (e) {
-        console.error("Failed to parse onboarding progress:", e);
+        logger.error("Failed to parse onboarding progress:", e);
       }
     }
     setIsLoading(false);

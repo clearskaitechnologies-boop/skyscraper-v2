@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireTenant } from "@/lib/auth/tenant";
@@ -123,7 +124,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
 
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
   } catch (error: any) {
-    console.error("[GET /api/network/clients/[slug]/profile] Error:", error);
+    logger.error("[GET /api/network/clients/[slug]/profile] Error:", error);
     return NextResponse.json({ error: "Failed to fetch client" }, { status: 500 });
   }
 }

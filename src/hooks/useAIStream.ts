@@ -19,6 +19,7 @@
  */
 
 import { useCallback,useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 
 export interface UseAIStreamOptions {
   onComplete?: (fullText: string) => void;
@@ -161,7 +162,7 @@ export function useAIStream(options: UseAIStreamOptions = {}): UseAIStreamReturn
         }
 
       } catch (err) {
-        console.error("[useAIStream] Error:", err);
+        logger.error("[useAIStream] Error:", err);
         const errorMsg = err instanceof Error ? err.message : "Stream failed";
         
         // Retry logic
@@ -169,7 +170,7 @@ export function useAIStream(options: UseAIStreamOptions = {}): UseAIStreamReturn
           retryCountRef.current++;
           const delay = retryDelay * Math.pow(2, retryCountRef.current - 1);
           
-          console.log(`[useAIStream] Retrying in ${delay}ms (attempt ${retryCountRef.current}/${maxRetries})`);
+          logger.debug(`[useAIStream] Retrying in ${delay}ms (attempt ${retryCountRef.current}/${maxRetries})`);
           
           setTimeout(() => {
             if (!abortedRef.current) {

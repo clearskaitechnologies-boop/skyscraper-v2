@@ -8,6 +8,7 @@ export const revalidate = 0;
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { env } from "@/env";
@@ -28,7 +29,7 @@ export async function GET() {
 
     return NextResponse.json({ code, url });
   } catch (error) {
-    console.error("[Referral Link Error]", error);
+    logger.error("[Referral Link Error]", error);
     return NextResponse.json({ error: "Failed to generate referral link" }, { status: 500 });
   }
 }

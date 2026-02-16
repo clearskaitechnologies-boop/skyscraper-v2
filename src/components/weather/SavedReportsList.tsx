@@ -1,6 +1,7 @@
 "use client";
 
 import { format, parseISO } from "date-fns";
+import { logger } from "@/lib/logger";
 import { Download, Eye,FileText, Loader2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -53,7 +54,7 @@ export function SavedReportsList({ claimId, leadId, onViewReport }: SavedReports
       setReports(data.reports || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load weather reports");
-      console.error("Fetch reports error:", err);
+      logger.error("Fetch reports error:", err);
     } finally {
       setLoading(false);
     }
@@ -77,7 +78,7 @@ export function SavedReportsList({ claimId, leadId, onViewReport }: SavedReports
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (err) {
-      console.error("PDF export error:", err);
+      logger.error("PDF export error:", err);
       alert("Failed to export PDF. Please try again.");
     }
   };

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -30,7 +31,7 @@ export async function GET(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Failed to fetch notifications:", error);
+    logger.error("Failed to fetch notifications:", error);
     return new Response(JSON.stringify({ error: "Failed to fetch notifications" }), { status: 500 });
   }
 }
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Failed to create notification:", error);
+    logger.error("Failed to create notification:", error);
     return new Response(JSON.stringify({ error: "Failed to create notification" }), { status: 500 });
   }
 }
@@ -91,7 +92,7 @@ export async function PATCH(req: NextRequest) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Failed to update notification:", error);
+    logger.error("Failed to update notification:", error);
     return new Response(JSON.stringify({ error: "Failed to update notification" }), { status: 500 });
   }
 }

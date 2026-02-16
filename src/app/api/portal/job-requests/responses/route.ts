@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -98,7 +99,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ error: "jobRequestId or mine=true required" }, { status: 400 });
   } catch (error) {
-    console.error("Error fetching responses:", error);
+    logger.error("Error fetching responses:", error);
     return NextResponse.json({ error: "Failed to fetch responses" }, { status: 500 });
   }
 }
@@ -218,7 +219,7 @@ export async function POST(request: NextRequest) {
       response,
     });
   } catch (error) {
-    console.error("Error creating response:", error);
+    logger.error("Error creating response:", error);
     return NextResponse.json({ error: "Failed to submit response" }, { status: 500 });
   }
 }
@@ -281,7 +282,7 @@ export async function PATCH(request: NextRequest) {
       response: updated,
     });
   } catch (error) {
-    console.error("Error updating response:", error);
+    logger.error("Error updating response:", error);
     return NextResponse.json({ error: "Failed to update response" }, { status: 500 });
   }
 }

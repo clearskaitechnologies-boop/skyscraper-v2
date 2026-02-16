@@ -4,6 +4,7 @@ export const fetchCache = "force-no-store";
 export const runtime = "nodejs";
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getOrgQuotaStatus } from "../../../../lib/plan";
@@ -22,7 +23,7 @@ export async function GET() {
 
     return NextResponse.json(quotaStatus);
   } catch (error) {
-    console.error("Failed to fetch quota status:", error);
+    logger.error("Failed to fetch quota status:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

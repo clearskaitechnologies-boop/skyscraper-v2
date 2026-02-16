@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { logger } from "@/lib/logger";
 import { Bell, CheckCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -86,7 +87,7 @@ export default function UnifiedNotificationBell({
         setUnreadCount(data.unreadCount ?? mapped.filter((n) => !n.read).length);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      logger.error("Failed to fetch notifications:", error);
     } finally {
       setLoading(false);
     }
@@ -116,7 +117,7 @@ export default function UnifiedNotificationBell({
         body: JSON.stringify({ notificationId }),
       });
     } catch (error) {
-      console.error("Failed to mark notification as read:", error);
+      logger.error("Failed to mark notification as read:", error);
       await fetchNotifications();
     }
   };
@@ -131,7 +132,7 @@ export default function UnifiedNotificationBell({
         body: JSON.stringify({ markAllAsRead: true }),
       });
     } catch (error) {
-      console.error("Failed to mark all as read:", error);
+      logger.error("Failed to mark all as read:", error);
       await fetchNotifications();
     }
   };

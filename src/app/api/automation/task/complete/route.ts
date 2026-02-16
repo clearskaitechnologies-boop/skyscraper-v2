@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { completeTask } from "@/lib/intel/automation/executors/tasks";
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[TASK COMPLETE] Error:", error);
+    logger.error("[TASK COMPLETE] Error:", error);
     return NextResponse.json(
       { error: "Failed to complete task", details: String(error) },
       { status: 500 }

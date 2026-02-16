@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 "use client";
 
 // Legacy Skai Assistant deprecated. Provide no-op compatibility exports only.
@@ -18,7 +20,7 @@ export function openSkaiAssistant(seedPrompt?: string) {
   }
   // Warn in console for any lingering calls.
   if (process.env.NODE_ENV === "development") {
-    console.warn("openSkaiAssistant() called. Skai Assistant is deprecated; redirected to Ask Dominus widget.");
+    logger.warn("openSkaiAssistant() called. Skai Assistant is deprecated; redirected to Ask Dominus widget.");
   }
 }
 

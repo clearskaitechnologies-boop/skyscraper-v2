@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { validatePortalToken } from "@/lib/portalAuth";
@@ -18,7 +19,7 @@ export async function GET(req: Request) {
     // Return claimId only — do not expose full client record (PII)
     return NextResponse.json({ claimId: resolved.claimId });
   } catch (error) {
-    console.error("[resolve-token] Error:", error);
+    logger.error("[resolve-token] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -149,7 +150,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ groups: groupsWithMembership });
   } catch (error) {
-    console.error("GET /api/trades/groups error:", error);
+    logger.error("GET /api/trades/groups error:", error);
     return NextResponse.json({ error: "Failed to fetch groups" }, { status: 500 });
   }
 }
@@ -204,7 +205,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ group }, { status: 201 });
   } catch (error) {
-    console.error("POST /api/trades/groups error:", error);
+    logger.error("POST /api/trades/groups error:", error);
     return NextResponse.json({ error: "Failed to create group" }, { status: 500 });
   }
 }
@@ -249,7 +250,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ group });
   } catch (error) {
-    console.error("PATCH /api/trades/groups error:", error);
+    logger.error("PATCH /api/trades/groups error:", error);
     return NextResponse.json({ error: "Failed to update group" }, { status: 500 });
   }
 }
@@ -290,7 +291,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("DELETE /api/trades/groups error:", error);
+    logger.error("DELETE /api/trades/groups error:", error);
     return NextResponse.json({ error: "Failed to delete group" }, { status: 500 });
   }
 }

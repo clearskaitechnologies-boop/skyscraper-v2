@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getAIPricing } from "@/lib/ai/pricing";
@@ -9,7 +10,7 @@ export async function GET(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     // Anomaly logging of repeated unauthorized access attempts
-    console.warn(`[pricing] Unauthorized access attempt productId=${new URL(req.url).searchParams.get('productId')}`);
+    logger.warn(`[pricing] Unauthorized access attempt productId=${new URL(req.url).searchParams.get('productId')}`);
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -72,7 +73,7 @@ export async function GET(req: Request) {
       rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
     });
   } catch (error) {
-    console.error("Pricing API error:", error);
+    logger.error("Pricing API error:", error);
     return new NextResponse("Internal server error", { status: 500 });
   }
 }

@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 // src/app/api/ai/chat/route.ts
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import type { claims, jobs, Org, Plan, projects, properties } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
 
     const user = await currentUser();
     if (!user) {
-      console.error("[AI_CHAT] ❌ Unauthorized - no user");
+      logger.error("[AI_CHAT] ❌ Unauthorized - no user");
       return NextResponse.json(aiFail("Unauthorized", "AUTH"), { status: 401 });
     }
 
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     const { message } = body;
     if (!message) {
-      console.error("[AI_CHAT] ❌ No message in request");
+      logger.error("[AI_CHAT] ❌ No message in request");
       return NextResponse.json(aiFail("Message is required", "BAD_REQUEST"), { status: 400 });
     }
 
@@ -284,7 +285,7 @@ Be conversational, helpful, and specific. Reference real data when available. If
     );
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error(`[AI_CHAT] Error after ${processingTime}ms:`, error);
+    logger.error(`[AI_CHAT] Error after ${processingTime}ms:`, error);
 
     // Provide detailed error information
     const errorDetails = {

@@ -4,6 +4,7 @@
  */
 
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "no-reply@skaiscrape.com";
@@ -25,7 +26,7 @@ interface StormIntakeEmailData {
  */
 export async function sendOrgIntakeNotification(data: StormIntakeEmailData): Promise<boolean> {
   if (!data.orgEmail || !process.env.RESEND_API_KEY) {
-    console.log("[EMAIL] Skipping org notification (no email or API key)");
+    logger.debug("[EMAIL] Skipping org notification (no email or API key)");
     return false;
   }
 
@@ -76,10 +77,10 @@ export async function sendOrgIntakeNotification(data: StormIntakeEmailData): Pro
       `,
     });
 
-    console.log(`[EMAIL] ✅ Sent org notification to ${data.orgEmail}`);
+    logger.debug(`[EMAIL] ✅ Sent org notification to ${data.orgEmail}`);
     return true;
   } catch (error) {
-    console.error("[EMAIL] Failed to send org notification:", error);
+    logger.error("[EMAIL] Failed to send org notification:", error);
     return false;
   }
 }
@@ -89,7 +90,7 @@ export async function sendOrgIntakeNotification(data: StormIntakeEmailData): Pro
  */
 export async function sendHomeownerReport(data: StormIntakeEmailData): Promise<boolean> {
   if (!data.homeownerEmail || !process.env.RESEND_API_KEY) {
-    console.log("[EMAIL] Skipping homeowner email (no email or API key)");
+    logger.debug("[EMAIL] Skipping homeowner email (no email or API key)");
     return false;
   }
 
@@ -178,10 +179,10 @@ export async function sendHomeownerReport(data: StormIntakeEmailData): Promise<b
       `,
     });
 
-    console.log(`[EMAIL] ✅ Sent homeowner report to ${data.homeownerEmail}`);
+    logger.debug(`[EMAIL] ✅ Sent homeowner report to ${data.homeownerEmail}`);
     return true;
   } catch (error) {
-    console.error("[EMAIL] Failed to send homeowner email:", error);
+    logger.error("[EMAIL] Failed to send homeowner email:", error);
     return false;
   }
 }

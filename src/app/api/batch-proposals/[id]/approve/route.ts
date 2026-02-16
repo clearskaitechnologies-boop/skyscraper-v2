@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -63,7 +64,7 @@ export async function POST(req: Request, context: { params: Promise<{ id: string
 
     return NextResponse.json({ job, status: "PROCESSING" });
   } catch (error) {
-    console.error("[BatchProposal Approve Error]", error);
+    logger.error("[BatchProposal Approve Error]", error);
     return NextResponse.json({ error: "Failed to approve batch job" }, { status: 500 });
   }
 }

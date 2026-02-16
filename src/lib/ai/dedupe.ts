@@ -12,6 +12,7 @@
  */
 
 import { buildAIKey } from './cache';
+import { logger } from "@/lib/logger";
 
 // Global map of running AI requests
 const runningRequests = new Map<string, Promise<any>>();
@@ -39,12 +40,12 @@ export async function withDedupe<T>(
   // Check if request is already running
   const existingRequest = runningRequests.get(key);
   if (existingRequest) {
-    console.log(`[AI Dedupe] Joining existing request: ${routeName}`);
+    logger.debug(`[AI Dedupe] Joining existing request: ${routeName}`);
     return existingRequest as Promise<T>;
   }
   
   // Start new request
-  console.log(`[AI Dedupe] Starting new request: ${routeName}`);
+  logger.debug(`[AI Dedupe] Starting new request: ${routeName}`);
   const promise = fn()
     .finally(() => {
       // Clean up after completion (success or error)

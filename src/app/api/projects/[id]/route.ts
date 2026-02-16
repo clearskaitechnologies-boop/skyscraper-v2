@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { onStageChange } from "@/lib/automation";
 import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     return Response.json(project);
   } catch (error) {
-    console.error("Error fetching project:", error);
+    logger.error("Error fetching project:", error);
     return Response.json({ error: "Failed to fetch project" }, { status: 500 });
   }
 }
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
     return Response.json(project);
   } catch (error) {
-    console.error("Error updating project:", error);
+    logger.error("Error updating project:", error);
     return Response.json({ error: "Failed to update project" }, { status: 500 });
   }
 }
@@ -201,7 +202,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
 
     return Response.json({ success: true });
   } catch (error) {
-    console.error("Error archiving project:", error);
+    logger.error("Error archiving project:", error);
     return Response.json({ error: "Failed to archive project" }, { status: 500 });
   }
 }

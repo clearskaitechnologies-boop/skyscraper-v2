@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Download, Loader2, Upload } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRef, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -108,7 +109,7 @@ export function VisionAnalyzerPanel({ claimId, onAnalysisComplete }: VisionAnaly
         }
       }
     } catch (err) {
-      console.error("Heatmap generation failed:", err);
+      logger.error("Heatmap generation failed:", err);
     }
   };
 

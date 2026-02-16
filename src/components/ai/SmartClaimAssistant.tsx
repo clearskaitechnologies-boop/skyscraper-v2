@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Send, Sparkles } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface Message {
@@ -60,7 +61,7 @@ export default function SmartClaimAssistant({ claimId }: { claimId?: string }) {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error: any) {
-      console.error("Assistant error:", error);
+      logger.error("Assistant error:", error);
       setMessages((prev) => [
         ...prev,
         {

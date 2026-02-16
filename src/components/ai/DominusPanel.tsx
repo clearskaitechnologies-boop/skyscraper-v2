@@ -10,6 +10,7 @@
 "use client";
 
 import { AlertTriangle, Brain, Loader2, Sparkles } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -94,7 +95,7 @@ export function DominusPanel({ leadId, aiData, photos }: DominusPanelProps) {
       window.location.reload();
 
     } catch (error) {
-      console.error("Error analyzing lead:", error);
+      logger.error("Error analyzing lead:", error);
       toast.error("Network Error", {
         description: "Failed to connect to AI service. Please check your connection.",
       });

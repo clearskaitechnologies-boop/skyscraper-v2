@@ -10,6 +10,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,7 @@ export async function GET() {
       message: "Design boards are stored locally. Server sync coming soon.",
     });
   } catch (error) {
-    console.error("[Design Board] Error:", error);
+    logger.error("[Design Board] Error:", error);
     return NextResponse.json({ error: "Failed to fetch boards" }, { status: 500 });
   }
 }
@@ -54,7 +55,7 @@ export async function POST(request: NextRequest) {
       message: "Board saved (local). Server sync coming soon.",
     });
   } catch (error) {
-    console.error("[Design Board] Error:", error);
+    logger.error("[Design Board] Error:", error);
     return NextResponse.json({ error: "Failed to save board" }, { status: 500 });
   }
 }

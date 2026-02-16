@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -59,12 +60,12 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ liked: true });
       }
     } catch (error) {
-      console.error("Error toggling like (table may not exist):", error);
+      logger.error("Error toggling like (table may not exist):", error);
       // Return success anyway for now
       return NextResponse.json({ liked: true });
     }
   } catch (error) {
-    console.error("Error toggling like:", error);
+    logger.error("Error toggling like:", error);
     return NextResponse.json({ error: "Failed to toggle like" }, { status: 500 });
   }
 }

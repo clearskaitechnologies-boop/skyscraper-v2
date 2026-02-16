@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
       message: `Triggered stage: ${stageName}`,
     });
   } catch (err: any) {
-    console.error("[Workflow Trigger Error]:", err);
+    logger.error("[Workflow Trigger Error]:", err);
     return NextResponse.json(
       { error: err.message || "Failed to trigger workflow" },
       { status: 500 }

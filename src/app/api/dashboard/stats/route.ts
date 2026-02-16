@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -35,7 +36,7 @@ export async function GET() {
         if (dbUser?.orgId) {
           orgId = dbUser.orgId;
         } else {
-          console.warn("[DASHBOARD_STATS] No org found for user:", user.id);
+          logger.warn("[DASHBOARD_STATS] No org found for user:", user.id);
           return NextResponse.json({
             ok: true,
             stats: {
@@ -239,7 +240,7 @@ export async function GET() {
 
     return NextResponse.json(payload);
   } catch (error: any) {
-    console.error("[GET /api/dashboard/stats] error:", error);
+    logger.error("[GET /api/dashboard/stats] error:", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },
       { status: 500 }

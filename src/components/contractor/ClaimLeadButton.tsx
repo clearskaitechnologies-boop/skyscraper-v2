@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface ClaimLeadButtonProps {
   leadId: string;
@@ -51,7 +52,7 @@ export default function ClaimLeadButton({ leadId, hasUnlimitedAccess }: ClaimLea
         }
       }
     } catch (error: any) {
-      console.error("Error claiming lead:", error);
+      logger.error("Error claiming lead:", error);
       alert(error.message || "Failed to claim lead. Please try again.");
     } finally {
       setLoading(false);

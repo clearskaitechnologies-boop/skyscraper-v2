@@ -1,10 +1,12 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Supabase client stub
  * Supabase has been replaced by Prisma. This module exists for backward compatibility.
  */
 
 export function createClient() {
-  console.warn("[supabase/client] Supabase is deprecated. Use Prisma instead.");
+  logger.warn("[supabase/client] Supabase is deprecated. Use Prisma instead.");
   return {
     from: (..._args: any[]) => ({
       select: (..._a: any[]) => Promise.resolve({ data: [], error: null }),

@@ -6,6 +6,7 @@
  */
 
 import { getMergedTemplate } from "./mergeTemplate";
+import { logger } from "@/lib/logger";
 
 interface PDFGenerationOptions {
   templateId: string;
@@ -27,7 +28,7 @@ interface PDFGenerationOptions {
 export async function generateTemplatePDF(options: PDFGenerationOptions): Promise<Buffer | string> {
   const { templateId, orgId, claimData } = options;
 
-  console.log(`[PDF_GENERATION] Starting PDF generation for template ${templateId}`);
+  logger.debug(`[PDF_GENERATION] Starting PDF generation for template ${templateId}`);
 
   try {
     // 1. Get merged template with branding
@@ -37,17 +38,17 @@ export async function generateTemplatePDF(options: PDFGenerationOptions): Promis
       throw new Error("Template not found or branding merge failed");
     }
 
-    console.log(`[PDF_GENERATION] Merged template loaded with branding`);
+    logger.debug(`[PDF_GENERATION] Merged template loaded with branding`);
 
     // 2. Generate PDF using Puppeteer (server-side rendering)
     // This approach renders the preview page and converts to PDF
     const pdfBuffer = await generatePDFWithPuppeteer(templateId, orgId, claimData);
 
-    console.log(`[PDF_GENERATION] PDF generated successfully (${pdfBuffer.length} bytes)`);
+    logger.debug(`[PDF_GENERATION] PDF generated successfully (${pdfBuffer.length} bytes)`);
 
     return pdfBuffer;
   } catch (error: any) {
-    console.error(`[PDF_GENERATION] Error:`, error);
+    logger.error(`[PDF_GENERATION] Error:`, error);
     throw new Error(`Failed to generate PDF: ${error.message}`);
   }
 }
@@ -185,7 +186,7 @@ export async function savePDFToStorage(pdfBuffer: Buffer, filename: string): Pro
   // 2. AWS S3
   // 3. Vercel Blob Storage
 
-  console.log(`[PDF_STORAGE] Would save PDF: ${filename} (${pdfBuffer.length} bytes)`);
+  logger.debug(`[PDF_STORAGE] Would save PDF: ${filename} (${pdfBuffer.length} bytes)`);
 
   // Placeholder URL
   return `/api/pdfs/${filename}`;

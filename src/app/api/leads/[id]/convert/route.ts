@@ -11,6 +11,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
@@ -190,10 +191,10 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       });
     } catch (activityError) {
       // Don't fail conversion if activity logging fails
-      console.warn("[LeadConvert] Activity logging failed:", activityError);
+      logger.warn("[LeadConvert] Activity logging failed:", activityError);
     }
 
-    console.log(`[LeadConvert] Successfully converted lead ${params.id} to claim ${claim.id}`);
+    logger.debug(`[LeadConvert] Successfully converted lead ${params.id} to claim ${claim.id}`);
 
     return NextResponse.json({
       success: true,
@@ -217,7 +218,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       return NextResponse.json({ error: `Validation failed: ${fieldErrors}` }, { status: 400 });
     }
 
-    console.error(`[POST /api/leads/${params.id}/convert] Error:`, error);
+    logger.error(`[POST /api/leads/${params.id}/convert] Error:`, error);
     return NextResponse.json({ error: error.message || "Failed to convert lead" }, { status: 500 });
   }
 }

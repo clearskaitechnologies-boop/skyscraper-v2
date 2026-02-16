@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { RebuttalAgent } from "@/agents/rebuttalAgent";
 import prisma from "@/lib/prisma";
@@ -168,7 +169,7 @@ export async function POST(req: NextRequest) {
       });
 
       pdfSaved = true;
-      console.log(`[Rebuttal API] PDF saved for claim ${claimId}`);
+      logger.debug(`[Rebuttal API] PDF saved for claim ${claimId}`);
     } catch (pdfError) {
       console.error("[Rebuttal API] PDF generation failed (non-critical):", pdfError);
       // Continue - PDF failure should not break the rebuttal response
@@ -227,7 +228,7 @@ export async function POST(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("[Rebuttal Generation Error]", error);
+    logger.error("[Rebuttal Generation Error]", error);
     return NextResponse.json(
       {
         ok: false,

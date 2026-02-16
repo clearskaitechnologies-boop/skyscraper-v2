@@ -7,6 +7,7 @@
  */
 
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
@@ -123,7 +124,7 @@ export async function POST(request: Request) {
       message: "Profile created successfully",
     });
   } catch (error) {
-    console.error("[CLIENT_ONBOARDING] Error:", error);
+    logger.error("[CLIENT_ONBOARDING] Error:", error);
     return NextResponse.json({ error: "Failed to save profile" }, { status: 500 });
   }
 }
@@ -161,7 +162,7 @@ export async function GET() {
       profile: client,
     });
   } catch (error) {
-    console.error("[CLIENT_ONBOARDING_GET] Error:", error);
+    logger.error("[CLIENT_ONBOARDING_GET] Error:", error);
     return NextResponse.json({ error: "Failed to check onboarding status" }, { status: 500 });
   }
 }

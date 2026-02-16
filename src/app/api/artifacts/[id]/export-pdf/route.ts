@@ -1,4 +1,5 @@
 import { renderToStream } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generatePdfDocument } from "@/lib/artifacts/pdfGenerator";
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
     });
   } catch (error) {
-    console.error("Error exporting PDF:", error);
+    logger.error("Error exporting PDF:", error);
     return NextResponse.json({ error: "Failed to export PDF" }, { status: 500 });
   }
 }

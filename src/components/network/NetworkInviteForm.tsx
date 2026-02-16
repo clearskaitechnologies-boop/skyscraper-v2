@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Mail, Send, User } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -64,7 +65,7 @@ export function NetworkInviteForm({ orgId }: NetworkInviteFormProps) {
         message: "",
       });
     } catch (err) {
-      console.error("Invite error:", err);
+      logger.error("Invite error:", err);
       toast.error(err instanceof Error ? err.message : "Failed to send invitation");
     } finally {
       setLoading(false);

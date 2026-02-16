@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { btn, card, glow } from "@/lib/theme";
 
@@ -35,7 +36,7 @@ export default function ClaimSupplements({
       const data = await res.json();
       setRebuttal(data.rebuttal || "");
     } catch (err) {
-      console.error("Failed to generate rebuttal:", err);
+      logger.error("Failed to generate rebuttal:", err);
     } finally {
       setLoading(false);
     }

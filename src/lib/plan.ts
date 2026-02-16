@@ -1,5 +1,6 @@
 // Plan management and quota enforcement helpers
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from 'crypto';
 
 import prisma from "./db/prisma";
@@ -40,7 +41,7 @@ export async function getOrgSeatCount(clerkOrgId: string): Promise<number> {
     });
     return orgMemberships.data.length;
   } catch (error) {
-    console.error("Failed to get Org seat count:", error);
+    logger.error("Failed to get Org seat count:", error);
     return 0;
   }
 }

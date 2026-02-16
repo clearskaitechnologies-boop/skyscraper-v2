@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Financial analysis generation stub
  * This file is a stub for legacy imports
@@ -17,7 +19,7 @@ export async function generateFinancialAnalysis(
   claim_id: string,
   orgId: string
 ): Promise<FinancialAnalysis> {
-  console.warn('generateFinancialAnalysis is a stub and needs implementation');
+  logger.warn('generateFinancialAnalysis is a stub and needs implementation');
   
   // TODO: Implement actual financial analysis
   // For now, return placeholder values

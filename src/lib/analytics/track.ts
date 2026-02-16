@@ -5,6 +5,7 @@
  */
 
 import { prismaModel } from "@/lib/db/prismaModel";
+import { logger } from "@/lib/logger";
 
 // Critical conversion events to track
 export const PRODUCT_EVENTS = {
@@ -116,7 +117,7 @@ export async function getConversionFunnel(orgId: string) {
 
     return events;
   } catch (error) {
-    console.error("[GET_CONVERSION_FUNNEL] Failed:", error);
+    logger.error("[GET_CONVERSION_FUNNEL] Failed:", error);
     return [];
   }
 }
@@ -148,7 +149,7 @@ export async function getProductEventsSummary(orgId?: string) {
       count: e._count.type,
     }));
   } catch (error) {
-    console.error("[GET_PRODUCT_EVENTS_SUMMARY] Failed:", error);
+    logger.error("[GET_PRODUCT_EVENTS_SUMMARY] Failed:", error);
     return [];
   }
 }

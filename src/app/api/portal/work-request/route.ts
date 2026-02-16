@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { generateClaimNumber } from "@/lib/claims/generateClaimNumber";
@@ -134,7 +135,7 @@ export async function POST(req: Request) {
           claimId: null, // Will phase out claim creation in favor of job postings
         });
       } catch (error) {
-        console.error("[work-request] Error creating job:", error);
+        logger.error("[work-request] Error creating job:", error);
         // Fall through to traditional claim creation as backup
       }
     }
@@ -291,7 +292,7 @@ export async function POST(req: Request) {
       claimNumber: claim.claimNumber,
     });
   } catch (error) {
-    console.error("[PortalWorkRequest] Unexpected error:", error);
+    logger.error("[PortalWorkRequest] Unexpected error:", error);
     return NextResponse.json(
       {
         success: false,

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 // =====================================================
 // ENVIRONMENT VALIDATION
 // =====================================================
@@ -27,7 +29,7 @@ if (IS_PROD && false) {
     );
   }
 
-  console.log("✅ Clerk Production keys validated at build time");
+  logger.debug("✅ Clerk Production keys validated at build time");
 }
 // ============================================
 
@@ -129,7 +131,7 @@ export function requireEnv(
       name === "NEXT_PUBLIC_SITE_URL" ? "http://localhost:3000" : fallback || "";
 
     if (defaultFallback) {
-      console.warn(`⚠️  Using fallback for ${name}: ${defaultFallback}`);
+      logger.warn(`⚠️  Using fallback for ${name}: ${defaultFallback}`);
       return defaultFallback;
     }
   }
@@ -173,7 +175,7 @@ export function assertRequiredEnv() {
   validateEnvPatterns();
 
   if (!IS_PROD) {
-    console.log("[env] Running in development mode with safe defaults");
+    logger.debug("[env] Running in development mode with safe defaults");
   }
 }
 
@@ -183,7 +185,7 @@ export function logEnvProfile() {
   const region = process.env.VERCEL_REGION || "local";
   const commit = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "dev";
 
-  console.log(`[env] Profile: ${profile} | Region: ${region} | Commit: ${commit}`);
+  logger.debug(`[env] Profile: ${profile} | Region: ${region} | Commit: ${commit}`);
 }
 
 // Validate specific env patterns
@@ -191,14 +193,14 @@ export function validateEnvPatterns() {
   // Database URL should use SSL in production
   if (process.env.NODE_ENV === "production" && process.env.DATABASE_URL) {
     if (!process.env.DATABASE_URL.includes("sslmode=require")) {
-      console.warn("⚠️  DATABASE_URL should include ?sslmode=require in production");
+      logger.warn("⚠️  DATABASE_URL should include ?sslmode=require in production");
     }
   }
 
   // Site URL should be https in production
   if (process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_SITE_URL) {
     if (!process.env.NEXT_PUBLIC_SITE_URL.startsWith("https://")) {
-      console.warn("⚠️  NEXT_PUBLIC_SITE_URL should use https:// in production");
+      logger.warn("⚠️  NEXT_PUBLIC_SITE_URL should use https:// in production");
     }
   }
 }

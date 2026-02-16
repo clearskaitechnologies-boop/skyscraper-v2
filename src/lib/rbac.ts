@@ -3,6 +3,7 @@
 // Enforces role hierarchy: OWNER > ADMIN > PM > FIELD_TECH > OFFICE_STAFF > CLIENT
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -106,7 +107,7 @@ export async function getUserRole(userId: string, orgId: string): Promise<Role |
 
     return user?.role as Role | null;
   } catch (error) {
-    console.error("[RBAC] Error fetching user role:", error);
+    logger.error("[RBAC] Error fetching user role:", error);
     return null;
   }
 }

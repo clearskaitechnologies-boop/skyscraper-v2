@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -55,7 +56,7 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
       },
     });
   } catch (error: unknown) {
-    console.error("❌ [GET /api/contractors/public/[slug]] Error:", error);
+    logger.error("❌ [GET /api/contractors/public/[slug]] Error:", error);
     return NextResponse.json({ error: "Failed to load contractor profile" }, { status: 500 });
   }
 }

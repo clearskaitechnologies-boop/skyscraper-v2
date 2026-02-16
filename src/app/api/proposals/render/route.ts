@@ -8,6 +8,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { renderProposalPdf } from "@/lib/proposals/render";
@@ -77,7 +78,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[API] /api/proposals/render error:", error);
+    logger.error("[API] /api/proposals/render error:", error);
     return NextResponse.json(
       {
         error: "Failed to render proposal",

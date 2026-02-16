@@ -1,6 +1,7 @@
 "use client";
 
 import { ClockIcon, CloudIcon, ExclamationTriangleIcon,MapPinIcon } from "@heroicons/react/24/outline";
+import { logger } from "@/lib/logger";
 import React, { useEffect, useState } from "react";
 
 interface StormEvent {
@@ -65,7 +66,7 @@ export default function StormImpactPanel({ leadId }: { leadId: string }) {
         setStormReport(null);
       }
     } catch (err) {
-      console.error("Error fetching storm report:", err);
+      logger.error("Error fetching storm report:", err);
       setError("Failed to load storm report");
     } finally {
       setLoading(false);
@@ -89,7 +90,7 @@ export default function StormImpactPanel({ leadId }: { leadId: string }) {
       const data = await response.json();
       setStormReport(data);
     } catch (err: any) {
-      console.error("Error generating storm report:", err);
+      logger.error("Error generating storm report:", err);
       setError(err.message || "Failed to generate storm report");
     } finally {
       setGenerating(false);
@@ -115,7 +116,7 @@ export default function StormImpactPanel({ leadId }: { leadId: string }) {
       const data = await response.json();
       setStormReport(data);
     } catch (err: any) {
-      console.error("Error toggling public link:", err);
+      logger.error("Error toggling public link:", err);
       setError(err.message);
     }
   };

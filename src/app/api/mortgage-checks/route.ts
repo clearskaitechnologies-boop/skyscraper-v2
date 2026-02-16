@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
@@ -62,7 +63,7 @@ export async function GET(req: NextRequest) {
 
     return apiOk({ checks, summary });
   } catch (err: any) {
-    console.error("[mortgage-checks-get]", err);
+    logger.error("[mortgage-checks-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -110,7 +111,7 @@ export async function POST(req: NextRequest) {
 
     return apiOk({ check }, { status: 201 });
   } catch (err: any) {
-    console.error("[mortgage-checks-post]", err);
+    logger.error("[mortgage-checks-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

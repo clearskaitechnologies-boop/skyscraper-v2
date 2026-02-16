@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     const { id } = await params;
 
     // HOA notice feature not yet implemented - requires database schema
-    console.log(`[HOA] Notice send requested for ${id} by org ${orgId}`);
+    logger.debug(`[HOA] Notice send requested for ${id} by org ${orgId}`);
 
     return NextResponse.json(
       {
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       { status: 501 }
     );
   } catch (error: unknown) {
-    console.error("Error in HOA notice:", error);
+    logger.error("Error in HOA notice:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to process notice" },
       { status: 500 }

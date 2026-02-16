@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOrgContext } from "@/lib/org/getOrgContext";
 import prisma from "@/lib/prisma";
@@ -19,7 +20,7 @@ export async function GET(_req: NextRequest) {
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     if (!organizationId) {
-      console.log("[GET /api/jobs] No org found for user:", userId);
+      logger.debug("[GET /api/jobs] No org found for user:", userId);
       return NextResponse.json({ jobs: [] });
     }
 
@@ -73,7 +74,7 @@ export async function GET(_req: NextRequest) {
 
     return NextResponse.json({ jobs });
   } catch (error: any) {
-    console.error("[GET /api/jobs] Error:", error);
+    logger.error("[GET /api/jobs] Error:", error);
     return NextResponse.json({ jobs: [] }, { status: 200 });
   }
 }

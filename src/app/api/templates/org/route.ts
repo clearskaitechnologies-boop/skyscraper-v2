@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -50,7 +51,7 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, templates: orgTemplates, orgMissing: false });
   } catch (error: any) {
-    console.error("[GET /api/templates/org] Error:", error);
+    logger.error("[GET /api/templates/org] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Failed to fetch org templates" },
       { status: 500 }

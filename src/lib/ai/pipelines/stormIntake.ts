@@ -13,6 +13,7 @@
  */
 
 import { AICoreRouter } from "@/lib/ai/core-router";
+import { logger } from "@/lib/logger";
 
 export interface StormIntakeInput {
   images: string[]; // Array of image URLs or base64
@@ -84,13 +85,13 @@ export async function runStormIntakePipeline(
   input: StormIntakeInput
 ): Promise<{ success: boolean; results?: StormIntakeResults; error?: string }> {
   try {
-    console.log("[Storm Intake] Starting pipeline for claim:", input.claimId);
-    console.log("[Storm Intake] Processing", input.images.length, "images");
+    logger.debug("[Storm Intake] Starting pipeline for claim:", input.claimId);
+    logger.debug("[Storm Intake] Processing", input.images.length, "images");
 
     const router = new AICoreRouter();
 
     // STEP 1: Classify primary damage type
-    console.log("[Storm Intake] Step 1: Classification");
+    logger.debug("[Storm Intake] Step 1: Classification");
     const classificationResults = await Promise.all(
       input.images.map(async (imageUrl) => {
         const result = await router.execute("classification.damage-type", {
@@ -103,7 +104,7 @@ export async function runStormIntakePipeline(
     );
 
     // STEP 2: Segment damage areas
-    console.log("[Storm Intake] Step 2: Segmentation");
+    logger.debug("[Storm Intake] Step 2: Segmentation");
     const segmentationResults = await Promise.all(
       input.images.map(async (imageUrl) => {
         const result = await router.execute("segmentation.roof-areas", {
@@ -116,7 +117,7 @@ export async function runStormIntakePipeline(
     );
 
     // STEP 3: Detect keypoints and measurements
-    console.log("[Storm Intake] Step 3: Keypoint Detection");
+    logger.debug("[Storm Intake] Step 3: Keypoint Detection");
     const keypointResults = await Promise.all(
       input.images.slice(0, 3).map(async (imageUrl) => {
         // Only process first 3 for performance
@@ -130,7 +131,7 @@ export async function runStormIntakePipeline(
     );
 
     // STEP 4: Generate captions
-    console.log("[Storm Intake] Step 4: Image Captioning");
+    logger.debug("[Storm Intake] Step 4: Image Captioning");
     const captionResults = await Promise.all(
       input.images.map(async (imageUrl) => {
         const result = await router.execute("prompting.image-caption", {
@@ -145,7 +146,7 @@ export async function runStormIntakePipeline(
     );
 
     // STEP 5: Aggregate and analyze results
-    console.log("[Storm Intake] Step 5: Aggregation");
+    logger.debug("[Storm Intake] Step 5: Aggregation");
 
     // Determine primary damage type
     const hailCount = classificationResults.filter((r) => r?.damageType === "hail").length;
@@ -285,10 +286,10 @@ export async function runStormIntakePipeline(
       },
     };
 
-    console.log("[Storm Intake] Pipeline complete");
+    logger.debug("[Storm Intake] Pipeline complete");
     return { success: true, results };
   } catch (error) {
-    console.error("[Storm Intake] Pipeline failed:", error);
+    logger.error("[Storm Intake] Pipeline failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

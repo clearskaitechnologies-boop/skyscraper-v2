@@ -25,6 +25,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { pgPool } from "@/lib/db";
@@ -75,7 +76,7 @@ export async function GET(req: Request, { params }: { params: { jobId: string } 
       },
     });
   } catch (error: any) {
-    console.error("[API ERROR] /api/jobs/[jobId]:", error);
+    logger.error("[API ERROR] /api/jobs/[jobId]:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   } finally {
     // IMPORTANT: Release the client back to the pool (DO NOT call pool.end()!)

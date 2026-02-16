@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { Paperclip, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -113,7 +114,7 @@ export function MessageThread({
         onMessageSent(data.message);
       }
     } catch (err) {
-      console.error("Send message error:", err);
+      logger.error("Send message error:", err);
       toast.error("Failed to send message");
     } finally {
       setIsSending(false);

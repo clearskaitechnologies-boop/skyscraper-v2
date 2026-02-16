@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -226,7 +227,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       },
     });
   } catch (error) {
-    console.error("Weather refresh error:", error);
+    logger.error("Weather refresh error:", error);
     return NextResponse.json(
       {
         error: "Failed to refresh weather data",

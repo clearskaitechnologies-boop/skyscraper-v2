@@ -11,6 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 // BETA: Usage tracking disabled - all AI features are free during beta
@@ -117,7 +118,7 @@ export function withAIProtection(handler: AIHandler, options: AIProtectionOption
     try {
       response = await handler(request, context);
     } catch (error: any) {
-      console.error(`[AI] ${options.feature} error:`, error);
+      logger.error(`[AI] ${options.feature} error:`, error);
       return NextResponse.json(
         {
           success: false,
@@ -161,7 +162,7 @@ async function checkProPlan(orgId: string): Promise<boolean> {
     const { hasFeature } = await import("@/lib/features");
     return await hasFeature(orgId, "ai_features");
   } catch (error) {
-    console.error("[AI] Plan check failed:", error);
+    logger.error("[AI] Plan check failed:", error);
     // Fail open during beta - allow access
     return true;
   }

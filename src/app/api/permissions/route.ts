@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserRole, type Permission,type TeamRole } from "@/lib/auth/rbac";
 
@@ -64,7 +65,7 @@ export async function GET() {
       permissions,
     });
   } catch (error) {
-    console.error("Failed to fetch permissions:", error);
+    logger.error("Failed to fetch permissions:", error);
     return NextResponse.json(
       { error: "Failed to fetch permissions" },
       { status: 500 }

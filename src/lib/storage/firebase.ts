@@ -1,4 +1,5 @@
 import {
+import { logger } from "@/lib/logger";
   deleteObject,
   getDownloadURL,
   listAll,
@@ -166,13 +167,13 @@ export async function cleanupTempFiles(olderThanHours: number = 24): Promise<num
           }
         }
       } catch (error) {
-        console.warn(`Failed to delete temp file ${itemRef.fullPath}:`, error);
+        logger.warn(`Failed to delete temp file ${itemRef.fullPath}:`, error);
       }
     }
 
     return deletedCount;
   } catch (error) {
-    console.error("Error cleaning up temp files:", error);
+    logger.error("Error cleaning up temp files:", error);
     return 0;
   }
 }

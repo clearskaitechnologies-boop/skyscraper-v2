@@ -1,4 +1,5 @@
 import { nanoid } from "nanoid";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -115,7 +116,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ profile: profileData });
   } catch (error: any) {
-    console.error("[GET /api/portal/profile] Error:", error);
+    logger.error("[GET /api/portal/profile] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to load profile" }, { status: 500 });
   }
 }
@@ -229,7 +230,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.error("[POST /api/portal/profile] Error:", error);
+    logger.error("[POST /api/portal/profile] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to save profile" }, { status: 500 });
   }
 }

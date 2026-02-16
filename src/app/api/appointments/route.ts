@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data: appointment }, { status: 201 });
   } catch (error) {
-    console.error("Error creating appointment:", error);
+    logger.error("Error creating appointment:", error);
     return NextResponse.json({ error: "Failed to create appointment" }, { status: 500 });
   }
 }

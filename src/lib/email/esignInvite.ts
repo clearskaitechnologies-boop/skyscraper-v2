@@ -5,6 +5,7 @@
  */
 
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -40,7 +41,7 @@ export async function sendEsignInvite(
       return { success: false, error: "No message ID returned" };
     }
   } catch (error) {
-    console.error("[ESIGN_EMAIL_ERROR]", error);
+    logger.error("[ESIGN_EMAIL_ERROR]", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -156,7 +157,7 @@ export async function sendEsignReminder(
       return { success: false, error: "No message ID returned" };
     }
   } catch (error) {
-    console.error("[ESIGN_REMINDER_ERROR]", error);
+    logger.error("[ESIGN_REMINDER_ERROR]", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

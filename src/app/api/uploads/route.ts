@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import Busboy from "busboy";
 import crypto from "crypto";
 import mime from "mime";
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest) {
     // Check storage availability first
     const { enabled, ready } = await assertStorageReady();
     if (!enabled) {
-      console.warn("Upload attempted while storage disabled");
+      logger.warn("Upload attempted while storage disabled");
       return NextResponse.json(
         {
           code: "STORAGE_DISABLED",
@@ -111,7 +112,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!ready) {
-      console.warn("Upload attempted while storage not ready");
+      logger.warn("Upload attempted while storage not ready");
       return NextResponse.json(
         {
           code: "STORAGE_NOT_READY",
@@ -316,7 +317,7 @@ export async function POST(req: NextRequest) {
       totalErrors: errors.length,
     });
   } catch (err: any) {
-    console.error("Upload error:", err);
+    logger.error("Upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

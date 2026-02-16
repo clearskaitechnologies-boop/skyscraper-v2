@@ -6,6 +6,7 @@
  */
 
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Enable 2FA for user
@@ -35,7 +36,7 @@ export async function enable2FA(userId: string): Promise<{ backupCodes: string[]
 
     return { backupCodes };
   } catch (error) {
-    console.error("Failed to enable 2FA:", error);
+    logger.error("Failed to enable 2FA:", error);
     throw new Error("Failed to enable 2FA");
   }
 }
@@ -53,7 +54,7 @@ export async function disable2FA(userId: string): Promise<void> {
       },
     });
   } catch (error) {
-    console.error("Failed to disable 2FA:", error);
+    logger.error("Failed to disable 2FA:", error);
     throw new Error("Failed to disable 2FA");
   }
 }
@@ -96,7 +97,7 @@ export async function verifyBackupCode(userId: string, code: string): Promise<bo
 
     return true;
   } catch (error) {
-    console.error("Failed to verify backup code:", error);
+    logger.error("Failed to verify backup code:", error);
     return false;
   }
 }
@@ -162,7 +163,7 @@ export async function enforce2FAForOrg(orgId: string, required: boolean): Promis
       },
     })
     .catch(() => {
-      console.warn("⚠️ Org table does not have require2FA field yet");
+      logger.warn("⚠️ Org table does not have require2FA field yet");
     });
 }
 

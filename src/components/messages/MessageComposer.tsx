@@ -1,6 +1,7 @@
 "use client";
 
 import { Send } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -25,7 +26,7 @@ export function MessageComposer({ onSend, disabled }: MessageComposerProps) {
       await onSend(message.trim());
       setMessage("");
     } catch (error) {
-      console.error("Failed to send message:", error);
+      logger.error("Failed to send message:", error);
     } finally {
       setSending(false);
     }

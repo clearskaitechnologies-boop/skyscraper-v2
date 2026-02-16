@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * PHASE 49: EVENT BUS v1.0
  * 
@@ -24,7 +26,7 @@ class EventBus {
    * Emit an event to all subscribers
    */
   emit(eventName: string, payload: any): void {
-    console.log(`[EventBus] 📡 Emitting: ${eventName}`, payload);
+    logger.debug(`[EventBus] 📡 Emitting: ${eventName}`, payload);
 
     // Store in history
     this.eventHistory.push({ eventName, payload, timestamp: new Date() });
@@ -42,15 +44,15 @@ class EventBus {
         // Handle async callbacks
         if (result instanceof Promise) {
           result.catch((error) => {
-            console.error(`[EventBus] ❌ Error in async callback for ${eventName}:`, error);
+            logger.error(`[EventBus] ❌ Error in async callback for ${eventName}:`, error);
           });
         }
       } catch (error) {
-        console.error(`[EventBus] ❌ Error in callback for ${eventName}:`, error);
+        logger.error(`[EventBus] ❌ Error in callback for ${eventName}:`, error);
       }
     });
 
-    console.log(`[EventBus] ✅ ${eventName} delivered to ${subscribers.length} subscribers`);
+    logger.debug(`[EventBus] ✅ ${eventName} delivered to ${subscribers.length} subscribers`);
   }
 
   /**
@@ -71,7 +73,7 @@ class EventBus {
 
     this.subscriptions.get(eventName)!.push(subscription);
 
-    console.log(`[EventBus] ➕ Subscribed: ${eventName} (${subscriptionId})`);
+    logger.debug(`[EventBus] ➕ Subscribed: ${eventName} (${subscriptionId})`);
 
     return subscriptionId;
   }
@@ -84,7 +86,7 @@ class EventBus {
       const index = subs.findIndex((s) => s.id === subscriptionId);
       if (index !== -1) {
         subs.splice(index, 1);
-        console.log(`[EventBus] ➖ Unsubscribed: ${subscriptionId}`);
+        logger.debug(`[EventBus] ➖ Unsubscribed: ${subscriptionId}`);
         return true;
       }
     }
@@ -96,7 +98,7 @@ class EventBus {
    */
   unsubscribeAll(eventName: string): void {
     this.subscriptions.delete(eventName);
-    console.log(`[EventBus] 🗑️ Cleared all subscriptions for: ${eventName}`);
+    logger.debug(`[EventBus] 🗑️ Cleared all subscriptions for: ${eventName}`);
   }
 
   /**

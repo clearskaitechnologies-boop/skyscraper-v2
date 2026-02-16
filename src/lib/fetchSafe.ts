@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 // fetchSafe.ts
 // Resilient fetch wrapper with build-time guards & retry logic to suppress ECONNRESET noise.
 // Import and use in external service integrations to avoid failing static builds.
@@ -31,10 +33,10 @@ export async function fetchSafe(url: string, init: FetchSafeOptions = {}): Promi
       const isConnReset = code === 'ECONNRESET' || /ECONNRESET/.test(String(err));
       const final = attempt === retries;
       const msg = isConnReset ? 'ECONNRESET' : (err?.message || 'Unknown error');
-      console.warn(`[${label}] attempt ${attempt + 1}/${retries + 1} ${msg} ${url}`);
+      logger.warn(`[${label}] attempt ${attempt + 1}/${retries + 1} ${msg} ${url}`);
       if (final) {
         if (isBuildTime() && swallowBuildErrors) {
-          console.warn(`[${label}] swallowing error during build for ${url}`);
+          logger.warn(`[${label}] swallowing error during build for ${url}`);
           return null;
         }
         throw err;

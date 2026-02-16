@@ -1,4 +1,5 @@
 import { httpsCallable } from "firebase/functions";
+import { logger } from "@/lib/logger";
 import { useCallback,useState } from "react";
 
 import { functions } from "@/lib/firebase";
@@ -83,7 +84,7 @@ export function useWeatherIntegration() {
         setError("No DOL data found for the specified location and date");
         return null;
       } catch (err) {
-        console.error("Error fetching DOL data:", err);
+        logger.error("Error fetching DOL data:", err);
         setError("Failed to fetch DOL data. Please try again.");
         return null;
       } finally {
@@ -117,7 +118,7 @@ export function useWeatherIntegration() {
         setError("No weather data found for the specified location and date");
         return null;
       } catch (err) {
-        console.error("Error fetching weather data:", err);
+        logger.error("Error fetching weather data:", err);
         setError("Failed to fetch weather data. Please try again.");
         return null;
       } finally {
@@ -151,7 +152,7 @@ export function useWeatherIntegration() {
         setError("No weather analysis data found for the specified parameters");
         return null;
       } catch (err) {
-        console.error("Error fetching weather analysis:", err);
+        logger.error("Error fetching weather analysis:", err);
         setError("Failed to fetch weather analysis. Please try again.");
         return null;
       } finally {
@@ -183,7 +184,7 @@ export function useWeatherIntegration() {
 
         return result;
       } catch (err) {
-        console.error("Error fetching weather data for PDF:", err);
+        logger.error("Error fetching weather data for PDF:", err);
         setError("Failed to fetch weather data for PDF generation");
         return null;
       } finally {

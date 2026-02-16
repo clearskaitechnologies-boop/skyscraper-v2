@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
         .filter((item) => item.quantity > 0),
     });
   } catch (error) {
-    console.error("Carrier compliance error:", error);
+    logger.error("Carrier compliance error:", error);
     return NextResponse.json(
       {
         error: "Internal server error",

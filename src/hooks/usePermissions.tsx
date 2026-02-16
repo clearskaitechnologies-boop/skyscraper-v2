@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 import type { Permission,TeamRole } from "@/lib/auth/rbac";
 
@@ -32,7 +33,7 @@ export function usePermissions(): PermissionsData {
         });
       })
       .catch((error) => {
-        console.error("Failed to fetch permissions:", error);
+        logger.error("Failed to fetch permissions:", error);
         setData((prev) => ({ ...prev, loading: false }));
       });
   }, []);

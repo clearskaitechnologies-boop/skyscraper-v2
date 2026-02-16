@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type ActivityType =
   | "STATUS_CHANGE"
@@ -102,7 +103,7 @@ export async function logActivity(
       }
     }
     if (!ActivityLog) {
-      console.warn("ActivityLog model not available; skipping persistent activity log");
+      logger.warn("ActivityLog model not available; skipping persistent activity log");
       const now = new Date();
       return {
         id: "no-db",
@@ -161,7 +162,7 @@ export async function logActivity(
       createdAt: created.created_at,
     };
   } catch (error) {
-    console.error("Failed to log activity:", error);
+    logger.error("Failed to log activity:", error);
     throw error;
   }
 }
@@ -442,7 +443,7 @@ export async function getActivityStats(
       topUsers,
     };
   } catch (error) {
-    console.error("Failed to get activity stats:", error);
+    logger.error("Failed to get activity stats:", error);
     return {
       totalActivities: 0,
       byType: {} as Record<ActivityType, number>,
@@ -470,7 +471,7 @@ export async function cleanupOldActivities(retentionDays: number = 90): Promise<
       },
     });
 
-    console.log(`🗑️ Cleaned up ${result.count} old activities`);
+    logger.debug(`🗑️ Cleaned up ${result.count} old activities`);
     return result.count;
   } catch {
     return 0;

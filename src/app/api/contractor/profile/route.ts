@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -139,7 +140,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[contractor/profile GET] Error:", error);
+    logger.error("[contractor/profile GET] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch contractor profile",
@@ -290,7 +291,7 @@ export async function PATCH(req: NextRequest) {
       ...(invalidFields.length > 0 && { ignoredFields: invalidFields }),
     });
   } catch (error) {
-    console.error("[contractor/profile PATCH] Error:", error);
+    logger.error("[contractor/profile PATCH] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to update contractor profile",
@@ -441,7 +442,7 @@ export async function POST(req: NextRequest) {
       profile: result.member,
     });
   } catch (error) {
-    console.error("[contractor/profile POST] Error:", error);
+    logger.error("[contractor/profile POST] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to create contractor profile",
@@ -559,7 +560,7 @@ export async function PUT(req: NextRequest) {
       profile: result.member,
     });
   } catch (error) {
-    console.error("[contractor/profile PUT] Error:", error);
+    logger.error("[contractor/profile PUT] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to update contractor profile",

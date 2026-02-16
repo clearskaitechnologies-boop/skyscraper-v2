@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -53,7 +54,7 @@ export async function GET(req: NextRequest) {
       count: reports.length,
     });
   } catch (error: any) {
-    console.error("[API /reports] Error fetching reports:", error);
+    logger.error("[API /reports] Error fetching reports:", error);
     return NextResponse.json(
       {
         ok: false,

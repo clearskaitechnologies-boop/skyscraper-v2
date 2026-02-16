@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -43,7 +44,7 @@ export async function GET(
       report,
     });
   } catch (err: any) {
-    console.error("WEATHER SHARE GET ERROR:", err);
+    logger.error("WEATHER SHARE GET ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to fetch shared report" },
       { status: 500 }

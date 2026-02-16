@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -52,7 +53,7 @@ export function PacketEmailComposer({
       await onSend({ to, cc: cc || undefined, subject, message });
       onClose();
     } catch (error) {
-      console.error("Error sending email:", error);
+      logger.error("Error sending email:", error);
       alert("Failed to send email. Please try again.");
     } finally {
       setSending(false);

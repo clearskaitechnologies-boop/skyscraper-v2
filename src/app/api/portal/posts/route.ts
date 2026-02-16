@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -68,11 +69,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ posts: postsWithLikes });
     } catch (error) {
       // Table doesn't exist yet, return empty array
-      console.log("client_posts table may not exist yet:", error);
+      logger.debug("client_posts table may not exist yet:", error);
       return NextResponse.json({ posts: [] });
     }
   } catch (error) {
-    console.error("Error fetching posts:", error);
+    logger.error("Error fetching posts:", error);
     return NextResponse.json({ error: "Failed to fetch posts" }, { status: 500 });
   }
 }
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
 
       return NextResponse.json({ post: newPost[0] });
     } catch (error) {
-      console.error("Error creating post (table may not exist):", error);
+      logger.error("Error creating post (table may not exist):", error);
       // Return a mock post for now
       return NextResponse.json({
         post: {
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Error creating post:", error);
+    logger.error("Error creating post:", error);
     return NextResponse.json({ error: "Failed to create post" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       data: clientRequest,
     });
   } catch (error) {
-    console.error("[ClientRequest] Error:", error);
+    logger.error("[ClientRequest] Error:", error);
     return NextResponse.json(
       { success: false, error: "Failed to submit request" },
       { status: 500 }

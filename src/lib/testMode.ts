@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Test Mode Helper
  * Centralized test mode detection and feature unlocking
@@ -61,7 +63,7 @@ export function shouldBypassBilling(): boolean {
  */
 export function shouldUnlockFeature(featureName: string): boolean {
   if (isTestMode()) {
-    console.log(`[TestMode] Feature "${featureName}" unlocked`);
+    logger.debug(`[TestMode] Feature "${featureName}" unlocked`);
     return true;
   }
   return false;

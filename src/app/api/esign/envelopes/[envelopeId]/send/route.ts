@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -62,7 +63,7 @@ export async function POST(
     });
 
     // TODO: Integrate with email service to send signing invitation
-    console.log(`[ESIGN] Envelope ${envelopeId} sent to ${envelope.signerEmail}`);
+    logger.debug(`[ESIGN] Envelope ${envelopeId} sent to ${envelope.signerEmail}`);
 
     return NextResponse.json({
       ok: true,
@@ -75,7 +76,7 @@ export async function POST(
       },
     });
   } catch (error) {
-    console.error("[ENVELOPE_SEND_ERROR]", error);
+    logger.error("[ENVELOPE_SEND_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to send" },
       { status: 500 }

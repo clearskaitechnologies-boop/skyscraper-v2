@@ -11,6 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";
@@ -46,7 +47,7 @@ async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: st
       status: result.success ? 200 : 400,
     });
   } catch (error: any) {
-    console.error("[Domain Adaptation AI] Error:", error);
+    logger.error("[Domain Adaptation AI] Error:", error);
 
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

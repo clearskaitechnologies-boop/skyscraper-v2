@@ -4,6 +4,7 @@
  */
 
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -26,9 +27,9 @@ interface EmailProps {
  */
 async function sendEmail({ to, subject, html }: EmailProps) {
   if (process.env.NODE_ENV === "development") {
-    console.log(`[EMAIL] To: ${to}`);
-    console.log(`[EMAIL] Subject: ${subject}`);
-    console.log(`[EMAIL] Body: ${html.substring(0, 200)}...`);
+    logger.debug(`[EMAIL] To: ${to}`);
+    logger.debug(`[EMAIL] Subject: ${subject}`);
+    logger.debug(`[EMAIL] Body: ${html.substring(0, 200)}...`);
     return { success: true, id: "dev-mode" };
   }
 
@@ -41,7 +42,7 @@ async function sendEmail({ to, subject, html }: EmailProps) {
     });
     return { success: true, id: result.data?.id };
   } catch (error) {
-    console.error("[EMAIL] Send error:", error);
+    logger.error("[EMAIL] Send error:", error);
     return { success: false, error };
   }
 }
@@ -53,7 +54,7 @@ export async function safeSendEmail({ to, subject, html }: EmailProps) {
   try {
     return await sendEmail({ to, subject, html });
   } catch (error) {
-    console.error("[EMAIL] Safe send failed:", error);
+    logger.error("[EMAIL] Safe send failed:", error);
     return { success: false, error };
   }
 }

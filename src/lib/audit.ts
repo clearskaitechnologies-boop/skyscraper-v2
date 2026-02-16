@@ -15,6 +15,7 @@ export async function recordScopeEdit(params: {
 }
 // Client-side audit helper for Phase 5
 import type { AuditAction } from "@/modules/audit/core/logger";
+import { logger } from "@/lib/logger";
 
 export interface AuditEvent {
   action: AuditAction;
@@ -38,10 +39,10 @@ export async function audit(event: AuditEvent): Promise<void> {
     });
 
     if (!response.ok) {
-      console.warn("Audit log failed:", response.statusText);
+      logger.warn("Audit log failed:", response.statusText);
     }
   } catch (error) {
-    console.warn("Audit log error:", error);
+    logger.warn("Audit log error:", error);
     // Don't throw - audit failures shouldn't break the app
   }
 }

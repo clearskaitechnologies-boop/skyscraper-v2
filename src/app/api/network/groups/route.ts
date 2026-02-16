@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -98,7 +99,7 @@ export async function GET(request: Request) {
       total: formattedGroups.length,
     });
   } catch (error: any) {
-    console.error("[Network Groups] Error:", error);
+    logger.error("[Network Groups] Error:", error);
     return NextResponse.json({ error: "Failed to fetch groups" }, { status: 500 });
   }
 }
@@ -160,7 +161,7 @@ export async function POST(request: Request) {
       group,
     });
   } catch (error: any) {
-    console.error("[Create Group] Error:", error);
+    logger.error("[Create Group] Error:", error);
     return NextResponse.json({ error: "Failed to create group" }, { status: 500 });
   }
 }

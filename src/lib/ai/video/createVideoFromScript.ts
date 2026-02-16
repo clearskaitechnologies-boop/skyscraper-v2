@@ -1,5 +1,6 @@
 // lib/ai/video/createVideoFromScript.ts
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { createPlaceholderVideo } from "./placeholderVideo";
 import type { VideoScript } from "./types";
 
@@ -12,7 +13,7 @@ import type { VideoScript } from "./types";
  * 3. Placeholder video (always succeeds)
  */
 export async function createVideoFromScript(script: VideoScript): Promise<Buffer> {
-  console.log(`[Video Generation] Starting for ${script.kind}: ${script.title}`);
+  logger.debug(`[Video Generation] Starting for ${script.kind}: ${script.title}`);
   console.log(
     `[Video Generation] Duration: ${script.durationSeconds}s, Scenes: ${script.scenes.length}`
   );
@@ -27,7 +28,7 @@ export async function createVideoFromScript(script: VideoScript): Promise<Buffer
   // Try OpenAI Sora first (when available)
   if (process.env.OPENAI_API_KEY && process.env.OPENAI_VIDEO_MODEL) {
     try {
-      console.log("[Video Generation] Attempting OpenAI Sora...");
+      logger.debug("[Video Generation] Attempting OpenAI Sora...");
       return await generateWithOpenAI(script, combinedPrompt);
     } catch (error: any) {
       console.error("[Video Generation] OpenAI failed:", error.message);
@@ -38,7 +39,7 @@ export async function createVideoFromScript(script: VideoScript): Promise<Buffer
   // Try Synthesia as fallback
   if (process.env.SYNTHESIA_API_KEY) {
     try {
-      console.log("[Video Generation] Attempting Synthesia...");
+      logger.debug("[Video Generation] Attempting Synthesia...");
       return await generateWithSynthesia(script, combinedPrompt);
     } catch (error: any) {
       console.error("[Video Generation] Synthesia failed:", error.message);
@@ -47,7 +48,7 @@ export async function createVideoFromScript(script: VideoScript): Promise<Buffer
   }
 
   // Final fallback: Generate placeholder video
-  console.log("[Video Generation] Using placeholder video (no provider configured)");
+  logger.debug("[Video Generation] Using placeholder video (no provider configured)");
   return await createPlaceholderVideo(script);
 }
 
@@ -69,7 +70,7 @@ async function generateWithOpenAI(script: VideoScript, prompt: string): Promise<
     throw new Error("No video data returned from OpenAI");
   }
 
-  console.log("[Video Generation] OpenAI success");
+  logger.debug("[Video Generation] OpenAI success");
   return Buffer.from(response.data[0].b64_json, "base64");
 }
 
@@ -121,7 +122,7 @@ async function generateWithSynthesia(script: VideoScript, prompt: string): Promi
       // Download the video
       const videoResponse = await fetch(statusData.download);
       const buffer = await videoResponse.arrayBuffer();
-      console.log("[Video Generation] Synthesia success");
+      logger.debug("[Video Generation] Synthesia success");
       return Buffer.from(buffer);
     }
 

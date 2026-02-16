@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -64,7 +65,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ vendors });
   } catch (error) {
-    console.error("Error fetching vendors:", error);
+    logger.error("Error fetching vendors:", error);
     return NextResponse.json({ error: "Failed to fetch vendors" }, { status: 500 });
   }
 }

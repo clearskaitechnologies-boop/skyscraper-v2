@@ -12,6 +12,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
@@ -85,7 +86,7 @@ async function GET_INNER(
 
     return NextResponse.json(response);
   } catch (error: any) {
-    console.error("AI orchestration error:", error);
+    logger.error("AI orchestration error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to orchestrate AI intelligence" },
       { status: 500 }

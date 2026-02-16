@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { withSentryApi } from "@/lib/monitoring/sentryApi";
@@ -48,7 +49,7 @@ export const GET = withSentryApi(
           typeof e?.message === "string" &&
           (e.message.includes("headshot_url") || e.message.includes("public_skills"))
         ) {
-          console.warn("[GET team member] headshot_url column missing - retrying without select");
+          logger.warn("[GET team member] headshot_url column missing - retrying without select");
           member = await prisma.users.findFirst({
             where: { id: params.memberId, orgId: orgCtx.orgId },
             select: {
@@ -69,7 +70,7 @@ export const GET = withSentryApi(
       }
       return NextResponse.json(member);
     } catch (error) {
-      console.error("GET /api/team/member/[memberId] error:", error);
+      logger.error("GET /api/team/member/[memberId] error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }
@@ -130,7 +131,7 @@ export const PATCH = withSentryApi(
         });
       } catch (e: any) {
         if (typeof e?.message === "string" && e.message.includes("headshot_url")) {
-          console.warn("[PATCH team member] headshot_url column missing - retrying without it");
+          logger.warn("[PATCH team member] headshot_url column missing - retrying without it");
           updated = await prisma.users.update({
             where: { id: params.memberId },
             data: {
@@ -149,7 +150,7 @@ export const PATCH = withSentryApi(
       }
       return NextResponse.json({ success: true, member: updated });
     } catch (error) {
-      console.error("PATCH /api/team/member/[memberId] error:", error);
+      logger.error("PATCH /api/team/member/[memberId] error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }
@@ -217,7 +218,7 @@ export const PUT = withSentryApi(
 
       return NextResponse.json({ success: true, member: updated });
     } catch (error) {
-      console.error("PUT /api/team/member/[memberId] error:", error);
+      logger.error("PUT /api/team/member/[memberId] error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }
@@ -277,7 +278,7 @@ export const DELETE = withSentryApi(
         message: `Member ${member.email} removed from team`,
       });
     } catch (error) {
-      console.error("DELETE /api/team/member/[memberId] error:", error);
+      logger.error("DELETE /api/team/member/[memberId] error:", error);
       return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
   }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -38,7 +39,7 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting notification:", error);
+    logger.error("Error deleting notification:", error);
     return NextResponse.json({ error: "Failed to delete notification" }, { status: 500 });
   }
 }

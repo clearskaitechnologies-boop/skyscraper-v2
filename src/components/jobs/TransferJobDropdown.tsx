@@ -2,6 +2,7 @@
 "use client";
 
 import { Archive, ArrowRight, Briefcase, DollarSign, FileText, Shield, Wrench } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -67,7 +68,7 @@ export function TransferJobDropdown({
 
       router.refresh();
     } catch (error) {
-      console.error("Failed to transfer job:", error);
+      logger.error("Failed to transfer job:", error);
       toast.error("Failed to transfer job. Please try again.");
     } finally {
       setTransferring(false);
@@ -88,7 +89,7 @@ export function TransferJobDropdown({
       toast.success("Job archived successfully");
       router.push("/archive");
     } catch (error) {
-      console.error("Failed to archive job:", error);
+      logger.error("Failed to archive job:", error);
       toast.error("Failed to archive job. Please try again.");
     } finally {
       setTransferring(false);

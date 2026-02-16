@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { runDamageBuilder } from "@/lib/ai/damage";
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("[Damage Builder] Starting analysis for user:", userId);
+    logger.debug("[Damage Builder] Starting analysis for user:", userId);
     console.log("[Damage Builder] Input:", {
       claimId: body.claimId,
       leadId: body.leadId,
@@ -122,7 +123,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (err) {
-    console.error("Error in /api/damage/build:", err);
+    logger.error("Error in /api/damage/build:", err);
     return NextResponse.json(
       { error: "Failed to build damage assessment." },
       { status: 500 }

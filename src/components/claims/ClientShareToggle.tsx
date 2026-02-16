@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Eye, EyeOff } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -48,7 +49,7 @@ export function ClientShareToggle({
       setIsShared(newState);
       onToggle?.(itemId, newState);
     } catch (error) {
-      console.error("Toggle error:", error);
+      logger.error("Toggle error:", error);
       // Revert on error
       setIsShared(isShared);
     } finally {
@@ -146,7 +147,7 @@ export function BulkShareActions({ claimId, selectedItems, onBulkUpdate }: BulkS
       await Promise.all(requests);
       onBulkUpdate?.();
     } catch (error) {
-      console.error("Bulk toggle error:", error);
+      logger.error("Bulk toggle error:", error);
     } finally {
       setIsLoading(false);
     }

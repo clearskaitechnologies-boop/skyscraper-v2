@@ -27,6 +27,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createTimelineEvent } from "@/lib/claims/timeline";
@@ -124,7 +125,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
       count: contractors.length,
     });
   } catch (error) {
-    console.error("[Claims Contractors GET] Error:", error);
+    logger.error("[Claims Contractors GET] Error:", error);
     return NextResponse.json({ error: "Failed to list contractors" }, { status: 500 });
   }
 }
@@ -259,7 +260,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
           `,
         });
       } catch (e) {
-        console.error("[Claims Contractors] Failed to send email:", e);
+        logger.error("[Claims Contractors] Failed to send email:", e);
       }
     }
 
@@ -276,7 +277,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       },
     });
   } catch (error) {
-    console.error("[Claims Contractors POST] Error:", error);
+    logger.error("[Claims Contractors POST] Error:", error);
     return NextResponse.json({ error: "Failed to assign contractor" }, { status: 500 });
   }
 }
@@ -348,7 +349,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { claim
       message: "Contractor removed from claim",
     });
   } catch (error) {
-    console.error("[Claims Contractors DELETE] Error:", error);
+    logger.error("[Claims Contractors DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to remove contractor" }, { status: 500 });
   }
 }

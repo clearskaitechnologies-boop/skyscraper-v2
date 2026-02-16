@@ -23,6 +23,7 @@ export const revalidate = 0;
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -143,25 +144,25 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log(`Starting damage E2E verification for proposal ${proposalId}`);
+    logger.debug(`Starting damage E2E verification for proposal ${proposalId}`);
 
     // Step 1: Upload test image
-    console.log("Step 1: Uploading test image...");
+    logger.debug("Step 1: Uploading test image...");
     const imageUrl = await uploadTestImage(orgId, proposalId);
-    console.log(`✓ Image uploaded: ${imageUrl}`);
+    logger.debug(`✓ Image uploaded: ${imageUrl}`);
 
     // Step 2: Insert photo record
-    console.log("Step 2: Inserting photo record...");
+    logger.debug("Step 2: Inserting photo record...");
     const photoId = await insertPhotoRecord(proposalId, orgId, imageUrl);
-    console.log(`✓ Photo record created: ${photoId}`);
+    logger.debug(`✓ Photo record created: ${photoId}`);
 
     // Step 3: Enqueue damage analysis job
-    console.log("Step 3: Enqueuing damage analysis job...");
+    logger.debug("Step 3: Enqueuing damage analysis job...");
     const jobId = await enqueue("damage-analyze" as any, [proposalId, orgId, [photoId]]);
-    console.log(`✓ Job enqueued: ${jobId}`);
+    logger.debug(`✓ Job enqueued: ${jobId}`);
 
     // Step 4: Poll for findings
-    console.log("Step 4: Polling for findings (60s timeout)...");
+    logger.debug("Step 4: Polling for findings (60s timeout)...");
     const finding = await pollForFindings(photoId, 60000);
     console.log(`✓ Finding received:`, {
       severity: finding.severity,
@@ -184,7 +185,7 @@ export async function POST(req: NextRequest) {
       imageUrl,
     });
   } catch (error: any) {
-    console.error("Damage E2E verification FAILED:", error);
+    logger.error("Damage E2E verification FAILED:", error);
 
     return NextResponse.json(
       {

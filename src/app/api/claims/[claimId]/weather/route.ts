@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -201,7 +202,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
       },
     });
   } catch (error) {
-    console.error("Weather fetch error:", error);
+    logger.error("Weather fetch error:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch weather data",

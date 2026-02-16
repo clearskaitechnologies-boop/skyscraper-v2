@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
     }
-    console.error("Error in claims folder export:", error);
+    logger.error("Error in claims folder export:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }

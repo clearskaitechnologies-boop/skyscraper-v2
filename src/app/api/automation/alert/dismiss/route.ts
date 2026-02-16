@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from '@/lib/db/modelAliases';
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[ALERT DISMISS] Error:", error);
+    logger.error("[ALERT DISMISS] Error:", error);
     return NextResponse.json(
       { error: "Failed to dismiss alert", details: String(error) },
       { status: 500 }

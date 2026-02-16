@@ -20,6 +20,7 @@
  */
 
 import { ClerkAPIError } from "@clerk/nextjs/errors";
+import { logger } from "@/lib/logger";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -114,7 +115,7 @@ export interface ApiSuccessResponse<T = unknown> {
  * - Unknown errors
  */
 export function handleApiError(error: unknown): NextResponse<ApiErrorResponse> {
-  console.error("[API Error]", error);
+  logger.error("[API Error]", error);
 
   // Handle our custom ApiError
   if (error instanceof ApiError) {

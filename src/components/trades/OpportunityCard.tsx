@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { Calendar, MapPin, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -139,7 +140,7 @@ export function OpportunityCard({
         router.push(`/network/thread/${data.threadId}`);
       }
     } catch (err) {
-      console.error("Apply error:", err);
+      logger.error("Apply error:", err);
       toast.error("Failed to send application");
     } finally {
       setIsApplying(false);

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
@@ -126,7 +127,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("[GET /api/portal/claims/[claimId]] Error:", error);
+    logger.error("[GET /api/portal/claims/[claimId]] Error:", error);
 
     if (errorMessage.includes("Access denied")) {
       return NextResponse.json({ error: errorMessage }, { status: 403 });

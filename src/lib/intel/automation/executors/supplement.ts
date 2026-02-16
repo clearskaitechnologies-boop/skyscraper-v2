@@ -5,12 +5,13 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { logger } from "@/lib/logger";
 
 import { buildMasterReportPayload } from "@/lib/intel/master/buildMasterPayload";
 import prisma from "@/lib/prisma";
 
 export async function executeSupplementPacket(claimId: string, orgId: string) {
-  console.log(`[DOMINUS] Executing Supplement Packet for ${claimId}`);
+  logger.debug(`[DOMINUS] Executing Supplement Packet for ${claimId}`);
 
   // Build master payload
   const payload = await buildMasterReportPayload({ claimId, orgId });
@@ -59,7 +60,7 @@ export async function executeSupplementPacket(claimId: string, orgId: string) {
     },
   });
 
-  console.log(`[DOMINUS] Supplement Packet Generated - Total: $${supplementValue}`);
+  logger.debug(`[DOMINUS] Supplement Packet Generated - Total: $${supplementValue}`);
 
   return {
     reportId: report.id,

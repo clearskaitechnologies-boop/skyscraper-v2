@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type BackupType = "FULL" | "INCREMENTAL" | "DIFFERENTIAL";
 export type BackupStatus = "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED";
@@ -142,12 +143,12 @@ export async function restoreFromBackup(
     throw new Error("Invalid backup");
   }
 
-  console.log(`Restoring backup ${backupId} to ${targetEnvironment} from ${backup.location}`);
+  logger.debug(`Restoring backup ${backupId} to ${targetEnvironment} from ${backup.location}`);
 
   // TODO: Implement actual restore logic
   await new Promise((resolve) => setTimeout(resolve, 5000));
 
-  console.log("Restore completed");
+  logger.debug("Restore completed");
 }
 
 /**
@@ -190,7 +191,7 @@ export async function testDisasterRecovery(planId: string): Promise<{
  * Enable replication
  */
 export async function enableReplication(sourceRegion: string, targetRegion: string): Promise<void> {
-  console.log(`Enabling replication from ${sourceRegion} to ${targetRegion}`);
+  logger.debug(`Enabling replication from ${sourceRegion} to ${targetRegion}`);
   // TODO: Implement actual replication setup
 }
 
@@ -198,7 +199,7 @@ export async function enableReplication(sourceRegion: string, targetRegion: stri
  * Failover to secondary region
  */
 export async function failoverToSecondary(region: string): Promise<void> {
-  console.log(`Initiating failover to ${region}`);
+  logger.debug(`Initiating failover to ${region}`);
 
   // TODO: Implement actual failover logic
   // 1. Update DNS records
@@ -208,7 +209,7 @@ export async function failoverToSecondary(region: string): Promise<void> {
 
   await new Promise((resolve) => setTimeout(resolve, 10000));
 
-  console.log("Failover completed");
+  logger.debug("Failover completed");
 }
 
 /**

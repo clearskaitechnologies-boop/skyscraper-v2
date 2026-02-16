@@ -11,6 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -44,7 +45,7 @@ async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: st
       status: result.success ? 200 : 400,
     });
   } catch (error: any) {
-    console.error("[Video AI] Error:", error);
+    logger.error("[Video AI] Error:", error);
 
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

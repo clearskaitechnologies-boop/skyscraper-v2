@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -42,7 +43,7 @@ export async function GET(req: NextRequest, { params }: { params: { claimId: str
 
     return NextResponse.json({ success: true, threads });
   } catch (error) {
-    console.error("Failed to fetch message threads:", error);
+    logger.error("Failed to fetch message threads:", error);
     return NextResponse.json({ error: "Failed to fetch threads" }, { status: 500 });
   }
 }
@@ -176,7 +177,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
 
     return NextResponse.json({ success: true, message, threadId: thread.id });
   } catch (error) {
-    console.error("Failed to send message:", error);
+    logger.error("Failed to send message:", error);
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[AI Suggest Status] Error:", error);
+    logger.error("[AI Suggest Status] Error:", error);
     return NextResponse.json(
       { error: "Failed to generate status suggestion" },
       { status: 500 }

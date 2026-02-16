@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -42,11 +43,11 @@ export async function POST() {
 
     // Create the template if it doesn't exist
     if (!template) {
-      console.log("[SeedMandatoryTemplate] Creating template:", MANDATORY_TEMPLATE_SLUG);
+      logger.debug("[SeedMandatoryTemplate] Creating template:", MANDATORY_TEMPLATE_SLUG);
       template = await prisma.template.create({
         data: MANDATORY_TEMPLATE_DATA,
       });
-      console.log("[SeedMandatoryTemplate] Created template:", template.id);
+      logger.debug("[SeedMandatoryTemplate] Created template:", template.id);
     } else if (!template.isPublished) {
       // Ensure template is published
       template = await prisma.template.update({
@@ -90,11 +91,11 @@ export async function POST() {
           },
         });
         seededCount++;
-        console.log(`[SeedTemplate] Added "${template.name}" to org: ${org.name}`);
+        logger.debug(`[SeedTemplate] Added "${template.name}" to org: ${org.name}`);
       } catch (error: any) {
         // Ignore duplicate key errors
         if (error.code !== "P2002") {
-          console.error(`[SeedTemplate] Error for org ${org.name}:`, error);
+          logger.error(`[SeedTemplate] Error for org ${org.name}:`, error);
         }
       }
     }
@@ -118,7 +119,7 @@ export async function POST() {
       reactivated: reactivated.count,
     });
   } catch (error) {
-    console.error("[SeedMandatoryTemplate] Error:", error);
+    logger.error("[SeedMandatoryTemplate] Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to seed template" },
       { status: 500 }
@@ -169,7 +170,7 @@ export async function GET() {
       missingOrgs: missingOrgs.map((o) => ({ id: o.id, name: o.name })),
     });
   } catch (error) {
-    console.error("[CheckMandatoryTemplate] Error:", error);
+    logger.error("[CheckMandatoryTemplate] Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to check template status" },
       { status: 500 }

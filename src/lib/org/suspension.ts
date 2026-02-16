@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type SuspensionReason =
   | "NON_PAYMENT"
@@ -48,7 +49,7 @@ export async function suspendOrg(
       })
       .catch(() => {
         // Fallback if columns don't exist
-        console.warn("⚠️ Org suspension columns not found - using metadata");
+        logger.warn("⚠️ Org suspension columns not found - using metadata");
         return prisma.org.update({
           where: { id: orgId },
           data: {
@@ -64,9 +65,9 @@ export async function suspendOrg(
       });
 
     // Log suspension event
-    console.log(`🚫 Organization suspended: ${orgId} (Reason: ${reason})`);
+    logger.debug(`🚫 Organization suspended: ${orgId} (Reason: ${reason})`);
   } catch (error) {
-    console.error("Failed to suspend org:", error);
+    logger.error("Failed to suspend org:", error);
     throw new Error("Failed to suspend organization");
   }
 }
@@ -103,9 +104,9 @@ export async function reactivateOrg(orgId: string, reactivatedBy: string): Promi
         });
       });
 
-    console.log(`✅ Organization reactivated: ${orgId}`);
+    logger.debug(`✅ Organization reactivated: ${orgId}`);
   } catch (error) {
-    console.error("Failed to reactivate org:", error);
+    logger.error("Failed to reactivate org:", error);
     throw new Error("Failed to reactivate organization");
   }
 }
@@ -173,7 +174,7 @@ export async function getOrgStatus(orgId: string): Promise<OrgStatus> {
       canReactivate: isSuspended && org.suspensionReason !== "TERMS_VIOLATION",
     };
   } catch (error) {
-    console.error("Failed to get org status:", error);
+    logger.error("Failed to get org status:", error);
     return {
       isActive: true,
       isSuspended: false,
@@ -233,9 +234,9 @@ export async function deactivateOrg(
         });
       });
 
-    console.log(`🗑️ Organization deactivated: ${orgId} (Delete on: ${deleteAt.toISOString()})`);
+    logger.debug(`🗑️ Organization deactivated: ${orgId} (Delete on: ${deleteAt.toISOString()})`);
   } catch (error) {
-    console.error("Failed to deactivate org:", error);
+    logger.error("Failed to deactivate org:", error);
     throw new Error("Failed to deactivate organization");
   }
 }
@@ -244,7 +245,7 @@ export async function deactivateOrg(
  * Permanently delete org data
  */
 export async function permanentlyDeleteOrg(orgId: string): Promise<void> {
-  console.warn(`⚠️ PERMANENT DELETION: ${orgId}`);
+  logger.warn(`⚠️ PERMANENT DELETION: ${orgId}`);
 
   try {
     // Delete all org data (cascade)
@@ -256,9 +257,9 @@ export async function permanentlyDeleteOrg(orgId: string): Promise<void> {
       prisma.org.delete({ where: { id: orgId } }),
     ]);
 
-    console.log(`🗑️ Organization permanently deleted: ${orgId}`);
+    logger.debug(`🗑️ Organization permanently deleted: ${orgId}`);
   } catch (error) {
-    console.error("Failed to permanently delete org:", error);
+    logger.error("Failed to permanently delete org:", error);
     throw new Error("Failed to permanently delete organization");
   }
 }
@@ -303,7 +304,7 @@ export async function cleanupDeletedOrgs(): Promise<number> {
       await permanentlyDeleteOrg(org.id);
       deleted++;
     } catch (error) {
-      console.error(`Failed to delete org ${org.id}:`, error);
+      logger.error(`Failed to delete org ${org.id}:`, error);
     }
   }
 

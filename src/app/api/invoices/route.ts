@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
@@ -93,7 +94,7 @@ export async function GET(req: NextRequest) {
 
     return apiOk({ invoices: enriched, count: enriched.length, limit, offset });
   } catch (err: any) {
-    console.error("[invoices-get]", err);
+    logger.error("[invoices-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -160,7 +161,7 @@ export async function POST(req: NextRequest) {
 
     return apiOk({ invoice: { ...invoice, invoiceNo } }, { status: 201 });
   } catch (err: any) {
-    console.error("[invoices-post]", err);
+    logger.error("[invoices-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

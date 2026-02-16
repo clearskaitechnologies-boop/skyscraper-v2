@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface DashboardKPI {
   name: string;
@@ -188,7 +189,7 @@ export async function getDashboardOverview(
 
     return { kpis, charts, trends };
   } catch (error) {
-    console.error("Failed to get dashboard overview:", error);
+    logger.error("Failed to get dashboard overview:", error);
     throw error;
   }
 }
@@ -406,7 +407,7 @@ export async function getClaimAnalytics(
       topAdjusters,
     };
   } catch (error) {
-    console.error("Failed to get claim analytics:", error);
+    logger.error("Failed to get claim analytics:", error);
     throw error;
   }
 }
@@ -478,7 +479,7 @@ export async function getUserActivityAnalytics(
       },
     };
   } catch (error) {
-    console.error("Failed to get user activity analytics:", error);
+    logger.error("Failed to get user activity analytics:", error);
     throw error;
   }
 }
@@ -520,7 +521,7 @@ export async function generateCustomReport(
 
     return { data, summary };
   } catch (error) {
-    console.error("Failed to generate custom report:", error);
+    logger.error("Failed to generate custom report:", error);
     throw error;
   }
 }
@@ -562,7 +563,7 @@ export async function exportAnalyticsData(
 
     return rows.join("\n");
   } catch (error) {
-    console.error("Failed to export analytics data:", error);
+    logger.error("Failed to export analytics data:", error);
     throw error;
   }
 }

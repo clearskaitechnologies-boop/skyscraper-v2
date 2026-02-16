@@ -9,6 +9,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
@@ -192,7 +193,7 @@ export abstract class BaseMigrationEngine {
         duration: Date.now() - this.startTime.getTime(),
       };
     } catch (error: any) {
-      console.error("[Migration] Fatal error:", error);
+      logger.error("[Migration] Fatal error:", error);
       await this.updateJob({ status: "FAILED", errors: [error.message] });
 
       return {
@@ -217,7 +218,7 @@ export abstract class BaseMigrationEngine {
    */
   cancel(): void {
     this.cancelled = true;
-    console.log(`[Migration] Job ${this.jobId} cancelled by user`);
+    logger.debug(`[Migration] Job ${this.jobId} cancelled by user`);
   }
 
   /**
@@ -249,7 +250,7 @@ export abstract class BaseMigrationEngine {
       await this.updateJob({ status: "CANCELLED" });
       this.emitProgress("CANCELLED", "Rollback complete", 100);
     } catch (error: any) {
-      console.error("[Migration] Rollback failed:", error);
+      logger.error("[Migration] Rollback failed:", error);
       await this.updateJob({ status: "FAILED", errors: [error.message] });
       throw error;
     }

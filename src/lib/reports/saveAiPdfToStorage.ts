@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { uploadSupabase } from "@/lib/storage";
 
 interface SaveAiPdfOptions {
@@ -69,7 +70,7 @@ export async function saveAiPdfToStorage(options: SaveAiPdfOptions): Promise<Sav
       },
     });
     artifactId = artifact.id;
-    console.log(`[saveAiPdfToStorage] Saved artifact ${artifactId} for claim ${claimId}`);
+    logger.debug(`[saveAiPdfToStorage] Saved artifact ${artifactId} for claim ${claimId}`);
   } catch (dbErr) {
     console.warn(
       `[saveAiPdfToStorage] Artifact DB write failed (PDF still saved to storage):`,

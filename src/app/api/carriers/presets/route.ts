@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 // Phase 5 - Carrier Presets API Route
 import { auth } from '@clerk/nextjs/server';
+import { logger } from "@/lib/logger";
 import { NextResponse } from 'next/server';
 
 import { BUILT_IN_CARRIERS, getCarrierPreset } from '@/modules/carriers/core/presets';
@@ -19,7 +20,7 @@ export async function GET() {
       presets: BUILT_IN_CARRIERS,
     });
   } catch (error) {
-    console.error('Error fetching carrier presets:', error);
+    logger.error('Error fetching carrier presets:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

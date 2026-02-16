@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { btn, card, glow } from "@/lib/theme";
 
@@ -33,7 +34,7 @@ export default function ClaimMessages({ claimId }: { claimId: string }) {
       setMessages([...messages, mock]);
       setNewMessage("");
     } catch (err) {
-      console.error("Failed to send message:", err);
+      logger.error("Failed to send message:", err);
     } finally {
       setSending(false);
     }

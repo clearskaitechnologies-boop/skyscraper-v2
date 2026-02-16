@@ -1,4 +1,5 @@
 import type { NextApiRequest } from "next";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getOrgContext } from "@/lib/org/getOrgContext";
@@ -65,7 +66,7 @@ export async function sendMagicLink(email: string, createUser = true) {
       },
     });
     // log event (console for now)
-    console.info("auth_link_sent", { email, createUser });
+    logger.info("auth_link_sent", { email, createUser });
     return res;
   } catch (err: any) {
     console.error("auth_failure", err?.message || err);

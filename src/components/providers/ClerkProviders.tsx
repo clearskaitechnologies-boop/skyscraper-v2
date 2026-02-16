@@ -1,6 +1,7 @@
 "use client";
 
 import { ClerkProvider } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import * as React from "react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -14,7 +15,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   const afterSignUpUrl = "/after-sign-in";
 
   if (!publishableKey) {
-    console.warn("⚠️ Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY at runtime.");
+    logger.warn("⚠️ Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY at runtime.");
   }
 
   return (

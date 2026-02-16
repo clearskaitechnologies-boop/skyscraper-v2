@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { processBatchJob } from "@/lib/batch-processing/processor";
@@ -39,7 +40,7 @@ export async function POST(request: Request) {
     }
 
     // Start processing
-    console.log(`[Manual] Starting batch job ${batchJobId}`);
+    logger.debug(`[Manual] Starting batch job ${batchJobId}`);
     await processBatchJob(batchJobId);
 
     return NextResponse.json({
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       jobId: batchJobId,
     });
   } catch (error) {
-    console.error("[Manual] Error processing batch job:", error);
+    logger.error("[Manual] Error processing batch job:", error);
 
     return NextResponse.json(
       {

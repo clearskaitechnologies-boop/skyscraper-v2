@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
       message: "Connection request sent successfully",
     });
   } catch (error) {
-    console.error("Error creating connection:", error);
+    logger.error("Error creating connection:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

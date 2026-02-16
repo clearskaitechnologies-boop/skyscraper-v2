@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -72,11 +73,11 @@ export async function POST(req: Request) {
   try {
     const isNewEvent = await saveEventId(event.id, event.type);
     if (!isNewEvent) {
-      console.log(`[EMAIL:IDEMPOTENT] Skipping already processed event: ${event.id}`);
+      logger.debug(`[EMAIL:IDEMPOTENT] Skipping already processed event: ${event.id}`);
       return NextResponse.json({ received: true, processed: false });
     }
   } catch (error) {
-    console.error("Idempotency check failed:", error);
+    logger.error("Idempotency check failed:", error);
     Sentry.captureException(error, {
       tags: { component: "stripe-webhook", event_id: event.id },
       extra: { eventType: event.type },
@@ -124,7 +125,7 @@ export async function POST(req: Request) {
             ...emailContent,
           });
 
-          console.log(`[EMAIL:TRIAL_ENDING] Sent to ${invoice.customer_email}`);
+          logger.debug(`[EMAIL:TRIAL_ENDING] Sent to ${invoice.customer_email}`);
         }
         break;
       }
@@ -159,7 +160,7 @@ export async function POST(req: Request) {
             ...emailContent,
           });
 
-          console.log(`[EMAIL:TRIAL_ENDING] Sent to ${email} (backup)`);
+          logger.debug(`[EMAIL:TRIAL_ENDING] Sent to ${email} (backup)`);
         } else {
           console.error(`[EMAIL:MISSING_EMAIL] trial_will_end without email`, {
             subscriptionId: sub.id,
@@ -183,7 +184,7 @@ export async function POST(req: Request) {
             ...emailContent,
           });
 
-          console.log(`[EMAIL:WELCOME] Sent to ${cs.customer_details.email}`);
+          logger.debug(`[EMAIL:WELCOME] Sent to ${cs.customer_details.email}`);
 
           // TODO: Send receipt email to customer via Resend
           // Include: amount paid, plan name, next billing date, invoice PDF link
@@ -275,7 +276,7 @@ export async function POST(req: Request) {
           // 🎯 REFERRAL REWARD: Check if this subscription came from a referral
           if (event.type === "customer.subscription.created" && sub.metadata?.ref) {
             const refCode = sub.metadata.ref;
-            console.log(`[REFERRAL] Processing referral code: ${refCode}`);
+            logger.debug(`[REFERRAL] Processing referral code: ${refCode}`);
 
             try {
               // Find the referral record
@@ -320,7 +321,7 @@ export async function POST(req: Request) {
                 }
               }
             } catch (error) {
-              console.error("[REFERRAL] Error processing referral:", error);
+              logger.error("[REFERRAL] Error processing referral:", error);
               Sentry.captureException(error, {
                 tags: { component: "stripe-webhook-referral" },
                 extra: { refCode, orgId: Org.id },
@@ -329,7 +330,7 @@ export async function POST(req: Request) {
             }
           }
         } else {
-          console.warn(`[SUBSCRIPTION:${event.type}] No Org found for customer ${customerId}`);
+          logger.warn(`[SUBSCRIPTION:${event.type}] No Org found for customer ${customerId}`);
         }
 
         // ── Full Access / Trades Network subscription ──
@@ -354,7 +355,7 @@ export async function POST(req: Request) {
               `[FULL_ACCESS] ${event.type} - User ${faUserId}: ${isActive ? "ACTIVE" : "INACTIVE"} until ${expiresAt}`
             );
           } catch (error) {
-            console.error("[FULL_ACCESS] Database update failed:", error);
+            logger.error("[FULL_ACCESS] Database update failed:", error);
           }
         }
         break;
@@ -386,7 +387,7 @@ export async function POST(req: Request) {
             },
           });
 
-          console.log(`[SUBSCRIPTION:DELETED] Canceled Org ${Org.id} subscription`);
+          logger.debug(`[SUBSCRIPTION:DELETED] Canceled Org ${Org.id} subscription`);
         }
 
         // ── Full Access / Trades Network deactivation ──
@@ -400,9 +401,9 @@ export async function POST(req: Request) {
                   updated_at = NOW()
               WHERE user_id = ${faUserId}::uuid
             `;
-            console.log(`[FULL_ACCESS] Subscription deleted - User ${faUserId}: DEACTIVATED`);
+            logger.debug(`[FULL_ACCESS] Subscription deleted - User ${faUserId}: DEACTIVATED`);
           } catch (error) {
-            console.error("[FULL_ACCESS] Deactivation failed:", error);
+            logger.error("[FULL_ACCESS] Deactivation failed:", error);
           }
         }
         break;
@@ -440,7 +441,7 @@ export async function POST(req: Request) {
           }
         }
 
-        console.log(`[INVOICE:PAYMENT_SUCCEEDED] Invoice ${invoice.id} paid`);
+        logger.debug(`[INVOICE:PAYMENT_SUCCEEDED] Invoice ${invoice.id} paid`);
         break;
       }
 
@@ -461,9 +462,9 @@ export async function POST(req: Request) {
             ...emailContent,
           });
 
-          console.log(`[EMAIL:PAYMENT_FAILED] Sent dunning email to ${invoice.customer_email}`);
+          logger.debug(`[EMAIL:PAYMENT_FAILED] Sent dunning email to ${invoice.customer_email}`);
         } else {
-          console.error(`[EMAIL:PAYMENT_FAILED] No customer email for invoice ${invoice.id}`);
+          logger.error(`[EMAIL:PAYMENT_FAILED] No customer email for invoice ${invoice.id}`);
         }
 
         // Update Org subscriptionStatus to past_due
@@ -483,14 +484,14 @@ export async function POST(req: Request) {
               data: { subscriptionStatus: "past_due" },
             });
 
-            console.log(`[SUBSCRIPTION:PAST_DUE] Updated Org ${Org.id} to past_due`);
+            logger.debug(`[SUBSCRIPTION:PAST_DUE] Updated Org ${Org.id} to past_due`);
           }
         }
         break;
       }
 
       default:
-        console.log(`[EMAIL:UNHANDLED] Event type: ${event.type}`);
+        logger.debug(`[EMAIL:UNHANDLED] Event type: ${event.type}`);
         break;
     }
 
@@ -499,7 +500,7 @@ export async function POST(req: Request) {
       rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
     });
   } catch (e) {
-    console.error("Webhook error:", e);
+    logger.error("Webhook error:", e);
     return NextResponse.json({ error: "Webhook handler failed" }, { status: 500 });
   }
 }

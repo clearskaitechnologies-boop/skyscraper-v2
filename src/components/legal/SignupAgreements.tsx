@@ -1,6 +1,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { Check, ChevronDown, ChevronUp, FileText, Mail, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -76,7 +77,7 @@ export function SignupAgreements({ userType, onComplete, redirectTo }: SignupAgr
             });
           }
         } catch (err) {
-          console.error(`Failed to load ${docId}:`, err);
+          logger.error(`Failed to load ${docId}:`, err);
         }
       }
 
@@ -89,7 +90,7 @@ export function SignupAgreements({ userType, onComplete, redirectTo }: SignupAgr
       });
       setExpandedSections(expanded);
     } catch (error) {
-      console.error("Failed to load documents:", error);
+      logger.error("Failed to load documents:", error);
       toast.error("Failed to load agreements. Please refresh.");
     } finally {
       setLoading(false);
@@ -144,7 +145,7 @@ export function SignupAgreements({ userType, onComplete, redirectTo }: SignupAgr
         router.push(userType === "client" ? "/portal" : "/dashboard");
       }
     } catch (error) {
-      console.error("Failed to save agreements:", error);
+      logger.error("Failed to save agreements:", error);
       toast.error("Failed to save. Please try again.");
     } finally {
       setSubmitting(false);

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 // ITEM 18: SMS notification API endpoint (Twilio integration)
@@ -38,7 +39,7 @@ Job ID: ${jobId || "N/A"}
           to: phoneNumber,
         });
 
-        console.log(`[SMS SENT] SID: ${result.sid}`);
+        logger.debug(`[SMS SENT] SID: ${result.sid}`);
 
         return NextResponse.json({
           success: true,
@@ -61,7 +62,7 @@ Job ID: ${jobId || "N/A"}
       mode: "mock",
     });
   } catch (error) {
-    console.error("SMS notification error:", error);
+    logger.error("SMS notification error:", error);
     return NextResponse.json({ error: "Failed to send SMS" }, { status: 500 });
   }
 }

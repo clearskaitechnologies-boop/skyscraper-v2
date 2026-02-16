@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { executeSupplementPacket } from "@/lib/intel/automation/executors/supplement";
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
     const result = await executeSupplementPacket(claimId, orgId);
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error("[Supplement Packet Error]", error);
+    logger.error("[Supplement Packet Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate supplement packet" },
       { status: 500 }

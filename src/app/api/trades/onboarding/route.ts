@@ -11,6 +11,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -26,11 +27,11 @@ export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
     if (!userId) {
-      console.error("[Trades Onboarding] No userId from auth()");
+      logger.error("[Trades Onboarding] No userId from auth()");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("[Trades Onboarding] Processing for userId:", userId);
+    logger.debug("[Trades Onboarding] Processing for userId:", userId);
 
     const raw = await req.json();
     const parsed = onboardingSchema.safeParse(raw);
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
     }
     const { step, data } = parsed.data;
 
-    console.log("[Trades Onboarding] Step:", step, "Data keys:", Object.keys(data || {}));
+    logger.debug("[Trades Onboarding] Step:", step, "Data keys:", Object.keys(data || {}));
 
     // ========================================================================
     // QUICK UPDATE: AVATAR ONLY
@@ -549,7 +550,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   } catch (error: any) {
-    console.error("[Trades Onboarding Error]", error);
+    logger.error("[Trades Onboarding Error]", error);
     return NextResponse.json(
       {
         error: "Internal server error",
@@ -631,7 +632,7 @@ export async function GET() {
       nextStep: "link_company",
     });
   } catch (error: any) {
-    console.error("[Trades Onboarding Status Error]", error);
+    logger.error("[Trades Onboarding Status Error]", error);
     return NextResponse.json(
       {
         error: "Internal server error",

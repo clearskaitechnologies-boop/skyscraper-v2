@@ -6,6 +6,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 const openai = getOpenAI();
 
@@ -138,7 +139,7 @@ Return ONLY valid JSON in this exact format:
 
     return scope;
   } catch (error) {
-    console.error("[generateScope] Error:", error);
+    logger.error("[generateScope] Error:", error);
     throw new Error(
       `Failed to generate scope: ${error instanceof Error ? error.message : "Unknown error"}`
     );
@@ -206,7 +207,7 @@ Write in a professional, objective tone. Be specific and reference observable fa
 
     return narrative.trim();
   } catch (error) {
-    console.error("[generateNarrative] Error:", error);
+    logger.error("[generateNarrative] Error:", error);
     throw new Error(
       `Failed to generate narrative: ${error instanceof Error ? error.message : "Unknown error"}`
     );
@@ -307,7 +308,7 @@ Format as clear sections with headers.`;
 
     return rebuttals.trim();
   } catch (error) {
-    console.error("[generateCarrierRebuttals] Error:", error);
+    logger.error("[generateCarrierRebuttals] Error:", error);
     throw new Error(
       `Failed to generate rebuttals: ${error instanceof Error ? error.message : "Unknown error"}`
     );

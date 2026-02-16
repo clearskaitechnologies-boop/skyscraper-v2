@@ -7,6 +7,7 @@
  */
 
 import { useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 import SignatureCanvas from "react-signature-canvas";
 
 import { Button } from "@/components/ui/button";
@@ -40,7 +41,7 @@ export function SignaturePad({ onSave, onClear, disabled, signerName }: Signatur
       const dataUrl = sigPadRef.current.toDataURL("image/png");
       await onSave(dataUrl);
     } catch (error) {
-      console.error("Failed to save signature:", error);
+      logger.error("Failed to save signature:", error);
       alert("Failed to save signature. Please try again.");
     } finally {
       setIsSaving(false);

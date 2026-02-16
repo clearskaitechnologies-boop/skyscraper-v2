@@ -6,19 +6,20 @@
  * NEVER bypasses auth — if CRON_SECRET is unset, ALL requests are rejected.
  */
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export function verifyCronSecret(req: Request): NextResponse | null {
   const cronSecret = process.env.CRON_SECRET;
 
   // If CRON_SECRET is not set, reject everything — fail closed
   if (!cronSecret) {
-    console.error("[CRON_AUTH] CRON_SECRET env var is not set — rejecting request");
+    logger.error("[CRON_AUTH] CRON_SECRET env var is not set — rejecting request");
     return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 500 });
   }
 
   const authHeader = req.headers.get("authorization");
   if (authHeader !== `Bearer ${cronSecret}`) {
-    console.warn("[CRON_AUTH] Unauthorized cron attempt");
+    logger.warn("[CRON_AUTH] Unauthorized cron attempt");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

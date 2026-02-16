@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Public Intake Handler
  * Phase 5: Turns public requests into full CRM pipeline
@@ -35,7 +37,7 @@ type PublicSubmitPayload = {
  * - contractor_profiles (should be ContractorProfile)
  */
 export async function handlePublicSubmit(payload: PublicSubmitPayload) {
-  console.warn('[public-intake] Feature disabled - missing backing Prisma models (customer_accounts, customer_properties, public_leads)');
+  logger.warn('[public-intake] Feature disabled - missing backing Prisma models (customer_accounts, customer_properties, public_leads)');
   
   // Return a minimal stub response that matches expected shape
   return {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 import { generateRecommendations } from "@/lib/ml/recommendations/engine";
@@ -72,7 +73,7 @@ async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
       refreshedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("[POST /api/ai/recommendations/refresh] Error:", error);
+    logger.error("[POST /api/ai/recommendations/refresh] Error:", error);
     return NextResponse.json(
       { ok: false, error: "Failed to refresh recommendations" },
       { status: 500 }

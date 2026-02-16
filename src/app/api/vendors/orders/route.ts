@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
       orders: transformedOrders,
     });
   } catch (error) {
-    console.error("Failed to fetch material orders:", error);
+    logger.error("Failed to fetch material orders:", error);
     return NextResponse.json({ error: "Failed to fetch material orders" }, { status: 500 });
   }
 }
@@ -245,7 +246,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to create material order:", error);
+    logger.error("Failed to create material order:", error);
     return NextResponse.json({ error: "Failed to create material order" }, { status: 500 });
   }
 }

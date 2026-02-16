@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
       results,
     });
   } catch (error: any) {
-    console.error("[POST /api/invitations/send] Error:", error);
+    logger.error("[POST /api/invitations/send] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to send invitations" },
       { status: 500 }

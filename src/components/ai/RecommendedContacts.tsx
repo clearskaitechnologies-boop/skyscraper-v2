@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink,Loader2, Star, TrendingUp, Users } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 interface Contact {
@@ -26,7 +27,7 @@ export default function RecommendedContacts() {
         const data = await response.json();
         setContacts(data.contacts);
       } catch (error) {
-        console.error("Recommendations error:", error);
+        logger.error("Recommendations error:", error);
       } finally {
         setLoading(false);
       }

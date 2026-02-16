@@ -12,6 +12,7 @@
  */
 
 import { createHash } from 'crypto';
+import { logger } from "@/lib/logger";
 
 import { upstash } from '@/lib/upstash';
 
@@ -49,7 +50,7 @@ export async function getCache<T>(key: string): Promise<T | null> {
     await redis.incr(`ai:stats:cache-hits`).catch(() => {});
     return cached as T;
   } catch (error) {
-    console.error('[AI Cache] Error getting cache:', error);
+    logger.error('[AI Cache] Error getting cache:', error);
     return null;
   }
 }
@@ -67,7 +68,7 @@ export async function setCache<T>(
     await redis.setex(key, ttl, JSON.stringify(data));
     await redis.incr(`ai:stats:cache-sets`).catch(() => {});
   } catch (error) {
-    console.error('[AI Cache] Error setting cache:', error);
+    logger.error('[AI Cache] Error setting cache:', error);
   }
 }
 
@@ -80,7 +81,7 @@ export async function hasCache(key: string): Promise<boolean> {
     const exists = await redis.exists(key);
     return exists === 1;
   } catch (error) {
-    console.error('[AI Cache] Error checking cache:', error);
+    logger.error('[AI Cache] Error checking cache:', error);
     return false;
   }
 }
@@ -93,7 +94,7 @@ export async function invalidateCache(key: string): Promise<void> {
   try {
     await redis.del(key);
   } catch (error) {
-    console.error('[AI Cache] Error invalidating cache:', error);
+    logger.error('[AI Cache] Error invalidating cache:', error);
   }
 }
 
@@ -107,7 +108,7 @@ export async function invalidateRoute(routeName: string): Promise<void> {
     const keys = await redis.keys(pattern);
     if (keys.length > 0) await redis.del(...keys);
   } catch (error) {
-    console.error('[AI Cache] Error invalidating route:', error);
+    logger.error('[AI Cache] Error invalidating route:', error);
   }
 }
 
@@ -131,7 +132,7 @@ export async function getCacheStats(): Promise<{
     const hitRate = total > 0 ? (hitsNum / total) * 100 : 0;
     return { hits: hitsNum, sets: setsNum, hitRate };
   } catch (error) {
-    console.error('[AI Cache] Error getting stats:', error);
+    logger.error('[AI Cache] Error getting stats:', error);
     return { hits: 0, sets: 0, hitRate: 0 };
   }
 }
@@ -160,10 +161,10 @@ export async function withCache<T>(
   const key = buildAIKey(routeName, inputObj);
   const cached = await getCache<T>(key);
   if (cached) {
-    console.log(`[AI Cache] HIT: ${routeName}`);
+    logger.debug(`[AI Cache] HIT: ${routeName}`);
     return { data: cached, cached: true };
   }
-  console.log(`[AI Cache] MISS: ${routeName}`);
+  logger.debug(`[AI Cache] MISS: ${routeName}`);
   const data = await fn();
   await setCache(key, data, ttl);
   return { data, cached: false };

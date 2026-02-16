@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Weather Integration
  * Stub implementation - to be completed
@@ -43,7 +45,7 @@ export async function getHistoricalWeather(
   lng: number,
   date: Date
 ): Promise<WeatherData | null> {
-  console.log(`[Weather] Getting historical weather for ${lat},${lng} on ${date.toISOString()}`);
+  logger.debug(`[Weather] Getting historical weather for ${lat},${lng} on ${date.toISOString()}`);
   return null;
 }
 
@@ -53,12 +55,12 @@ export async function getWeatherEvents(
   startDate: Date,
   endDate: Date
 ): Promise<WeatherData[]> {
-  console.log(`[Weather] Getting weather events for ${lat},${lng}`);
+  logger.debug(`[Weather] Getting weather events for ${lat},${lng}`);
   return [];
 }
 
 export async function getStormData(claimId: string) {
-  console.log(`[Weather] Getting storm data for claim ${claimId}`);
+  logger.debug(`[Weather] Getting storm data for claim ${claimId}`);
   return null;
 }
 

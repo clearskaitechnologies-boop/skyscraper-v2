@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -43,7 +44,7 @@ export default function RecentActivity({ activities: propActivities }: RecentAct
         setActivities(data.activities || []);
       }
     } catch (error) {
-      console.error("Failed to fetch activities:", error);
+      logger.error("Failed to fetch activities:", error);
     } finally {
       setLoading(false);
     }

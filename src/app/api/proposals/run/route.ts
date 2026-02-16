@@ -27,6 +27,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { enqueue } from "@/lib/queue";
 
@@ -47,13 +48,13 @@ export async function POST(req: Request) {
       } as any
     );
 
-    console.log(`Proposal generation job enqueued: ${jobId}`);
+    logger.debug(`Proposal generation job enqueued: ${jobId}`);
 
     return NextResponse.json({
       jobId,
     });
   } catch (error: any) {
-    console.error("Error enqueuing proposal generation job:", error);
+    logger.error("Error enqueuing proposal generation job:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "edge";
@@ -94,7 +95,7 @@ Format the response in a professional, structured manner suitable for insurance 
 
     if (!openaiResponse.ok) {
       const error = await openaiResponse.json();
-      console.error("OpenAI API error:", error);
+      logger.error("OpenAI API error:", error);
       return NextResponse.json({ error: "Failed to generate damage assessment" }, { status: 500 });
     }
 
@@ -118,7 +119,7 @@ Format the response in a professional, structured manner suitable for insurance 
       },
     });
   } catch (error) {
-    console.error("Error generating damage assessment:", error);
+    logger.error("Error generating damage assessment:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

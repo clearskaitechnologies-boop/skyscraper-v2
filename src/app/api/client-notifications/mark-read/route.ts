@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getClientFromAuth } from "@/lib/portal/getClientFromAuth";
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error marking notification as read:", error);
+    logger.error("Error marking notification as read:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

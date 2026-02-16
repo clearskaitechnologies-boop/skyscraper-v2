@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface ShareButtonProps {
   reportId: string;
@@ -26,7 +27,7 @@ export function ShareButton({ reportId }: ShareButtonProps) {
         setShareUrl(data.shareUrl);
       }
     } catch (error) {
-      console.error("Failed to generate share link:", error);
+      logger.error("Failed to generate share link:", error);
     } finally {
       setIsLoading(false);
     }
@@ -49,7 +50,7 @@ export function ShareButton({ reportId }: ShareButtonProps) {
       });
       setShareUrl(null);
     } catch (error) {
-      console.error("Failed to revoke share link:", error);
+      logger.error("Failed to revoke share link:", error);
     }
   };
 

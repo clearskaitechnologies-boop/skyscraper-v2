@@ -7,6 +7,7 @@
 // ============================================================================
 
 import JSZip from "jszip";
+import { logger } from "@/lib/logger";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -146,7 +147,7 @@ export async function bundleClaimPackage(opts: {
       if (result.status === "fulfilled") {
         allFiles.push(result.value);
       } else {
-        console.warn("[zip-bundle] Failed to fetch photo:", result.reason);
+        logger.warn("[zip-bundle] Failed to fetch photo:", result.reason);
       }
     }
   }

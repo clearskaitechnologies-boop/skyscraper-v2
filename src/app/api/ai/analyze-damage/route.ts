@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -16,7 +17,7 @@ export async function POST(request: NextRequest) {
   try {
     const orgId = await getTenant();
     if (!orgId) {
-      console.error("[AI_VISION] ❌ Unauthorized - no orgId");
+      logger.error("[AI_VISION] ❌ Unauthorized - no orgId");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -37,7 +38,7 @@ export async function POST(request: NextRequest) {
     const claimId = formData.get("claimId") as string;
 
     if (!image) {
-      console.error("[AI_VISION] ❌ No image provided");
+      logger.error("[AI_VISION] ❌ No image provided");
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
     }
 
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
     const apiKey = process.env.DOMINUS_AI_API_KEY;
 
     if (!apiKey) {
-      console.error("[AI_VISION] ❌ CRITICAL: DOMINUS_AI_API_KEY not configured!");
+      logger.error("[AI_VISION] ❌ CRITICAL: DOMINUS_AI_API_KEY not configured!");
       return NextResponse.json(
         { error: "AI service configuration error. Please contact support." },
         { status: 503 }
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
 
         // Log error response
         const errorText = await aiResponse.text();
-        console.error(`[AI_VISION] Attempt ${attempt} failed: ${aiResponse.status} - ${errorText}`);
+        logger.error(`[AI_VISION] Attempt ${attempt} failed: ${aiResponse.status} - ${errorText}`);
         lastError = new Error(`HTTP ${aiResponse.status}: ${errorText}`);
 
         // Retry on 5xx errors or network issues
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(response);
   } catch (error) {
     const processingTime = Date.now() - startTime;
-    console.error(`[AI_VISION] Error after ${processingTime}ms:`, error);
+    logger.error(`[AI_VISION] Error after ${processingTime}ms:`, error);
 
     return NextResponse.json(
       {

@@ -6,6 +6,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -184,7 +185,7 @@ export async function POST(req: NextRequest) {
       clientSlug: client.slug,
     });
   } catch (error: any) {
-    console.error("[JOIN] Error:", error);
+    logger.error("[JOIN] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to process request" },
       { status: 500 }

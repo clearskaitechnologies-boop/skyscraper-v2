@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -101,7 +102,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ answer });
     }
   } catch (error: any) {
-    console.error("Ask Dominus API error:", error);
+    logger.error("Ask Dominus API error:", error);
     return NextResponse.json(
       { error: error?.message || "Ask Dominus encountered an error. Please try again." },
       { status: 500 }
@@ -135,6 +136,6 @@ async function safePersist(
       content: answer,
     });
   } catch (err) {
-    console.error("Persist Dominus messages error (non-blocking):", err);
+    logger.error("Persist Dominus messages error (non-blocking):", err);
   }
 }

@@ -15,6 +15,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import { buildExplanation } from "../explanations/generateExplanation";
 import { logAIAction } from "../feedback/logAction";
@@ -57,7 +58,7 @@ export interface OrchestratorOutput {
  * Call this to get AI intelligence for any claim.
  */
 export async function orchestrateClaim(input: OrchestratorInput): Promise<OrchestratorOutput> {
-  console.log(`🧠 Orchestrating claim ${input.claimId}...`);
+  logger.debug(`🧠 Orchestrating claim ${input.claimId}...`);
 
   // 1. Get claim data
   const claim = await prisma.claims.findUnique({
@@ -72,12 +73,12 @@ export async function orchestrateClaim(input: OrchestratorInput): Promise<Orches
   const currentState = await getCurrentClaimState(input.claimId);
   const allowedNextStates = getAllowedNextStates(currentState);
 
-  console.log(`📊 Current state: ${currentState || "INTAKE"}`);
+  logger.debug(`📊 Current state: ${currentState || "INTAKE"}`);
 
   // 3. Evaluate rules
   const ruleEvaluation = await evaluateClaimRules(input.claimId);
   const triggeredRules = ruleEvaluation.triggered;
-  console.log(`📋 Triggered ${triggeredRules.length} rules`);
+  logger.debug(`📋 Triggered ${triggeredRules.length} rules`);
 
   // 4. Get next actions from planner
   const nextActions = getNextActionsForClaim({
@@ -85,11 +86,11 @@ export async function orchestrateClaim(input: OrchestratorInput): Promise<Orches
     state: currentState as any,
     rules: triggeredRules,
   });
-  console.log(`🎯 Generated ${nextActions.length} action suggestions`);
+  logger.debug(`🎯 Generated ${nextActions.length} action suggestions`);
 
   // 5. Find similar claims
   const similarClaims = await findSimilarClaims(input.claimId, 5);
-  console.log(`🔍 Found ${similarClaims.length} similar claims`);
+  logger.debug(`🔍 Found ${similarClaims.length} similar claims`);
 
   // 6. Calculate intelligence metrics
   const intelligence = await calculateClaimIntelligence({
@@ -134,7 +135,7 @@ export async function orchestrateClaim(input: OrchestratorInput): Promise<Orches
       estimateValue: claim.estimatedValue ?? undefined,
     });
 
-    console.log(`💼 Generated ${negotiationSuggestions.length} negotiation suggestions`);
+    logger.debug(`💼 Generated ${negotiationSuggestions.length} negotiation suggestions`);
   }
 
   // 9. Log orchestration action
@@ -151,7 +152,7 @@ export async function orchestrateClaim(input: OrchestratorInput): Promise<Orches
     },
   });
 
-  console.log(`✅ Orchestration complete`);
+  logger.debug(`✅ Orchestration complete`);
 
   return {
     claimId: input.claimId,

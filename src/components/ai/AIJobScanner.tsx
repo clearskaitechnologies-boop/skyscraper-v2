@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   ArrowRight,
@@ -87,7 +88,7 @@ export function AIJobScanner() {
       setSummary(data.summary || null);
       setLastScanned(data.scannedAt || null);
     } catch (err) {
-      console.error("AI Job Scanner error:", err);
+      logger.error("AI Job Scanner error:", err);
       setError("Unable to load AI recommendations");
     } finally {
       setLoading(false);

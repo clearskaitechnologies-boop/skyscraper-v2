@@ -5,6 +5,7 @@
  */
 
 import sharp from "sharp";
+import { logger } from "@/lib/logger";
 
 export interface ImageProcessingOptions {
   width?: number;
@@ -363,7 +364,7 @@ export async function addTextOverlay(
  */
 export async function removeBackground(input: Buffer): Promise<Buffer> {
   // TODO: Integrate with remove.bg API or local ML model
-  console.log("Background removal not implemented");
+  logger.debug("Background removal not implemented");
   return input;
 }
 

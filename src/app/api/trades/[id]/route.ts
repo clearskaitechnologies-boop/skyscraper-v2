@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -36,7 +37,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ success: true, trade });
   } catch (error) {
-    console.error("[TRADE_GET]", error);
+    logger.error("[TRADE_GET]", error);
     return NextResponse.json({ error: "Failed to fetch trade" }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
 
     return NextResponse.json({ success: true, trade });
   } catch (error) {
-    console.error("[TRADE_UPDATE]", error);
+    logger.error("[TRADE_UPDATE]", error);
     return NextResponse.json({ error: "Failed to update trade" }, { status: 500 });
   }
 }
@@ -123,7 +124,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[TRADE_DELETE]", error);
+    logger.error("[TRADE_DELETE]", error);
     return NextResponse.json({ error: "Failed to delete trade" }, { status: 500 });
   }
 }

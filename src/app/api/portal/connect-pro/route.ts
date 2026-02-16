@@ -4,6 +4,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (!company) {
-      console.error(`[connect-pro] Company not found for proId: ${proId}`);
+      logger.error(`[connect-pro] Company not found for proId: ${proId}`);
       return NextResponse.json({ error: "Contractor not found" }, { status: 404 });
     }
 
@@ -192,11 +193,11 @@ export async function POST(req: NextRequest) {
             clientName,
             connectionId: connection.id,
           });
-          console.log(`[connect-pro] Notification sent to member: ${member.userId}`);
+          logger.debug(`[connect-pro] Notification sent to member: ${member.userId}`);
         }
       }
     } catch (notifErr) {
-      console.log("[connect-pro] Notification error:", notifErr);
+      logger.debug("[connect-pro] Notification error:", notifErr);
     }
 
     return NextResponse.json({
@@ -205,7 +206,7 @@ export async function POST(req: NextRequest) {
       message: "Connection request sent",
     });
   } catch (error: any) {
-    console.error("[POST /api/portal/connect-pro] Error:", error);
+    logger.error("[POST /api/portal/connect-pro] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create connection" },
       { status: 500 }
@@ -286,7 +287,7 @@ export async function GET(req: NextRequest) {
         .map((c) => c.contractorId),
     });
   } catch (error: any) {
-    console.error("[GET /api/portal/connect-pro] Error:", error);
+    logger.error("[GET /api/portal/connect-pro] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to check connection" },
       { status: 500 }

@@ -6,6 +6,7 @@
  */
 
 import { callAI, getAIConfig } from "@/lib/ai/aiAssistant";
+import { logger } from "@/lib/logger";
 
 export type DocumentType =
   | "INSURANCE_POLICY"
@@ -63,7 +64,7 @@ export async function parseDocument(
       },
     };
   } catch (error) {
-    console.error("Document parsing failed:", error);
+    logger.error("Document parsing failed:", error);
     throw new Error("Failed to parse document");
   }
 }
@@ -76,7 +77,7 @@ async function extractTextFromDocument(url: string): Promise<string> {
     // TODO: Integrate with OCR service (Tesseract, Google Cloud Vision, AWS Textract)
 
     // Mock implementation
-    console.log(`📄 OCR Processing: ${url}`);
+    logger.debug(`📄 OCR Processing: ${url}`);
 
     // Simulated OCR output
     return `
@@ -89,7 +90,7 @@ Effective Date: 01/15/2024
 Expiration Date: 01/15/2025
     `.trim();
   } catch (error) {
-    console.error("OCR extraction failed:", error);
+    logger.error("OCR extraction failed:", error);
     throw error;
   }
 }
@@ -250,7 +251,7 @@ Return ONLY valid JSON with extracted values. Use null for missing fields.`;
 
     return extracted;
   } catch (error) {
-    console.error("Data extraction failed:", error);
+    logger.error("Data extraction failed:", error);
     return {};
   }
 }

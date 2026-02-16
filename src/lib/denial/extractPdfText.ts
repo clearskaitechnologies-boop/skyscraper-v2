@@ -12,6 +12,7 @@
  */
 
 import pdfParse from "pdf-parse";
+import { logger } from "@/lib/logger";
 
 // ===========================
 // TYPE DEFINITIONS
@@ -55,7 +56,7 @@ export async function extractPDFText(pdfBuffer: Buffer): Promise<{
       metadata: data.metadata || {}
     };
   } catch (error) {
-    console.error("[PDF EXTRACTION ERROR]", error);
+    logger.error("[PDF EXTRACTION ERROR]", error);
     throw new Error("Failed to extract PDF text");
   }
 }

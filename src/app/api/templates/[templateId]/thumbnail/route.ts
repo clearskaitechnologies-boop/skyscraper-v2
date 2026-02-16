@@ -10,6 +10,7 @@
  */
 
 import fs from "fs/promises";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
@@ -302,7 +303,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
     const shouldAttemptGeneration = req.nextUrl.searchParams.get("generate") !== "false";
     if (shouldAttemptGeneration && dbTemplate) {
       try {
-        console.log(`[THUMBNAIL_API] Attempting on-demand generation for ${templateId}`);
+        logger.debug(`[THUMBNAIL_API] Attempting on-demand generation for ${templateId}`);
         const result = await generateTemplateThumbnail(templateId, {
           width: 1200,
           height: 630,
@@ -337,7 +338,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
       },
     });
   } catch (error) {
-    console.error(`[THUMBNAIL_API] Error for ${templateId}:`, error);
+    logger.error(`[THUMBNAIL_API] Error for ${templateId}:`, error);
 
     const placeholder = svgPlaceholder(templateId);
     return new NextResponse(Uint8Array.from(placeholder), {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useOrganization } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 interface BrandingData {
@@ -42,7 +43,7 @@ export function CRMFooter() {
           }
         }
       } catch (error) {
-        console.error("[CRMFooter] Failed to fetch branding:", error);
+        logger.error("[CRMFooter] Failed to fetch branding:", error);
       } finally {
         setLoading(false);
       }

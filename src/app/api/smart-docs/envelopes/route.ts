@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -50,7 +51,7 @@ export async function GET() {
 
     return NextResponse.json({ ok: true, envelopes });
   } catch (error) {
-    console.error("[SMART_DOCS_LIST_ERROR]", error);
+    logger.error("[SMART_DOCS_LIST_ERROR]", error);
     return NextResponse.json(
       {
         ok: false,

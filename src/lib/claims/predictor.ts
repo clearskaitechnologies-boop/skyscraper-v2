@@ -21,6 +21,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 const openai = getOpenAI();
 
@@ -83,7 +84,7 @@ export interface PredictionOutput {
  * Main prediction function
  */
 export async function predictClaimLifecycle(input: PredictionInput): Promise<PredictionOutput> {
-  console.log(`[PREDICTOR] Analyzing claim ${input.claimId}`);
+  logger.debug(`[PREDICTOR] Analyzing claim ${input.claimId}`);
 
   // Calculate probabilities
   const probabilities = calculateProbabilities(input);
@@ -356,7 +357,7 @@ Be specific and tactical.`;
       timeline: lines[lines.length - 1] || "2-4 weeks for initial response",
     };
   } catch (err) {
-    console.error("[PREDICTOR] AI carrier behavior error:", err);
+    logger.error("[PREDICTOR] AI carrier behavior error:", err);
     return {
       likelyStrategy: "Standard review process with documentation requests",
       commonTactics: [

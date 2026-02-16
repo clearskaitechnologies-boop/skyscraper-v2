@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -184,7 +185,7 @@ export async function GET(request: NextRequest) {
       totalPages: Math.ceil(totalCount / limit),
     });
   } catch (error) {
-    console.error("[Trades Jobs GET] Error:", error);
+    logger.error("[Trades Jobs GET] Error:", error);
     return NextResponse.json({ error: "Failed to list jobs" }, { status: 500 });
   }
 }

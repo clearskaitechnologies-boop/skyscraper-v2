@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { ensureOpenAI } from "@/lib/ai/client";
 import { requireTenant } from "@/lib/auth/tenant";
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, text, record });
   } catch (err: any) {
-    console.error("OCR PDF Error:", err);
+    logger.error("OCR PDF Error:", err);
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }
 }

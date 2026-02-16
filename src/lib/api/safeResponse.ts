@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 export interface APIResponse<T = any> {
   ok: boolean;
@@ -98,7 +99,7 @@ export function withErrorHandler<T extends any[]>(handler: (...args: T) => Promi
     try {
       return await handler(...args);
     } catch (error) {
-      console.error("[API Error]", error);
+      logger.error("[API Error]", error);
       return apiError(
         "Internal server error",
         error instanceof Error ? error.message : String(error)

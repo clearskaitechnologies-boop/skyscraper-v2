@@ -16,6 +16,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -221,7 +222,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (error) {
-      console.error("[Supabase Upload] Error, trying Firebase fallback:", error);
+      logger.error("[Supabase Upload] Error, trying Firebase fallback:", error);
 
       // Try Firebase fallback
       try {
@@ -245,7 +246,7 @@ export async function POST(request: NextRequest) {
           });
 
           const downloadUrl = await getDownloadURL(storageRef);
-          console.log("[Firebase Upload] Success:", { firebasePath, downloadUrl });
+          logger.debug("[Firebase Upload] Success:", { firebasePath, downloadUrl });
 
           // Create file_assets DB record for Firebase uploads too
           try {
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest) {
               },
             });
           } catch (dbErr) {
-            console.warn("[Firebase Upload] file_assets record creation failed:", dbErr);
+            logger.warn("[Firebase Upload] file_assets record creation failed:", dbErr);
           }
 
           // Log successful Firebase upload
@@ -334,7 +335,7 @@ export async function POST(request: NextRequest) {
         },
       });
     } catch (dbErr) {
-      console.warn("[Supabase Upload] file_assets record creation failed:", dbErr);
+      logger.warn("[Supabase Upload] file_assets record creation failed:", dbErr);
       // File is uploaded successfully, DB record is secondary
     }
 
@@ -360,7 +361,7 @@ export async function POST(request: NextRequest) {
       storage: "supabase",
     });
   } catch (error) {
-    console.error("[Supabase Upload] Error:", error);
+    logger.error("[Supabase Upload] Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Upload failed" },
       { status: 500 }

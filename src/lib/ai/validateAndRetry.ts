@@ -4,6 +4,7 @@
  */
 
 import { ZodSchema } from "zod";
+import { logger } from "@/lib/logger";
 
 export interface ValidateAndRetryOptions<T> {
   call: () => Promise<any>;
@@ -41,11 +42,11 @@ export async function validateAndRetry<T>({
 
       // Last attempt - return fallback
       if (attempt === retries) {
-        console.error("All validation attempts failed, using fallback");
+        logger.error("All validation attempts failed, using fallback");
         return fallback;
       }
     } catch (error) {
-      console.error(`AI call failed (attempt ${attempt + 1}/${retries + 1}):`, error);
+      logger.error(`AI call failed (attempt ${attempt + 1}/${retries + 1}):`, error);
 
       if (onError) {
         onError(error, attempt);
@@ -53,7 +54,7 @@ export async function validateAndRetry<T>({
 
       // Last attempt - return fallback
       if (attempt === retries) {
-        console.error("All attempts failed, using fallback");
+        logger.error("All attempts failed, using fallback");
         return fallback;
       }
 

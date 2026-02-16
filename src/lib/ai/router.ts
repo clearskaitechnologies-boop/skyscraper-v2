@@ -10,6 +10,7 @@
 // Import logging utilities
 // Static imports for all AI modules (fixes Next.js ES module issue)
 import * as aiAssistant from "./aiAssistant";
+import { logger } from "@/lib/logger";
 import * as automation from "./automation";
 import * as autoTimeline from "./autoTimeline";
 import * as callGPT4 from "./callGPT4";
@@ -122,7 +123,7 @@ function registerModules() {
     workflowAutomation,
   };
 
-  console.log(`[AI Router] Registering ${Object.keys(modules).length} modules`);
+  logger.debug(`[AI Router] Registering ${Object.keys(modules).length} modules`);
 
   for (const [moduleName, moduleExports] of Object.entries(modules)) {
     try {
@@ -150,9 +151,9 @@ function registerModules() {
       });
 
       if (tasks.length > 0) {
-        console.log(`[AI Router] ✓ ${moduleName}: ${tasks.length} tasks`);
+        logger.debug(`[AI Router] ✓ ${moduleName}: ${tasks.length} tasks`);
       } else {
-        console.warn(`[AI Router] ⚠ ${moduleName}: no exported functions found`);
+        logger.warn(`[AI Router] ⚠ ${moduleName}: no exported functions found`);
       }
     } catch (err: any) {
       console.error(`[AI Router] ✗ ${moduleName}:`, err.message);
@@ -167,14 +168,14 @@ function registerModules() {
     }
   }
 
-  console.log(`[AI Router] Total tasks registered: ${Object.keys(registry).length}`);
+  logger.debug(`[AI Router] Total tasks registered: ${Object.keys(registry).length}`);
 }
 
 // Initialize registry on module load
 try {
   registerModules();
 } catch (err) {
-  console.error("[AI Router] Failed to initialize:", err);
+  logger.error("[AI Router] Failed to initialize:", err);
 }
 
 /**
@@ -258,7 +259,7 @@ export async function AICoreRouter<T = any>(
   } catch (err: any) {
     const executionTime = Date.now() - startTime;
 
-    console.error(`[AI Router] Task '${task}' failed:`, err);
+    logger.error(`[AI Router] Task '${task}' failed:`, err);
 
     // Log error
     logError(task, payload, err.message, executionTime, {
@@ -328,11 +329,11 @@ export function isTaskAvailable(task: string): boolean {
  */
 export function registerTask(task: string, handler: Function): void {
   if (registry[task]) {
-    console.warn(`[AI Router] Task '${task}' already registered. Overwriting.`);
+    logger.warn(`[AI Router] Task '${task}' already registered. Overwriting.`);
   }
 
   registry[task] = handler;
-  console.log(`[AI Router] Manually registered: ${task}`);
+  logger.debug(`[AI Router] Manually registered: ${task}`);
 }
 
 /**

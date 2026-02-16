@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   Activity,
   Award,
@@ -79,7 +80,7 @@ export function AdminAnalyticsDashboard({
       setRuleEffectiveness(data.ruleEffectiveness || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
-      console.error("Failed to fetch analytics:", err);
+      logger.error("Failed to fetch analytics:", err);
     } finally {
       setLoading(false);
     }

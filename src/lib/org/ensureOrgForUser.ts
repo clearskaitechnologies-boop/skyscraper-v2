@@ -14,6 +14,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import type { Org } from "@prisma/client";
 import { redirect } from "next/navigation";
 
@@ -40,7 +41,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
   const user = await currentUser();
 
   if (!user) {
-    console.log("[ensureOrgForUser] No authenticated user - redirecting to sign-in");
+    logger.debug("[ensureOrgForUser] No authenticated user - redirecting to sign-in");
     redirect("/sign-in?redirect_url=/dashboard");
   }
 
@@ -87,7 +88,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
         await prisma.user_organizations.deleteMany({
           where: { id: { in: orphanedIds } },
         });
-        console.log("[ensureOrgForUser] Deleted", orphanedIds.length, "orphaned memberships");
+        logger.debug("[ensureOrgForUser] Deleted", orphanedIds.length, "orphaned memberships");
 
         // Fall through to create new org below
       } else {
@@ -112,7 +113,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
       }
     }
 
-    console.log("[ensureOrgForUser] No existing memberships - checking for orphaned orgs");
+    logger.debug("[ensureOrgForUser] No existing memberships - checking for orphaned orgs");
 
     // 2. AUTO-HEAL: Look for existing org by clerkOrgId pattern (prevents duplicate org creation)
     let orgToUse: Org | null = null;
@@ -129,7 +130,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
     });
 
     if (orgToUse) {
-      console.log("[ensureOrgForUser] Found orphaned org by userId:", orgToUse.id);
+      logger.debug("[ensureOrgForUser] Found orphaned org by userId:", orgToUse.id);
     }
 
     // 3. If still no org, try email domain matching
@@ -146,7 +147,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
       });
 
       if (orgToUse) {
-        console.log("[ensureOrgForUser] Found org by domain:", orgToUse.id);
+        logger.debug("[ensureOrgForUser] Found org by domain:", orgToUse.id);
       }
     }
 
@@ -180,7 +181,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
     // 5. If STILL no org after all checks → create ONE new org
     let orgCreated = false;
     if (!orgToUse) {
-      console.log("[ensureOrgForUser] Creating new org for user:", userId);
+      logger.debug("[ensureOrgForUser] Creating new org for user:", userId);
 
       const fallbackName =
         [user.firstName, user.lastName].filter(Boolean).join(" ") ||
@@ -213,7 +214,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
       });
       orgCreated = true;
 
-      console.log("[ensureOrgForUser] Upserted org:", orgToUse.id);
+      logger.debug("[ensureOrgForUser] Upserted org:", orgToUse.id);
     }
 
     if (!orgToUse) {
@@ -238,7 +239,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
       },
     });
 
-    console.log("[ensureOrgForUser] Ensured membership:", newMembership.id);
+    logger.debug("[ensureOrgForUser] Ensured membership:", newMembership.id);
 
     if (orgCreated) {
       try {
@@ -246,7 +247,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
           orgId: orgToUse.id,
           userId,
         });
-        console.log("[ensureOrgForUser] Demo seed result:", seedResult.reason);
+        logger.debug("[ensureOrgForUser] Demo seed result:", seedResult.reason);
         if (seedResult.seeded) {
           await prisma.org.update({
             where: { id: orgToUse.id },
@@ -267,8 +268,8 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
       isNew: true,
     };
   } catch (error) {
-    console.error("🚨🚨🚨 [ensureOrgForUser] FATAL ORG CONTEXT ERROR 🚨🚨🚨");
-    console.error("Error details:", error);
+    logger.error("🚨🚨🚨 [ensureOrgForUser] FATAL ORG CONTEXT ERROR 🚨🚨🚨");
+    logger.error("Error details:", error);
     console.error("User ID:", userId);
     console.error("Email:", primaryEmail);
     // Throwing with clear log so we don't get silent white screens

@@ -1,5 +1,6 @@
 // src/app/api/claims-folder/homeowner-statement/route.ts
 import { NextResponse, type NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Homeowner statement save error:", error);
+    logger.error("Homeowner statement save error:", error);
     return NextResponse.json({ error: "Failed to save statement" }, { status: 500 });
   }
 }
@@ -136,7 +137,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Homeowner statement fetch error:", error);
+    logger.error("Homeowner statement fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch statement" }, { status: 500 });
   }
 }

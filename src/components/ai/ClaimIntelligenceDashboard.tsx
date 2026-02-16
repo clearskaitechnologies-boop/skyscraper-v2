@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, CheckCircle2, TrendingUp } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -38,7 +39,7 @@ export function ClaimIntelligenceDashboard({ claimId }: ClaimIntelligenceDashboa
         setIntelligence(data.intelligence);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        console.error("Failed to fetch claim intelligence:", err);
+        logger.error("Failed to fetch claim intelligence:", err);
       } finally {
         setLoading(false);
       }

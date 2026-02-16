@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type VulnerabilitySeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 export type ScanType = "DEPENDENCY" | "CODE" | "CONTAINER" | "INFRASTRUCTURE" | "API";
@@ -255,7 +256,7 @@ export async function scheduleSecurityScans(
   schedule: "DAILY" | "WEEKLY" | "MONTHLY"
 ): Promise<void> {
   // TODO: Implement actual scheduling
-  console.log(`Scheduled security scans: ${schedule}`);
+  logger.debug(`Scheduled security scans: ${schedule}`);
 }
 
 /**

@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       orgTemplate,
     });
   } catch (error: any) {
-    console.error("[POST /api/templates/org/add] Error:", error);
+    logger.error("[POST /api/templates/org/add] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Failed to add template" },
       { status: 500 }

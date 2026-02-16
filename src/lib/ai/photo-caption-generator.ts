@@ -12,6 +12,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { CODE_LIBRARY } from "@/types/universal-claims-report";
 
 const openai = getOpenAI();
@@ -122,7 +123,7 @@ Return ONLY valid JSON in this exact format:
 
     return caption;
   } catch (error) {
-    console.error("[PHOTO_CAPTION_ERROR]", error);
+    logger.error("[PHOTO_CAPTION_ERROR]", error);
 
     // Fallback caption
     return {

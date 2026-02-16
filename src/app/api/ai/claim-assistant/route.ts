@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -36,7 +37,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
         content: msg.content,
       })) || [];
 
-    console.log("[claim-assistant] Making OpenAI request for user:", userId || "demo");
+    logger.debug("[claim-assistant] Making OpenAI request for user:", userId || "demo");
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4",
@@ -53,7 +54,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
       completion.choices[0]?.message?.content ||
       "I'm sorry, I couldn't generate a response. Please try again.";
 
-    console.log("[claim-assistant] OpenAI response received successfully");
+    logger.debug("[claim-assistant] OpenAI response received successfully");
 
     return NextResponse.json({
       response,

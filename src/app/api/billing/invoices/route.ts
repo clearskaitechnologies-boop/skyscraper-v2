@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -104,7 +105,7 @@ export async function GET(request: NextRequest) {
       totalCount: invoices.length,
     });
   } catch (error) {
-    console.error("Error fetching invoices:", error);
+    logger.error("Error fetching invoices:", error);
 
     if (error instanceof Stripe.errors.StripeError) {
       return NextResponse.json(

@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -43,7 +44,7 @@ export async function GET() {
           },
         })
         .catch((err) => {
-          console.error("[DASHBOARD_ACTIVITIES] Claims fetch failed:", err);
+          logger.error("[DASHBOARD_ACTIVITIES] Claims fetch failed:", err);
           return [] as ClaimRecord[];
         }),
       prisma.leads
@@ -59,7 +60,7 @@ export async function GET() {
           },
         })
         .catch((err) => {
-          console.error("[DASHBOARD_ACTIVITIES] Leads fetch failed:", err);
+          logger.error("[DASHBOARD_ACTIVITIES] Leads fetch failed:", err);
           return [] as LeadRecord[];
         }),
       prisma.ai_reports
@@ -75,7 +76,7 @@ export async function GET() {
           },
         })
         .catch((err) => {
-          console.error("[DASHBOARD_ACTIVITIES] Reports table might not exist:", err);
+          logger.error("[DASHBOARD_ACTIVITIES] Reports table might not exist:", err);
           return [] as ReportRecord[];
         }),
       prisma.inspections
@@ -91,7 +92,7 @@ export async function GET() {
           },
         })
         .catch((err) => {
-          console.error("[DASHBOARD_ACTIVITIES] Inspections table might not exist:", err);
+          logger.error("[DASHBOARD_ACTIVITIES] Inspections table might not exist:", err);
           return [] as InspectionRecord[];
         }),
     ]);
@@ -156,7 +157,7 @@ export async function GET() {
       activities: activities.slice(0, 10),
     });
   } catch (error) {
-    console.error("[Activity Feed API] Error:", error);
+    logger.error("[Activity Feed API] Error:", error);
     return NextResponse.json({ ok: false, error: "Failed to fetch activities" }, { status: 500 });
   }
 }

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * AI Address List CSV Generator
  * Uses AI to generate list of addresses within a polygon
@@ -36,8 +38,8 @@ export async function generateAddressListCSV({
   error?: string;
 }> {
   try {
-    console.log(`[ADDRESS_CSV] Generating address list for community ${communityId}`);
-    console.log(`[ADDRESS_CSV] Polygon bounds:`, JSON.stringify(polygon.coordinates));
+    logger.debug(`[ADDRESS_CSV] Generating address list for community ${communityId}`);
+    logger.debug(`[ADDRESS_CSV] Polygon bounds:`, JSON.stringify(polygon.coordinates));
 
     // TODO: In production, this would:
     // 1. Call Mapbox Tilequery API to get buildings in polygon
@@ -71,7 +73,7 @@ export async function generateAddressListCSV({
     // Mock CSV URL (in production, upload to storage)
     const mockCsvUrl = `/api/community/${communityId}/addresses.csv`;
 
-    console.log(`[ADDRESS_CSV] Generated ${mockAddresses.length} addresses`);
+    logger.debug(`[ADDRESS_CSV] Generated ${mockAddresses.length} addresses`);
 
     return {
       ok: true,
@@ -79,7 +81,7 @@ export async function generateAddressListCSV({
       addresses: mockAddresses.map((a) => a.address),
     };
   } catch (error: any) {
-    console.error("[ADDRESS_CSV] Generation failed:", error);
+    logger.error("[ADDRESS_CSV] Generation failed:", error);
     return {
       ok: false,
       error: error.message,
@@ -134,8 +136,8 @@ export interface AddressPreview {
  * });
  *
  * if (result.ok) {
- *   console.log("CSV URL:", result.csvUrl);
- *   console.log("Addresses:", result.addresses);
+ *   logger.debug("CSV URL:", result.csvUrl);
+ *   logger.debug("Addresses:", result.addresses);
  * }
  * ```
  */

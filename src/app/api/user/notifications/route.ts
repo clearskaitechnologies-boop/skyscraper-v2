@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ notifications, unreadCount });
   } catch (error: any) {
-    console.error("Get notifications error:", error);
+    logger.error("Get notifications error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to retrieve notifications" },
       { status: 500 }
@@ -130,7 +131,7 @@ export async function PATCH(req: NextRequest) {
 
     return NextResponse.json({ message: "Notifications marked as read" });
   } catch (error: any) {
-    console.error("Update notifications error:", error);
+    logger.error("Update notifications error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update notifications" },
       { status: 500 }

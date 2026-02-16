@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 /**
@@ -16,7 +17,7 @@ export async function PATCH(
     }
 
     const { templateId, sectionId } = await params;
-    console.log(`[TemplateSections] PATCH stub for template ${templateId} section ${sectionId}`);
+    logger.debug(`[TemplateSections] PATCH stub for template ${templateId} section ${sectionId}`);
 
     // Sections are stored as JSON in report_templates.section_order / section_enabled
     // Individual section editing would require JSON manipulation
@@ -26,7 +27,7 @@ export async function PATCH(
       sectionId,
     });
   } catch (error) {
-    console.error("Failed to update section:", error);
+    logger.error("Failed to update section:", error);
     return NextResponse.json({ error: "Failed to update section" }, { status: 500 });
   }
 }
@@ -42,7 +43,7 @@ export async function DELETE(
     }
 
     const { templateId, sectionId } = await params;
-    console.log(`[TemplateSections] DELETE stub for template ${templateId} section ${sectionId}`);
+    logger.debug(`[TemplateSections] DELETE stub for template ${templateId} section ${sectionId}`);
 
     return NextResponse.json({
       message: "Section deletion stored in template JSON. Use template PATCH endpoint.",
@@ -50,7 +51,7 @@ export async function DELETE(
       sectionId,
     });
   } catch (error) {
-    console.error("Failed to delete section:", error);
+    logger.error("Failed to delete section:", error);
     return NextResponse.json({ error: "Failed to delete section" }, { status: 500 });
   }
 }

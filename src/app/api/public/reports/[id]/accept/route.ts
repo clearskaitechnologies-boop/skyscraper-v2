@@ -10,6 +10,7 @@ export const revalidate = 0;
 // =====================================================
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 import { sendAcceptanceReceiptEmail } from "@/lib/mailer";
@@ -131,7 +132,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       receiptUrl: receiptPdfUrl,
     });
   } catch (error) {
-    console.error("Accept report error:", error);
+    logger.error("Accept report error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Accept failed" },
       { status: 500 }

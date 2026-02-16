@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
@@ -68,7 +69,7 @@ export async function POST(req: NextRequest) {
     // Start async generation (non-blocking)
     generateContractorPacketAsync(packetId, orgId, sections, format, claimId, jobId).catch(
       (err) => {
-        console.error("[Contractor Packet] Async generation failed:", err);
+        logger.error("[Contractor Packet] Async generation failed:", err);
       }
     );
 
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       message: "Contractor packet generation started",
     });
   } catch (error) {
-    console.error("[Contractor Packet] Error creating packet:", error);
+    logger.error("[Contractor Packet] Error creating packet:", error);
     return NextResponse.json({ error: "Failed to create contractor packet" }, { status: 500 });
   }
 }
@@ -117,7 +118,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ packets: packetsRes.rows });
   } catch (error) {
-    console.error("[Contractor Packet] Error listing packets:", error);
+    logger.error("[Contractor Packet] Error listing packets:", error);
     return NextResponse.json({ error: "Failed to list contractor packets" }, { status: 500 });
   }
 }
@@ -134,7 +135,7 @@ async function generateContractorPacketAsync(
   claimId?: string,
   jobId?: string
 ) {
-  console.log(`[Contractor Packet] Starting generation for ${packetId}`);
+  logger.debug(`[Contractor Packet] Starting generation for ${packetId}`);
 
   try {
     // Pull real data from claim if available
@@ -329,7 +330,7 @@ async function generateContractorPacketAsync(
       );
     } catch (rhErr) {
       // report_history table may not exist yet — non-blocking
-      console.warn("[Contractor Packet] Could not save to report_history:", rhErr);
+      logger.warn("[Contractor Packet] Could not save to report_history:", rhErr);
     }
 
     // ── Save to claim_documents so it appears on the claim's Documents tab ──
@@ -353,13 +354,13 @@ async function generateContractorPacketAsync(
         );
       } catch (cdErr) {
         // claim_documents table may not exist yet — non-blocking
-        console.warn("[Contractor Packet] Could not save to claim_documents:", cdErr);
+        logger.warn("[Contractor Packet] Could not save to claim_documents:", cdErr);
       }
     }
 
-    console.log(`[Contractor Packet] ✓ Generation complete for ${packetId}`);
+    logger.debug(`[Contractor Packet] ✓ Generation complete for ${packetId}`);
   } catch (error: any) {
-    console.error(`[Contractor Packet] Generation failed for ${packetId}:`, error);
+    logger.error(`[Contractor Packet] Generation failed for ${packetId}:`, error);
 
     // Update status to failed
     await db.query(

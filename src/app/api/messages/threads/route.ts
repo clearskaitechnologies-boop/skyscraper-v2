@@ -325,7 +325,7 @@ export async function GET(req: Request) {
       error: error?.message,
       duration: Date.now() - startTime,
     });
-    console.error("Threads fetch error:", error);
+    logger.error("Threads fetch error:", error);
     // Return safe 200 response with empty threads to prevent demo crashes
     return NextResponse.json(
       {

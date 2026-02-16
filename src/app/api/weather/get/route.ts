@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -46,7 +47,7 @@ export async function GET(req: Request) {
       report,
     });
   } catch (err: any) {
-    console.error("WEATHER GET ERROR:", err);
+    logger.error("WEATHER GET ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to fetch weather report" },
       { status: 500 }

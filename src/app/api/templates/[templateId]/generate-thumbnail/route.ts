@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAdmin } from "@/lib/auth/requireAuth";
 import { generateTemplateThumbnail } from "@/lib/templates/thumbnailService";
@@ -38,7 +39,7 @@ export async function POST(req: NextRequest, { params }: { params: { templateId:
       // No body or invalid JSON, use defaults
     }
 
-    console.log(`[GenerateThumbnail] Starting generation for ${templateId}`, options);
+    logger.debug(`[GenerateThumbnail] Starting generation for ${templateId}`, options);
 
     const result = await generateTemplateThumbnail(templateId, {
       forceRegenerate: options.forceRegenerate ?? false,
@@ -59,7 +60,7 @@ export async function POST(req: NextRequest, { params }: { params: { templateId:
       cached: result.cached,
     });
   } catch (error) {
-    console.error(`[GenerateThumbnail] Error for ${templateId}:`, error);
+    logger.error(`[GenerateThumbnail] Error for ${templateId}:`, error);
     return NextResponse.json(
       { ok: false, error: error instanceof Error ? error.message : "UNKNOWN_ERROR" },
       { status: 500 }
@@ -93,7 +94,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
       cached: result.cached,
     });
   } catch (error) {
-    console.error(`[GenerateThumbnail] Error for ${templateId}:`, error);
+    logger.error(`[GenerateThumbnail] Error for ${templateId}:`, error);
     return NextResponse.json(
       { ok: false, error: error instanceof Error ? error.message : "UNKNOWN_ERROR" },
       { status: 500 }

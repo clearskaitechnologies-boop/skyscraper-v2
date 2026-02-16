@@ -5,6 +5,7 @@
  * Track progress, deadlines, priorities
  */
 
+import { logger } from "@/lib/logger";
 import type {
   tasks as PrismaTask,
   TaskPriority as PrismaTaskPriority,
@@ -77,7 +78,7 @@ export async function createTask(
 
     return task;
   } catch (error) {
-    console.error("Failed to create task:", error);
+    logger.error("Failed to create task:", error);
     throw new Error("Failed to create task");
   }
 }
@@ -118,7 +119,7 @@ export async function updateTaskStatus(
 
     return true;
   } catch (error) {
-    console.error("Failed to update task status:", error);
+    logger.error("Failed to update task status:", error);
     return false;
   }
 }
@@ -253,7 +254,7 @@ export async function reassignTask(
 
     return true;
   } catch (error) {
-    console.error("Failed to reassign task:", error);
+    logger.error("Failed to reassign task:", error);
     return false;
   }
 }
@@ -349,7 +350,7 @@ export async function deleteTask(taskId: string, userId: string): Promise<boolea
 
     return true;
   } catch (error) {
-    console.error("Failed to delete task:", error);
+    logger.error("Failed to delete task:", error);
     return false;
   }
 }
@@ -393,7 +394,7 @@ export async function bulkCreateTasks(
       });
       created.push(task);
     } catch (error) {
-      console.error("Failed to create task:", error);
+      logger.error("Failed to create task:", error);
     }
   }
 

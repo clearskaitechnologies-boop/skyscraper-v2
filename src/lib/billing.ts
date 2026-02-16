@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { redirect } from "next/navigation";
 
 import { isBetaMode } from "@/lib/beta";
@@ -89,7 +90,7 @@ export async function getUserPlanAndTokens(userId?: string): Promise<UserPlanAnd
       hasTokens: () => tokensRemaining > 0,
     };
   } catch (error) {
-    console.error("Error getting user plan and tokens:", error);
+    logger.error("Error getting user plan and tokens:", error);
     return {
       plan: "free",
       tokensRemaining: 0,
@@ -147,7 +148,7 @@ export async function consumeTokens(
 
     return { success: true, remainingTokens: currentBalance - count };
   } catch (error) {
-    console.error("Error consuming tokens:", error);
+    logger.error("Error consuming tokens:", error);
     return { success: false, remainingTokens: 0 };
   }
 }
@@ -156,7 +157,7 @@ export async function consumeTokens(
 export async function requireTokens(requiredTokens: number = 1, requiredFeature?: string) {
   // BETA MODE: Allow all access during beta testing
   if (isBetaMode()) {
-    console.log("[BILLING] Beta mode active - bypassing token check");
+    logger.debug("[BILLING] Beta mode active - bypassing token check");
     return {
       subscriptionStatus: "active" as const,
       canAccessFeature: () => true,
@@ -182,7 +183,7 @@ export async function requireTokens(requiredTokens: number = 1, requiredFeature?
 export async function requireSubscription(feature?: string) {
   // BETA MODE: Allow all access during beta testing
   if (isBetaMode()) {
-    console.log("[BILLING] Beta mode active - bypassing subscription check");
+    logger.debug("[BILLING] Beta mode active - bypassing subscription check");
     return {
       subscriptionStatus: "active" as const,
       plan: "enterprise",

@@ -4,6 +4,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { safeAI } from "@/lib/aiGuard";
 
 import type { AIDraftSections, PacketType, ProposalContext } from "./types";
@@ -44,7 +45,7 @@ export async function draftProposalSections(
       notes: sections[3],
     };
   } catch (error) {
-    console.error("AI drafting failed:", error);
+    logger.error("AI drafting failed:", error);
     // Return basic fallback content
     return buildFallbackSections(context, packetType);
   }
@@ -97,7 +98,7 @@ async function callOpenAIWithRetry(
     }
 
     // Final failure after retries
-    console.error("OpenAI failed after all retry attempts:", error);
+    logger.error("OpenAI failed after all retry attempts:", error);
     throw new Error("AI temporarily unavailable - please try again");
   }
 }

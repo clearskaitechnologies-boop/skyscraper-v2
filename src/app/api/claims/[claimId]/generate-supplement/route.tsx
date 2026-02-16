@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { renderToStream } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ claimI
       userId,
       documentName,
     }).catch((err) => {
-      console.error("Supplement generation failed:", err);
+      logger.error("Supplement generation failed:", err);
     });
 
     return NextResponse.json({
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest, context: { params: Promise<{ claimI
       totalDelta,
     });
   } catch (error) {
-    console.error("Supplement generation error:", error);
+    logger.error("Supplement generation error:", error);
     return NextResponse.json({ error: "Failed to generate supplement" }, { status: 500 });
   }
 }
@@ -200,9 +201,9 @@ async function generateSupplementAsync(params: {
       estimatedCostCents: result.estimatedCostCents,
     });
 
-    console.log(`Supplement ${generatedDocumentId} generated successfully`);
+    logger.debug(`Supplement ${generatedDocumentId} generated successfully`);
   } catch (error) {
-    console.error("Supplement async generation error:", error);
+    logger.error("Supplement async generation error:", error);
 
     // Update document status to error
     await updateDocumentStatus(generatedDocumentId, "error", {

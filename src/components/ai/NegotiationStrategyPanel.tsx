@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, Clock, Target } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +54,7 @@ export function NegotiationStrategyPanel({
         setSuggestions(data.negotiationSuggestions || []);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        console.error("Failed to fetch negotiation strategy:", err);
+        logger.error("Failed to fetch negotiation strategy:", err);
       } finally {
         setLoading(false);
       }

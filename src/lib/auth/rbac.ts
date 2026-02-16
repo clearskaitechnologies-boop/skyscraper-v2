@@ -35,6 +35,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -161,7 +162,7 @@ export async function getCurrentUserRole(): Promise<{
           );
         }
       } catch (e) {
-        console.warn("[RBAC] Failed membership org fallback lookup", e);
+        logger.warn("[RBAC] Failed membership org fallback lookup", e);
       }
     }
     if (!userId || !effectiveOrgId) {
@@ -232,10 +233,10 @@ export async function getCurrentUserRole(): Promise<{
             role: determinedRole.toUpperCase(),
           },
         });
-        console.log(`[RBAC] Updated user_organizations role for ${userId} to: ${determinedRole}`);
+        logger.debug(`[RBAC] Updated user_organizations role for ${userId} to: ${determinedRole}`);
       } catch (updateError) {
         // Ignore errors - not critical for role resolution
-        console.warn("[RBAC] Could not update user_organizations role:", updateError);
+        logger.warn("[RBAC] Could not update user_organizations role:", updateError);
       }
 
       return {
@@ -251,7 +252,7 @@ export async function getCurrentUserRole(): Promise<{
       role: teamMember.role as TeamRole,
     };
   } catch (error) {
-    console.error("[RBAC] Failed to get current user role:", error);
+    logger.error("[RBAC] Failed to get current user role:", error);
     // 🚨 FINAL MASTER PROMPT #65: Critical fallback
     // If normal lookup fails (transient deployment / replication lag), force-create an ADMIN membership
     try {
@@ -281,7 +282,7 @@ export async function getCurrentUserRole(): Promise<{
         } catch (updateErr) {
           // Ignore errors - not critical
         }
-        console.warn(`CRITICAL: Auto-assigned ADMIN role to new user ${userId}.`);
+        logger.warn(`CRITICAL: Auto-assigned ADMIN role to new user ${userId}.`);
         return { userId, orgId: effectiveOrgId, role: "admin" };
       }
     } catch (fallbackErr) {

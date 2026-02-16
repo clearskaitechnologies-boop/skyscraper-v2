@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -74,7 +75,7 @@ export async function GET(req: NextRequest) {
 
     return apiOk({ records: enriched, totals, count: enriched.length });
   } catch (err: any) {
-    console.error("[commissions-get]", err);
+    logger.error("[commissions-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -138,7 +139,7 @@ export async function POST(req: NextRequest) {
 
     return apiOk({ record: updated, action });
   } catch (err: any) {
-    console.error("[commissions-post]", err);
+    logger.error("[commissions-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

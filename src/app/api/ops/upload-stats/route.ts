@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -55,7 +56,7 @@ export async function GET() {
       failedToday,
     });
   } catch (error) {
-    console.error("[OPS_UPLOAD_STATS] Failed:", error);
+    logger.error("[OPS_UPLOAD_STATS] Failed:", error);
     return NextResponse.json({
       uploadsToday: 0,
       totalFiles: 0,

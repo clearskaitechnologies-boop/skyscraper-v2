@@ -3,6 +3,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface TimelineEventInput {
   claimId: string;
@@ -30,7 +31,7 @@ export async function createTimelineEvent(input: TimelineEventInput) {
     });
   } catch (error) {
     // Log but don't fail the main operation
-    console.error("[Timeline] Failed to create event:", error);
+    logger.error("[Timeline] Failed to create event:", error);
   }
 }
 

@@ -22,6 +22,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { pgPool } from "@/lib/db";
@@ -39,7 +40,7 @@ export async function GET(req: Request) {
 
   const stream = new ReadableStream({
     async start(controller) {
-      console.log("SSE client connected");
+      logger.debug("SSE client connected");
 
       const send = (event: string, data: any) => {
         const message = `event: ${event}\ndata: ${JSON.stringify(data)}\n\n`;
@@ -70,7 +71,7 @@ export async function GET(req: Request) {
 
           send("snapshot", { rows: result.rows });
         } catch (error: any) {
-          console.error("[SSE ERROR] polling job_events:", error);
+          logger.error("[SSE ERROR] polling job_events:", error);
           send("error", { description: error.message });
         } finally {
           // Release the client back to pool
@@ -80,7 +81,7 @@ export async function GET(req: Request) {
 
       // Clean up on disconnect
       req.signal.addEventListener("abort", () => {
-        console.log("SSE client disconnected");
+        logger.debug("SSE client disconnected");
         clearInterval(intervalId);
         controller.close();
       });

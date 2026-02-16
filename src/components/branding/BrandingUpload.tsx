@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface BrandingUploadProps {
@@ -60,7 +61,7 @@ export function BrandingUpload({ type, currentUrl, onUploadComplete }: BrandingU
         throw new Error("No URL returned from upload");
       }
     } catch (err: any) {
-      console.error("[BrandingUpload] Error:", err);
+      logger.error("[BrandingUpload] Error:", err);
       setError(err.message || "Upload failed");
     } finally {
       setUploading(false);

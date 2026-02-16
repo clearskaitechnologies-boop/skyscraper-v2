@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -38,7 +39,7 @@ export async function uploadPdf({ buffer, path, orgId }: UploadPdfOptions) {
       size: buffer.length,
     };
   } catch (error) {
-    console.error("uploadPdf error:", error);
+    logger.error("uploadPdf error:", error);
     throw error;
   }
 }

@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -32,11 +33,11 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ conversations });
     } catch (error) {
       // Tables may not exist yet
-      console.log("Chat tables may not exist:", error);
+      logger.debug("Chat tables may not exist:", error);
       return NextResponse.json({ conversations: [] });
     }
   } catch (error) {
-    console.error("Error fetching conversations:", error);
+    logger.error("Error fetching conversations:", error);
     return NextResponse.json({ error: "Failed to fetch conversations" }, { status: 500 });
   }
 }
@@ -106,7 +107,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
       }
     } catch (error) {
-      console.error("Error creating conversation (tables may not exist):", error);
+      logger.error("Error creating conversation (tables may not exist):", error);
       // Return mock conversation
       return NextResponse.json({
         conversation: {
@@ -127,7 +128,7 @@ export async function POST(req: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Error creating conversation:", error);
+    logger.error("Error creating conversation:", error);
     return NextResponse.json({ error: "Failed to create conversation" }, { status: 500 });
   }
 }

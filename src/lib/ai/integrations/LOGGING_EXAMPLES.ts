@@ -12,6 +12,7 @@
 // ============================================
 
 import { getAgentByName } from "@/lib/ai/agents";
+import { logger } from "@/lib/logger";
 import { logAIAction } from "@/lib/ai/feedback/logAction";
 
 // After generating estimate in your generateCostEstimate function:
@@ -47,7 +48,7 @@ async function generateCostEstimateWithLogging(request: EstimateRequest) {
       });
     }
   } catch (error) {
-    console.error("Failed to log AI action:", error);
+    logger.error("Failed to log AI action:", error);
     // Don't fail the estimate generation if logging fails
   }
 
@@ -94,7 +95,7 @@ async function generateLetterWithLogging(params: {
       });
     }
   } catch (error) {
-    console.error("Failed to log AI action:", error);
+    logger.error("Failed to log AI action:", error);
   }
 
   return letter;
@@ -144,7 +145,7 @@ async function updateClaimStatusWithOutcome(claimId: string, status: string, met
       });
     }
   } catch (error) {
-    console.error("Failed to log AI outcome:", error);
+    logger.error("Failed to log AI outcome:", error);
   }
 }
 
@@ -194,7 +195,7 @@ async function onClaimCreatedOrUpdated(claimId: string) {
       await createOrUpdateClaimEmbedding(claimId, claimText);
     }
   } catch (error) {
-    console.error("Failed to generate claim embedding:", error);
+    logger.error("Failed to generate claim embedding:", error);
   }
 }
 
@@ -252,22 +253,22 @@ async function batchGenerateEmbeddings() {
     include: { property: true, damage_types: true },
   });
 
-  console.log(`Processing ${claims.length} claims...`);
+  logger.debug(`Processing ${claims.length} claims...`);
 
   for (const claim of claims) {
     try {
       const claimText = buildClaimText(claim);
       await createOrUpdateClaimEmbedding(claim.id, claimText);
-      console.log(`✅ ${claim.id}`);
+      logger.debug(`✅ ${claim.id}`);
     } catch (error) {
-      console.error(`❌ ${claim.id}:`, error);
+      logger.error(`❌ ${claim.id}:`, error);
     }
 
     // Rate limit: 500ms between requests
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  console.log("Batch complete!");
+  logger.debug("Batch complete!");
 }
 
 function buildClaimText(claim: any): string {

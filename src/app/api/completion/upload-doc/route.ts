@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -100,7 +101,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(document);
   } catch (error: any) {
-    console.error("[Completion Document Upload Error]", error);
+    logger.error("[Completion Document Upload Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to upload document" },
       { status: 500 }
@@ -130,7 +131,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(documents);
   } catch (error: any) {
-    console.error("[Completion Documents Get Error]", error);
+    logger.error("[Completion Documents Get Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to get documents" },
       { status: 500 }

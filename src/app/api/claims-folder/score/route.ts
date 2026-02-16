@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
     }
-    console.error("Error calculating readiness score:", error);
+    logger.error("Error calculating readiness score:", error);
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
 }

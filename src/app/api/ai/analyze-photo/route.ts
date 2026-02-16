@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { analyzeImage } from "@/lib/ai/openai-vision";
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       rawReport: damageReport, // Include raw report for debugging
     });
   } catch (error) {
-    console.error("[AI Analyze Photo] Error:", error);
+    logger.error("[AI Analyze Photo] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to analyze photo",

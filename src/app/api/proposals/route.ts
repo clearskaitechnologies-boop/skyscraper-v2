@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -128,7 +129,7 @@ export async function POST(request: Request) {
       orgName: org?.name || "Organization",
       orgLogo: org?.brandLogoUrl ?? undefined,
     }).catch((error) => {
-      console.error("[Proposals] Async generation error:", error);
+      logger.error("[Proposals] Async generation error:", error);
     });
 
     return NextResponse.json({
@@ -137,7 +138,7 @@ export async function POST(request: Request) {
       message: "Proposal generation started",
     });
   } catch (error: any) {
-    console.error("[Proposals] Failed to create proposal:", error);
+    logger.error("[Proposals] Failed to create proposal:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create proposal" },
       { status: 500 }
@@ -155,7 +156,7 @@ async function generateProposalAsync(
   context: ReportGenerationContext
 ) {
   try {
-    console.log(`[Proposals] Starting generation for: ${proposalId}`);
+    logger.debug(`[Proposals] Starting generation for: ${proposalId}`);
 
     // Update canonical document status
     await updateDocumentStatus(generatedDocumentId, "generating");
@@ -178,9 +179,9 @@ async function generateProposalAsync(
       estimatedCostCents: Math.ceil(report.totalTokensUsed * 0.001),
     });
 
-    console.log(`[Proposals] ✓ Generation complete: ${proposalId}`);
+    logger.debug(`[Proposals] ✓ Generation complete: ${proposalId}`);
   } catch (error: any) {
-    console.error(`[Proposals] Generation failed for ${proposalId}:`, error);
+    logger.error(`[Proposals] Generation failed for ${proposalId}:`, error);
 
     // Update proposal with error
     await prisma.$executeRaw`UPDATE proposals SET 
@@ -214,7 +215,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(proposals);
   } catch (error: any) {
-    console.error("[Proposals] Failed to fetch proposals:", error);
+    logger.error("[Proposals] Failed to fetch proposals:", error);
     return NextResponse.json({ error: "Failed to fetch proposals" }, { status: 500 });
   }
 }

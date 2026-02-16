@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Real-time Pipeline Synchronization
  *
@@ -45,7 +47,7 @@ class WebSocketManager {
     }
 
     this.connections.get(key)!.add(connection);
-    console.log(`🔌 Subscribed to ${key}`);
+    logger.debug(`🔌 Subscribed to ${key}`);
   }
 
   /**
@@ -63,7 +65,7 @@ class WebSocketManager {
       }
     }
 
-    console.log(`🔌 Unsubscribed from ${key}`);
+    logger.debug(`🔌 Unsubscribed from ${key}`);
   }
 
   /**
@@ -74,11 +76,11 @@ class WebSocketManager {
     const subs = this.connections.get(key);
 
     if (!subs || subs.size === 0) {
-      console.log(`📡 No subscribers for ${key}`);
+      logger.debug(`📡 No subscribers for ${key}`);
       return;
     }
 
-    console.log(`📡 Broadcasting to ${subs.size} subscribers on ${key}`);
+    logger.debug(`📡 Broadcasting to ${subs.size} subscribers on ${key}`);
 
     const message = JSON.stringify(update);
 
@@ -89,7 +91,7 @@ class WebSocketManager {
           connection.send(message);
         }
       } catch (error) {
-        console.error("Failed to send WebSocket message:", error);
+        logger.error("Failed to send WebSocket message:", error);
         subs.delete(connection);
       }
     }
@@ -295,7 +297,7 @@ async function recordActivity(update: PipelineUpdate): Promise<void> {
         // Graceful fallback if table doesn't exist
       });
   } catch (error) {
-    console.error("Failed to record activity:", error);
+    logger.error("Failed to record activity:", error);
   }
 }
 

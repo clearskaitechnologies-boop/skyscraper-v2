@@ -5,6 +5,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureOrgForUser } from "@/lib/auth/ensureOrgForUser";
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     const org = await ensureOrgForUser({ userId: user.id });
     const orgId = org.id;
 
-    console.log(`[OrgInit] Org ${orgId} resolved for user ${user.id}`);
+    logger.debug(`[OrgInit] Org ${orgId} resolved for user ${user.id}`);
 
     // Update org timestamp (brandingCompleted/onboardingCompleted fields don't exist in schema)
     await prisma.org.update({
@@ -44,7 +45,7 @@ export async function POST(req: Request) {
     revalidatePath("/contacts");
     revalidatePath("/settings/branding");
     revalidatePath("/claims");
-    console.log("[OrgInit] Revalidated paths: dashboard, contacts, branding, claims");
+    logger.debug("[OrgInit] Revalidated paths: dashboard, contacts, branding, claims");
 
     return NextResponse.json({
       success: true,
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
       testMode: testModeActive,
     });
   } catch (error) {
-    console.error("[OrgInit] Failed:", error);
+    logger.error("[OrgInit] Failed:", error);
     return NextResponse.json({ error: "Failed to initialize organization" }, { status: 500 });
   }
 }

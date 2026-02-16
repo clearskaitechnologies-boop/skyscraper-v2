@@ -1,6 +1,7 @@
 "use client";
 
 import { X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -39,7 +40,7 @@ export function LegalModal({ document, onAccepted }: LegalModalProps) {
       });
 
       const data = await response.json().catch(() => ({}));
-      console.log("[LegalModal] API response:", { status: response.status, data });
+      logger.debug("[LegalModal] API response:", { status: response.status, data });
 
       if (!response.ok) {
         // Provide specific error messages
@@ -53,14 +54,14 @@ export function LegalModal({ document, onAccepted }: LegalModalProps) {
         throw new Error(data.error || `Server returned ${response.status}`);
       }
 
-      console.log("[LegalModal] ✅ Acceptance saved successfully");
+      logger.debug("[LegalModal] ✅ Acceptance saved successfully");
 
       // Small delay to ensure database commit completes
       await new Promise((resolve) => setTimeout(resolve, 300));
 
       onAccepted();
     } catch (error: any) {
-      console.error("[LegalModal] ❌ Failed to accept:", error);
+      logger.error("[LegalModal] ❌ Failed to accept:", error);
       setError(error.message || "Could not record your acceptance. Please try again.");
       setLoading(false);
     }

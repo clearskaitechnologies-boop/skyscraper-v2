@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -158,13 +159,13 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   const { userId } = await auth();
   if (!userId) {
-    console.error("[trades/profile POST] ❌ Unauthorized - no userId");
+    logger.error("[trades/profile POST] ❌ Unauthorized - no userId");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const user = await currentUser();
   if (!user) {
-    console.error(`[trades/profile POST] ❌ User ${userId} not found in Clerk`);
+    logger.error(`[trades/profile POST] ❌ User ${userId} not found in Clerk`);
     return new NextResponse("User not found", { status: 404 });
   }
 
@@ -276,13 +277,13 @@ export async function POST(req: Request) {
 export async function PATCH(req: Request) {
   const { userId } = await auth();
   if (!userId) {
-    console.error("[trades/profile PATCH] ❌ Unauthorized - no userId");
+    logger.error("[trades/profile PATCH] ❌ Unauthorized - no userId");
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const user = await currentUser();
   if (!user) {
-    console.error(`[trades/profile PATCH] ❌ User ${userId} not found in Clerk`);
+    logger.error(`[trades/profile PATCH] ❌ User ${userId} not found in Clerk`);
     return new NextResponse("User not found", { status: 404 });
   }
 

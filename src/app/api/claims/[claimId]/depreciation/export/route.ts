@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import PDFDocument from "pdfkit";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -170,7 +171,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
       );
     }
   } catch (error: any) {
-    console.error("[Depreciation Export] Error:", error);
+    logger.error("[Depreciation Export] Error:", error);
     return NextResponse.json(
       { error: "Failed to generate depreciation invoice", details: error.message },
       { status: 500 }

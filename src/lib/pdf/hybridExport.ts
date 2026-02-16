@@ -8,6 +8,7 @@
 // ============================================================================
 
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { exec } from "child_process";
 import { readFile, unlink,writeFile } from "fs/promises";
 import { tmpdir } from "os";
@@ -56,7 +57,7 @@ export async function convertDocxToPdfWithLibreOffice(docxBuffer: Buffer): Promi
     });
 
     if (stderr && !stderr.includes("convert")) {
-      console.warn("[LibreOffice] stderr:", stderr);
+      logger.warn("[LibreOffice] stderr:", stderr);
     }
 
     // Read generated PDF
@@ -163,7 +164,7 @@ export async function generatePdfWithPdfLib(packetData: PacketData): Promise<Buf
         color: rgb(0.3,0.3,0.3),
       });
     } catch (e) {
-      console.warn('[PDF_EXPORT] Branding draw skipped:', (e as any)?.message);
+      logger.warn('[PDF_EXPORT] Branding draw skipped:', (e as any)?.message);
     }
   }
 
@@ -487,24 +488,24 @@ export async function exportToPdf(options: HybridExportOptions): Promise<Buffer>
     const hasLibreOffice = await isLibreOfficeAvailable();
 
     if (hasLibreOffice) {
-      console.log("[PDF_EXPORT] Using LibreOffice for conversion...");
+      logger.debug("[PDF_EXPORT] Using LibreOffice for conversion...");
       const pdfBuffer = await convertDocxToPdfWithLibreOffice(docxBuffer);
 
       if (pdfBuffer) {
-        console.log("[PDF_EXPORT] LibreOffice conversion successful");
+        logger.debug("[PDF_EXPORT] LibreOffice conversion successful");
         return pdfBuffer;
       } else {
-        console.warn("[PDF_EXPORT] LibreOffice failed, falling back to pdf-lib");
+        logger.warn("[PDF_EXPORT] LibreOffice failed, falling back to pdf-lib");
       }
     } else {
-      console.log("[PDF_EXPORT] LibreOffice not available, using pdf-lib fallback");
+      logger.debug("[PDF_EXPORT] LibreOffice not available, using pdf-lib fallback");
     }
   }
 
   // Strategy 2: Generate PDF directly with pdf-lib
-  console.log("[PDF_EXPORT] Generating PDF with pdf-lib...");
+  logger.debug("[PDF_EXPORT] Generating PDF with pdf-lib...");
   const pdfBuffer = await generatePdfWithPdfLib({ mode, data });
-  console.log("[PDF_EXPORT] pdf-lib generation successful");
+  logger.debug("[PDF_EXPORT] pdf-lib generation successful");
 
   return pdfBuffer;
 }

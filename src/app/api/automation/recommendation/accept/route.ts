@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { type Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -124,7 +125,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, executed: !!action });
   } catch (error) {
-    console.error("[RECOMMENDATION ACCEPT] Error:", error);
+    logger.error("[RECOMMENDATION ACCEPT] Error:", error);
     return NextResponse.json(
       { error: "Failed to accept recommendation", details: String(error) },
       { status: 500 }

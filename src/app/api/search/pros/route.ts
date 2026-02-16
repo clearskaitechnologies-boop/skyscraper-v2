@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ results });
   } catch (error) {
-    console.error("[PRO_SEARCH_ERROR]", error);
+    logger.error("[PRO_SEARCH_ERROR]", error);
     return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 }

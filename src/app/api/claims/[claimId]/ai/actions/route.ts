@@ -27,6 +27,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { callOpenAI, getOpenAI } from "@/lib/ai/client";
@@ -155,7 +156,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
-    console.error("[AI Actions] Error:", error);
+    logger.error("[AI Actions] Error:", error);
     return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
   }
 }
@@ -321,7 +322,7 @@ Write a persuasive, professional rebuttal that:
       const pdfBuffer = await htmlToPdfBuffer(html);
       pdfUrl = await saveAiPdfToStorage(pdfBuffer, claimId, "rebuttal", orgId);
     } catch (e) {
-      console.error("PDF save failed:", e);
+      logger.error("PDF save failed:", e);
     }
   }
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { createForbiddenResponse, requirePermission } from "@/lib/auth/rbac";
@@ -46,7 +47,7 @@ export const revalidate = 0;
 export const GET = withOrgScope(
   async (req, { orgId }, { params }: { params: { claimId: string } }) => {
     try {
-      console.log(`[GET /api/claims/${params.claimId}] Looking up claim in org: ${orgId}`);
+      logger.debug(`[GET /api/claims/${params.claimId}] Looking up claim in org: ${orgId}`);
 
       // Try to find by ID first
       let claim = await prisma.claims.findFirst({
@@ -81,7 +82,7 @@ export const GET = withOrgScope(
 
       // If not found by ID, try by claimNumber as fallback
       if (!claim) {
-        console.log(`[GET /api/claims/${params.claimId}] Not found by ID, trying claimNumber...`);
+        logger.debug(`[GET /api/claims/${params.claimId}] Not found by ID, trying claimNumber...`);
         claim = await prisma.claims.findFirst({
           where: {
             claimNumber: params.claimId,
@@ -114,14 +115,14 @@ export const GET = withOrgScope(
       }
 
       if (!claim) {
-        console.log(`[GET /api/claims/${params.claimId}] NOT FOUND in org ${orgId}`);
+        logger.debug(`[GET /api/claims/${params.claimId}] NOT FOUND in org ${orgId}`);
         return NextResponse.json({ error: "Claim not found" }, { status: 404 });
       }
 
-      console.log(`[GET /api/claims/${params.claimId}] FOUND claim: ${claim.id}`);
+      logger.debug(`[GET /api/claims/${params.claimId}] FOUND claim: ${claim.id}`);
       return NextResponse.json({ claim }, { headers: { "Cache-Control": "no-store" } });
     } catch (error: any) {
-      console.error(`[GET /api/claims/${params.claimId}] Error:`, error);
+      logger.error(`[GET /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to fetch claim" },
         { status: 500 }
@@ -279,7 +280,7 @@ export const PATCH = withOrgScope(
 
       return NextResponse.json({ claim }, { headers: { "Cache-Control": "no-store" } });
     } catch (error: any) {
-      console.error(`[PATCH /api/claims/${params.claimId}] Error:`, error);
+      logger.error(`[PATCH /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to update claim" },
         { status: 500 }
@@ -360,7 +361,7 @@ export const DELETE = withOrgScope(
         description: "Claim archived successfully",
       });
     } catch (error: any) {
-      console.error(`[DELETE /api/claims/${params.claimId}] Error:`, error);
+      logger.error(`[DELETE /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to delete claim" },
         { status: 500 }

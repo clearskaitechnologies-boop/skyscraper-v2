@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 import { Brain, ChevronDown, ChevronUp, Clock, Download,FileText, Loader2 } from "lucide-react";
 import { useEffect,useState } from "react";
 
@@ -48,7 +49,7 @@ export function ClaimAIReports({ claimId }: ClaimAIReportsProps) {
       const data = await res.json();
       setReports(data.reports || []);
     } catch (err) {
-      console.error("Failed to fetch AI reports:", err);
+      logger.error("Failed to fetch AI reports:", err);
       setReports([]);
     } finally {
       setLoading(false);
@@ -77,7 +78,7 @@ export function ClaimAIReports({ claimId }: ClaimAIReportsProps) {
         setPdfMap(map);
       }
     } catch (err) {
-      console.error("Failed to fetch PDFs:", err);
+      logger.error("Failed to fetch PDFs:", err);
     }
   };
 

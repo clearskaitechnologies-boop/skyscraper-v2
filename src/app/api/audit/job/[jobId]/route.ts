@@ -4,6 +4,7 @@ export const revalidate = 0;
 
 // Phase 5 - Audit Logs API Route
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from "@/lib/logger";
 
 import { requireRole } from '@/lib/security/roles';
 import { getJobAuditLogs } from '@/modules/audit/core/logger';
@@ -20,7 +21,7 @@ export async function GET(
 
     return NextResponse.json({ logs });
   } catch (error: any) {
-    console.error('Error fetching audit logs:', error);
+    logger.error('Error fetching audit logs:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },
       { status: error.message === 'Unauthorized' ? 401 : 500 }

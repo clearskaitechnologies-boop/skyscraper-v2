@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Approval error:", error);
+    logger.error("Approval error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -84,7 +85,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ approvals });
   } catch (error) {
-    console.error("Approvals fetch error:", error);
+    logger.error("Approvals fetch error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

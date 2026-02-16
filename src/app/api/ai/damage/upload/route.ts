@@ -16,6 +16,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
@@ -145,7 +146,7 @@ export async function POST(req: Request) {
           path,
         });
 
-        console.log(`Photo uploaded: ${record.id} - ${photo.name}`);
+        logger.debug(`Photo uploaded: ${record.id} - ${photo.name}`);
       } catch (uploadError: any) {
         console.error(`Failed to upload photo ${photo.name}:`, uploadError);
         // Continue with other photos but log the error
@@ -220,7 +221,7 @@ export async function POST(req: Request) {
       jobId, // Job ID for tracking
     });
   } catch (error: any) {
-    console.error("AI Damage Upload failed:", error);
+    logger.error("AI Damage Upload failed:", error);
 
     // Handle auth errors
     if (error.message?.includes("Unauthorized") || error.message?.includes("organization")) {

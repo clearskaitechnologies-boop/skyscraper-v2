@@ -1,6 +1,7 @@
 "use client";
 
 import { ExternalLink, Loader2, MapPin } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from "react";
 
 interface MapProperty {
@@ -69,7 +70,7 @@ export default function PropertyMap() {
         });
       }
     } catch (err) {
-      console.error("Failed to load property details:", err);
+      logger.error("Failed to load property details:", err);
     } finally {
       setLoadingDetails(false);
     }

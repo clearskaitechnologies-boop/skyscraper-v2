@@ -8,6 +8,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -44,7 +45,7 @@ export async function GET() {
       videoPlanTier: Org.videoPlanTier,
     });
   } catch (error) {
-    console.error("[Video Access API] Error:", error);
+    logger.error("[Video Access API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

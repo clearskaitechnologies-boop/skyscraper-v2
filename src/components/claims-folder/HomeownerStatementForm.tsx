@@ -2,6 +2,7 @@
 "use client";
 
 import { AlertCircle, Check, FileText, Loader2, Pen, Save } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -77,7 +78,7 @@ export default function HomeownerStatementForm({
       await onSave(formData);
       setSaved(true);
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
     } finally {
       setSaving(false);
     }

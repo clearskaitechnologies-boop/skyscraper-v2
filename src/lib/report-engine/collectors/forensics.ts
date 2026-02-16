@@ -2,6 +2,7 @@
 // 🧬 FORENSICS COLLECTOR — Material failure analysis for report generation
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 import { formatForensicsForReport } from "@/lib/intel/forensics/materials";
 
 /**
@@ -71,7 +72,7 @@ export async function collectForensicsDataset(claimId: string): Promise<Forensic
       fullPayload: payload,
     };
   } catch (err) {
-    console.error("❌ Forensics collector error:", err);
+    logger.error("❌ Forensics collector error:", err);
     return {
       hasForensics: false,
     };

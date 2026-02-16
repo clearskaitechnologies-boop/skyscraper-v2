@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("[Portal Claims Actions] Error:", error);
+    logger.error("[Portal Claims Actions] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

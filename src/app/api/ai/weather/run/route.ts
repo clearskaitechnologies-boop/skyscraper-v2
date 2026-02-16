@@ -17,6 +17,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
@@ -129,7 +130,7 @@ export async function POST(req: Request) {
     // Check if weather provider is configured
     const weatherApiKey = process.env.WEATHERSTACK_API_KEY;
     if (!weatherApiKey) {
-      console.error("WEATHERSTACK_API_KEY not configured");
+      logger.error("WEATHERSTACK_API_KEY not configured");
       return NextResponse.json(
         {
           error: "Weather service not configured. Contact administrator.",
@@ -194,7 +195,7 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log(`Weather report generated: ${date} - ${location.address || "no address"}`);
+    logger.debug(`Weather report generated: ${date} - ${location.address || "no address"}`);
 
     await emitEvent({
       orgId,
@@ -221,7 +222,7 @@ export async function POST(req: Request) {
       tokensCharged: 0,
     });
   } catch (error: any) {
-    console.error("AI Weather Run failed:", error);
+    logger.error("AI Weather Run failed:", error);
 
     if (orgIdForTelemetry && userIdForTelemetry) {
       await emitEvent({

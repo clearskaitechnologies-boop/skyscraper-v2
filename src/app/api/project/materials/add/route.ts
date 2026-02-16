@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { arrayUnion, doc, getDoc, setDoc } from "firebase/firestore";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -60,7 +61,7 @@ export async function POST(req: Request) {
       description: "Material added to project successfully",
     });
   } catch (error) {
-    console.error("Error adding material to project:", error);
+    logger.error("Error adding material to project:", error);
     return NextResponse.json({ error: "Failed to add material to project" }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 // app/api/report-templates/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -24,7 +25,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(templates);
   } catch (err: any) {
-    console.error("GET /api/report-templates error:", err);
+    logger.error("GET /api/report-templates error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to fetch templates" },
       { status: 500 }
@@ -106,7 +107,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newTemplate, { status: 201 });
   } catch (err: any) {
-    console.error("POST /api/report-templates error:", err);
+    logger.error("POST /api/report-templates error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to create template" },
       { status: 500 }

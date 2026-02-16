@@ -4,6 +4,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 const openai = getOpenAI();
 
@@ -42,7 +43,7 @@ export async function getAIPricing(productId: string): Promise<number | null> {
 
     return price;
   } catch (error) {
-    console.error("AI pricing error:", error);
+    logger.error("AI pricing error:", error);
     return null;
   }
 }

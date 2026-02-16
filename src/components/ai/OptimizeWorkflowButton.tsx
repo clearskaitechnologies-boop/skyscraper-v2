@@ -7,6 +7,7 @@
 "use client";
 
 import { AlertCircle,Loader2, Zap } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface OptimizeWorkflowButtonProps {
@@ -44,7 +45,7 @@ export function OptimizeWorkflowButton({
 
       onComplete?.(data.result);
     } catch (err: any) {
-      console.error("[OptimizeWorkflow] Error:", err);
+      logger.error("[OptimizeWorkflow] Error:", err);
       setError(err.message);
     } finally {
       setIsOptimizing(false);

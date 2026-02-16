@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Queue Helper - Safe Job Enqueue
  * 
@@ -21,12 +23,12 @@ export async function enqueueJobSafe(
     // Or:
     // await queue.add(queueName, payload);
     
-    console.log(`[queue:${queueName}]`, JSON.stringify(payload, null, 2));
+    logger.debug(`[queue:${queueName}]`, JSON.stringify(payload, null, 2));
     
     // For now, this is a no-op placeholder
     // Nothing will explode, just logs for visibility
   } catch (err) {
-    console.warn(`[queue] Failed to enqueue ${queueName}`, err);
+    logger.warn(`[queue] Failed to enqueue ${queueName}`, err);
     // Swallow error - don't block user-facing flow
   }
 }

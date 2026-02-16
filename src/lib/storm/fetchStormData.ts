@@ -13,6 +13,7 @@
  */
 
 import { format, subDays } from "date-fns";
+import { logger } from "@/lib/logger";
 
 // ===========================
 // TYPE DEFINITIONS
@@ -113,7 +114,7 @@ export async function fetchNOAAStorms(
       totalEvents: events.length
     };
   } catch (error) {
-    console.error("[NOAA API ERROR]", error);
+    logger.error("[NOAA API ERROR]", error);
     
     // Return mock data for development
     return {
@@ -180,7 +181,7 @@ export async function fetchNWSRadar(
       velocity: 0
     };
   } catch (error) {
-    console.error("[NWS API ERROR]", error);
+    logger.error("[NWS API ERROR]", error);
 
     // Return mock radar
     return {

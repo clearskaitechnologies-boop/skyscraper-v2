@@ -4,6 +4,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -87,7 +88,7 @@ export async function POST(req: NextRequest) {
           : "Error processing response",
     });
   } catch (error) {
-    console.error("[AI Assistant] Error:", error);
+    logger.error("[AI Assistant] Error:", error);
     return NextResponse.json({ error: "Failed to process AI request" }, { status: 500 });
   }
 }

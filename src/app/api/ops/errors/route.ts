@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -44,7 +45,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ items: errors });
   } catch (error) {
-    console.error("[OPS_ERRORS] Failed:", error);
+    logger.error("[OPS_ERRORS] Failed:", error);
     return NextResponse.json({ items: [] });
   }
 }

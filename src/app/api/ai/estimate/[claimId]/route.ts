@@ -10,6 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
@@ -218,7 +219,7 @@ Format as professional insurance estimate ready for submission.
       carrierStrategy: carrierStrategy ? true : false,
     });
   } catch (error: any) {
-    console.error("AI Estimate Generation Error:", error);
+    logger.error("AI Estimate Generation Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate estimate" },
       { status: 500 }

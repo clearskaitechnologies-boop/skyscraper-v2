@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { upsertDraft, UpsertDraftPayload } from "@/lib/wizard";
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
       draft,
     });
   } catch (err: any) {
-    console.error("Wizard save error:", err);
+    logger.error("Wizard save error:", err);
     return NextResponse.json({ error: err.message ?? "Internal error" }, { status: 500 });
   }
 }

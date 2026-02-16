@@ -5,6 +5,7 @@
 "use client";
 
 import { Bell, FileText, MessageSquare, Upload } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useEffect,useState } from "react";
 
@@ -44,7 +45,7 @@ export function NotificationBadge() {
         setUnreadCount(data.unreadCount || 0);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications", error);
+      logger.error("Failed to fetch notifications", error);
     }
   }
 
@@ -54,7 +55,7 @@ export function NotificationBadge() {
       setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
       setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
-      console.error("Failed to mark as read", error);
+      logger.error("Failed to mark as read", error);
     }
   }
 

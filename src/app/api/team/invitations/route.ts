@@ -4,6 +4,7 @@
  */
 
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -60,7 +61,7 @@ export async function POST(request: Request) {
         inviterUserId: userId,
       });
 
-      console.log(`✅ Invitation sent to ${email} via Clerk`);
+      logger.debug(`✅ Invitation sent to ${email} via Clerk`);
 
       return NextResponse.json({
         success: true,
@@ -85,7 +86,7 @@ export async function POST(request: Request) {
       throw clerkError;
     }
   } catch (error) {
-    console.error("Failed to send invitation:", error);
+    logger.error("Failed to send invitation:", error);
     return NextResponse.json({ error: "Failed to send invitation" }, { status: 500 });
   }
 }
@@ -115,7 +116,7 @@ export async function GET() {
 
     return NextResponse.json(formattedInvitations);
   } catch (error) {
-    console.error("Failed to fetch invitations:", error);
+    logger.error("Failed to fetch invitations:", error);
     return NextResponse.json({ error: "Failed to fetch invitations" }, { status: 500 });
   }
 }

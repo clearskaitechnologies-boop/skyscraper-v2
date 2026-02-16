@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
       timeline,
     });
   } catch (error) {
-    console.error("[CLIENT_CLAIM_DETAIL_ERROR]", error);
+    logger.error("[CLIENT_CLAIM_DETAIL_ERROR]", error);
     return NextResponse.json({ error: "Failed to fetch claim details" }, { status: 500 });
   }
 }

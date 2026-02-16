@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Import Auto-Matcher Stub
  *
@@ -22,7 +24,7 @@ export interface MatchResult {
  * Stub implementation
  */
 export function autoMatchFields(sourceFields: string[], targetSchema: string[]): MatchResult {
-  console.log("[AutoMatcher] Stub: Would auto-match fields");
+  logger.debug("[AutoMatcher] Stub: Would auto-match fields");
   return {
     mappings: [],
     unmatchedSource: sourceFields,
@@ -60,7 +62,7 @@ export function applyMatches(
   data: Record<string, any>[],
   mappings: FieldMapping[]
 ): Record<string, any>[] {
-  console.log(`[AutoMatcher] Applying ${mappings.length} mappings to ${data.length} rows`);
+  logger.debug(`[AutoMatcher] Applying ${mappings.length} mappings to ${data.length} rows`);
   return data.map((row) => {
     const mapped: Record<string, any> = {};
     for (const m of mappings) {

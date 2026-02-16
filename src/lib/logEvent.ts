@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 // Minimal Json type used by some clients (supabase expects Json)
 export type Json = null | boolean | number | string | Json[] | { [k: string]: Json };
@@ -66,6 +67,6 @@ export async function logEvent(event_type: string, payload: LogEventPayload = {}
       metadata: (sanitizeContext(payload.metadata) || null) as unknown as Json,
     });
   } catch (error) {
-    console.error("Failed to log event:", error);
+    logger.error("Failed to log event:", error);
   }
 }

@@ -1,6 +1,7 @@
 // MODULE 8: Follow System - Follow/unfollow company (tradesCompany)
 // Uses ClientSavedPro model to save/unsave trade companies
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ followed: false });
     }
   } catch (error) {
-    console.error("[FOLLOW_COMPANY]", error);
+    logger.error("[FOLLOW_COMPANY]", error);
     return NextResponse.json({ error: "Failed to update follow status" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -151,7 +152,7 @@ export async function GET(req: NextRequest) {
             data: { isOwner: true, isAdmin: true, role: "owner" },
           });
 
-          console.log(`[trades/company] Auto-created company "${companyName}" for user ${userId}`);
+          logger.debug(`[trades/company] Auto-created company "${companyName}" for user ${userId}`);
 
           return NextResponse.json({
             ok: true,
@@ -255,7 +256,7 @@ export async function GET(req: NextRequest) {
       memberCount,
     });
   } catch (error) {
-    console.error("[trades/company] GET Error:", error);
+    logger.error("[trades/company] GET Error:", error);
     return NextResponse.json({ error: "Failed to fetch company" }, { status: 500 });
   }
 }
@@ -385,7 +386,7 @@ export async function PATCH(req: NextRequest) {
       company: { ...updated, coverPhoto: updated.coverimage },
     });
   } catch (error) {
-    console.error("[trades/company] PATCH Error:", error);
+    logger.error("[trades/company] PATCH Error:", error);
     return NextResponse.json({ error: "Failed to update company" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 // /api/signatures/request
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOrgClaimOrThrow } from "@/lib/auth/orgScope";
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -92,7 +93,7 @@ export async function POST(req: NextRequest) {
       message: "Signature request sent successfully",
     });
   } catch (error: any) {
-    console.error("Error creating signature request:", error);
+    logger.error("Error creating signature request:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create signature request" },
       { status: 500 }

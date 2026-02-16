@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { getPremiumRegistry } from "@/lib/templates/registry";
@@ -44,7 +45,7 @@ export async function GET() {
       });
     } catch (e: any) {
       dbWarning = e?.message ?? "DATABASE_UNAVAILABLE";
-      console.warn("[MARKETPLACE_API] Database query failed, using registry:", dbWarning);
+      logger.warn("[MARKETPLACE_API] Database query failed, using registry:", dbWarning);
       dbTemplates = [];
     }
 
@@ -111,7 +112,7 @@ export async function GET() {
     }
 
     // Fall back to registry
-    console.log("[MARKETPLACE_API] Database empty, using registry");
+    logger.debug("[MARKETPLACE_API] Database empty, using registry");
 
     const registryTemplates = ALL_TEMPLATES.map((t) => ({
       id: t.id,
@@ -146,7 +147,7 @@ export async function GET() {
       ...(dbWarning ? { warning: dbWarning } : {}),
     });
   } catch (e: any) {
-    console.error("[MARKETPLACE_API] Error:", e);
+    logger.error("[MARKETPLACE_API] Error:", e);
     // Final fallback: never 500 for demo QA.
     return NextResponse.json({
       ok: true,

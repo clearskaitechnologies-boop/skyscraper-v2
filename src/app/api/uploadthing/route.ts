@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { createRouteHandler } from "uploadthing/next";
 
 import { ourFileRouter } from "./core";
@@ -16,9 +17,9 @@ function checkEnvVars() {
   const UPLOADTHING_APP_ID = process.env.UPLOADTHING_APP_ID;
 
   if (!UPLOADTHING_SECRET || !UPLOADTHING_APP_ID) {
-    console.error("[UploadThing] ⚠️ Missing env vars - uploads will fail gracefully");
-    console.error("  Required: UPLOADTHING_SECRET, UPLOADTHING_APP_ID");
-    console.error("  Set these in Vercel Environment Variables for production");
+    logger.error("[UploadThing] ⚠️ Missing env vars - uploads will fail gracefully");
+    logger.error("  Required: UPLOADTHING_SECRET, UPLOADTHING_APP_ID");
+    logger.error("  Set these in Vercel Environment Variables for production");
     return false;
   }
   return true;
@@ -34,7 +35,7 @@ try {
     });
   }
 } catch (error) {
-  console.error("[UploadThing] Failed to create route handler:", error);
+  logger.error("[UploadThing] Failed to create route handler:", error);
 }
 
 // Export GET handler

@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -35,7 +36,7 @@ export async function GET() {
 
     return NextResponse.json({ preferences });
   } catch (error: any) {
-    console.error("[Email Preferences GET] Error:", error);
+    logger.error("[Email Preferences GET] Error:", error);
     return NextResponse.json({ error: "Failed to fetch preferences" }, { status: 500 });
   }
 }
@@ -125,7 +126,7 @@ export async function POST(request: Request) {
             JSON.stringify({ marketingOptIn, productUpdates, weeklyDigest, partnerOffers }),
           ]
         );
-        console.log(`[Email Subscribers] Added/updated ${email} to newsletter list`);
+        logger.debug(`[Email Subscribers] Added/updated ${email} to newsletter list`);
       } catch (dbError) {
         // Table might not exist yet - that's okay, just log it
         console.log(
@@ -140,7 +141,7 @@ export async function POST(request: Request) {
       preferences,
     });
   } catch (error: any) {
-    console.error("[Email Preferences POST] Error:", error);
+    logger.error("[Email Preferences POST] Error:", error);
     return NextResponse.json({ error: "Failed to save preferences" }, { status: 500 });
   }
 }
@@ -167,14 +168,14 @@ export async function DELETE() {
       },
     });
 
-    console.log(`[Email Preferences] User ${userId} unsubscribed from marketing`);
+    logger.debug(`[Email Preferences] User ${userId} unsubscribed from marketing`);
 
     return NextResponse.json({
       success: true,
       message: "Unsubscribed from marketing emails",
     });
   } catch (error: any) {
-    console.error("[Email Preferences DELETE] Error:", error);
+    logger.error("[Email Preferences DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to unsubscribe" }, { status: 500 });
   }
 }

@@ -8,6 +8,7 @@ export const revalidate = 0;
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -43,7 +44,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
 
     return NextResponse.json(draft);
   } catch (error) {
-    console.error("[API] /api/proposals/[id] error:", error);
+    logger.error("[API] /api/proposals/[id] error:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch proposal",

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { subDays } from "date-fns";
 import { NextResponse } from "next/server";
 
@@ -66,7 +67,7 @@ export async function GET(request: Request) {
       dateRange: { startDate, endDate: new Date(), days },
     });
   } catch (error) {
-    console.error("Analytics API error (lead-sources):", error);
+    logger.error("Analytics API error (lead-sources):", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

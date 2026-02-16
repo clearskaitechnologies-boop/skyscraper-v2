@@ -2,6 +2,7 @@
 // 🧬 MATERIAL FORENSICS API — Generate engineering-grade material failure analysis
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -95,7 +96,7 @@ export async function POST(req: Request) {
     };
 
     // Generate forensic analysis
-    console.log("🧬 Generating material forensics for claim:", claimId);
+    logger.debug("🧬 Generating material forensics for claim:", claimId);
     const forensicData = await analyzeMaterialForensics(forensicsInput);
 
     // Calculate derived metrics
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
       },
     });
 
-    console.log("✅ Material forensics saved:", saved.id);
+    logger.debug("✅ Material forensics saved:", saved.id);
 
     return NextResponse.json({
       success: true,
@@ -130,7 +131,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (err) {
-    console.error("❌ MATERIAL FORENSICS ERROR:", err);
+    logger.error("❌ MATERIAL FORENSICS ERROR:", err);
     return NextResponse.json(
       {
         error: "Material forensics generation failed",
@@ -194,7 +195,7 @@ export async function GET(req: Request) {
       data: report,
     });
   } catch (err) {
-    console.error("❌ FORENSIC FETCH ERROR:", err);
+    logger.error("❌ FORENSIC FETCH ERROR:", err);
     return NextResponse.json({ error: "Failed to fetch forensic report" }, { status: 500 });
   }
 }

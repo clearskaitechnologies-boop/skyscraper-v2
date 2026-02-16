@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(template);
   } catch (error) {
-    console.error("Create template error:", error);
+    logger.error("Create template error:", error);
     return NextResponse.json({ error: "Failed to create template" }, { status: 500 });
   }
 }

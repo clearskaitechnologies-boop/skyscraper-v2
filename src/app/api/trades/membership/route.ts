@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -46,7 +47,7 @@ export async function GET(req: NextRequest) {
       stripeSubscriptionId: membershipData?.stripe_subscription_id || null,
     });
   } catch (err: any) {
-    console.error("GET /api/trades/membership error:", err);
+    logger.error("GET /api/trades/membership error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

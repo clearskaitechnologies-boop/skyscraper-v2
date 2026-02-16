@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 import { APP_URL } from "@/lib/env";
 
@@ -60,14 +61,14 @@ export async function sendInvitationEmail({
     });
 
     if (error) {
-      console.error("Failed to send invitation email:", error);
+      logger.error("Failed to send invitation email:", error);
       throw new Error(error.message);
     }
 
-    console.log(`✅ Invitation email sent to ${to}:`, data);
+    logger.debug(`✅ Invitation email sent to ${to}:`, data);
     return data;
   } catch (error) {
-    console.error("Email sending failed:", error);
+    logger.error("Email sending failed:", error);
     throw error;
   }
 }
@@ -271,14 +272,14 @@ Visit our website: ${APP_URL}
     });
 
     if (error) {
-      console.error("Failed to send welcome email:", error);
+      logger.error("Failed to send welcome email:", error);
       throw new Error(error.message);
     }
 
-    console.log(`✅ Welcome email sent to ${to}:`, data);
+    logger.debug(`✅ Welcome email sent to ${to}:`, data);
     return data;
   } catch (error) {
-    console.error("Email sending failed:", error);
+    logger.error("Email sending failed:", error);
     throw error;
   }
 }

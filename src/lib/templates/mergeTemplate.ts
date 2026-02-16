@@ -6,6 +6,7 @@
  */
 
 import { Prisma } from "@prisma/client";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -228,7 +229,7 @@ export async function getMergedTemplate(
     });
 
     if (!template) {
-      console.error(`Template ${templateId} not found`);
+      logger.error(`Template ${templateId} not found`);
       return null;
     }
 
@@ -241,7 +242,7 @@ export async function getMergedTemplate(
     });
 
     if (!branding) {
-      console.warn(`No branding found for org ${orgId}, using defaults`);
+      logger.warn(`No branding found for org ${orgId}, using defaults`);
       return baseLayout as TemplateLayout;
     }
 
@@ -256,7 +257,7 @@ export async function getMergedTemplate(
       website: branding.website || undefined,
     });
   } catch (error) {
-    console.error("Error merging template:", error);
+    logger.error("Error merging template:", error);
     return null;
   }
 }
@@ -313,7 +314,7 @@ export async function createCompanyTemplateFromMarketplace(
     );
     return companyTemplate.id;
   } catch (error) {
-    console.error("Error creating company template:", error);
+    logger.error("Error creating company template:", error);
     return null;
   }
 }
@@ -353,10 +354,10 @@ export async function reapplyBrandingToAllTemplates(orgId: string): Promise<numb
       }
     }
 
-    console.log(`Reapplied branding to ${updated} templates for org ${orgId}`);
+    logger.debug(`Reapplied branding to ${updated} templates for org ${orgId}`);
     return updated;
   } catch (error) {
-    console.error("Error reapplying branding:", error);
+    logger.error("Error reapplying branding:", error);
     return 0;
   }
 }

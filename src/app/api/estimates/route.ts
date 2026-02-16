@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -159,7 +160,7 @@ export async function POST(req: NextRequest) {
       estimates,
     });
   } catch (error: any) {
-    console.error("[API] Create estimates error:", error);
+    logger.error("[API] Create estimates error:", error);
 
     if (error.name === "ZodError") {
       return NextResponse.json({ error: "Invalid input", details: error.errors }, { status: 400 });
@@ -228,7 +229,7 @@ export async function GET(req: NextRequest) {
       estimates,
     });
   } catch (error: any) {
-    console.error("[API] List estimates error:", error);
+    logger.error("[API] List estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch estimates" },
       { status: 500 }

@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { annotatePhotos } from "@/lib/ai/photo-annotator";
 import { runStormIntakePipeline } from "@/lib/ai/pipelines/stormIntake";
@@ -198,7 +199,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       },
     });
   } catch (error) {
-    console.error("[Enhanced Report Builder] Error:", error);
+    logger.error("[Enhanced Report Builder] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to generate enhanced report",

@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * Demo Mode Infrastructure
@@ -22,7 +23,7 @@ export async function isDemoMode(orgId: string): Promise<boolean> {
     });
     return org?.demoMode ?? false;
   } catch (error) {
-    console.error("Error checking demo mode:", error);
+    logger.error("Error checking demo mode:", error);
     return false; // Default to production mode on error
   }
 }

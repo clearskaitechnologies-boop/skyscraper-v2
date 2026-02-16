@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Video Access Stub
  *
@@ -19,7 +21,7 @@ export async function generateVideoAccessToken(
   userId: string,
   permissions: string[] = ["view"]
 ): Promise<VideoAccessToken> {
-  console.log(`[VideoAccess] Stub: Would generate token for video ${videoId}`);
+  logger.debug(`[VideoAccess] Stub: Would generate token for video ${videoId}`);
   return {
     token: `vat_${Date.now()}_${crypto.randomUUID().slice(0, 8)}`,
     videoId,
@@ -36,7 +38,7 @@ export async function validateVideoAccessToken(token: string): Promise<{
   videoId?: string;
   error?: string;
 }> {
-  console.log("[VideoAccess] Stub: Would validate token");
+  logger.debug("[VideoAccess] Stub: Would validate token");
   return { valid: false, error: "Video access not yet implemented" };
 }
 
@@ -44,7 +46,7 @@ export async function validateVideoAccessToken(token: string): Promise<{
  * Revoke video access token
  */
 export async function revokeVideoAccessToken(token: string): Promise<boolean> {
-  console.log("[VideoAccess] Stub: Would revoke token");
+  logger.debug("[VideoAccess] Stub: Would revoke token");
   return true;
 }
 

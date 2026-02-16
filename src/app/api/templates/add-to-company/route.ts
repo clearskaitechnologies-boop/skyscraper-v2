@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "AUTH_REQUIRED" }, { status: 401 });
     }
 
-    console.log("[ADD_TO_COMPANY_REQUEST]", { clerkOrgId, userId });
+    logger.debug("[ADD_TO_COMPANY_REQUEST]", { clerkOrgId, userId });
 
     // Resolve internal org ID from Clerk org ID
     const org = await prisma.org.findUnique({
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: "TEMPLATE_ID_REQUIRED" }, { status: 400 });
     }
 
-    console.log("[ADD_TO_COMPANY_REQUEST]", { orgId, templateId });
+    logger.debug("[ADD_TO_COMPANY_REQUEST]", { orgId, templateId });
 
     // Find the marketplace template
     const template = await prisma.template.findUnique({
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    console.log("[ADD_TO_COMPANY_OK]", { orgTemplateId: orgTemplate.id, orgId, templateId });
+    logger.debug("[ADD_TO_COMPANY_OK]", { orgTemplateId: orgTemplate.id, orgId, templateId });
 
     return NextResponse.json({
       ok: true,
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
       alreadyAdded: false,
     });
   } catch (error) {
-    console.error("Error adding template:", error);
+    logger.error("Error adding template:", error);
     return NextResponse.json(
       {
         ok: false,

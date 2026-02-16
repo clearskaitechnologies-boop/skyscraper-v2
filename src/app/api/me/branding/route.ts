@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -57,7 +58,7 @@ export async function GET() {
       companyName: branding.companyName || null,
     });
   } catch (error) {
-    console.error("Error fetching branding:", error);
+    logger.error("Error fetching branding:", error);
     return NextResponse.json({ complete: false, error: "Internal server error" }, { status: 500 });
   }
 }

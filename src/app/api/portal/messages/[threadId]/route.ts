@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -59,7 +60,7 @@ export async function GET(req: NextRequest, { params }: { params: { threadId: st
       thread,
     });
   } catch (error) {
-    console.error("[GET_THREAD_ERROR]", error);
+    logger.error("[GET_THREAD_ERROR]", error);
     return NextResponse.json({ error: "Failed to load thread" }, { status: 500 });
   }
 }

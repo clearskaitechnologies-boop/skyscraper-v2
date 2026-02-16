@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2,Mail } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,7 @@ export function SendPacketButton({
       setDraft(data);
       setIsComposerOpen(true);
     } catch (error) {
-      console.error("Error drafting email:", error);
+      logger.error("Error drafting email:", error);
       alert("Failed to prepare email. Please try again.");
     } finally {
       setIsLoading(false);

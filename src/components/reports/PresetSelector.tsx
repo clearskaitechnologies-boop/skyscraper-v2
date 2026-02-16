@@ -1,6 +1,7 @@
 "use client";
 
 import { FolderOpen, Loader2,Save } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -66,7 +67,7 @@ export function PresetSelector({
         setPresets(data.presets || []);
       }
     } catch (error) {
-      console.error("Failed to load presets:", error);
+      logger.error("Failed to load presets:", error);
     } finally {
       setLoading(false);
     }
@@ -102,7 +103,7 @@ export function PresetSelector({
         alert("Failed to save preset");
       }
     } catch (error) {
-      console.error("Save preset error:", error);
+      logger.error("Save preset error:", error);
       alert("Failed to save preset");
     } finally {
       setSaving(false);

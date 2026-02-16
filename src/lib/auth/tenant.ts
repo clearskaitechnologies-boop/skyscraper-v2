@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -60,17 +61,17 @@ export async function getTenant(): Promise<string | null> {
     process.env.NEXT_PHASE === "phase-export" ||
     process.env.NEXT_PHASE === "phase-production-build"
   ) {
-    console.log("[getTenant] BUILD-TIME: Skipping tenant check during build/export phase");
+    logger.debug("[getTenant] BUILD-TIME: Skipping tenant check during build/export phase");
     return null;
   }
 
   try {
     const { userId } = await auth();
 
-    console.log("[getTenant] Clerk userId:", userId);
+    logger.debug("[getTenant] Clerk userId:", userId);
 
     if (!userId) {
-      console.log("[getTenant] No userId from Clerk - user not authenticated");
+      logger.debug("[getTenant] No userId from Clerk - user not authenticated");
       return null;
     }
 
@@ -83,7 +84,7 @@ export async function getTenant(): Promise<string | null> {
       });
     });
 
-    console.log("[getTenant] UserOrganization membership:", membership);
+    logger.debug("[getTenant] UserOrganization membership:", membership);
 
     if (!membership) {
       // Fallback: check legacy users table direct Org linkage
@@ -92,7 +93,7 @@ export async function getTenant(): Promise<string | null> {
         select: { orgId: true },
       });
       if (legacyUser?.orgId) {
-        console.warn("[getTenant] Fallback activated: using users.orgId (no UserOrganization row)");
+        logger.warn("[getTenant] Fallback activated: using users.orgId (no UserOrganization row)");
         return legacyUser.orgId;
       }
 
@@ -107,7 +108,7 @@ export async function getTenant(): Promise<string | null> {
         // Prefer orgId — companyId is a trades-specific UUID that may not match an Org row
         const resolvedId = tradeMember.orgId || null;
         if (resolvedId) {
-          console.warn("[getTenant] Fallback 2: using tradesCompanyMember orgId:", resolvedId);
+          logger.warn("[getTenant] Fallback 2: using tradesCompanyMember orgId:", resolvedId);
           return resolvedId;
         }
         // If only companyId exists, verify it maps to a real Org before returning
@@ -159,7 +160,7 @@ export async function getTenant(): Promise<string | null> {
             select: { organizationId: true },
           })
         );
-        console.log("[getTenant] AUTO-CREATED Org:", Org.id);
+        logger.debug("[getTenant] AUTO-CREATED Org:", Org.id);
       } catch (createError: any) {
         console.error(
           "🚨 ORG CREATION FAILURE (auto-create disabled or failed):",
@@ -176,15 +177,15 @@ export async function getTenant(): Promise<string | null> {
 
     // 🔧 FIX: Use organizationId with comprehensive fallback for all field name variations
     const orgId = membership?.organizationId ?? (membership as any)?.organization_id ?? null;
-    console.log("[getTenant] Returning orgId:", orgId);
+    logger.debug("[getTenant] Returning orgId:", orgId);
 
     if (!orgId) {
-      console.warn("[getTenant] No orgId found in membership object:", membership);
+      logger.warn("[getTenant] No orgId found in membership object:", membership);
     }
 
     return orgId;
   } catch (error) {
-    console.error("[getTenant] ERROR:", error);
+    logger.error("[getTenant] ERROR:", error);
     return null;
   }
 }
@@ -206,7 +207,7 @@ export async function requireTenant(): Promise<string> {
     process.env.NEXT_PHASE === "phase-export" ||
     process.env.NEXT_PHASE === "phase-production-build"
   ) {
-    console.log("[requireTenant] BUILD-TIME: Returning placeholder during build/export phase");
+    logger.debug("[requireTenant] BUILD-TIME: Returning placeholder during build/export phase");
     return "build-time-placeholder";
   }
 
@@ -229,7 +230,7 @@ export async function getTenantContext() {
     process.env.NEXT_PHASE === "phase-export" ||
     process.env.NEXT_PHASE === "phase-production-build"
   ) {
-    console.log("[getTenantContext] BUILD-TIME: Skipping during build/export phase");
+    logger.debug("[getTenantContext] BUILD-TIME: Skipping during build/export phase");
     return null;
   }
 
@@ -285,7 +286,7 @@ export async function validateTenantAccess(recordOrgId: string | null | undefine
     process.env.NEXT_PHASE === "phase-export" ||
     process.env.NEXT_PHASE === "phase-production-build"
   ) {
-    console.log("[validateTenantAccess] BUILD-TIME: Skipping during build/export phase");
+    logger.debug("[validateTenantAccess] BUILD-TIME: Skipping during build/export phase");
     return;
   }
 
@@ -356,7 +357,7 @@ export function withOrgScope<
       const orgId = await requireTenant();
       return await handler(req, { userId, orgId }, ...args);
     } catch (error: any) {
-      console.error("[ORG SCOPE ERROR]", error);
+      logger.error("[ORG SCOPE ERROR]", error);
       return NextResponse.json(
         { ok: false, error: error.message ?? "Unauthorized" },
         { status: 401 }

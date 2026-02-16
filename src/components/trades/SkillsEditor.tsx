@@ -1,6 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import { logger } from "@/lib/logger";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -98,7 +99,7 @@ export function SkillsEditor({
       await onSave(skills);
       toast.success("Skills saved successfully");
     } catch (error) {
-      console.error("Failed to save skills:", error);
+      logger.error("Failed to save skills:", error);
       toast.error("Failed to save skills");
     } finally {
       setSaving(false);

@@ -11,6 +11,7 @@
  */
 
 import { getPricing } from "./pricingTable";
+import { logger } from "@/lib/logger";
 
 export interface PricingProfile {
   taxRate: number;
@@ -93,7 +94,7 @@ export function calculateLineItemTotal(
     // Get base pricing
     const pricing = getPricing(item.code);
     if (!pricing) {
-      console.warn(`[calculateLineItemTotal] No pricing found for code: ${item.code}`);
+      logger.warn(`[calculateLineItemTotal] No pricing found for code: ${item.code}`);
       return null;
     }
 
@@ -131,7 +132,7 @@ export function calculateLineItemTotal(
       total: Math.round(total * 100) / 100,
     };
   } catch (error) {
-    console.error(`[calculateLineItemTotal] Error for ${item.code}:`, error);
+    logger.error(`[calculateLineItemTotal] Error for ${item.code}:`, error);
     return null;
   }
 }

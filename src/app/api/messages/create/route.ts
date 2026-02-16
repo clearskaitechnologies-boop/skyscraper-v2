@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -148,7 +149,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error: any) {
-    console.error("[API] /api/messages/create error:", error);
+    logger.error("[API] /api/messages/create error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },
       { status: 500 }

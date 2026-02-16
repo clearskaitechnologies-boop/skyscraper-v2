@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -132,7 +133,7 @@ export async function POST(req: Request) {
         })
       });
     } catch (usageError) {
-      console.warn('[AI Build] Usage tracking failed:', usageError);
+      logger.warn('[AI Build] Usage tracking failed:', usageError);
     }
 
     // Persist AI claim build unequivocally (no degraded mode)
@@ -158,7 +159,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, summary, lineItems: uniqueItems });
   } catch (error: any) {
-    console.error("[AI CLAIM BUILDER ERROR]", error);
+    logger.error("[AI CLAIM BUILDER ERROR]", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },
       { status: 500 }

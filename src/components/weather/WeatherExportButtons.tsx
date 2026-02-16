@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface WeatherExportButtonsProps {
   reportId: string;
@@ -37,7 +38,7 @@ export function WeatherExportButtons({ reportId }: WeatherExportButtonsProps) {
 
       alert(`${format} packet exported successfully!`);
     } catch (err) {
-      console.error("Export error:", err);
+      logger.error("Export error:", err);
       alert("Failed to export packet. Please try again.");
     } finally {
       setExporting(null);
@@ -71,7 +72,7 @@ export function WeatherExportButtons({ reportId }: WeatherExportButtonsProps) {
 
       alert(`${format} PDF exported successfully!`);
     } catch (err) {
-      console.error("PDF export error:", err);
+      logger.error("PDF export error:", err);
       alert("Failed to export PDF. Please try again.");
     } finally {
       setExporting(null);

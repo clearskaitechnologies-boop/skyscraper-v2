@@ -5,6 +5,7 @@
  */
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 
 export async function executeCreateTask(
   claimId: string,
@@ -17,7 +18,7 @@ export async function executeCreateTask(
     linkedReportId?: string;
   }
 ) {
-  console.log(`[DOMINUS] Creating task: ${config.title}`);
+  logger.debug(`[DOMINUS] Creating task: ${config.title}`);
 
   const task = await getDelegate("automationTask").create({
     data: {
@@ -34,7 +35,7 @@ export async function executeCreateTask(
     },
   });
 
-  console.log(`[DOMINUS] Task created - ID: ${task.id}`);
+  logger.debug(`[DOMINUS] Task created - ID: ${task.id}`);
 
   return {
     taskId: task.id,

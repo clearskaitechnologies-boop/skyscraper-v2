@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch job:", error);
+    logger.error("Failed to fetch job:", error);
     return NextResponse.json({ error: "Failed to fetch job" }, { status: 500 });
   }
 }
@@ -181,7 +182,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (error) {
-    console.error("Failed to update job:", error);
+    logger.error("Failed to update job:", error);
     return NextResponse.json({ error: "Failed to update job" }, { status: 500 });
   }
 }
@@ -240,7 +241,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
       message: "Job cancelled successfully",
     });
   } catch (error) {
-    console.error("Failed to cancel job:", error);
+    logger.error("Failed to cancel job:", error);
     return NextResponse.json({ error: "Failed to cancel job" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import {
   fetchClaimData,
@@ -721,7 +722,7 @@ export async function GET(
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
     }
-    console.error("Error fetching section data:", error);
+    logger.error("Error fetching section data:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch section data" },
       { status: 500 }

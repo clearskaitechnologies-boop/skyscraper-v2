@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -47,14 +48,14 @@ export function useGoogleOneTap({ clientId, disabled }: UseGoogleOneTapOptions) 
             });
 
             if (error) {
-              console.error("Google One Tap sign-in error:", error);
+              logger.error("Google One Tap sign-in error:", error);
               return;
             }
 
             // Redirect to callback to handle onboarding/dashboard routing
             window.location.href = "/auth/callback";
           } catch (error) {
-            console.error("Google One Tap error:", error);
+            logger.error("Google One Tap error:", error);
           }
         },
         auto_select: true,

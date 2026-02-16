@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -160,7 +161,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(analysisResults);
   } catch (error) {
-    console.error("[POST /api/agents/claims-analysis] Unexpected error:", error);
+    logger.error("[POST /api/agents/claims-analysis] Unexpected error:", error);
     return NextResponse.json(
       { error: "An unexpected error occurred during analysis" },
       { status: 500 }

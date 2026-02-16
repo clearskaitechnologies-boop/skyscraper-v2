@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -45,7 +46,7 @@ export async function GET(req: Request) {
       },
     });
   } catch (error) {
-    console.error("Session verification error:", error);
+    logger.error("Session verification error:", error);
     return NextResponse.json({ error: "Failed to verify session" }, { status: 500 });
   }
 }

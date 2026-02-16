@@ -11,6 +11,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Prisma singleton imported from @/lib/db/prisma
 
@@ -513,5 +514,5 @@ export async function seedCommonCarriers() {
     });
   }
 
-  console.log("✅ Seeded common carriers");
+  logger.debug("✅ Seeded common carriers");
 }

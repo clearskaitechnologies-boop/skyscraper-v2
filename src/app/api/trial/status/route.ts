@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTrialInfo } from "@/lib/billing/trials";
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(trialInfo);
   } catch (error) {
-    console.error("Error fetching trial status:", error);
+    logger.error("Error fetching trial status:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

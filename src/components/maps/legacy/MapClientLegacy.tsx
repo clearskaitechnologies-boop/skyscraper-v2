@@ -1,5 +1,6 @@
 "use client";
 import "mapbox-gl/dist/mapbox-gl.css";
+import { logger } from "@/lib/logger";
 
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
@@ -34,7 +35,7 @@ export default function MapClient() {
     // Wait for container to be ready in DOM
     const initMap = () => {
       if (!mapContainer.current) {
-        console.warn("[MapClient] Container not ready, retrying...");
+        logger.warn("[MapClient] Container not ready, retrying...");
         setTimeout(initMap, 100);
         return;
       }
@@ -59,17 +60,17 @@ export default function MapClient() {
         map.current.on("load", () => {
           if (loadTimeout) clearTimeout(loadTimeout);
           setIsLoading(false);
-          console.log("[MapClient] Mapbox GL map loaded successfully");
+          logger.debug("[MapClient] Mapbox GL map loaded successfully");
         });
 
         map.current.on("error", (e) => {
-          console.error("[MapClient] Mapbox error:", e);
+          logger.error("[MapClient] Mapbox error:", e);
           if (loadTimeout) clearTimeout(loadTimeout);
           setError("Failed to load map. Please check your internet connection and try again.");
           setIsLoading(false);
         });
       } catch (err) {
-        console.error("[MapClient] Initialization error:", err);
+        logger.error("[MapClient] Initialization error:", err);
         if (loadTimeout) clearTimeout(loadTimeout);
         setError("Failed to initialize map. Please refresh the page.");
         setIsLoading(false);

@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -111,7 +112,7 @@ export async function GET(req: NextRequest) {
       total: contractors.length,
     });
   } catch (error: unknown) {
-    console.error("❌ [GET /api/contractors/public/list] Error:", error);
+    logger.error("❌ [GET /api/contractors/public/list] Error:", error);
     return NextResponse.json({ error: "Failed to load contractors" }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       message: "Share link revoked",
     });
   } catch (error: any) {
-    console.error("Error revoking video share:", error);
+    logger.error("Error revoking video share:", error);
     return NextResponse.json(
       { error: "Failed to revoke share link", details: error.message },
       { status: 500 }

@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 
 export type TimelineEventType =
@@ -53,7 +54,7 @@ export async function emitTimelineEvent({
 
     return event;
   } catch (error) {
-    console.error("Failed to emit timeline event:", error);
+    logger.error("Failed to emit timeline event:", error);
     return null;
   }
 }
@@ -92,7 +93,7 @@ export async function emitPhotoUploadEvent(claimId: string, userId: string, phot
       });
     }
   } catch (error) {
-    console.error("Failed to create notification:", error);
+    logger.error("Failed to create notification:", error);
   }
 
   return event;
@@ -132,7 +133,7 @@ export async function emitDocumentSharedEvent(
       });
     }
   } catch (error) {
-    console.error("Failed to create notification:", error);
+    logger.error("Failed to create notification:", error);
   }
 
   return event;
@@ -172,7 +173,7 @@ export async function emitDocumentQuestionEvent(
       });
     }
   } catch (error) {
-    console.error("Failed to create notification:", error);
+    logger.error("Failed to create notification:", error);
   }
 
   return event;

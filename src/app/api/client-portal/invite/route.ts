@@ -1,4 +1,5 @@
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { FROM_EMAIL, getResend, REPLY_TO_EMAIL, TEMPLATES } from "@/lib/email/resend";
@@ -103,7 +104,7 @@ export async function POST(req: Request) {
       // Don't return token in production - it's sent via email
     });
   } catch (error: any) {
-    console.error("Error inviting client to portal:", error);
+    logger.error("Error inviting client to portal:", error);
     return new NextResponse(error?.message || "Internal server error", {
       status: 500,
     });

@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
@@ -81,7 +82,7 @@ async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: str
       },
     });
   } catch (error: any) {
-    console.error("[AI Skills] Error:", error);
+    logger.error("[AI Skills] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

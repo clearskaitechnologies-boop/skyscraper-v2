@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { LEGAL_DOCUMENTS } from "@/lib/legal/config";
@@ -38,7 +39,7 @@ export async function GET() {
     // Find pending documents (not yet accepted or outdated version)
     const pending = allDocs.filter((doc) => !acceptedKeys.has(`${doc.id}:${doc.latestVersion}`));
 
-    console.log("[Legal Pending] User:", userId, "Org:", orgId, "Pending:", pending.length);
+    logger.debug("[Legal Pending] User:", userId, "Org:", orgId, "Pending:", pending.length);
 
     return NextResponse.json({
       pending: pending.map((doc) => ({
@@ -48,7 +49,7 @@ export async function GET() {
       })),
     });
   } catch (error: any) {
-    console.error("[Legal Pending] Error:", error);
+    logger.error("[Legal Pending] Error:", error);
     return NextResponse.json({ error: "Internal server error: " + error.message }, { status: 500 });
   }
 }

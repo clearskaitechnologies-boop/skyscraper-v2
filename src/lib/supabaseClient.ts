@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 // Ensure a minimal profile exists for a user. Best-effort; logs on error.
 export async function ensureProfile(supabaseClient: any, user: any) {
@@ -7,7 +8,7 @@ export async function ensureProfile(supabaseClient: any, user: any) {
     const sb = supabaseClient ?? supabase;
     await sb.from("org_profiles").insert({ id: user.id }).onConflict("id").ignore();
   } catch (error) {
-    console.error("ensureProfile error", error);
+    logger.error("ensureProfile error", error);
   }
 }
 

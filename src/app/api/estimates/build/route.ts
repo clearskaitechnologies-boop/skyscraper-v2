@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { runEstimateBuilder } from "@/lib/ai/estimates";
@@ -34,7 +35,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ estimate }, { status: 200 });
   } catch (error: any) {
-    console.error("Estimate build error:", error);
+    logger.error("Estimate build error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to build estimate" },
       { status: 500 }

@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getDelegate } from "@/lib/db/modelAliases";
 import prisma from "@/lib/prisma";
@@ -75,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
         });
       }
     } catch (analyticsError) {
-      console.warn("Analytics tracking failed:", analyticsError);
+      logger.warn("Analytics tracking failed:", analyticsError);
     }
 
     return NextResponse.json({
@@ -107,7 +108,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       forms,
     });
   } catch (error: unknown) {
-    console.error("❌ [GET /api/public/contractor/[slug]] Error:", error);
+    logger.error("❌ [GET /api/public/contractor/[slug]] Error:", error);
     return NextResponse.json({ error: "Failed to load contractor profile" }, { status: 500 });
   }
 }

@@ -1,5 +1,6 @@
 // app/api/weather/export/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (err: any) {
-    console.error("WEATHER PACKET EXPORT ERROR:", err);
+    logger.error("WEATHER PACKET EXPORT ERROR:", err);
     return NextResponse.json({ error: err?.message || "Packet export failed" }, { status: 500 });
   }
 }

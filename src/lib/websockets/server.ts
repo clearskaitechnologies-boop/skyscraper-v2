@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * TASK 112: WEBSOCKETS
  *
@@ -105,7 +107,7 @@ export class WebSocketManager {
    */
   sendToClient(clientId: string, message: WebSocketMessage): void {
     // Implementation would send via actual WebSocket connection
-    console.log(`Sending to ${clientId}:`, message);
+    logger.debug(`Sending to ${clientId}:`, message);
   }
 
   /**

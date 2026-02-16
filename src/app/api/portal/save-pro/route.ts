@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
       });
     }
   } catch (error) {
-    console.error("Save pro error:", error);
+    logger.error("Save pro error:", error);
     return NextResponse.json({ error: "Failed to save pro" }, { status: 500 });
   }
 }
@@ -157,7 +158,7 @@ export async function GET() {
       savedProIds: savedPros.map((p) => p.id),
     });
   } catch (error) {
-    console.error("Get saved pros error:", error);
+    logger.error("Get saved pros error:", error);
     return NextResponse.json({ error: "Failed to get saved pros" }, { status: 500 });
   }
 }

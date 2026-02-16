@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
       jobs: scheduledJobs,
     });
   } catch (error) {
-    console.error("Failed to fetch scheduled jobs:", error);
+    logger.error("Failed to fetch scheduled jobs:", error);
     return NextResponse.json({ error: "Failed to fetch scheduled jobs" }, { status: 500 });
   }
 }
@@ -263,7 +264,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to create scheduled job:", error);
+    logger.error("Failed to create scheduled job:", error);
     return NextResponse.json({ error: "Failed to create scheduled job" }, { status: 500 });
   }
 }

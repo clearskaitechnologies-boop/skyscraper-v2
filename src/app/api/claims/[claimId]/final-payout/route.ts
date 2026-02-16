@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -207,7 +208,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[GET /api/claims/[claimId]/final-payout] Error:", error);
+    logger.error("[GET /api/claims/[claimId]/final-payout] Error:", error);
     return NextResponse.json({ error: "Failed to fetch final payout data" }, { status: 500 });
   }
 }
@@ -324,7 +325,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { claimI
       },
     });
   } catch (error) {
-    console.error("[PATCH /api/claims/[claimId]/final-payout] Error:", error);
+    logger.error("[PATCH /api/claims/[claimId]/final-payout] Error:", error);
     return NextResponse.json({ error: "Failed to update final payout" }, { status: 500 });
   }
 }

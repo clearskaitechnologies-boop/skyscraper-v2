@@ -7,6 +7,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { runDominusAutomations } from "@/lib/intel/automation/engine";
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing claimId" }, { status: 400 });
     }
 
-    console.log(`[API] Running Dominus automations for ${claimId}`);
+    logger.debug(`[API] Running Dominus automations for ${claimId}`);
 
     // Run the automation engine
     const result = await runDominusAutomations(claimId, orgId);
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
       errors: result.errors,
     });
   } catch (error) {
-    console.error("[AUTOMATION API] Error:", error);
+    logger.error("[AUTOMATION API] Error:", error);
     return NextResponse.json(
       { error: "Automation failed", details: String(error) },
       { status: 500 }

@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -68,7 +69,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[QB_STATUS_ERROR]", error);
+    logger.error("[QB_STATUS_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed" },
       { status: 500 }
@@ -109,7 +110,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: false, message: "Unknown action" }, { status: 400 });
   } catch (error) {
-    console.error("[QB_DISCONNECT_ERROR]", error);
+    logger.error("[QB_DISCONNECT_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed" },
       { status: 500 }

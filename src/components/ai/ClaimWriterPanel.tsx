@@ -7,6 +7,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   CheckCircle,
@@ -140,7 +141,7 @@ export function ClaimWriterPanel({ leadId }: ClaimWriterPanelProps) {
         description: "Your AI-powered insurance claim is ready for review.",
       });
     } catch (error) {
-      console.error("Error generating claim:", error);
+      logger.error("Error generating claim:", error);
       setError("Network error. Please check your connection and try again.");
       updateStage("rebuttals", "error");
       toast.error("Network Error", {

@@ -10,6 +10,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
@@ -55,7 +56,7 @@ async function ensureOrgPrimitives(orgId: string, userId: string): Promise<void>
           updatedAt: new Date(),
         },
       });
-      console.log("[getActiveOrgContext] Created BillingSettings for org:", orgId);
+      logger.debug("[getActiveOrgContext] Created BillingSettings for org:", orgId);
     }
 
     // Ensure org_branding exists (raw query since it's not in Prisma schema)
@@ -75,11 +76,11 @@ async function ensureOrgPrimitives(orgId: string, userId: string): Promise<void>
             updatedAt: new Date(),
           },
         });
-        console.log("[getActiveOrgContext] Created org_branding for org:", orgId);
+        logger.debug("[getActiveOrgContext] Created org_branding for org:", orgId);
       }
     } catch (brandingErr: any) {
       // Non-fatal - table may not exist in all environments
-      console.warn("[getActiveOrgContext] Branding setup skipped:", brandingErr.message);
+      logger.warn("[getActiveOrgContext] Branding setup skipped:", brandingErr.message);
     }
   } catch (err: any) {
     // Non-fatal - log but don't fail
@@ -108,9 +109,9 @@ export async function getActiveOrgContext(
     userId = a.userId ?? null;
     clerkOrgId = a.orgId ?? null;
 
-    console.log("[getActiveOrgContext] Clerk context:", { userId, clerkOrgId });
+    logger.debug("[getActiveOrgContext] Clerk context:", { userId, clerkOrgId });
   } catch (err) {
-    console.error("[getActiveOrgContext] Clerk auth error:", err);
+    logger.error("[getActiveOrgContext] Clerk auth error:", err);
     userId = null;
   }
 
@@ -142,7 +143,7 @@ export async function getActiveOrgContext(
   try {
     // PATH 1: Clerk organization exists - use it as primary source
     if (clerkOrgId) {
-      console.log("[getActiveOrgContext] Using Clerk orgId:", clerkOrgId);
+      logger.debug("[getActiveOrgContext] Using Clerk orgId:", clerkOrgId);
 
       // Find or create organization by clerkOrgId
       let org = await prisma.org.findUnique({
@@ -150,7 +151,7 @@ export async function getActiveOrgContext(
       });
 
       if (!org) {
-        console.log("[getActiveOrgContext] Creating new org for clerkOrgId:", clerkOrgId);
+        logger.debug("[getActiveOrgContext] Creating new org for clerkOrgId:", clerkOrgId);
 
         const orgName = "My Organization";
 
@@ -164,7 +165,7 @@ export async function getActiveOrgContext(
             updatedAt: new Date(),
           },
         });
-        console.log("[getActiveOrgContext] Upserted org:", org.id);
+        logger.debug("[getActiveOrgContext] Upserted org:", org.id);
       }
 
       // Ensure user_organizations membership exists
@@ -183,8 +184,8 @@ export async function getActiveOrgContext(
         update: {},
       });
 
-      console.log("[getActiveOrgContext] Resolved org:", { dbOrgId: org.id, clerkOrgId });
-      console.log("[ORG RESOLUTION]", { userId, clerkOrgId, resolvedOrgId: org.id });
+      logger.debug("[getActiveOrgContext] Resolved org:", { dbOrgId: org.id, clerkOrgId });
+      logger.debug("[ORG RESOLUTION]", { userId, clerkOrgId, resolvedOrgId: org.id });
 
       // Ensure workspace primitives exist
       await ensureOrgPrimitives(org.id, userId);
@@ -200,7 +201,7 @@ export async function getActiveOrgContext(
     }
 
     // PATH 2: No Clerk org - check user_organizations table (personal org)
-    console.log("[getActiveOrgContext] No Clerk org, checking user_organizations...");
+    logger.debug("[getActiveOrgContext] No Clerk org, checking user_organizations...");
 
     const memberships = await prisma.user_organizations.findMany({
       where: { userId },
@@ -253,7 +254,7 @@ export async function getActiveOrgContext(
 
     // PATH 3: No org found - handle based on mode
     if (optional) {
-      console.log("[getActiveOrgContext] Optional mode, returning no-org");
+      logger.debug("[getActiveOrgContext] Optional mode, returning no-org");
       return { ok: false, reason: "no-org" };
     }
 
@@ -314,7 +315,7 @@ export async function getActiveOrgContext(
       }
 
       // Auto-create personal org for user (DETERMINISTIC key prevents duplicates)
-      console.log("[getActiveOrgContext] Required mode, creating personal org for user:", userId);
+      logger.debug("[getActiveOrgContext] Required mode, creating personal org for user:", userId);
 
       const fallbackClerkOrgId = `org_${userId}`;
 
@@ -341,9 +342,9 @@ export async function getActiveOrgContext(
       // Ensure workspace primitives exist
       await ensureOrgPrimitives(newOrg.id, userId);
 
-      console.log("[getActiveOrgContext] Created personal org:", newOrg.id);
+      logger.debug("[getActiveOrgContext] Created personal org:", newOrg.id);
 
-      console.log("[ORG RESOLUTION]", { userId, clerkOrgId: null, resolvedOrgId: newOrg.id });
+      logger.debug("[ORG RESOLUTION]", { userId, clerkOrgId: null, resolvedOrgId: newOrg.id });
       return {
         ok: true,
         userId,
@@ -356,7 +357,7 @@ export async function getActiveOrgContext(
 
     return { ok: false, reason: "no-org" };
   } catch (error) {
-    console.error("[getActiveOrgContext] Error:", error);
+    logger.error("[getActiveOrgContext] Error:", error);
     return {
       ok: false,
       reason: "error",

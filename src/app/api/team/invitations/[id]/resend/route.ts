@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -53,7 +54,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     // Note: Team invitations can be sent via Resend API
     // Example: await resend.emails.send({ to: invitation.email, subject: "Team Invitation", ... });
-    console.log(`📧 Invitation resent to ${invitation.email}`);
+    logger.debug(`📧 Invitation resent to ${invitation.email}`);
 
     // Log activity (soft-fail if audit table missing)
     if (Activity) {
@@ -81,7 +82,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
       inviteUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invite/${invitation.token}`,
     });
   } catch (error) {
-    console.error("Failed to resend invitation:", error);
+    logger.error("Failed to resend invitation:", error);
     return NextResponse.json({ error: "Failed to resend invitation" }, { status: 500 });
   }
 }

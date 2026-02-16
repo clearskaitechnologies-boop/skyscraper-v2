@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { logger } from "@/lib/logger";
 
 import { useAutoInit } from "@/hooks/useAutoInit";
 
@@ -14,10 +15,10 @@ export function AutoInitWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (error) {
-      console.error("[DASHBOARD] Auto-init error:", error);
+      logger.error("[DASHBOARD] Auto-init error:", error);
     }
     if (initialized) {
-      console.log("[DASHBOARD] Auto-init complete");
+      logger.debug("[DASHBOARD] Auto-init complete");
     }
   }, [error, initialized]);
 

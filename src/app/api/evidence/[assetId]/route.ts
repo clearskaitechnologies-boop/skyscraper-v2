@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -56,7 +57,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { assetI
       },
     });
   } catch (error) {
-    console.error("Asset metadata update error:", error);
+    logger.error("Asset metadata update error:", error);
     return NextResponse.json(
       {
         error: "Failed to update asset",

@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -64,7 +65,7 @@ export async function GET(
       },
     });
   } catch (error) {
-    console.error("[ENVELOPE_GET_ERROR]", error);
+    logger.error("[ENVELOPE_GET_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to get envelope" },
       { status: 500 }

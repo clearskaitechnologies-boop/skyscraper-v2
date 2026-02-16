@@ -1,5 +1,6 @@
 // MODULE 6: Homeowner Profiles - Update profile
 import { auth, clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -25,7 +26,7 @@ async function getUserEmail(userId: string): Promise<string | null> {
     const user = await client.users.getUser(userId);
     return user.emailAddresses?.[0]?.emailAddress || null;
   } catch (error) {
-    console.error("[HOMEOWNER_PROFILE] Failed to get user email:", error);
+    logger.error("[HOMEOWNER_PROFILE] Failed to get user email:", error);
     return null;
   }
 }
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
       claimId: clientAccess.claimId,
     });
   } catch (error) {
-    console.error("[PROFILE_UPDATE]", error);
+    logger.error("[PROFILE_UPDATE]", error);
     return NextResponse.json({ error: "Failed to update profile" }, { status: 500 });
   }
 }
@@ -127,7 +128,7 @@ export async function GET() {
       claims: clientAccessRecords.map((access) => access.claims),
     });
   } catch (error) {
-    console.error("[PROFILE_GET]", error);
+    logger.error("[PROFILE_GET]", error);
     return NextResponse.json({ error: "Failed to get profile" }, { status: 500 });
   }
 }

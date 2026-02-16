@@ -7,6 +7,7 @@
  */
 
 import { getUpstash } from "@/lib/upstash";
+import { logger } from "@/lib/logger";
 
 export interface CodeViolation {
   code: string;
@@ -348,7 +349,7 @@ async function getCachedResult<T>(key: string): Promise<T | null> {
     const cached = await redis.get<T>(key);
     return cached;
   } catch (e) {
-    console.warn("[compliance-cache] Read error:", e);
+    logger.warn("[compliance-cache] Read error:", e);
     return null;
   }
 }
@@ -359,7 +360,7 @@ async function setCachedResult<T>(key: string, value: T): Promise<void> {
     if (!redis) return;
     await redis.set(key, value, { ex: CACHE_TTL_SECONDS });
   } catch (e) {
-    console.warn("[compliance-cache] Write error:", e);
+    logger.warn("[compliance-cache] Write error:", e);
   }
 }
 
@@ -604,9 +605,9 @@ export async function invalidateCache(state?: string): Promise<void> {
         await redis.del(...keys);
       }
     }
-    console.log(`[compliance-cache] Invalidated ${state || "all"} cache`);
+    logger.debug(`[compliance-cache] Invalidated ${state || "all"} cache`);
   } catch (e) {
-    console.warn("[compliance-cache] Invalidation error:", e);
+    logger.warn("[compliance-cache] Invalidation error:", e);
   }
 }
 

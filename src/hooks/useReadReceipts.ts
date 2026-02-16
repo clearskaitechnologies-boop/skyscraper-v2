@@ -17,6 +17,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -107,7 +108,7 @@ export function useReadReceipts(conversationId: string | null | undefined) {
           next.delete(messageId);
           return next;
         });
-        console.error("[useReadReceipts] markAsRead failed:", err);
+        logger.error("[useReadReceipts] markAsRead failed:", err);
       }
     },
     [conversationId]

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
   } catch (err: any) {
-    console.error("Full Access checkout error:", err);
+    logger.error("Full Access checkout error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to create checkout session" },
       { status: 500 }

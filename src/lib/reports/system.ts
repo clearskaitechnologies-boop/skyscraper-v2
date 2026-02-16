@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Report Types
 export type ReportType =
@@ -521,7 +522,7 @@ export async function runScheduledReports(): Promise<void> {
         },
       });
     } catch (error) {
-      console.error(`Failed to run scheduled report ${schedule.id}:`, error);
+      logger.error(`Failed to run scheduled report ${schedule.id}:`, error);
     }
   }
 }
@@ -531,7 +532,7 @@ export async function runScheduledReports(): Promise<void> {
  */
 async function distributeReport(schedule: any, reportData: ReportData): Promise<void> {
   // TODO: Implement email sending
-  console.log(`Distributing report to: ${schedule.recipients.join(", ")}`);
+  logger.debug(`Distributing report to: ${schedule.recipients.join(", ")}`);
 }
 
 /**

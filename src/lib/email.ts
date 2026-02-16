@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Email utility for CRM notifications
  * This is a placeholder implementation - integrate with your email provider
@@ -24,7 +26,7 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
 
     // For development, just log the email
     if (process.env.NODE_ENV === "development") {
-      console.log("🔧 Development mode: Email logged but not sent");
+      logger.debug("🔧 Development mode: Email logged but not sent");
       return true;
     }
 
@@ -47,7 +49,7 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error("Failed to send email:", error);
+    logger.error("Failed to send email:", error);
     return false;
   }
 }
@@ -55,17 +57,17 @@ export async function sendEmail(emailData: EmailData): Promise<boolean> {
 export async function sendSMS(to: string, message: string): Promise<boolean> {
   try {
     // TODO: Integrate with SMS provider (Twilio, AWS SNS, etc.)
-    console.log("📱 SMS would be sent:", { to, message });
+    logger.debug("📱 SMS would be sent:", { to, message });
 
     if (process.env.NODE_ENV === "development") {
-      console.log("🔧 Development mode: SMS logged but not sent");
+      logger.debug("🔧 Development mode: SMS logged but not sent");
       return true;
     }
 
     // Production implementation would go here
     return true;
   } catch (error) {
-    console.error("Failed to send SMS:", error);
+    logger.error("Failed to send SMS:", error);
     return false;
   }
 }

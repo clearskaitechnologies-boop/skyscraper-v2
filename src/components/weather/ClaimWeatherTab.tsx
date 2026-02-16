@@ -1,6 +1,7 @@
 "use client";
 
 import { Calendar, Cloud, FileText } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -53,7 +54,7 @@ export function ClaimWeatherTab({ claimId, propertyAddress, currentDol }: ClaimW
       // Refresh the page to show updated DOL
       router.refresh();
     } catch (error) {
-      console.error("Error updating DOL:", error);
+      logger.error("Error updating DOL:", error);
       toast({
         title: "Error",
         description: "Failed to update date of loss. Please try again.",

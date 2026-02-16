@@ -14,6 +14,7 @@
  */
 
 import { useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
 // ============================================================================
@@ -90,7 +91,7 @@ export function UserIdentityProvider({ children }: { children: React.ReactNode }
         setIdentity(null);
       }
     } catch (error) {
-      console.error("[UserIdentityProvider] Error fetching identity:", error);
+      logger.error("[UserIdentityProvider] Error fetching identity:", error);
       setIdentity(null);
     } finally {
       setIsLoading(false);

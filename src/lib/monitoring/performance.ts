@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface PerformanceMetric {
   id: string;
@@ -63,7 +64,7 @@ export async function recordMetric(
       },
     });
   } catch (error) {
-    console.error("Failed to record metric:", error);
+    logger.error("Failed to record metric:", error);
   }
 }
 
@@ -94,7 +95,7 @@ export async function recordSlowQuery(
       });
     }
   } catch (error) {
-    console.error("Failed to record slow query:", error);
+    logger.error("Failed to record slow query:", error);
   }
 }
 
@@ -161,10 +162,10 @@ class APMTraceContext {
 
       // Alert if slow
       if (duration > 3000) {
-        console.warn(`Slow trace: ${this.name} took ${duration}ms`);
+        logger.warn(`Slow trace: ${this.name} took ${duration}ms`);
       }
     } catch (error) {
-      console.error("Failed to record APM trace:", error);
+      logger.error("Failed to record APM trace:", error);
     }
   }
 }
@@ -335,7 +336,7 @@ export async function getMetricsSummary(
       count: values.length,
     };
   } catch (error) {
-    console.error("Failed to get metrics summary:", error);
+    logger.error("Failed to get metrics summary:", error);
     return {
       avg: 0,
       min: 0,
@@ -411,7 +412,7 @@ export async function getSystemHealth(): Promise<{
       issues,
     };
   } catch (error) {
-    console.error("Failed to get system health:", error);
+    logger.error("Failed to get system health:", error);
     return {
       status: "unhealthy",
       metrics: {
@@ -530,7 +531,7 @@ export async function getDashboardData(): Promise<{
       systemHealth: health,
     };
   } catch (error) {
-    console.error("Failed to get dashboard data:", error);
+    logger.error("Failed to get dashboard data:", error);
     throw error;
   }
 }

@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
       );
     }
 
-    console.info(`[API:CLAIM_PACKET] Generating ${version} packet for user ${userId}`);
+    logger.info(`[API:CLAIM_PACKET] Generating ${version} packet for user ${userId}`);
 
     // Generate packet
     const blob = await generateClaimPacket({
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error: any) {
-    console.error("[API:CLAIM_PACKET] Generation failed:", error);
+    logger.error("[API:CLAIM_PACKET] Generation failed:", error);
     Sentry.captureException(error, {
       tags: { component: "claim-packet-api" },
     });

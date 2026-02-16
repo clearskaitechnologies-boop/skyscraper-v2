@@ -2,6 +2,7 @@
 "use client";
 
 import { useEffect,useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface Partner {
   id: string;
@@ -64,7 +65,7 @@ export function PartnersManager() {
       const data = await res.json();
       setPartners(data);
     } catch (error) {
-      console.error("Failed to load partners:", error);
+      logger.error("Failed to load partners:", error);
     } finally {
       setLoading(false);
     }

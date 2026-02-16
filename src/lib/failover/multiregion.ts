@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type RegionStatus = "ACTIVE" | "STANDBY" | "FAILED" | "RECOVERING";
 
@@ -172,7 +173,7 @@ async function executeFailover(fromRegionId: string, toRegionId: string): Promis
   // 4. Update application configuration
   await updateApplicationConfig(toRegionId);
 
-  console.log(`Failover completed from ${fromRegionId} to ${toRegionId}`);
+  logger.debug(`Failover completed from ${fromRegionId} to ${toRegionId}`);
 }
 
 /**
@@ -186,7 +187,7 @@ async function updateDNS(regionId: string): Promise<void> {
   if (!region) return;
 
   // TODO: Update actual DNS records
-  console.log(`Updated DNS to point to ${region.location}`);
+  logger.debug(`Updated DNS to point to ${region.location}`);
 }
 
 /**
@@ -194,7 +195,7 @@ async function updateDNS(regionId: string): Promise<void> {
  */
 async function updateApplicationConfig(regionId: string): Promise<void> {
   // TODO: Update application configuration
-  console.log(`Updated application config for region ${regionId}`);
+  logger.debug(`Updated application config for region ${regionId}`);
 }
 
 /**
@@ -208,7 +209,7 @@ export async function testFailover(regionId: string): Promise<boolean> {
   if (!region) return false;
 
   // Simulate failover without actually switching
-  console.log(`Testing failover for region ${regionId}`);
+  logger.debug(`Testing failover for region ${regionId}`);
 
   // Check standby regions
   const standby = await prisma.region.count({

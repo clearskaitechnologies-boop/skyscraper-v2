@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { notifyMilestone } from "@/lib/websocket/pipelineSync";
 
@@ -174,7 +175,7 @@ export async function getJobTimeline(jobId: string, orgId: string): Promise<Time
 
     return events;
   } catch (error) {
-    console.error("Failed to get job timeline:", error);
+    logger.error("Failed to get job timeline:", error);
     return [];
   }
 }
@@ -210,7 +211,7 @@ export async function reorderMilestones(
       )
     );
   } catch (error) {
-    console.error("Failed to reorder milestones:", error);
+    logger.error("Failed to reorder milestones:", error);
     throw error;
   }
 }

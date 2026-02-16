@@ -4,6 +4,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { compose,safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
 import { requireUser } from "@/lib/authz";
@@ -49,7 +50,7 @@ const basePOST = async (req: Request) => {
 
     return NextResponse.json({ ok: true, mapUrl: url });
   } catch (error: any) {
-    console.error("[API ERROR] /api/leads/map-snapshot:", error);
+    logger.error("[API ERROR] /api/leads/map-snapshot:", error);
     return NextResponse.json(
       { error: error.message || "Failed to save map snapshot" },
       { status: 500 }

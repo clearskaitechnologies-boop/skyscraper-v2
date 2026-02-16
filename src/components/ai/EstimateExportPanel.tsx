@@ -7,6 +7,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   Calculator,
@@ -136,7 +137,7 @@ export function EstimateExportPanel({ leadId, claimId }: EstimateExportPanelProp
         description: "Your XML and JSON files are ready for download.",
       });
     } catch (error) {
-      console.error("Error exporting estimate:", error);
+      logger.error("Error exporting estimate:", error);
       setError("Network error. Please check your connection and try again.");
       toast.error("Network Error", {
         description: "Failed to connect to export service.",
@@ -187,7 +188,7 @@ export function EstimateExportPanel({ leadId, claimId }: EstimateExportPanelProp
         description: `Total: $${data.pricing.total.toFixed(2)}`,
       });
     } catch (error) {
-      console.error("Error pricing estimate:", error);
+      logger.error("Error pricing estimate:", error);
       setError("Network error. Please check your connection and try again.");
       toast.error("Network Error", {
         description: "Failed to connect to pricing service.",

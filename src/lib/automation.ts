@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import { sendEmail } from "./email";
 
@@ -38,7 +39,7 @@ export async function onStageChange(
     });
 
     if (!project) {
-      console.error(`Project ${projectId} not found for stage change automation`);
+      logger.error(`Project ${projectId} not found for stage change automation`);
       return;
     }
 
@@ -92,10 +93,10 @@ export async function onStageChange(
         break;
 
       default:
-        console.log(`No automation defined for stage: ${newStage}`);
+        logger.debug(`No automation defined for stage: ${newStage}`);
     }
   } catch (error) {
-    console.error("Error in stage change automation:", error);
+    logger.error("Error in stage change automation:", error);
   }
 }
 
@@ -132,7 +133,7 @@ async function handleInspectionScheduled(project: any) {
         },
       });
     } catch (error) {
-      console.error("Failed to send inspection email:", error);
+      logger.error("Failed to send inspection email:", error);
     }
   }
 }
@@ -201,7 +202,7 @@ async function handleEstimateSent(project: any) {
         },
       });
     } catch (error) {
-      console.error("Failed to send estimate email:", error);
+      logger.error("Failed to send estimate email:", error);
     }
   }
 }
@@ -360,7 +361,7 @@ async function handleProjectPaid(project: any) {
         },
       });
     } catch (error) {
-      console.error("Failed to send completion email:", error);
+      logger.error("Failed to send completion email:", error);
     }
   }
 }
@@ -416,7 +417,7 @@ export async function scheduleTaskReminders() {
           },
         });
       } catch (error) {
-        console.error(`Failed to send task reminder for task ${task.id}:`, error);
+        logger.error(`Failed to send task reminder for task ${task.id}:`, error);
       }
     }
   }

@@ -4,6 +4,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import { pool } from "@/server/db";
 
@@ -55,7 +56,7 @@ export async function getOrganization(orgId: string): Promise<Organization | nul
       updatedAt: row.updatedAt,
     };
   } catch (error) {
-    console.error("[getOrganization] Error:", error);
+    logger.error("[getOrganization] Error:", error);
     return null;
   }
 }
@@ -83,7 +84,7 @@ export async function getOrgTheme(orgId: string): Promise<{
       accent: result.rows[0].colorAccent || "#FFC838",
     };
   } catch (error) {
-    console.error("[getOrgTheme] Error:", error);
+    logger.error("[getOrgTheme] Error:", error);
     return null;
   }
 }
@@ -99,7 +100,7 @@ export async function organizationExists(orgId: string): Promise<boolean> {
     );
     return result.rows.length > 0;
   } catch (error) {
-    console.error("[organizationExists] Error:", error);
+    logger.error("[organizationExists] Error:", error);
     return false;
   }
 }

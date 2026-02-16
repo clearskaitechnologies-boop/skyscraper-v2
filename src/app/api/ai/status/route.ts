@@ -9,6 +9,7 @@ export const revalidate = 0;
 // Returns: { id, status, reportId, engine, createdAt, completedAt?, error?, result? }
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { getStatus } from "@/modules/ai/jobs/queue";
@@ -29,7 +30,7 @@ async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string 
 
     return NextResponse.json(job);
   } catch (error: any) {
-    console.error("[AI Status API]", error);
+    logger.error("[AI Status API]", error);
     return NextResponse.json({ error: error.message || "Failed to get status" }, { status: 500 });
   }
 }

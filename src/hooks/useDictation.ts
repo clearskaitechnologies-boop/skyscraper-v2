@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 
 type SpeechRecognitionConstructor = new () => {
   lang: string;
@@ -71,7 +72,7 @@ export function useDictation({ lang = "en-US", interim = true }: UseDictationOpt
       rec.start();
       setListening(true);
     } catch (error) {
-      console.error("Failed to start dictation:", error);
+      logger.error("Failed to start dictation:", error);
       setListening(false);
     }
   }, [lang, interim]);

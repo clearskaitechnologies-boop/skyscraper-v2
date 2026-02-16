@@ -3,6 +3,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { markAllNotificationsRead } from "@/lib/notifications/notificationHelper";
@@ -32,7 +33,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[MARK_ALL_READ_ERROR]", error);
+    logger.error("[MARK_ALL_READ_ERROR]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

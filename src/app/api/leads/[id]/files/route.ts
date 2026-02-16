@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ files: filesWithSharing });
   } catch (error: any) {
-    console.error("[Leads Files GET] Error:", error);
+    logger.error("[Leads Files GET] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

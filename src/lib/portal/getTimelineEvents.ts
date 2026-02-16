@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Safe wrapper to fetch timeline events without crashing if table missing
 export async function getClaimTimelineEventsSafe(claimId: string) {
@@ -11,7 +12,7 @@ export async function getClaimTimelineEventsSafe(claimId: string) {
   } catch (err: any) {
     const msg = err?.message || "";
     if (/relation .*claim_timeline_events.* does not exist/i.test(msg)) {
-      console.warn("[timeline] claim_timeline_events table missing; returning empty list.");
+      logger.warn("[timeline] claim_timeline_events table missing; returning empty list.");
       return [];
     }
     console.error("[timeline] Unexpected error loading events:", msg);

@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ExportPayload {
   type: string;
@@ -79,7 +80,7 @@ export function generateEstimateDraftPayload(
   estimate: Record<string, any>,
   options?: { includeAttachments?: boolean }
 ): EmailDraftPayload {
-  console.log("[ExportPayloads] Generating estimate draft");
+  logger.debug("[ExportPayloads] Generating estimate draft");
   return {
     subject: `Estimate for ${estimate.claimNumber || "Claim"}`,
     body: "Estimate details would be here.",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
 import {
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest) {
           });
 
           results.sentEnded++;
-          console.log(`[CRON:TRIAL_ENDED] Sent to ${email} for Org ${Org.id}`);
+          logger.debug(`[CRON:TRIAL_ENDED] Sent to ${email} for Org ${Org.id}`);
         }
       } catch (error) {
         const msg = `Failed to process expired trial for Org ${Org.id}: ${error}`;
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest) {
           });
 
           results.sent24h++;
-          console.log(`[CRON:T-24H] Sent to ${email} for Org ${Org.id}`);
+          logger.debug(`[CRON:T-24H] Sent to ${email} for Org ${Org.id}`);
         }
       } catch (error) {
         const msg = `Failed to send T-24h email for Org ${Org.id}: ${error}`;
@@ -229,7 +230,7 @@ export async function GET(request: NextRequest) {
           });
 
           results.sent1h++;
-          console.log(`[CRON:T-1H] Sent to ${email} for Org ${Org.id}`);
+          logger.debug(`[CRON:T-1H] Sent to ${email} for Org ${Org.id}`);
         }
       } catch (error) {
         const msg = `Failed to send T-1h email for Org ${Org.id}: ${error}`;
@@ -244,7 +245,7 @@ export async function GET(request: NextRequest) {
       results,
     });
   } catch (error) {
-    console.error("[CRON:TRIALS_SWEEP] Fatal error:", error);
+    logger.error("[CRON:TRIALS_SWEEP] Fatal error:", error);
     return NextResponse.json(
       {
         success: false,

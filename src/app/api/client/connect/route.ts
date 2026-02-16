@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -140,7 +141,7 @@ export async function POST(req: Request) {
       message: "Connection request sent",
     });
   } catch (error) {
-    console.error("[POST /api/client/connect] Error:", error);
+    logger.error("[POST /api/client/connect] Error:", error);
     return NextResponse.json({ error: "Failed to create connection" }, { status: 500 });
   }
 }
@@ -203,7 +204,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, connections });
   } catch (error) {
-    console.error("[GET /api/client/connect] Error:", error);
+    logger.error("[GET /api/client/connect] Error:", error);
     return NextResponse.json({ error: "Failed to fetch connections" }, { status: 500 });
   }
 }

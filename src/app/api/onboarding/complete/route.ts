@@ -5,6 +5,7 @@
  */
 
 import { revalidatePath } from "next/cache";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
       redirectTo: "/dashboard",
     });
   } catch (error) {
-    console.error("[Onboarding] Completion failed:", error);
+    logger.error("[Onboarding] Completion failed:", error);
     return NextResponse.json({ error: "Failed to complete onboarding" }, { status: 500 });
   }
 }

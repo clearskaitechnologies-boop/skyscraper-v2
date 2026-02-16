@@ -14,6 +14,7 @@
 "use client";
 
 import { AlertCircle,CheckCircle2, Download, Loader2, Share2, Upload, XCircle } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useCallback,useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -182,7 +183,7 @@ export function BATFPanel({ leadId, claimId }: BATFPanelProps) {
         }
       }
     } catch (err) {
-      console.error("Failed to fetch reports:", err);
+      logger.error("Failed to fetch reports:", err);
     }
   };
 

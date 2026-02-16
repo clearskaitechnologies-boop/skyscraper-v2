@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Structure Analyzer
  *
@@ -71,7 +73,7 @@ export async function analyzeStructure(
   }
 ): Promise<{ success: boolean; data?: StructureAnalysis; error?: string }> {
   try {
-    console.log("[Structure Analyzer] Analyzing structure from", photoUrls.length, "photos");
+    logger.debug("[Structure Analyzer] Analyzing structure from", photoUrls.length, "photos");
 
     // In production, integrate with:
     // - Google Cloud Vision API
@@ -139,7 +141,7 @@ export async function analyzeStructure(
 
     return { success: true, data: analysis };
   } catch (error) {
-    console.error("[Structure Analyzer] Failed:", error);
+    logger.error("[Structure Analyzer] Failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

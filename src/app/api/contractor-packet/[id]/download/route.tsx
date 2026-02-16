@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { renderToStream } from "@react-pdf/renderer";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -117,7 +118,7 @@ ${packet.sections.map((s: string) => `- ${s}`).join("\n")}
       },
     });
   } catch (error) {
-    console.error("[Contractor Packet] Error downloading packet:", error);
+    logger.error("[Contractor Packet] Error downloading packet:", error);
     return NextResponse.json({ error: "Failed to download contractor packet" }, { status: 500 });
   }
 }

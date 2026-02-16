@@ -23,6 +23,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -53,7 +54,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
       : "User";
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || null;
 
-    console.log("[org/repair] Starting for user:", userId, "clerkOrgId:", clerkOrgId || "none");
+    logger.debug("[org/repair] Starting for user:", userId, "clerkOrgId:", clerkOrgId || "none");
 
     // Use transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
@@ -67,7 +68,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
 
       const orphanedMemberships = allMemberships.filter((m) => !m.Org);
       if (orphanedMemberships.length > 0) {
-        console.log("[org/repair] Cleaning up", orphanedMemberships.length, "orphaned memberships");
+        logger.debug("[org/repair] Cleaning up", orphanedMemberships.length, "orphaned memberships");
         await tx.user_organizations.deleteMany({
           where: {
             id: { in: orphanedMemberships.map((m) => m.id) },
@@ -85,7 +86,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
         });
 
         if (org) {
-          console.log("[org/repair] Found org via Clerk orgId:", org.id);
+          logger.debug("[org/repair] Found org via Clerk orgId:", org.id);
         }
       }
 
@@ -98,7 +99,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
             select: { id: true, name: true, clerkOrgId: true },
           });
           if (org) {
-            console.log("[org/repair] Found org via membership:", org.id);
+            logger.debug("[org/repair] Found org via membership:", org.id);
           }
         }
       }
@@ -117,7 +118,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
           });
 
           if (org) {
-            console.log("[org/repair] Found org via users.orgId:", org.id);
+            logger.debug("[org/repair] Found org via users.orgId:", org.id);
           }
         }
       }
@@ -138,7 +139,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
         });
 
         repaired.push("created_org");
-        console.log("[org/repair] Created new org:", org.id);
+        logger.debug("[org/repair] Created new org:", org.id);
       }
 
       // STEP 3: Ensure membership exists
@@ -158,7 +159,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
           },
         });
         repaired.push("created_membership");
-        console.log("[org/repair] Created membership for user:", userId);
+        logger.debug("[org/repair] Created membership for user:", userId);
       }
 
       // STEP 4: Ensure user record exists and is linked
@@ -178,14 +179,14 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
           },
         });
         repaired.push("created_user");
-        console.log("[org/repair] Created user record");
+        logger.debug("[org/repair] Created user record");
       } else if (existingUser.orgId !== org.id) {
         await tx.users.update({
           where: { clerkUserId: userId },
           data: { orgId: org.id },
         });
         repaired.push("linked_user_to_org");
-        console.log("[org/repair] Linked user to org");
+        logger.debug("[org/repair] Linked user to org");
       }
 
       // STEP 5: Ensure BillingSettings exists
@@ -202,7 +203,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
           },
         });
         repaired.push("created_billing");
-        console.log("[org/repair] Created BillingSettings");
+        logger.debug("[org/repair] Created BillingSettings");
       }
 
       return org;
@@ -221,11 +222,11 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
           ON CONFLICT ("orgId") DO NOTHING
         `;
         repaired.push("created_branding");
-        console.log("[org/repair] Created org_branding row");
+        logger.debug("[org/repair] Created org_branding row");
       }
     } catch (brandingError: any) {
       // Non-fatal - branding table may not exist in all environments
-      console.warn("[org/repair] Branding check failed (non-fatal):", brandingError.message);
+      logger.warn("[org/repair] Branding check failed (non-fatal):", brandingError.message);
     }
 
     console.log(
@@ -242,7 +243,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
       repaired: repaired.length > 0 ? repaired : undefined,
     });
   } catch (error: any) {
-    console.error("[org/repair] Error:", error);
+    logger.error("[org/repair] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Repair failed" },
       { status: 500 }

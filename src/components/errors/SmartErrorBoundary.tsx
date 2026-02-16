@@ -1,4 +1,5 @@
 import React from "react";
+import { logger } from "@/lib/logger";
 
 import ApiErrorBoundary from "./ApiErrorBoundary";
 import AuthErrorBoundary from "./AuthErrorBoundary";
@@ -94,7 +95,7 @@ class ErrorBoundaryWrapper extends React.Component<
     // Report to error tracking service in production
     if (process.env.NODE_ENV === "production") {
       // Sentry is already configured, errors will be automatically captured
-      console.error("Production error:", error);
+      logger.error("Production error:", error);
     }
   }
 

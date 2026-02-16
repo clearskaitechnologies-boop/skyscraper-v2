@@ -1,4 +1,5 @@
 import { Prisma } from "@prisma/client";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
@@ -103,7 +104,7 @@ export async function GET() {
       hasTradesMember,
     });
   } catch (error) {
-    console.error("[ONBOARDING_PROGRESS] Error:", error);
+    logger.error("[ONBOARDING_PROGRESS] Error:", error);
     return NextResponse.json({ error: "Failed to fetch onboarding progress" }, { status: 500 });
   }
 }

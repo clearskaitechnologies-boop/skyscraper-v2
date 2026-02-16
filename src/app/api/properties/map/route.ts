@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -45,7 +46,7 @@ export async function GET() {
         take: 100,
       });
     } catch (error) {
-      console.error("[Map API] Properties query failed:", error);
+      logger.error("[Map API] Properties query failed:", error);
       // Continue with empty properties array
     }
 
@@ -70,7 +71,7 @@ export async function GET() {
         take: 100,
       });
     } catch (error) {
-      console.error("[Map API] Leads query failed:", error);
+      logger.error("[Map API] Leads query failed:", error);
       // Continue with empty leads array
     }
 
@@ -113,7 +114,7 @@ export async function GET() {
 
     return NextResponse.json(mapItems, { status: 200 });
   } catch (error) {
-    console.error("[Map API] Critical error:", error);
+    logger.error("[Map API] Critical error:", error);
     // Return empty array with 200 status to prevent UI crash
     return NextResponse.json([], { status: 200 });
   }

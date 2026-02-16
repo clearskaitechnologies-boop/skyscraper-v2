@@ -5,6 +5,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { safeAI } from "@/lib/aiGuard";
 
 const openai = getOpenAI();
@@ -82,7 +83,7 @@ export async function analyzeInspectionPhoto(
     const analysisText = response.choices[0].message.content || "";
     return parseAIInspectionResponse(analysisText, componentType);
   } catch (error) {
-    console.error("Error analyzing inspection photo:", error);
+    logger.error("Error analyzing inspection photo:", error);
     throw new Error("Failed to analyze inspection photo");
   }
 }
@@ -223,7 +224,7 @@ function parseAIInspectionResponse(
       };
     }
   } catch (error) {
-    console.error("Error parsing AI response:", error);
+    logger.error("Error parsing AI response:", error);
   }
 
   // Fallback response

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -62,7 +63,7 @@ export async function GET() {
 
     return NextResponse.json({ invitations });
   } catch (error) {
-    console.error("Error fetching invitations:", error);
+    logger.error("Error fetching invitations:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

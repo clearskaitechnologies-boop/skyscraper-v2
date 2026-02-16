@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -95,7 +96,7 @@ export async function POST(req: NextRequest) {
             success: true,
           };
         } catch (error: any) {
-          console.error(`[PerAddressPDF] Failed for ${address}:`, error);
+          logger.error(`[PerAddressPDF] Failed for ${address}:`, error);
           return {
             address,
             error: error.message,
@@ -120,7 +121,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[PerAddressPDF] Error:", error);
+    logger.error("[PerAddressPDF] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate PDFs" },
       { status: 500 }

@@ -20,6 +20,7 @@
  */
 
 import { callOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { reconstructClaimTimeline } from "@/lib/claims/reconstructor";
 import prisma from "@/lib/prisma";
 
@@ -45,7 +46,7 @@ export async function generateNarrative(
   tone: NarrativeTone = "contractor"
 ): Promise<GeneratedNarrative> {
   try {
-    console.log(`[narrative] Generating for claim ${claimId} with tone: ${tone}`);
+    logger.debug(`[narrative] Generating for claim ${claimId} with tone: ${tone}`);
 
     // 1. Fetch claim with all relations
     const claim = await prisma.claims.findUnique({
@@ -122,7 +123,7 @@ export async function generateNarrative(
     // 7. Parse structured narrative
     const parsed = parseNarrativeResponse(narrativeText);
 
-    console.log(`[narrative] Generated ${narrativeText.length} characters for claim ${claimId}`);
+    logger.debug(`[narrative] Generated ${narrativeText.length} characters for claim ${claimId}`);
 
     return {
       narrative: narrativeText,
@@ -136,7 +137,7 @@ export async function generateNarrative(
       generatedAt: new Date(),
     };
   } catch (error) {
-    console.error("[narrative] Generation failed:", error);
+    logger.error("[narrative] Generation failed:", error);
     throw new Error(`Failed to generate narrative: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }

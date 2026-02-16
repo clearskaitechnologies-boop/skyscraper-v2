@@ -4,6 +4,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -155,7 +156,7 @@ export async function getPreviewContext(
       }
     }
   } catch (error) {
-    console.error("[PREVIEW_CONTEXT] Error fetching user org:", error);
+    logger.error("[PREVIEW_CONTEXT] Error fetching user org:", error);
     // Fall through to use demo branding
   }
 

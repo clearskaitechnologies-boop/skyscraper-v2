@@ -1,5 +1,6 @@
 // MODULE 4: Approvals - Client responds (approve/reject)
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest) {
       message: `Approval ${status}`,
     });
   } catch (error) {
-    console.error("[APPROVAL_RESPOND]", error);
+    logger.error("[APPROVAL_RESPOND]", error);
     return NextResponse.json({ error: "Failed to respond to approval" }, { status: 500 });
   }
 }

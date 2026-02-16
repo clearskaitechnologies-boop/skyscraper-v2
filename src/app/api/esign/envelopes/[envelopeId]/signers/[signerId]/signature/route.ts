@@ -9,6 +9,7 @@
  */
 
 import { mkdir, writeFile } from "fs/promises";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { join } from "path";
 
@@ -98,7 +99,7 @@ export async function POST(
       message: "Signature saved using simplified signature model",
     });
   } catch (error) {
-    console.error("[SIGNATURE_SAVE_ERROR]", error);
+    logger.error("[SIGNATURE_SAVE_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to save signature" },
       { status: 500 }

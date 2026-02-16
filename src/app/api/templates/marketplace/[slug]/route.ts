@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { getPremiumRegistryBySlug } from "@/lib/templates/registry";
@@ -103,7 +104,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       },
     });
   } catch (error: any) {
-    console.error(`[GET /api/templates/marketplace/${params.slug}] Error:`, error);
+    logger.error(`[GET /api/templates/marketplace/${params.slug}] Error:`, error);
     return NextResponse.json(
       { ok: false, error: error.message || "Failed to fetch template" },
       { status: 500 }

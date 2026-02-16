@@ -1,4 +1,5 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import type { NormalizedLocation } from "../weather/storm-types";
 
@@ -9,7 +10,7 @@ export async function geocodeAddress(address: string): Promise<NormalizedLocatio
   const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
 
   if (!mapboxToken) {
-    console.warn(`[GEOCODE] Mapbox token not configured - geocoding disabled`);
+    logger.warn(`[GEOCODE] Mapbox token not configured - geocoding disabled`);
     return null;
   }
 
@@ -22,14 +23,14 @@ export async function geocodeAddress(address: string): Promise<NormalizedLocatio
     } as RequestInit);
 
     if (!res.ok) {
-      console.error(`[GEOCODE] HTTP error: ${res.status}`);
+      logger.error(`[GEOCODE] HTTP error: ${res.status}`);
       return null;
     }
 
     const data: any = await res.json();
 
     if (!data.features || data.features.length === 0) {
-      console.log(`[GEOCODE] No results for address: ${address}`);
+      logger.debug(`[GEOCODE] No results for address: ${address}`);
       return null;
     }
 
@@ -39,7 +40,7 @@ export async function geocodeAddress(address: string): Promise<NormalizedLocatio
     // Extract address components from Mapbox context
     const components = parseAddressComponents(feature);
 
-    console.log(`[GEOCODE] ✅ Geocoded: ${address} -> ${lat}, ${lon}`);
+    logger.debug(`[GEOCODE] ✅ Geocoded: ${address} -> ${lat}, ${lon}`);
 
     return {
       address: components.address || address,
@@ -51,7 +52,7 @@ export async function geocodeAddress(address: string): Promise<NormalizedLocatio
       longitude: lon,
     };
   } catch (error) {
-    console.error(`[GEOCODE] Failed to geocode address:`, error);
+    logger.error(`[GEOCODE] Failed to geocode address:`, error);
     return null;
   }
 }

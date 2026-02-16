@@ -5,6 +5,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -45,13 +46,13 @@ export async function getClientFromAuth() {
           select: { id: true, name: true, brandLogoUrl: true },
         });
       } catch (error) {
-        console.log("[getClientFromAuth] Org fetch failed (non-critical):", error);
+        logger.debug("[getClientFromAuth] Org fetch failed (non-critical):", error);
       }
     }
 
     return { ...client, org } as any;
   } catch (error) {
-    console.error("[getClientFromAuth] Error:", error);
+    logger.error("[getClientFromAuth] Error:", error);
     return null;
   }
 }

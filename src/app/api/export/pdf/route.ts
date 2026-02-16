@@ -7,6 +7,7 @@
 // ============================================================================
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
@@ -41,11 +42,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log(`[PDF_EXPORT] Starting export for ${mode} - ID: ${packetId || reportId}`);
+    logger.debug(`[PDF_EXPORT] Starting export for ${mode} - ID: ${packetId || reportId}`);
 
     // Check LibreOffice availability
     const hasLibreOffice = await isLibreOfficeAvailable();
-    console.log(`[PDF_EXPORT] LibreOffice available: ${hasLibreOffice}`);
+    logger.debug(`[PDF_EXPORT] LibreOffice available: ${hasLibreOffice}`);
 
     // Fetch branding (non-fatal if fails)
     let branding: any = null;
@@ -58,7 +59,7 @@ export async function POST(req: NextRequest) {
         branding = await brandingRes.json();
       }
     } catch (e) {
-      console.warn('[PDF_EXPORT] Branding fetch failed, continuing without branding');
+      logger.warn('[PDF_EXPORT] Branding fetch failed, continuing without branding');
     }
 
     const enrichedData = { ...data, branding };
@@ -69,7 +70,7 @@ export async function POST(req: NextRequest) {
       data: enrichedData,
     });
 
-    console.log(`[PDF_EXPORT] PDF generated successfully (${pdfBuffer.length} bytes)`);
+    logger.debug(`[PDF_EXPORT] PDF generated successfully (${pdfBuffer.length} bytes)`);
 
     // Return PDF as blob
     return new NextResponse(new Uint8Array(pdfBuffer), {
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[PDF_EXPORT] Export failed:", error);
+    logger.error("[PDF_EXPORT] Export failed:", error);
     Sentry.captureException(error, {
       tags: { component: "pdf-export" },
     });
@@ -105,7 +106,7 @@ export async function GET() {
       strategy: hasLibreOffice ? "LibreOffice + pdf-lib fallback" : "pdf-lib only",
     });
   } catch (error: any) {
-    console.error("[PDF_EXPORT] Capability check failed:", error);
+    logger.error("[PDF_EXPORT] Capability check failed:", error);
     return NextResponse.json(
       { error: error.message || "Capability check failed" },
       { status: 500 }

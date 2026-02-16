@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface Phase50ButtonsProps {
   claimId: string;
@@ -21,7 +22,7 @@ export function Phase50SelfWritingButtons({ claimId }: Phase50ButtonsProps) {
 
       if (data.success) {
         alert("✅ Narrative generated successfully!\n\nCheck the console for the full narrative.");
-        console.log("Generated Narrative:", data.narrative);
+        logger.debug("Generated Narrative:", data.narrative);
       } else {
         alert(`❌ Failed: ${data.error || "Unknown error"}`);
       }
@@ -48,7 +49,7 @@ export function Phase50SelfWritingButtons({ claimId }: Phase50ButtonsProps) {
             `Est. Cost: $${codeSummary.totalEstimatedCost.toLocaleString()}\n\n` +
             `Check the console for full details.`
         );
-        console.log("Code Summary:", codeSummary);
+        logger.debug("Code Summary:", codeSummary);
       } else {
         alert(`❌ Failed: ${data.error || "Unknown error"}`);
       }
@@ -84,7 +85,7 @@ export function Phase50SelfWritingButtons({ claimId }: Phase50ButtonsProps) {
             `Photo Evidence: ${appeal.photoReferences.length}\n\n` +
             `Check the console for the full appeal letter.`
         );
-        console.log("Appeal Package:", appeal);
+        logger.debug("Appeal Package:", appeal);
       } else {
         alert(`❌ Failed: ${data.error || "Unknown error"}`);
       }

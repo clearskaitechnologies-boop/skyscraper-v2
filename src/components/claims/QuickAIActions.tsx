@@ -7,6 +7,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   CheckCircle2,
   Download,
@@ -14,7 +15,6 @@ import {
   ListChecks,
   Loader2,
   MessageSquare,
-  Send,
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
@@ -96,7 +96,7 @@ export function QuickAIActions({ claimId, onActionComplete }: QuickAIActionsProp
         throw new Error(data.error);
       }
     } catch (error) {
-      console.error(`[QuickAIActions] Action ${action.id} failed:`, error);
+      logger.error(`[QuickAIActions] Action ${action.id} failed:`, error);
       setResults((prev) => ({ ...prev, [action.id]: "error" }));
     } finally {
       setLoading(null);

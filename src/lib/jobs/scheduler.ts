@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type JobFrequency =
   | "EVERY_MINUTE"
@@ -376,51 +377,51 @@ export async function getJobExecutions(
 
 // Job Handler Implementations
 async function cleanupOldLogs(params: any) {
-  console.log("Cleaning up old logs...");
+  logger.debug("Cleaning up old logs...");
   return { deleted: 0 };
 }
 
 async function sendScheduledReports(params: any) {
-  console.log("Sending scheduled reports...");
+  logger.debug("Sending scheduled reports...");
   return { sent: 0 };
 }
 
 async function processEmailQueue(params: any) {
-  console.log("Processing email queue...");
+  logger.debug("Processing email queue...");
   return { processed: 0 };
 }
 
 async function processSMSQueue(params: any) {
-  console.log("Processing SMS queue...");
+  logger.debug("Processing SMS queue...");
   return { processed: 0 };
 }
 
 async function processWebhookRetries(params: any) {
-  console.log("Processing webhook retries...");
+  logger.debug("Processing webhook retries...");
   return { retried: 0 };
 }
 
 async function backupDatabase(params: any) {
-  console.log("Backing up database...");
+  logger.debug("Backing up database...");
   return { success: true };
 }
 
 async function syncIntegrations(params: any) {
-  console.log("Syncing integrations...");
+  logger.debug("Syncing integrations...");
   return { synced: 0 };
 }
 
 async function calculateAnalytics(params: any) {
-  console.log("Calculating analytics...");
+  logger.debug("Calculating analytics...");
   return { calculated: true };
 }
 
 async function checkExpiredTrials(params: any) {
-  console.log("Checking expired trials...");
+  logger.debug("Checking expired trials...");
   return { expired: 0 };
 }
 
 async function sendReminders(params: any) {
-  console.log("Sending reminders...");
+  logger.debug("Sending reminders...");
   return { sent: 0 };
 }

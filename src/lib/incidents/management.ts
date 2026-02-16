@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type IncidentSeverity = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
 export type IncidentStatus = "OPEN" | "INVESTIGATING" | "RESOLVED" | "CLOSED";
@@ -69,7 +70,7 @@ export async function getActiveIncidents(): Promise<Incident[]> {
 
 async function sendIncidentAlert(incidentId: string): Promise<void> {
   // TODO: Send alert via email/SMS/webhook
-  console.log("Incident alert sent:", incidentId);
+  logger.debug("Incident alert sent:", incidentId);
 }
 
 export async function addIncidentUpdate(incidentId: string, update: string): Promise<void> {

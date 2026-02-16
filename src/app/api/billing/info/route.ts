@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getCustomerInvoices, getCustomerPaymentMethods } from "@/lib/billing/portal";
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching billing info:", error);
+    logger.error("Error fetching billing info:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

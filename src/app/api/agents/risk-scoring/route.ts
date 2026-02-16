@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -219,7 +220,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("[risk-scoring] Error:", error);
+    logger.error("[risk-scoring] Error:", error);
     return NextResponse.json({ error: "Failed to calculate risk score" }, { status: 500 });
   }
 }

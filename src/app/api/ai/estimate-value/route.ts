@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
@@ -81,7 +82,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       disclaimer: "AI estimate based on typical damage patterns. Manual review recommended.",
     });
   } catch (error) {
-    console.error("[AI Estimate Value] Error:", error);
+    logger.error("[AI Estimate Value] Error:", error);
     return NextResponse.json({ error: "Failed to generate value estimate" }, { status: 500 });
   }
 }

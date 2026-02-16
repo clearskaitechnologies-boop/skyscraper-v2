@@ -5,6 +5,7 @@
 // =====================================================
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function getAdminLogs(orgId: string, limit = 200) {
   // Fetch report events (always available)
@@ -18,7 +19,7 @@ export async function getAdminLogs(orgId: string, limit = 200) {
       LIMIT ${limit}
     `) as any[];
   } catch (error) {
-    console.error("Failed to fetch report events:", error);
+    logger.error("Failed to fetch report events:", error);
     events = [];
   }
 
@@ -71,7 +72,7 @@ export async function logAuditEvent(
       VALUES (${orgId}::uuid, ${userId}, ${event}, ${JSON.stringify(meta || {})}::jsonb)
     `;
   } catch (error) {
-    console.error("Failed to log audit event:", error);
+    logger.error("Failed to log audit event:", error);
     // Don't throw - auditing is secondary
   }
 }
@@ -88,7 +89,7 @@ export async function logWebhookEvent(
       VALUES (${orgId}::uuid, ${kind}, ${statusCode}, ${JSON.stringify(payload || {})}::jsonb)
     `;
   } catch (error) {
-    console.error("Failed to log webhook event:", error);
+    logger.error("Failed to log webhook event:", error);
     // Don't throw - logging is secondary
   }
 }

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Weather Builder - Weather verification and analysis
  * Stub file for legacy imports
@@ -17,7 +19,7 @@ export async function fetchWeatherVerification(params: {
   location: string;
   dateOfLoss: Date;
 }): Promise<WeatherVerificationResult> {
-  console.warn('fetchWeatherVerification is deprecated - use weather AI functions instead');
+  logger.warn('fetchWeatherVerification is deprecated - use weather AI functions instead');
   
   return {
     verified: false,

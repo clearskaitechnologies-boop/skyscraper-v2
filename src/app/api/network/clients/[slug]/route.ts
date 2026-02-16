@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -39,7 +40,7 @@ export async function GET(req: NextRequest, { params }: Params) {
 
     return NextResponse.json({ client: { ...client, contacts, activity } });
   } catch (error) {
-    console.error(`[GET /api/network/clients/${slug}]`, error);
+    logger.error(`[GET /api/network/clients/${slug}]`, error);
     return NextResponse.json({ error: "Failed to fetch client network" }, { status: 500 });
   }
 }
@@ -85,7 +86,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 
     return NextResponse.json({ client: { ...updated, contacts } });
   } catch (error) {
-    console.error(`[PATCH /api/network/clients/${slug}]`, error);
+    logger.error(`[PATCH /api/network/clients/${slug}]`, error);
     return NextResponse.json({ error: "Failed to update client network" }, { status: 500 });
   }
 }

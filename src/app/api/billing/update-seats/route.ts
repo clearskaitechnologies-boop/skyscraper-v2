@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { PRICE_PER_SEAT_CENTS, validateSeatCount } from "@/lib/billing/seat-pricing";
@@ -81,7 +82,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(`[update-seats] org=${orgId} seats: ${oldSeatCount} → ${newSeatCount}`);
+    logger.debug(`[update-seats] org=${orgId} seats: ${oldSeatCount} → ${newSeatCount}`);
 
     return NextResponse.json({
       success: true,
@@ -91,7 +92,7 @@ export async function POST(req: NextRequest) {
       prorated: true,
     });
   } catch (error: any) {
-    console.error("[update-seats] Error:", error);
+    logger.error("[update-seats] Error:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to update seats" },
       { status: 500 }
@@ -136,7 +137,7 @@ export async function GET() {
       monthlyTotal: ((sub?.seatCount || 0) * PRICE_PER_SEAT_CENTS) / 100,
     });
   } catch (error: any) {
-    console.error("[update-seats GET] Error:", error);
+    logger.error("[update-seats GET] Error:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to get seat info" },
       { status: 500 }

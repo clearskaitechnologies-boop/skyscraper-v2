@@ -6,6 +6,7 @@
 
 // Direct import for event publishing
 import { prismaModel } from "@/lib/db/prismaModel";
+import { logger } from "@/lib/logger";
 
 import { missionRegistry } from "./missionRegistry";
 
@@ -77,7 +78,7 @@ export async function processInline(
   try {
     // Log mission start
     if (opts.logLevel === "debug" || opts.logLevel === "info") {
-      console.log(`[Inline] Starting mission: ${missionId} for job ${jobId}`);
+      logger.debug(`[Inline] Starting mission: ${missionId} for job ${jobId}`);
     }
 
     // Publish start event
@@ -123,7 +124,7 @@ export async function processInline(
       });
 
       if (opts.logLevel === "debug" || opts.logLevel === "info") {
-        console.log(`[Inline] Mission ${missionId} requires approval - paused`);
+        logger.debug(`[Inline] Mission ${missionId} requires approval - paused`);
       }
 
       return {
@@ -146,7 +147,7 @@ export async function processInline(
     // Handle chaining
     if (result.next) {
       if (opts.logLevel === "debug" || opts.logLevel === "info") {
-        console.log(`[Inline] Chaining to mission: ${result.next}`);
+        logger.debug(`[Inline] Chaining to mission: ${result.next}`);
       }
 
       // Recursively process next mission
@@ -158,7 +159,7 @@ export async function processInline(
     }
 
     if (opts.logLevel === "debug" || opts.logLevel === "info") {
-      console.log(`[Inline] Mission ${missionId} completed successfully`);
+      logger.debug(`[Inline] Mission ${missionId} completed successfully`);
     }
 
     return { success: true, result };
@@ -176,7 +177,7 @@ export async function processInline(
     });
 
     if (opts.logLevel === "error" || opts.logLevel === "warn" || opts.logLevel === "info") {
-      console.error(`[Inline] Mission ${missionId} failed:`, error);
+      logger.error(`[Inline] Mission ${missionId} failed:`, error);
     }
 
     return { success: false, error: errorMsg };

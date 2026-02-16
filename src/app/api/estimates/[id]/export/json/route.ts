@@ -1,5 +1,6 @@
 // src/app/api/estimates/[id]/export/json/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -66,7 +67,7 @@ export async function GET(req: NextRequest, { params }: RouteParams) {
       },
     });
   } catch (err) {
-    console.error("Error exporting estimates JSON:", err);
+    logger.error("Error exporting estimates JSON:", err);
     return NextResponse.json({ error: "Failed to export estimates." }, { status: 500 });
   }
 }

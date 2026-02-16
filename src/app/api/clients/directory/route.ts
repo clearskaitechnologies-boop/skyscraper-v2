@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -40,7 +41,7 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error("Error fetching client directory:", error);
+    logger.error("Error fetching client directory:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

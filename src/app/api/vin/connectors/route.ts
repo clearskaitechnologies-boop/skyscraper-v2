@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -42,7 +43,7 @@ export async function GET() {
       })),
     });
   } catch (error) {
-    console.error("[VIN Connectors] Error:", error);
+    logger.error("[VIN Connectors] Error:", error);
     return NextResponse.json({ error: "Failed to fetch connectors" }, { status: 500 });
   }
 }
@@ -87,7 +88,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, connector });
   } catch (error) {
-    console.error("[VIN Connectors] Error:", error);
+    logger.error("[VIN Connectors] Error:", error);
     return NextResponse.json({ error: "Failed to configure connector" }, { status: 500 });
   }
 }

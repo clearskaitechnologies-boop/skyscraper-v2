@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 
     return NextResponse.json({ vendor });
   } catch (error: any) {
-    console.error("Error fetching vendor:", error);
+    logger.error("Error fetching vendor:", error);
     return NextResponse.json(
       {
         error: "Failed to fetch vendor",

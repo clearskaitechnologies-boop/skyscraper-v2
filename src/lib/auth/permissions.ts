@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -102,7 +103,7 @@ export async function getUserRole(): Promise<Role | null> {
 
     return user?.role ? roleMap[user.role] || "viewer" : null;
   } catch (error) {
-    console.error("Failed to get user role:", error);
+    logger.error("Failed to get user role:", error);
     return null;
   }
 }
@@ -195,7 +196,7 @@ export async function getUserPermissions(): Promise<Permission[]> {
 
 // Legacy function for backwards compatibility
 export async function ensureRole(userId: string, allowedRoles: string[]) {
-  console.warn("ensureRole is deprecated - use requireRole or requirePermission instead");
+  logger.warn("ensureRole is deprecated - use requireRole or requirePermission instead");
   const role = await getUserRole();
   if (!role) {
     throw new Error(
@@ -215,7 +216,7 @@ export async function ensureRole(userId: string, allowedRoles: string[]) {
 
 // Legacy function for backwards compatibility
 export async function getUserRoles(userId: string): Promise<string[]> {
-  console.warn("getUserRoles is deprecated - use getUserRole instead");
+  logger.warn("getUserRoles is deprecated - use getUserRole instead");
   const role = await getUserRole();
   return role ? [role] : [];
 }
@@ -259,7 +260,7 @@ export async function canUpload({
 
     return !!portalAccess;
   } catch (error) {
-    console.error("Error checking upload permission:", error);
+    logger.error("Error checking upload permission:", error);
     return false;
   }
 }
@@ -286,7 +287,7 @@ export async function canEditClaim({
     const tenant = await getTenant();
     return tenant === claim.orgId;
   } catch (error) {
-    console.error("Error checking edit claim permission:", error);
+    logger.error("Error checking edit claim permission:", error);
     return false;
   }
 }
@@ -313,7 +314,7 @@ export async function canInviteClients({
     const tenant = await getTenant();
     return tenant === claim.orgId;
   } catch (error) {
-    console.error("Error checking invite clients permission:", error);
+    logger.error("Error checking invite clients permission:", error);
     return false;
   }
 }
@@ -340,7 +341,7 @@ export async function canAttachVendors({
     const tenant = await getTenant();
     return tenant === claim.orgId;
   } catch (error) {
-    console.error("Error checking attach vendors permission:", error);
+    logger.error("Error checking attach vendors permission:", error);
     return false;
   }
 }
@@ -404,7 +405,7 @@ export async function getClaimPermissions({
       portalRole: hasPortalAccess ? "EDITOR" : undefined,
     };
   } catch (error) {
-    console.error("Error getting claim permissions:", error);
+    logger.error("Error getting claim permissions:", error);
     return {
       canView: false,
       canEdit: false,

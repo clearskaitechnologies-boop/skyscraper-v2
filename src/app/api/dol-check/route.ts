@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   const { userId } = await auth();
@@ -35,7 +36,7 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify({ data: mockData }), { status: 200 });
   } catch (error) {
-    console.error("[DOL-CHECK] Error:", error);
+    logger.error("[DOL-CHECK] Error:", error);
     return new Response(JSON.stringify({ error: "DOL check failed" }), { status: 500 });
   }
 }

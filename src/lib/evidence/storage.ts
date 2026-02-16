@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import crypto from "crypto";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -77,7 +78,7 @@ export async function uploadEvidence(
   });
 
   if (error) {
-    console.error("Evidence upload error:", error);
+    logger.error("Evidence upload error:", error);
     throw new Error(`Failed to upload evidence: ${error.message}`);
   }
 
@@ -200,7 +201,7 @@ export async function getBatchSignedUrls(
           const url = await getEvidenceSignedUrl(path, expiresIn, skipCache);
           return { path, url };
         } catch (error) {
-          console.error(`Failed to generate signed URL for ${path}:`, error);
+          logger.error(`Failed to generate signed URL for ${path}:`, error);
           return { path, url: "" }; // Empty string for failed paths
         }
       })

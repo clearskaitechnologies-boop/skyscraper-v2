@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * CSV Parser Stub
  *
@@ -32,7 +34,7 @@ export interface LineItem {
  * Stub implementation
  */
 export function parseCSV(content: string): ParseResult {
-  console.log("[CSVParser] Stub: Would parse CSV content");
+  logger.debug("[CSVParser] Stub: Would parse CSV content");
   return {
     success: true,
     rows: [],
@@ -46,7 +48,7 @@ export function parseCSV(content: string): ParseResult {
  * Parse CSV file
  */
 export async function parseCSVFile(file: File | Blob): Promise<ParseResult> {
-  console.log("[CSVParser] Stub: Would parse CSV file");
+  logger.debug("[CSVParser] Stub: Would parse CSV file");
   return parseCSV("");
 }
 
@@ -68,7 +70,7 @@ export function validateCSVStructure(
  * Validate line items - stub
  */
 export function validateLineItems(items: LineItem[]): { valid: boolean; errors: string[] } {
-  console.log(`[CSVParser] Validating ${items.length} line items`);
+  logger.debug(`[CSVParser] Validating ${items.length} line items`);
   return { valid: true, errors: [] };
 }
 

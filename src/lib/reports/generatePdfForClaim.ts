@@ -1,5 +1,6 @@
 // lib/reports/generatePdfForClaim.ts
 import { nanoid } from "nanoid";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -91,7 +92,7 @@ export async function generatePdfForClaim(config: ReportConfig): Promise<Generat
       },
     });
   } catch (error) {
-    console.warn("[generatePdfForClaim] Failed to save report metadata:", error);
+    logger.warn("[generatePdfForClaim] Failed to save report metadata:", error);
     // Continue even if save fails - PDF was generated successfully
   }
 

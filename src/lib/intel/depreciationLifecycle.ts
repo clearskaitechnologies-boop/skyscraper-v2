@@ -3,6 +3,7 @@
 // Handles status transitions and simple schedule-based depreciation calculations.
 
 import prisma from '@/lib/prisma';
+import { logger } from "@/lib/logger";
 
 // Basic annual depreciation rates by category (could be extended).
 const CATEGORY_RATES: Record<string, number> = {
@@ -52,7 +53,7 @@ export interface DepreciationSummary {
 
 function log(action: string, extra?: any) {
   // Intentionally quiet; uncomment for tracing
-  // console.log(`🟡 depreciation:${action} (stub)`, extra || {});
+  // logger.debug(`🟡 depreciation:${action} (stub)`, extra || {});
 }
 
 export async function initializeDepreciationTracker(

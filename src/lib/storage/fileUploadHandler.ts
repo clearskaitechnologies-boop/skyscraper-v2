@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * File Upload Handler
  *
@@ -61,14 +63,14 @@ export class FileUploadHandler {
     for (const file of fileArray) {
       // Check max files
       if (this.files.size >= this.options.maxFiles!) {
-        console.warn("Maximum number of files reached");
+        logger.warn("Maximum number of files reached");
         break;
       }
 
       // Validate file
       const validation = this.validateFile(file);
       if (!validation.valid) {
-        console.error(`File validation failed: ${validation.error}`);
+        logger.error(`File validation failed: ${validation.error}`);
         continue;
       }
 

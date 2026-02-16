@@ -1,5 +1,6 @@
 // app/api/intel/claims-packet/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ClaimsPacketInput, generateClaimsPacket } from "@/lib/intel/reports/claims-packet";
@@ -173,7 +174,7 @@ export async function POST(req: Request) {
       packet,
     });
   } catch (error) {
-    console.error("Claims Packet Generation Error:", error);
+    logger.error("Claims Packet Generation Error:", error);
     return NextResponse.json(
       { error: "Claims packet generation failed", details: String(error) },
       { status: 500 }
@@ -218,7 +219,7 @@ export async function GET(req: Request) {
       generatedAt: report.createdAt,
     });
   } catch (error) {
-    console.error("Claims Packet Retrieval Error:", error);
+    logger.error("Claims Packet Retrieval Error:", error);
     return NextResponse.json(
       { error: "Claims packet retrieval failed", details: String(error) },
       { status: 500 }

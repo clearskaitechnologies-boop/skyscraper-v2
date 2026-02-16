@@ -5,6 +5,7 @@
  */
 
 import { getCachedClaimContext, setCachedClaimContext } from "@/lib/cache/claimContextCache";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { computeVariances, Variance } from "@/lib/delta/computeDelta";
 import { logger } from "@/lib/observability/logger";
@@ -346,7 +347,7 @@ export async function buildClaimContext(claimId: string, skipCache = false): Pro
 
   // Cache the result (fire and forget - don't block on cache write)
   setCachedClaimContext(claimId, context).catch((err) => {
-    console.error("[CACHE] Failed to cache claim context:", err);
+    logger.error("[CACHE] Failed to cache claim context:", err);
   });
 
   return context;

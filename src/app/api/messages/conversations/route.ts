@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -53,7 +54,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ success: true, data: threadsWithUnread });
   } catch (error) {
-    console.error("Error fetching message threads:", error);
+    logger.error("Error fetching message threads:", error);
     return NextResponse.json({ error: "Failed to fetch message threads" }, { status: 500 });
   }
 }

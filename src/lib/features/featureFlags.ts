@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type FeatureFlagScope = "GLOBAL" | "ORG" | "USER";
 
@@ -160,7 +161,7 @@ export async function enableFeature(
         },
       })
       .catch(() => {
-        console.warn("⚠️ FeatureFlag table not found - using in-memory cache");
+        logger.warn("⚠️ FeatureFlag table not found - using in-memory cache");
         flagCache.set(featureKey, {
           key: featureKey,
           enabled: true,
@@ -179,7 +180,7 @@ export async function enableFeature(
       targetUserIds: targets?.userIds,
     });
   } catch (error) {
-    console.error("Failed to enable feature:", error);
+    logger.error("Failed to enable feature:", error);
   }
 }
 
@@ -217,7 +218,7 @@ export async function disableFeature(
       cached.enabled = false;
     }
   } catch (error) {
-    console.error("Failed to disable feature:", error);
+    logger.error("Failed to disable feature:", error);
   }
 }
 
@@ -257,7 +258,7 @@ export async function getAllFeatureFlags(): Promise<FeatureFlag[]> {
 
     return allFlags;
   } catch (error) {
-    console.error("Failed to get feature flags:", error);
+    logger.error("Failed to get feature flags:", error);
     return Object.entries(DEFAULT_FLAGS).map(([key, enabled]) => ({
       key,
       enabled,

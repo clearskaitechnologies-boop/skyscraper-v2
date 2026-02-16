@@ -21,6 +21,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 const openai = getOpenAI();
@@ -157,7 +158,7 @@ export interface ReconstructionResult {
 // ==========================================
 
 export async function reconstructClaimTimeline(claimId: string): Promise<ReconstructionResult> {
-  console.log(`[Reconstructor] Starting reconstruction for claim ${claimId}`);
+  logger.debug(`[Reconstructor] Starting reconstruction for claim ${claimId}`);
 
   // Step 1: Gather all data sources
   const sources = await gatherClaimSources(claimId);
@@ -729,7 +730,7 @@ Focus on: timeline completeness, documentation strength, and recommended next st
 
     return completion.choices[0]?.message?.content || "Claim reconstruction analysis complete.";
   } catch (error) {
-    console.error("[Reconstructor] Error generating AI summary:", error);
+    logger.error("[Reconstructor] Error generating AI summary:", error);
     return `Claim reconstruction shows ${realTimeline.length} documented events with ${missingEvents.length} missing components. Quality score indicates ${discrepancies.length} areas requiring attention for optimal claim presentation.`;
   }
 }

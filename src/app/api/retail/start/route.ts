@@ -11,6 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
@@ -59,7 +60,7 @@ export async function POST() {
       .single();
 
     if (error) {
-      console.error("[retail/start] Insert error:", error);
+      logger.error("[retail/start] Insert error:", error);
       return NextResponse.json(
         { error: "Failed to create draft", details: error.message },
         { status: 500 }
@@ -76,7 +77,7 @@ export async function POST() {
       description: "Draft created",
     });
   } catch (err) {
-    console.error("[retail/start] Unexpected error:", err);
+    logger.error("[retail/start] Unexpected error:", err);
     return NextResponse.json(
       {
         error: "Internal server error",

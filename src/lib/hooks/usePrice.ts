@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Hook for fetching product pricing
  */
@@ -30,7 +32,7 @@ export async function fetchPrice(
     
     return await res.json();
   } catch (error) {
-    console.error("Error fetching price:", error);
+    logger.error("Error fetching price:", error);
     return null;
   }
 }

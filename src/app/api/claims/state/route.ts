@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log(`✅ Claim ${claimId} state: ${currentState} → ${state} (${trigger})`);
+    logger.debug(`✅ Claim ${claimId} state: ${currentState} → ${state} (${trigger})`);
 
     // Create notification for user
     try {
@@ -144,7 +145,7 @@ export async function POST(req: NextRequest) {
         ).catch((err) => console.error("Failed to send claim update email:", err));
       }
     } catch (error) {
-      console.error("Failed to create notification:", error);
+      logger.error("Failed to create notification:", error);
       // Don't fail the request if notification fails
     }
 
@@ -155,7 +156,7 @@ export async function POST(req: NextRequest) {
       trigger,
     });
   } catch (error: any) {
-    console.error("State transition error:", error);
+    logger.error("State transition error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update claim state" },
       { status: 500 }
@@ -207,7 +208,7 @@ export async function GET(req: NextRequest) {
       history,
     });
   } catch (error: any) {
-    console.error("State history error:", error);
+    logger.error("State history error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to retrieve state history" },
       { status: 500 }

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Error Tracking Integration (Sentry)
  *
@@ -19,10 +21,10 @@ export interface ErrorContext {
  */
 export function initSentry(): void {
   if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
-    console.log("✅ Sentry initialized");
+    logger.debug("✅ Sentry initialized");
     // TODO: Actual Sentry.init() when Sentry SDK is installed
   } else {
-    console.warn("⚠️  Sentry DSN not configured");
+    logger.warn("⚠️  Sentry DSN not configured");
   }
 }
 
@@ -51,7 +53,7 @@ export function captureMessage(
   level: "info" | "warning" | "error" = "info",
   context?: ErrorContext
 ): void {
-  console.log(`📝 Message captured [${level}]:`, message, context);
+  logger.debug(`📝 Message captured [${level}]:`, message, context);
 
   // TODO: Send to Sentry
   // Sentry.captureMessage(message, {

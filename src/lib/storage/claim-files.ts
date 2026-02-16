@@ -1,5 +1,6 @@
 // Storage helper for claim document/photo uploads
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey =
@@ -48,7 +49,7 @@ export async function uploadClaimFileToStorage(
   });
 
   if (error) {
-    console.error("[uploadClaimFileToStorage] Upload error:", error);
+    logger.error("[uploadClaimFileToStorage] Upload error:", error);
     throw new Error(`Failed to upload file: ${error.message}`);
   }
 

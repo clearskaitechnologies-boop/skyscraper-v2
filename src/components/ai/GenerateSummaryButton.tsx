@@ -7,6 +7,7 @@
 "use client";
 
 import { AlertCircle,FileText, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface GenerateSummaryButtonProps {
@@ -44,7 +45,7 @@ export function GenerateSummaryButton({
 
       onComplete?.(data.result);
     } catch (err: any) {
-      console.error("[GenerateSummary] Error:", err);
+      logger.error("[GenerateSummary] Error:", err);
       setError(err.message);
     } finally {
       setIsGenerating(false);

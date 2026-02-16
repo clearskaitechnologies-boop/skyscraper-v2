@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -92,7 +93,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, message });
   } catch (error: any) {
-    console.error("Error sending message:", error);
+    logger.error("Error sending message:", error);
     return new NextResponse(error?.message || "Internal server error", {
       status: 500,
     });

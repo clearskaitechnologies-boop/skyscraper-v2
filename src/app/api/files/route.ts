@@ -4,6 +4,7 @@ export const fetchCache = "force-no-store";
 export const runtime = "nodejs";
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(files);
   } catch (error) {
-    console.error("Failed to fetch files:", error);
+    logger.error("Failed to fetch files:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

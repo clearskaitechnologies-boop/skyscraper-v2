@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -146,7 +147,7 @@ export async function GET(req: NextRequest, context: RouteContext) {
       Message: mappedMessages, // keep uppercase alias for backward compat
     });
   } catch (error) {
-    console.error("Error fetching Message:", error);
+    logger.error("Error fetching Message:", error);
     return NextResponse.json({ error: "Failed to fetch messages" }, { status: 500 });
   }
 }
@@ -279,13 +280,13 @@ export async function POST(req: NextRequest, context: RouteContext) {
         }
       }
     } catch (error) {
-      console.error("Failed to create message notifications:", error);
+      logger.error("Failed to create message notifications:", error);
       // Don't fail the request if notification fails
     }
 
     return NextResponse.json(message, { status: 201 });
   } catch (error) {
-    console.error("Error sending message:", error);
+    logger.error("Error sending message:", error);
     return NextResponse.json({ error: "Failed to send message" }, { status: 500 });
   }
 }
@@ -355,7 +356,7 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true, message: "Thread deleted" });
   } catch (error) {
-    console.error("Error deleting thread:", error);
+    logger.error("Error deleting thread:", error);
     return NextResponse.json({ error: "Failed to delete thread" }, { status: 500 });
   }
 }
@@ -462,7 +463,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
       { status: 400 }
     );
   } catch (error) {
-    console.error("Error updating thread:", error);
+    logger.error("Error updating thread:", error);
     return NextResponse.json({ error: "Failed to update thread" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import mapboxgl from "mapbox-gl";
+import { logger } from "@/lib/logger";
 import { useEffect, useRef, useState } from "react";
 
 interface MapboxMapProps {
@@ -31,14 +32,14 @@ export default function MapboxMap({ properties }: MapboxMapProps) {
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || null;
 
     if (!token) {
-      console.error("[MapboxMap] No token available");
+      logger.error("[MapboxMap] No token available");
       setError("Map temporarily unavailable");
       setIsLoading(false);
       return;
     }
 
     try {
-      console.log("[MapboxMap] Setting up map instance");
+      logger.debug("[MapboxMap] Setting up map instance");
       mapboxgl.accessToken = token;
 
       // Initialize map centered on Prescott, AZ (Phase 1 Rule: Use Prescott fallback)
@@ -58,18 +59,18 @@ export default function MapboxMap({ properties }: MapboxMapProps) {
       );
 
       map.current.on("load", () => {
-        console.log("[MapboxMap] Map loaded successfully");
+        logger.debug("[MapboxMap] Map loaded successfully");
         setMapLoaded(true);
         setIsLoading(false);
       });
 
       map.current.on("error", (e) => {
-        console.error("[MapboxMap] Map error:", e);
+        logger.error("[MapboxMap] Map error:", e);
         setError("Map temporarily unavailable");
         setIsLoading(false);
       });
     } catch (err: any) {
-      console.error("[MapboxMap] Initialization failed:", err);
+      logger.error("[MapboxMap] Initialization failed:", err);
       setError("Map temporarily unavailable");
       setIsLoading(false);
     }

@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -65,7 +66,7 @@ export async function POST(request: NextRequest) {
       message: "Thank you for your feedback!",
     });
   } catch (error) {
-    console.error("Feedback API error:", error);
+    logger.error("Feedback API error:", error);
     return NextResponse.json({ error: "Failed to submit feedback" }, { status: 500 });
   }
 }
@@ -104,7 +105,7 @@ export async function GET(request: NextRequest) {
       count: feedback.length,
     });
   } catch (error) {
-    console.error("Feedback GET error:", error);
+    logger.error("Feedback GET error:", error);
     return NextResponse.json({ error: "Failed to fetch feedback" }, { status: 500 });
   }
 }

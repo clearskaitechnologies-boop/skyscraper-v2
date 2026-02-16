@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { formatPrice, getReportBySku } from "@/config/communityReports";
@@ -48,7 +49,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
     }
 
-    console.log(`[PURCHASE] User ${userId} purchasing report: ${reportConfig.title}`);
+    logger.debug(`[PURCHASE] User ${userId} purchasing report: ${reportConfig.title}`);
 
     // ENHANCEMENT: When Stripe is ready, create checkout session here
     // For now, create a pending order in the database
@@ -78,7 +79,7 @@ export async function POST(request: Request) {
       nextAction: "pending_payment",
     });
   } catch (error: any) {
-    console.error("[PURCHASE] Error:", error);
+    logger.error("[PURCHASE] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to purchase report" },
       { status: 500 }

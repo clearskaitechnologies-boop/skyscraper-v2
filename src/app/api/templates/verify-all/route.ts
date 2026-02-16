@@ -4,6 +4,7 @@
  */
 
 import fs from "fs/promises";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import path from "path";
 
@@ -95,7 +96,7 @@ export async function GET() {
       },
     });
   } catch (error: any) {
-    console.error("[verify-all] Error:", error);
+    logger.error("[verify-all] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to verify templates" },
       { status: 500 }

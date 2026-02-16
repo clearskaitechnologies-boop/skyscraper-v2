@@ -12,6 +12,7 @@ export const revalidate = 0;
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -59,7 +60,7 @@ async function GET_INNER(_req: Request, ctx: { userId: string; orgId: string | n
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("OpenAI Vision selftest failed:", error);
+    logger.error("OpenAI Vision selftest failed:", error);
 
     return NextResponse.json(
       {

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       updatedAt: packet.updated_at,
     });
   } catch (error) {
-    console.error("[Contractor Packet] Error fetching status:", error);
+    logger.error("[Contractor Packet] Error fetching status:", error);
     return NextResponse.json(
       { error: "Failed to fetch contractor packet status" },
       { status: 500 }

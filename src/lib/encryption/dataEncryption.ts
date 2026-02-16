@@ -6,6 +6,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 const ALGORITHM = "aes-256-gcm";
 const IV_LENGTH = 16;
@@ -21,7 +22,7 @@ function getEncryptionKey(): string {
   const key = process.env.ENCRYPTION_KEY || process.env.DATABASE_ENCRYPTION_KEY;
 
   if (!key) {
-    console.warn("⚠️ No ENCRYPTION_KEY found - using fallback (NOT FOR PRODUCTION!)");
+    logger.warn("⚠️ No ENCRYPTION_KEY found - using fallback (NOT FOR PRODUCTION!)");
     return "fallback-development-key-change-in-production-32bytes!!";
   }
 
@@ -57,7 +58,7 @@ export function encrypt(plaintext: string): string {
     // Format: salt:iv:tag:encrypted
     return `${salt.toString("hex")}:${iv.toString("hex")}:${tag.toString("hex")}:${encrypted}`;
   } catch (error) {
-    console.error("Encryption failed:", error);
+    logger.error("Encryption failed:", error);
     throw new Error("Failed to encrypt data");
   }
 }
@@ -91,7 +92,7 @@ export function decrypt(encrypted: string): string {
 
     return decrypted;
   } catch (error) {
-    console.error("Decryption failed:", error);
+    logger.error("Decryption failed:", error);
     throw new Error("Failed to decrypt data");
   }
 }

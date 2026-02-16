@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import { saveSignature } from "@/lib/signatures/saveSignature";
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Signature save error:", error);
+    logger.error("Signature save error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to save signature" },
       { status: 500 }

@@ -11,6 +11,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
 import { trackPerformance } from "./perf";
@@ -170,7 +171,7 @@ async function _detectSlopesInternal(imageUrl: string): Promise<SlopeAnalysis> {
       analyzedAt: new Date(),
     };
   } catch (error) {
-    console.error("[Geometry] Slope detection error:", error);
+    logger.error("[Geometry] Slope detection error:", error);
 
     // Safe fallback
     return {

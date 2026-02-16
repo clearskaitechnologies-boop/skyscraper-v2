@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -40,7 +41,7 @@ export async function GET() {
 
     return NextResponse.json({ contacts: formattedContacts });
   } catch (error) {
-    console.error("Error fetching contacts:", error);
+    logger.error("Error fetching contacts:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

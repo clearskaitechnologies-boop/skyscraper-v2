@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { triggerNotification } from "@/components/notifications/UnifiedNotificationBell";
 import { card } from "@/lib/theme";
@@ -104,7 +105,7 @@ export default function ClaimsPipeline({ claims = [] }: { claims: ClaimCard[] })
         }
       }
     } catch (err) {
-      console.log("AI suggestion unavailable, proceeding with manual update");
+      logger.debug("AI suggestion unavailable, proceeding with manual update");
     }
 
     // If no AI suggestion or low confidence, proceed with manual update
@@ -121,7 +122,7 @@ export default function ClaimsPipeline({ claims = [] }: { claims: ClaimCard[] })
       });
       window.location.reload(); // Refresh to show updated state
     } catch (err) {
-      console.error("Failed to update claim stage:", err);
+      logger.error("Failed to update claim stage:", err);
     }
   };
 

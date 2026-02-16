@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 export interface ClaimContext {
   id: string;
@@ -48,7 +49,7 @@ export function useClaimContext(claimId: string | undefined) {
       })
       .catch((err) => {
         if (mounted) {
-          console.error("Failed to load claim context:", err);
+          logger.error("Failed to load claim context:", err);
           setError(err.message || "Failed to load claim context");
         }
       })

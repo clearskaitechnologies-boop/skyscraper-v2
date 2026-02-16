@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   BarChart3,
   CalendarDays,
@@ -69,7 +70,7 @@ export function CompanyLeaderboard() {
           setSummary(data.data.summary);
         }
       } catch (e) {
-        console.error("Leaderboard fetch failed:", e);
+        logger.error("Leaderboard fetch failed:", e);
       } finally {
         setLoading(false);
       }

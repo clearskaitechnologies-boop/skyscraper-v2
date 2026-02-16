@@ -12,6 +12,7 @@
  */
 
 import sharp from "sharp";
+import { logger } from "@/lib/logger";
 
 import { StormEvent } from "./fetchStormData";
 
@@ -60,7 +61,7 @@ export async function generateBaseMap(
     process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN;
 
   if (!mapboxToken) {
-    console.warn("[MAPBOX] No token configured. Static map generation disabled.");
+    logger.warn("[MAPBOX] No token configured. Static map generation disabled.");
     return "https://via.placeholder.com/1280x720/4A90E2/FFFFFF?text=Storm+Map";
   }
 
@@ -79,7 +80,7 @@ export async function generateBaseMap(
     const uploadedUrl = `https://storage.example.com/maps/base-${Date.now()}.png`;
     return uploadedUrl;
   } catch (error) {
-    console.error("[MAPBOX ERROR]", error);
+    logger.error("[MAPBOX ERROR]", error);
     return "https://via.placeholder.com/1280x720/4A90E2/FFFFFF?text=Storm+Map";
   }
 }
@@ -170,7 +171,7 @@ export async function composeStormOverlay(
     const uploadedUrl = `https://storage.example.com/overlays/heatmap-${Date.now()}.jpg`;
     return uploadedUrl;
   } catch (error) {
-    console.error("[OVERLAY COMPOSITION ERROR]", error);
+    logger.error("[OVERLAY COMPOSITION ERROR]", error);
     return baseMapUrl; // Fallback to base map
   }
 }

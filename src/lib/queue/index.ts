@@ -8,6 +8,7 @@
  */
 
 import { type Job, PgBoss } from "pg-boss";
+import { logger } from "@/lib/logger";
 
 export type { Job };
 
@@ -28,7 +29,7 @@ export async function getBoss(): Promise<PgBoss> {
       throw new Error("DATABASE_URL environment variable is required");
     }
 
-    console.log("Initializing pg-boss...");
+    logger.debug("Initializing pg-boss...");
 
     // Create new PgBoss instance with explicit schema
     bossInstance = new PgBoss({
@@ -37,13 +38,13 @@ export async function getBoss(): Promise<PgBoss> {
     });
 
     bossInstance.on("error", (error) => {
-      console.error("pg-boss error:", error);
+      logger.error("pg-boss error:", error);
     });
 
     // Start pg-boss - this creates all internal tables on first run
-    console.log("Starting pg-boss (creating tables if needed)...");
+    logger.debug("Starting pg-boss (creating tables if needed)...");
     await bossInstance.start();
-    console.log("✅ pg-boss started successfully!");
+    logger.debug("✅ pg-boss started successfully!");
   }
 
   return bossInstance;
@@ -80,7 +81,7 @@ export async function enqueue(
     throw new Error(`Failed to enqueue job: ${queueName}`);
   }
 
-  console.log(`Job enqueued: ${queueName} (${jobId})`);
+  logger.debug(`Job enqueued: ${queueName} (${jobId})`);
   return jobId;
 }
 
@@ -102,7 +103,7 @@ export async function enqueueScheduled(
     throw new Error(`Failed to enqueue scheduled job: ${queueName}`);
   }
 
-  console.log(`Scheduled job enqueued: ${queueName} (${jobId})`);
+  logger.debug(`Scheduled job enqueued: ${queueName} (${jobId})`);
   return jobId;
 }
 
@@ -137,11 +138,11 @@ export async function subscribe<T = any>(
 
     for (const j of jobs) {
       try {
-        console.log(`Processing job: ${queueName} (${j.id})`);
+        logger.debug(`Processing job: ${queueName} (${j.id})`);
         await handler(j.data as T, j);
-        console.log(`Job completed: ${queueName} (${j.id})`);
+        logger.debug(`Job completed: ${queueName} (${j.id})`);
       } catch (error) {
-        console.error(`Job failed: ${queueName} (${j.id})`, error);
+        logger.error(`Job failed: ${queueName} (${j.id})`, error);
 
         // Capture queue failure to Sentry
         if (typeof window === "undefined") {
@@ -157,7 +158,7 @@ export async function subscribe<T = any>(
     }
   });
 
-  console.log(`Subscribed to queue: ${queueName}`);
+  logger.debug(`Subscribed to queue: ${queueName}`);
 }
 
 // =============================================================================
@@ -170,7 +171,7 @@ export async function subscribe<T = any>(
 export async function cancelJobs(queueName: string, jobIds: string[]): Promise<void> {
   const boss = await getBoss();
   await boss.cancel(queueName, jobIds);
-  console.log(`Jobs cancelled: ${queueName} - ${jobIds.length} jobs`);
+  logger.debug(`Jobs cancelled: ${queueName} - ${jobIds.length} jobs`);
 }
 
 /**
@@ -212,7 +213,7 @@ export async function stopQueue(): Promise<void> {
   if (bossInstance) {
     await bossInstance.stop();
     bossInstance = null;
-    console.log("pg-boss queue stopped");
+    logger.debug("pg-boss queue stopped");
   }
 }
 

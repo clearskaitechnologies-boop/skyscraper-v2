@@ -29,6 +29,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -196,7 +197,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
-    console.error("[Claim Mutate] Error:", error);
+    logger.error("[Claim Mutate] Error:", error);
     return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
   }
 }

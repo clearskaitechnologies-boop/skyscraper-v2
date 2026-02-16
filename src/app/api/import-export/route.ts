@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
             imported++;
           }
         } catch (err) {
-          console.error("Import row error:", err);
+          logger.error("Import row error:", err);
         }
       }
 
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: "Invalid format" }, { status: 400 });
   } catch (error) {
-    console.error("Import/export error:", error);
+    logger.error("Import/export error:", error);
     return NextResponse.json({ error: "Failed to import/export data" }, { status: 500 });
   }
 }

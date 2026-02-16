@@ -5,6 +5,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -173,7 +174,7 @@ export async function GET() {
       },
     });
   } catch (error: any) {
-    console.error("[BOOTSTRAP] Error:", error);
+    logger.error("[BOOTSTRAP] Error:", error);
     return NextResponse.json(
       {
         ok: false,

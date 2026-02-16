@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { compose,safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
@@ -81,7 +82,7 @@ const basePOST = async (
       },
     });
   } catch (error: any) {
-    console.error("Error saving note:", error);
+    logger.error("Error saving note:", error);
     return NextResponse.json(
       { error: "Failed to save note", details: error.message },
       { status: 500 }

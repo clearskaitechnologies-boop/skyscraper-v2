@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { requireApiAuth, verifyClaimAccess } from "@/lib/auth/apiAuth";
@@ -309,7 +310,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       },
     });
   } catch (error: any) {
-    console.error("[Depreciation Export PDF Error]", error);
+    logger.error("[Depreciation Export PDF Error]", error);
     return NextResponse.json({ error: error.message || "Failed to export PDF" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@
  * Uses Puppeteer for HTML-to-PDF conversion
  */
 
+import { logger } from "@/lib/logger";
 import puppeteer, {
   type Browser,
   type Page,
@@ -169,7 +170,7 @@ export async function renderToPDF(
       contentType: "application/pdf",
     };
   } catch (error: any) {
-    console.error("[Renderer] PDF generation failed:", error);
+    logger.error("[Renderer] PDF generation failed:", error);
     return {
       success: false,
       error: error.message,
@@ -248,11 +249,11 @@ export async function renderTemplateToPdf(
 
     const pdfBuffer = await page.pdf(pdfOptions);
 
-    console.log(`[Renderer] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
+    logger.debug(`[Renderer] PDF generated successfully, size: ${pdfBuffer.length} bytes`);
 
     return Buffer.from(pdfBuffer);
   } catch (error) {
-    console.error("[Renderer] PDF generation error:", error);
+    logger.error("[Renderer] PDF generation error:", error);
     throw new Error(
       `PDF generation failed: ${error instanceof Error ? error.message : String(error)}`
     );
@@ -347,15 +348,15 @@ export async function renderTemplateToThumbnail(
         .png({ quality })
         .toBuffer();
 
-      console.log(`[Renderer] Thumbnail generated, size: ${resizedBuffer.length} bytes`);
+      logger.debug(`[Renderer] Thumbnail generated, size: ${resizedBuffer.length} bytes`);
       return resizedBuffer;
     } catch {
       // Sharp not available, return full-size screenshot
-      console.log("[Renderer] Sharp not available, returning full-size screenshot");
+      logger.debug("[Renderer] Sharp not available, returning full-size screenshot");
       return Buffer.from(fullBuffer);
     }
   } catch (error) {
-    console.error("[Renderer] Thumbnail generation error:", error);
+    logger.error("[Renderer] Thumbnail generation error:", error);
     throw new Error(
       `Thumbnail generation failed: ${error instanceof Error ? error.message : String(error)}`
     );

@@ -6,6 +6,7 @@
 'use client';
 
 import { AlertCircle, CheckCircle2, Clock, DollarSign, TrendingUp, XCircle } from 'lucide-react';
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -61,7 +62,7 @@ export default function DepreciationDashboard({ claimId }: DepreciationDashboard
         setPayments(data.payments || []);
       }
     } catch (error) {
-      console.error('Failed to fetch depreciation summary:', error);
+      logger.error('Failed to fetch depreciation summary:', error);
     }
   };
 
@@ -80,7 +81,7 @@ export default function DepreciationDashboard({ claimId }: DepreciationDashboard
       });
       await fetchSummary();
     } catch (error) {
-      console.error('Failed to mark requested:', error);
+      logger.error('Failed to mark requested:', error);
     }
     setLoading(false);
   };

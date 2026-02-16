@@ -17,6 +17,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 interface EnsureWorkspaceOptions {
   orgId: string;
@@ -42,7 +43,7 @@ export async function ensureWorkspaceForOrg(options: EnsureWorkspaceOptions): Pr
             updatedAt: new Date(),
           },
         });
-        console.log(`[ensureWorkspace] Created BillingSettings for org ${orgId}`);
+        logger.debug(`[ensureWorkspace] Created BillingSettings for org ${orgId}`);
       }
     }
 
@@ -83,10 +84,10 @@ export async function ensureWorkspaceForOrg(options: EnsureWorkspaceOptions): Pr
           role: "owner",
         },
       });
-      console.log(`[ensureWorkspace] Created membership for user ${userId} in org ${orgId}`);
+      logger.debug(`[ensureWorkspace] Created membership for user ${userId} in org ${orgId}`);
     }
   } catch (error) {
-    console.error(`[ensureWorkspace] Failed to ensure workspace for org ${orgId}:`, error);
+    logger.error(`[ensureWorkspace] Failed to ensure workspace for org ${orgId}:`, error);
     // Don't throw - let the app continue even if this fails
   }
 }

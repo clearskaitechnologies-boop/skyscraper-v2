@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -62,7 +63,7 @@ export async function GET() {
       messages,
     });
   } catch (error) {
-    console.error("[API/portal/stats] Error:", error);
+    logger.error("[API/portal/stats] Error:", error);
     return NextResponse.json(
       { activeProjects: 0, savedContractors: 0, claims: 0, messages: 0 },
       { status: 200 }

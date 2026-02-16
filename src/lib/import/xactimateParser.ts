@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Xactimate Parser Stub
  *
@@ -30,7 +32,7 @@ export interface XactimateParseResult {
  * Stub implementation
  */
 export async function parseXactimateFile(file: File | Blob): Promise<XactimateParseResult> {
-  console.log("[XactimateParser] Stub: Would parse Xactimate file");
+  logger.debug("[XactimateParser] Stub: Would parse Xactimate file");
   return {
     success: false,
     lineItems: [],
@@ -43,7 +45,7 @@ export async function parseXactimateFile(file: File | Blob): Promise<XactimatePa
  * Parse Xactimate XML content
  */
 export function parseXactimateXML(content: string): XactimateParseResult {
-  console.log("[XactimateParser] Stub: Would parse Xactimate XML");
+  logger.debug("[XactimateParser] Stub: Would parse Xactimate XML");
   return {
     success: false,
     lineItems: [],

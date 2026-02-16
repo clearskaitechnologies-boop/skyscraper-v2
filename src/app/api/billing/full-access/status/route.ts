@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -44,7 +45,7 @@ export async function GET(req: NextRequest) {
       subscriptionId: status.stripe_subscription_id,
     });
   } catch (err: any) {
-    console.error("Full Access status error:", err);
+    logger.error("Full Access status error:", err);
     return NextResponse.json({ error: err.message || "Failed to fetch status" }, { status: 500 });
   }
 }
@@ -76,7 +77,7 @@ export async function DELETE(req: NextRequest) {
 
     return NextResponse.json({ ok: true, description: "Subscription canceled" });
   } catch (err: any) {
-    console.error("Full Access cancel error:", err);
+    logger.error("Full Access cancel error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to cancel subscription" },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { PutObjectCommand,S3Client } from "@aws-sdk/client-s3";
+import { logger } from "@/lib/logger";
 import crypto from "crypto";
 import fs from "fs/promises";
 import path from "path";
@@ -97,7 +98,7 @@ export async function renderPdfJob(payload: RenderPayload) {
           publicUrl = await uploadToS3(pdfBuffer, key);
         } catch (err) {
           // swallow upload error but keep local file
-          console.error("S3 upload failed", err);
+          logger.error("S3 upload failed", err);
         }
       }
 

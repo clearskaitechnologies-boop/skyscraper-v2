@@ -4,6 +4,7 @@
  */
 
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export type ComposeModeType = "inspection" | "insurance" | "retail";
 
@@ -87,7 +88,7 @@ Keep it professional, specific, and actionable.`;
     if (error) throw error;
     return data?.summary || "";
   } catch (e: any) {
-    console.error("composeClaim error:", e);
+    logger.error("composeClaim error:", e);
     throw new Error(e.message || "Failed to compose claim");
   }
 }

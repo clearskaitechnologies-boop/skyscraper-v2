@@ -1,11 +1,12 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import type { NormalizedLocation, StormSnapshot } from "./storm-types";
 
 const VISUALCROSSING_API_KEY = process.env.VISUALCROSSING_API_KEY;
 
 if (!VISUALCROSSING_API_KEY) {
-  console.warn("[VISUALCROSSING] API key not configured – weather will return null fallback.");
+  logger.warn("[VISUALCROSSING] API key not configured – weather will return null fallback.");
 }
 
 /**
@@ -16,7 +17,7 @@ export async function fetchVisualCrossingStormData(
   location: NormalizedLocation
 ): Promise<StormSnapshot | null> {
   if (!VISUALCROSSING_API_KEY) {
-    console.warn("[VISUALCROSSING] Skipping fetch – no API key configured");
+    logger.warn("[VISUALCROSSING] Skipping fetch – no API key configured");
     return null;
   }
 
@@ -38,7 +39,7 @@ export async function fetchVisualCrossingStormData(
   });
 
   try {
-    console.log(`[VISUALCROSSING] Fetching storm data for: ${location.address}`);
+    logger.debug(`[VISUALCROSSING] Fetching storm data for: ${location.address}`);
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 5000);
@@ -50,7 +51,7 @@ export async function fetchVisualCrossingStormData(
     clearTimeout(timeout);
 
     if (!res.ok) {
-      console.error(`[VISUALCROSSING] HTTP ${res.status}: ${res.statusText}`);
+      logger.error(`[VISUALCROSSING] HTTP ${res.status}: ${res.statusText}`);
       return null;
     }
 
@@ -97,7 +98,7 @@ export async function fetchVisualCrossingStormData(
       raw: data,
     };
 
-    console.log(`[VISUALCROSSING] Found ${stormCount} storm events`);
+    logger.debug(`[VISUALCROSSING] Found ${stormCount} storm events`);
     return snapshot;
   } catch (error) {
     if (error instanceof Error) {

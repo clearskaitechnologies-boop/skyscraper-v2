@@ -1,6 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -47,7 +48,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ ok: true, weather });
   } catch (error: any) {
-    console.error("[WEATHER INTELLIGENCE ERROR]", error);
+    logger.error("[WEATHER INTELLIGENCE ERROR]", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },
       { status: 500 }

@@ -5,6 +5,7 @@
  */
 
 import puppeteer, { type Browser } from "puppeteer";
+import { logger } from "@/lib/logger";
 
 import { APP_URL } from "@/lib/env";
 import prisma from "@/lib/prisma";
@@ -40,7 +41,7 @@ export async function renderProposalPdf({
   try {
     return await renderPdfWithRetry(draftId, template, options, 1);
   } catch (error) {
-    console.error("[PDF Render] Failed after all retry attempts:", error);
+    logger.error("[PDF Render] Failed after all retry attempts:", error);
     throw new Error("PDF generation failed - please try again or download HTML");
   }
 }
@@ -77,7 +78,7 @@ async function renderPdfWithRetry(
       url.searchParams.set("maxEvidenceImages", String(options.maxEvidenceImages));
     }
 
-    console.log(`[PDF Render] Attempt ${attempt} - Starting Puppeteer for:`, url.toString());
+    logger.debug(`[PDF Render] Attempt ${attempt} - Starting Puppeteer for:`, url.toString());
 
     // Launch headless browser with timeout protection
     browser = await Promise.race([
@@ -131,13 +132,13 @@ async function renderPdfWithRetry(
     await browser.close();
     browser = null;
 
-    console.log("[PDF Render] PDF generated, size:", pdfBuffer.length, "bytes");
+    logger.debug("[PDF Render] PDF generated, size:", pdfBuffer.length, "bytes");
 
     // Upload to Firebase Storage
     const filePath = `proposals/${(draft as any).org_id || "org"}/${draftId}.pdf`;
     const { publicUrl } = await uploadBufferToFirebase(filePath, pdfBuffer, "application/pdf");
 
-    console.log("[PDF Render] Uploaded to Firebase:", publicUrl);
+    logger.debug("[PDF Render] Uploaded to Firebase:", publicUrl);
 
     // Create ProposalFile record
     const proposalFile = await prisma.proposal_files.create({

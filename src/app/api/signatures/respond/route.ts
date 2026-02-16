@@ -1,6 +1,7 @@
 // /api/signatures/respond
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { notifyDocumentSigned } from "@/lib/notifications/sendNotification";
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest) {
       message: action === "signed" ? "Document signed successfully" : "Signature declined",
     });
   } catch (error: any) {
-    console.error("Error responding to signature request:", error);
+    logger.error("Error responding to signature request:", error);
     return NextResponse.json(
       { error: error.message || "Failed to process signature response" },
       { status: 500 }

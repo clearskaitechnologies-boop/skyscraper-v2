@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
       ready: missingFields.length === 0,
     });
   } catch (error) {
-    console.error("[PREVIEW] Error:", error);
+    logger.error("[PREVIEW] Error:", error);
     return NextResponse.json(
       {
         ok: false,

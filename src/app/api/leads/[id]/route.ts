@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { compose, safeAuth, withOrgScope, withRateLimit, withSentryApi } from "@/lib/api/wrappers";
 import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
@@ -70,7 +71,7 @@ const baseGET = async (request: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ lead });
   } catch (error) {
-    console.error(`[GET /api/leads/${params.id}] Error:`, error);
+    logger.error(`[GET /api/leads/${params.id}] Error:`, error);
     return NextResponse.json({ error: "Failed to fetch lead" }, { status: 500 });
   }
 };
@@ -172,7 +173,7 @@ const basePATCH = async (request: NextRequest, { params }: { params: { id: strin
           },
         });
       } catch (activityError) {
-        console.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
+        logger.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
         // Don't fail the request
       }
     } else if (Object.keys(updateData).length > 0) {
@@ -193,13 +194,13 @@ const basePATCH = async (request: NextRequest, { params }: { params: { id: strin
           },
         });
       } catch (activityError) {
-        console.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
+        logger.warn("[PATCH /api/leads/[id]] Failed to create activity:", activityError);
       }
     }
 
     return NextResponse.json({ lead });
   } catch (error) {
-    console.error(`[PATCH /api/leads/${params.id}] Error:`, error);
+    logger.error(`[PATCH /api/leads/${params.id}] Error:`, error);
 
     if (error instanceof Error) {
       if (error.message.includes("Unique constraint")) {
@@ -280,7 +281,7 @@ const baseDELETE = async (request: NextRequest, { params }: { params: { id: stri
         },
       });
     } catch (activityError) {
-      console.warn("[DELETE /api/leads/[id]] Failed to create activity:", activityError);
+      logger.warn("[DELETE /api/leads/[id]] Failed to create activity:", activityError);
     }
 
     return NextResponse.json({
@@ -288,7 +289,7 @@ const baseDELETE = async (request: NextRequest, { params }: { params: { id: stri
       description: "Lead deleted successfully",
     });
   } catch (error) {
-    console.error(`[DELETE /api/leads/${params.id}] Error:`, error);
+    logger.error(`[DELETE /api/leads/${params.id}] Error:`, error);
     return NextResponse.json({ error: "Failed to delete lead" }, { status: 500 });
   }
 };

@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -27,7 +28,7 @@ export async function POST(req: NextRequest) {
 
     const now = new Date();
 
-    console.log(`[Archive] Archiving ${itemType} ${itemId}`);
+    logger.debug(`[Archive] Archiving ${itemType} ${itemId}`);
 
     if (itemType === "lead") {
       await prisma.leads.update({
@@ -63,7 +64,7 @@ export async function POST(req: NextRequest) {
       archivedAt: now.toISOString(),
     });
   } catch (error: any) {
-    console.error("[Archive] Error:", error);
+    logger.error("[Archive] Error:", error);
     return NextResponse.json(
       { error: "Failed to archive", details: error.message },
       { status: 500 }
@@ -204,7 +205,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[Archive GET] Error:", error);
+    logger.error("[Archive GET] Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch archive", details: error.message },
       { status: 500 }
@@ -228,7 +229,7 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: "itemId and itemType are required" }, { status: 400 });
     }
 
-    console.log(`[Archive] Restoring ${itemType} ${itemId}`);
+    logger.debug(`[Archive] Restoring ${itemType} ${itemId}`);
 
     if (itemType === "lead") {
       await prisma.leads.update({
@@ -263,7 +264,7 @@ export async function DELETE(req: NextRequest) {
       message: `${itemType} restored from archive`,
     });
   } catch (error: any) {
-    console.error("[Archive DELETE] Error:", error);
+    logger.error("[Archive DELETE] Error:", error);
     return NextResponse.json(
       { error: "Failed to restore", details: error.message },
       { status: 500 }

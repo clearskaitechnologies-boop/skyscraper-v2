@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
 
     return apiOk({ threads, count: Array.isArray(threads) ? threads.length : 0 });
   } catch (err: any) {
-    console.error("[sms-get]", err);
+    logger.error("[sms-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -120,11 +121,11 @@ export async function POST(req: NextRequest) {
         twilioResult = await twilioRes.json();
         status = twilioRes.ok ? "sent" : "failed";
       } catch (err) {
-        console.error("[sms-send-twilio]", err);
+        logger.error("[sms-send-twilio]", err);
         status = "failed";
       }
     } else {
-      console.warn("[sms-send] No Twilio credentials — message stored but not sent");
+      logger.warn("[sms-send] No Twilio credentials — message stored but not sent");
       status = "mock";
     }
 
@@ -148,7 +149,7 @@ export async function POST(req: NextRequest) {
 
     return apiOk({ message, twilioStatus: status }, { status: 201 });
   } catch (err: any) {
-    console.error("[sms-post]", err);
+    logger.error("[sms-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

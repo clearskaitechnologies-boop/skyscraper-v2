@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -113,11 +114,11 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. Parse scope
-    console.log("[estimate/export] Parsing scope...");
+    logger.debug("[estimate/export] Parsing scope...");
     const scope = parseScope(claimWriterRecord.scopeJson);
 
     // 8. Build Xactimate XML
-    console.log("[estimate/export] Building Xactimate XML...");
+    logger.debug("[estimate/export] Building Xactimate XML...");
     const primaryContact = lead.contacts;
     const metadata = {
       id: lead.id,
@@ -131,14 +132,14 @@ export async function POST(request: NextRequest) {
     const xml = buildXactimateXml(scope, metadata);
 
     // 9. Build Symbility JSON
-    console.log("[estimate/export] Building Symbility JSON...");
+    logger.debug("[estimate/export] Building Symbility JSON...");
     const symbility = buildSymbilityJson(scope, metadata);
 
     // 10. Build summary
     const summary = buildEstimateSummary(scope);
 
     // 11. Build ZIP
-    console.log("[estimate/export] Creating ZIP bundle...");
+    logger.debug("[estimate/export] Creating ZIP bundle...");
     const zipUrl = await buildEstimateZip(leadId, { includeReports: true });
 
     // 12. Save to database
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
       downloadZipUrl: zipUrl,
     });
   } catch (error) {
-    console.error("[estimate/export] Error:", error);
+    logger.error("[estimate/export] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to export estimate",

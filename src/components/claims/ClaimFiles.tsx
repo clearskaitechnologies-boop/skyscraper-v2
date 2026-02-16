@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { btn, card, glow } from "@/lib/theme";
 
@@ -13,7 +14,7 @@ export default function ClaimFiles({ claimId }: { claimId: string }) {
     setUploading(true);
     try {
       // TODO: Implement file upload to Firebase Storage
-      console.log("Uploading files:", e.target.files);
+      logger.debug("Uploading files:", e.target.files);
       // Mock upload
       const newFiles = Array.from(e.target.files).map((file) => ({
         id: Math.random().toString(36),
@@ -24,7 +25,7 @@ export default function ClaimFiles({ claimId }: { claimId: string }) {
       }));
       setFiles([...files, ...newFiles]);
     } catch (err) {
-      console.error("Upload failed:", err);
+      logger.error("Upload failed:", err);
     } finally {
       setUploading(false);
     }

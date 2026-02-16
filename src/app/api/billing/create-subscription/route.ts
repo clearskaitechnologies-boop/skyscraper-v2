@@ -16,6 +16,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { PRICE_PER_SEAT_CENTS, validateSeatCount } from "@/lib/billing/seat-pricing";
@@ -165,7 +166,7 @@ export async function POST(req: NextRequest) {
       monthlyTotal: (seatCount * PRICE_PER_SEAT_CENTS) / 100,
     });
   } catch (error: any) {
-    console.error("[create-subscription] Error:", error);
+    logger.error("[create-subscription] Error:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to create subscription" },
       { status: 500 }

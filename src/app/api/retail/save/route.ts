@@ -15,6 +15,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
-      console.error("[retail/save] Update error:", error);
+      logger.error("[retail/save] Update error:", error);
       return NextResponse.json(
         { error: "Failed to save fragment", details: error.message },
         { status: 500 }
@@ -130,7 +131,7 @@ export async function POST(request: NextRequest) {
       description: `Step ${step} fragment saved`,
     });
   } catch (err) {
-    console.error("[retail/save] Unexpected error:", err);
+    logger.error("[retail/save] Unexpected error:", err);
     return NextResponse.json(
       {
         error: "Internal server error",

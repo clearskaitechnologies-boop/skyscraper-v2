@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -81,7 +82,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
       description: `Documents sent to ${recipientEmail}`,
     });
   } catch (error: any) {
-    console.error("[Send to Adjuster] Error:", error);
+    logger.error("[Send to Adjuster] Error:", error);
     return NextResponse.json(
       { error: "Failed to send email", details: error.message },
       { status: 500 }

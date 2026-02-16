@@ -2,6 +2,7 @@
 // CRITICAL: Resolve claims by id OR claimNumber to fix "claim not found" cascading errors
 
 import { prismaModel } from "@/lib/db/prismaModel";
+import { logger } from "@/lib/logger";
 
 /**
  * Resolve a claim by either database id or claimNumber
@@ -69,7 +70,7 @@ export async function getClaimByParam(orgId: string, claimParam: string) {
       updatedAt: claim.updatedAt,
     };
   } catch (error) {
-    console.error("[getClaimByParam] Error:", error);
+    logger.error("[getClaimByParam] Error:", error);
     return null;
   }
 }
@@ -175,7 +176,7 @@ export async function getClaimDetailsByParam(orgId: string, claimParam: string) 
       contact,
     };
   } catch (error) {
-    console.error("[getClaimDetailsByParam] Error:", error);
+    logger.error("[getClaimDetailsByParam] Error:", error);
     return null;
   }
 }

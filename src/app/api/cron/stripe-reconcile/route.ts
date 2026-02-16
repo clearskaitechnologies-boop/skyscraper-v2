@@ -12,6 +12,7 @@ export const revalidate = 0;
 // =====================================================
 // (Removed duplicate dynamic export)
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -97,11 +98,11 @@ export async function GET(req: Request) {
 
           fixed++;
 
-          console.log(`Reconciled Org ${Org.id}: ${currentBalance} → ${expectedTokens} tokens`);
+          logger.debug(`Reconciled Org ${Org.id}: ${currentBalance} → ${expectedTokens} tokens`);
         }
       } catch (error: any) {
         errors.push(`Org ${Org.id}: ${error.message}`);
-        console.error(`Reconciliation error for Org ${Org.id}:`, error);
+        logger.error(`Reconciliation error for Org ${Org.id}:`, error);
       }
     }
 
@@ -124,7 +125,7 @@ export async function GET(req: Request) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("Stripe reconciliation cron error:", error);
+    logger.error("Stripe reconciliation cron error:", error);
     Sentry.captureException(error, {
       tags: { component: "stripe-reconcile-cron" },
     });

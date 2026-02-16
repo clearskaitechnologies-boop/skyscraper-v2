@@ -15,6 +15,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // ── Config ──────────────────────────────────────────────────────────────────
 
@@ -177,7 +178,7 @@ export async function getValidToken(orgId: string): Promise<{
       );
       return { accessToken: refreshed.accessToken, realmId: conn.realm_id };
     } catch (err) {
-      console.error("[QB] Token refresh failed:", err);
+      logger.error("[QB] Token refresh failed:", err);
       // Mark connection as inactive
       await prisma.quickbooks_connections.update({
         where: { org_id: orgId },
@@ -341,7 +342,7 @@ export async function syncJobToInvoice(orgId: string, jobId: string) {
 
   // Check if already synced
   if (financials.qb_invoice_id) {
-    console.log(`[QB] Job ${jobId} already synced to QB invoice ${financials.qb_invoice_id}`);
+    logger.debug(`[QB] Job ${jobId} already synced to QB invoice ${financials.qb_invoice_id}`);
     return { qbInvoiceId: financials.qb_invoice_id, status: "already_synced" };
   }
 

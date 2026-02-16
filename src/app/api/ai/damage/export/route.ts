@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { jsPDF } from "jspdf";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -324,7 +325,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("PDF export error:", error);
+    logger.error("PDF export error:", error);
     return NextResponse.json({ error: error.message || "Export failed" }, { status: 500 });
   }
 }

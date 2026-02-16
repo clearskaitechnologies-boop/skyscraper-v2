@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, FileText, Loader2, Scale, Shield, ShieldCheck } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -79,7 +80,7 @@ export function LegalGate({ initialPending, children }: LegalGateProps) {
 
       toast.success("Welcome! All agreements accepted.");
     } catch (error: any) {
-      console.error("[LegalGate] Accept all failed:", error);
+      logger.error("[LegalGate] Accept all failed:", error);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setAccepting(false);

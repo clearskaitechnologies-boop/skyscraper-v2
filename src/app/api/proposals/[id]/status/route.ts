@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       updated_at: proposal.updated_at,
     });
   } catch (error) {
-    console.error("[Proposals] Error fetching status:", error);
+    logger.error("[Proposals] Error fetching status:", error);
     return NextResponse.json({ error: "Failed to fetch proposal status" }, { status: 500 });
   }
 }

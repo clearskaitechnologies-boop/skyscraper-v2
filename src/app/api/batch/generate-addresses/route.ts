@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[GenerateAddresses] Error:", error);
+    logger.error("[GenerateAddresses] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate addresses" },
       { status: 500 }

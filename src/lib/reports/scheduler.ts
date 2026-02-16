@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type ReportFrequency = "DAILY" | "WEEKLY" | "MONTHLY";
 export type ReportType = "USAGE" | "ANALYTICS" | "COMPLIANCE" | "PERFORMANCE";
@@ -90,7 +91,7 @@ export async function executeScheduledReports(): Promise<number> {
 
       executed++;
     } catch (error) {
-      console.error("Failed to execute report:", error);
+      logger.error("Failed to execute report:", error);
     }
   }
 
@@ -102,7 +103,7 @@ async function generateAndSendReport(report: any): Promise<void> {
   const reportData = await generateReportData(report);
 
   // TODO: Send via email
-  console.log(`Report generated for ${report.tenantId}`);
+  logger.debug(`Report generated for ${report.tenantId}`);
 }
 
 async function generateReportData(report: any): Promise<any> {

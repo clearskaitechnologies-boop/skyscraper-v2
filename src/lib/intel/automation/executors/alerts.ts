@@ -5,6 +5,7 @@
  */
 
 import { getDelegate } from "@/lib/db/modelAliases";
+import { logger } from "@/lib/logger";
 
 export async function executeCreateAlert(
   claimId: string,
@@ -17,7 +18,7 @@ export async function executeCreateAlert(
     metadata?: any;
   }
 ) {
-  console.log(`[DOMINUS] Creating alert: ${config.title}`);
+  logger.debug(`[DOMINUS] Creating alert: ${config.title}`);
 
   const alert = await getDelegate("automationAlert").create({
     data: {
@@ -49,7 +50,7 @@ export async function executeCreateRecommendation(
     reasoning?: string;
   }
 ) {
-  console.log(`[DOMINUS] Creating recommendation: ${config.recommendationType}`);
+  logger.debug(`[DOMINUS] Creating recommendation: ${config.recommendationType}`);
 
   const recommendation = await getDelegate("automationRecommendation").create({
     data: {

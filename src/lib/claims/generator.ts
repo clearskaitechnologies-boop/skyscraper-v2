@@ -5,6 +5,7 @@
 // ============================================================================
 
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import {
   AlignmentType,
   convertInchesToTwip,
@@ -29,7 +30,7 @@ export async function generateClaimPacket(options: GeneratePacketOptions): Promi
   const { data, version, format, includeWeatherPage = true } = options;
 
   try {
-    console.info(`[CLAIM_PACKET] Generating ${version} packet in ${format} format`);
+    logger.info(`[CLAIM_PACKET] Generating ${version} packet in ${format} format`);
 
     if (format === "docx") {
       return await generateDOCX(data, version, includeWeatherPage);
@@ -37,7 +38,7 @@ export async function generateClaimPacket(options: GeneratePacketOptions): Promi
       return await generatePDF(data, version, includeWeatherPage);
     }
   } catch (error) {
-    console.error("[CLAIM_PACKET] Generation failed:", error);
+    logger.error("[CLAIM_PACKET] Generation failed:", error);
     Sentry.captureException(error, {
       tags: { component: "claim-packet", format, version },
       extra: { insured_name: data.insured_name, propertyAddress: data.propertyAddress },
@@ -58,7 +59,7 @@ async function fetchImageBuffer(url: string): Promise<Buffer> {
     const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
   } catch (error) {
-    console.error(`[CLAIM_PACKET] Failed to fetch image ${url}:`, error);
+    logger.error(`[CLAIM_PACKET] Failed to fetch image ${url}:`, error);
     throw error;
   }
 }
@@ -286,7 +287,7 @@ async function generateInsuranceDOCX(
         );
       } catch (error) {
         // Fallback if image fetch fails
-        console.warn(`[CLAIM_PACKET] Skipping image ${photo.url}:`, error);
+        logger.warn(`[CLAIM_PACKET] Skipping image ${photo.url}:`, error);
         sections.push(
           new Paragraph({
             text: `Photo ${photo.index}: ${photo.caption} (Image unavailable)`,
@@ -348,7 +349,7 @@ async function generateInsuranceDOCX(
           })
         );
       } catch (error) {
-        console.warn(`[CLAIM_PACKET] Skipping roof diagram image:`, error);
+        logger.warn(`[CLAIM_PACKET] Skipping roof diagram image:`, error);
         sections.push(
           new Paragraph({
             text: "Roof Layout Diagram: (Image unavailable)",
@@ -906,7 +907,7 @@ async function generateInsuranceDOCX(
   });
 
   const blob = await Packer.toBlob(doc);
-  console.info(`[CLAIM_PACKET] Insurance DOCX generated successfully (${blob.size} bytes)`);
+  logger.info(`[CLAIM_PACKET] Insurance DOCX generated successfully (${blob.size} bytes)`);
   return blob;
 }
 
@@ -1117,7 +1118,7 @@ async function generateRetailDOCX(data: ClaimPacketData, includeWeather: boolean
           );
         }
       } catch (error) {
-        console.error(`[CLAIM_PACKET] Failed to insert photo ${i + 1}:`, error);
+        logger.error(`[CLAIM_PACKET] Failed to insert photo ${i + 1}:`, error);
         // Fallback to text placeholder
         sections.push(
           new Paragraph({
@@ -1588,7 +1589,7 @@ async function generateRetailDOCX(data: ClaimPacketData, includeWeather: boolean
   });
 
   const blob = await Packer.toBlob(doc);
-  console.info(`[CLAIM_PACKET] Retail DOCX generated successfully (${blob.size} bytes)`);
+  logger.info(`[CLAIM_PACKET] Retail DOCX generated successfully (${blob.size} bytes)`);
   return blob;
 }
 
@@ -1600,7 +1601,7 @@ async function generatePDF(
   // Strategy: Generate DOCX first, then convert to PDF
   // This ensures consistent formatting between DOCX and PDF exports
 
-  console.info("[CLAIM_PACKET] Generating PDF via DOCX conversion...");
+  logger.info("[CLAIM_PACKET] Generating PDF via DOCX conversion...");
 
   try {
     // Step 1: Generate DOCX
@@ -1628,10 +1629,10 @@ async function generatePDF(
     }
 
     const pdfBlob = await response.blob();
-    console.info(`[CLAIM_PACKET] PDF generated successfully (${pdfBlob.size} bytes)`);
+    logger.info(`[CLAIM_PACKET] PDF generated successfully (${pdfBlob.size} bytes)`);
     return pdfBlob;
   } catch (error) {
-    console.error("[CLAIM_PACKET] PDF generation failed:", error);
+    logger.error("[CLAIM_PACKET] PDF generation failed:", error);
     throw new Error(
       "PDF generation not yet fully implemented. " +
         "Please use DOCX format, or implement server-side conversion using libre-office, " +

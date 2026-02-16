@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
@@ -24,7 +25,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error("Error fetching product:", error);
+    logger.error("Error fetching product:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -65,7 +66,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json(product);
   } catch (error) {
-    console.error("Error updating product:", error);
+    logger.error("Error updating product:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -95,7 +96,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting product:", error);
+    logger.error("Error deleting product:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

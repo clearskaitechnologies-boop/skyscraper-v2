@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -43,7 +44,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ clients });
   } catch (error) {
-    console.error("[GET /api/connections/search] Error:", error);
+    logger.error("[GET /api/connections/search] Error:", error);
     return NextResponse.json({ error: "Search failed" }, { status: 500 });
   }
 }

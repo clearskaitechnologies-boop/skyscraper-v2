@@ -1,5 +1,6 @@
 // MODULE 7: Community Explorer - Get nearby jobs (anonymized)
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -70,7 +71,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ jobs });
   } catch (error) {
-    console.error("[COMMUNITY_MAP]", error);
+    logger.error("[COMMUNITY_MAP]", error);
     return NextResponse.json({ error: "Failed to fetch community data" }, { status: 500 });
   }
 }

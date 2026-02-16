@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -91,7 +92,7 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
 
     return NextResponse.json({ form });
   } catch (error: unknown) {
-    console.error("❌ [GET /api/contractors/forms/public/[slug]] Error:", error);
+    logger.error("❌ [GET /api/contractors/forms/public/[slug]] Error:", error);
     return NextResponse.json({ error: "Failed to load form" }, { status: 500 });
   }
 }

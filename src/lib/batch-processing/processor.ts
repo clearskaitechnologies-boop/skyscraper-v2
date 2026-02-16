@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Batch Processing - Processor Stub
  *
@@ -24,7 +26,7 @@ export interface ProcessResult {
  * Stub implementation - returns success
  */
 export async function processBatchJob(jobId: string): Promise<ProcessResult> {
-  console.log(`[BatchProcessor] Stub: Would process job ${jobId}`);
+  logger.debug(`[BatchProcessor] Stub: Would process job ${jobId}`);
   return {
     success: true,
     processedCount: 0,
@@ -36,7 +38,7 @@ export async function processBatchJob(jobId: string): Promise<ProcessResult> {
  * Get batch job status
  */
 export async function getBatchJobStatus(jobId: string): Promise<BatchJob | null> {
-  console.log(`[BatchProcessor] Stub: Would get status for job ${jobId}`);
+  logger.debug(`[BatchProcessor] Stub: Would get status for job ${jobId}`);
   return null;
 }
 
@@ -44,6 +46,6 @@ export async function getBatchJobStatus(jobId: string): Promise<BatchJob | null>
  * Queue a new batch job
  */
 export async function queueBatchJob(type: string, data: Record<string, any>): Promise<string> {
-  console.log(`[BatchProcessor] Stub: Would queue ${type} job`);
+  logger.debug(`[BatchProcessor] Stub: Would queue ${type} job`);
   return `batch_${Date.now()}`;
 }

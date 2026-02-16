@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
           }
         }
       } catch (e) {
-        console.log("[my-templates] OrgTemplate query failed:", e);
+        logger.debug("[my-templates] OrgTemplate query failed:", e);
       }
     }
 
@@ -88,7 +89,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ templates: allTemplates });
   } catch (error) {
-    console.error("[my-templates] Error:", error);
+    logger.error("[my-templates] Error:", error);
     return NextResponse.json({ templates: [] }, { status: 200 });
   }
 }

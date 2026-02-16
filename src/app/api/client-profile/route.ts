@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 // client_access model only has: id, claimId, email, createdAt
@@ -24,7 +25,7 @@ export async function PATCH(req: Request) {
       { status: 501 }
     );
   } catch (error) {
-    console.error("Profile update error:", error);
+    logger.error("Profile update error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

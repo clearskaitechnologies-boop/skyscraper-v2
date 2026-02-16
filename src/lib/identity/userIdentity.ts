@@ -11,6 +11,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -103,7 +104,7 @@ export async function getUserIdentity(clerkUserId: string): Promise<UserIdentity
       lastSeenAt: registry.lastSeenAt,
     };
   } catch (error) {
-    console.error("[getUserIdentity] Error:", error);
+    logger.error("[getUserIdentity] Error:", error);
     return null;
   }
 }
@@ -137,7 +138,7 @@ export async function determineUserType(clerkUserId: string): Promise<UserType> 
       return "pro";
     }
   } catch (error) {
-    console.error("[determineUserType] Pro check error:", error);
+    logger.error("[determineUserType] Pro check error:", error);
   }
 
   // Fallback: Check clients table (CLIENT)
@@ -153,7 +154,7 @@ export async function determineUserType(clerkUserId: string): Promise<UserType> 
       return "client";
     }
   } catch (error) {
-    console.error("[determineUserType] Client check error:", error);
+    logger.error("[determineUserType] Client check error:", error);
   }
 
   return "unknown";
@@ -321,7 +322,7 @@ export async function registerUser(
       onboardingComplete: (result as any).onboardingComplete ?? false,
     };
   } catch (error) {
-    console.error("[registerUser] Error:", error);
+    logger.error("[registerUser] Error:", error);
     return null;
   }
 }
@@ -337,7 +338,7 @@ export async function updateLastSeen(clerkUserId: string): Promise<void> {
     });
   } catch (error) {
     // Silently fail - this is not critical
-    console.error("[updateLastSeen] Error:", error);
+    logger.error("[updateLastSeen] Error:", error);
   }
 }
 
@@ -356,7 +357,7 @@ export async function getCurrentUserIdentity(): Promise<UserIdentity | null> {
 
     return await getUserIdentity(user.id);
   } catch (error) {
-    console.error("[getCurrentUserIdentity] Error:", error);
+    logger.error("[getCurrentUserIdentity] Error:", error);
     return null;
   }
 }

@@ -6,6 +6,7 @@
 "use client";
 
 import { Check,Save } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from "react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,9 +60,9 @@ export function ExecutiveSummaryEditor({ claimId, initialData }: ExecutiveSummar
       if (!response.ok) throw new Error("Save failed");
 
       setLastSaved(new Date());
-      console.log("[EXEC_SUMMARY] Auto-saved");
+      logger.debug("[EXEC_SUMMARY] Auto-saved");
     } catch (error) {
-      console.error("[EXEC_SUMMARY] Save error:", error);
+      logger.error("[EXEC_SUMMARY] Save error:", error);
     } finally {
       setIsSaving(false);
     }

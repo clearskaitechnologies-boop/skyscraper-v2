@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    console.log(`[twilio-inbound] From=${from} Body=${body.substring(0, 100)}`);
+    logger.debug(`[twilio-inbound] From=${from} Body=${body.substring(0, 100)}`);
 
     // Normalize phone: strip everything except digits, ensure +1 prefix
     const normalizedPhone = from.replace(/\D/g, "").replace(/^1/, "");
@@ -77,7 +78,7 @@ export async function POST(req: NextRequest) {
       headers: { "Content-Type": "text/xml" },
     });
   } catch (err: any) {
-    console.error("[twilio-webhook]", err);
+    logger.error("[twilio-webhook]", err);
     // Always return 200 to Twilio to prevent retries
     return new NextResponse('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
       status: 200,

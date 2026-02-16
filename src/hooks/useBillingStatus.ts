@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 export interface BillingStatus {
   plan: string;
@@ -33,7 +34,7 @@ export function useBillingStatus() {
         const data = await res.json();
         setStatus(data);
       } catch (err) {
-        console.error("Billing status error:", err);
+        logger.error("Billing status error:", err);
         setError(err instanceof Error ? err.message : "Unknown error");
         // Set default values on error
         setStatus({

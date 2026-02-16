@@ -12,6 +12,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -144,11 +145,11 @@ export async function POST(request: NextRequest) {
     }
 
     // 8. Parse scope
-    console.log("[estimate/priced] Parsing scope...");
+    logger.debug("[estimate/priced] Parsing scope...");
     const parsedScope = parseScope(claimWriter.scopeJson);
 
     // 9. Apply pricing
-    console.log("[estimate/priced] Applying pricing...");
+    logger.debug("[estimate/priced] Applying pricing...");
     const profile: PricingProfile = {
       taxRate: pricingProfile.taxRate,
       opPercent: pricingProfile.opPercent,
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
     const { pricedItems, totals, unpricedItems } = priceScope(parsedScope.items, profile);
 
     // 10. Build priced XML
-    console.log("[estimate/priced] Building priced Xactimate XML...");
+    logger.debug("[estimate/priced] Building priced Xactimate XML...");
     const pricingInfo = pricedItems.map((item) => ({
       code: item.code,
       unitPrice: item.unitPrice,
@@ -182,7 +183,7 @@ export async function POST(request: NextRequest) {
     const xml = buildXactimateXml(parsedScope, metadata, pricingInfo);
 
     // 11. Build priced Symbility JSON
-    console.log("[estimate/priced] Building priced Symbility JSON...");
+    logger.debug("[estimate/priced] Building priced Symbility JSON...");
     const symbility = buildSymbilityJson(parsedScope, metadata, pricingInfo);
 
     // 12. Build summary
@@ -259,7 +260,7 @@ export async function POST(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[estimate/priced] Error:", error);
+    logger.error("[estimate/priced] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to generate priced estimate",

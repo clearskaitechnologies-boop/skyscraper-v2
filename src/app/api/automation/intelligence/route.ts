@@ -8,6 +8,7 @@
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getClaimAutomationIntelligence } from "@/lib/intel/automation/engine";
@@ -30,7 +31,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(intelligence);
   } catch (error) {
-    console.error("[AUTOMATION INTELLIGENCE] Error:", error);
+    logger.error("[AUTOMATION INTELLIGENCE] Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch intelligence", details: String(error) },
       { status: 500 }

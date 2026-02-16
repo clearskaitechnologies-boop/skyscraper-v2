@@ -16,6 +16,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { JobNimbusMigrationEngine } from "@/lib/migrations/jobnimbus-engine";
 import { getCurrentUserPermissions } from "@/lib/permissions";
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
       durationMs: result.durationMs,
     });
   } catch (err: any) {
-    console.error("[API] /api/migrations/jobnimbus error:", err);
+    logger.error("[API] /api/migrations/jobnimbus error:", err);
     return NextResponse.json(
       { ok: false, error: err.message || "Migration failed" },
       { status: 500 }

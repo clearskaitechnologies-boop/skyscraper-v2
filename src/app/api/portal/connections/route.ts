@@ -5,6 +5,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -188,7 +189,7 @@ export async function POST(req: NextRequest) {
       message: "Connection request sent",
     });
   } catch (error) {
-    console.error("[connections POST] Error:", error);
+    logger.error("[connections POST] Error:", error);
     return NextResponse.json({ error: "Failed to send connection request" }, { status: 500 });
   }
 }
@@ -277,7 +278,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ connections: pros });
   } catch (error) {
-    console.error("[connections GET] Error:", error);
+    logger.error("[connections GET] Error:", error);
     return NextResponse.json({ connections: [] });
   }
 }

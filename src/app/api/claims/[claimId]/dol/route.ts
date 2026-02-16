@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
         },
       });
     } catch (activityError) {
-      console.warn("[POST /api/claims/[id]/dol] Failed to log activity:", activityError);
+      logger.warn("[POST /api/claims/[id]/dol] Failed to log activity:", activityError);
     }
 
     return NextResponse.json({
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
       claim: updatedClaim,
     });
   } catch (error: any) {
-    console.error(`[POST /api/claims/${params.claimId}/dol] Error:`, error);
+    logger.error(`[POST /api/claims/${params.claimId}/dol] Error:`, error);
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(

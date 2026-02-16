@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { withOrgScope } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -20,7 +21,7 @@ export const GET = withOrgScope(
     try {
       const templateId = params.templateId;
 
-      console.log(`[TEMPLATE_PREVIEW] Fetching template ${templateId} for org ${orgId}`);
+      logger.debug(`[TEMPLATE_PREVIEW] Fetching template ${templateId} for org ${orgId}`);
 
       // Try marketplace template first (Template table)
       let template = await prisma.template.findUnique({
@@ -41,7 +42,7 @@ export const GET = withOrgScope(
         // Marketplace template found
         isMarketplace = true;
         layout = template.sections;
-        console.log(`[TEMPLATE_PREVIEW] Found marketplace template: ${template.name}`);
+        logger.debug(`[TEMPLATE_PREVIEW] Found marketplace template: ${template.name}`);
       } else {
         // Try custom template (report_templates)
         const customTemplate = Templates
@@ -102,7 +103,7 @@ export const GET = withOrgScope(
           : null,
       });
     } catch (error: any) {
-      console.error(`[TEMPLATE_PREVIEW] Error:`, error);
+      logger.error(`[TEMPLATE_PREVIEW] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to load template preview" },
         { status: 500 }

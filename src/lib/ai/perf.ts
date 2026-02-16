@@ -11,6 +11,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type AIModel = "gpt-4o" | "gpt-4o-mini" | "gpt-4-turbo" | "gpt-3.5-turbo";
 
@@ -74,7 +75,7 @@ export async function logAIPerformance(metrics: AIPerformanceMetrics): Promise<v
       `[AI Perf] Logged: ${metrics.routeName} | ${metrics.durationMs}ms | ${metrics.cacheHit ? "CACHED" : "MISS"} | $${costUsd.toFixed(4)}`
     );
   } catch (error) {
-    console.error("[AI Perf] Error logging performance:", error);
+    logger.error("[AI Perf] Error logging performance:", error);
   }
 }
 

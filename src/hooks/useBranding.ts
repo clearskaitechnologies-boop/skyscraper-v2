@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface BrandingData {
   companyName?: string | null;
@@ -22,7 +23,7 @@ export function useBranding() {
           setBranding(data.branding);
         }
       } catch (error) {
-        console.error("Error fetching branding:", error);
+        logger.error("Error fetching branding:", error);
       } finally {
         setLoading(false);
       }

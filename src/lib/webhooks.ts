@@ -1,4 +1,5 @@
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -46,7 +47,7 @@ export async function triggerWebhooks(
     });
 
     if (webhooks.length === 0) {
-      console.log(`No webhooks registered for ${event} in org ${orgId}`);
+      logger.debug(`No webhooks registered for ${event} in org ${orgId}`);
       return;
     }
 
@@ -73,7 +74,7 @@ export async function triggerWebhooks(
       }
     });
   } catch (error) {
-    console.error("Failed to trigger webhooks:", error);
+    logger.error("Failed to trigger webhooks:", error);
   }
 }
 

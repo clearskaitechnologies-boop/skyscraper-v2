@@ -5,6 +5,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 import { Readable } from "stream";
 
 import { createClient } from "@/integrations/supabase/client";
@@ -88,7 +89,7 @@ export async function cacheRenderedPdf(options: CachePDFOptions): Promise<CacheP
       });
 
     if (error) {
-      console.error("PDF cache upload error:", error);
+      logger.error("PDF cache upload error:", error);
       return {
         success: false,
         error: `Storage upload failed: ${error.message}`,
@@ -115,7 +116,7 @@ export async function cacheRenderedPdf(options: CachePDFOptions): Promise<CacheP
       fileSizeBytes: pdfBuffer.length,
     };
   } catch (error) {
-    console.error("PDF caching error:", error);
+    logger.error("PDF caching error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -138,13 +139,13 @@ export async function getCachedPdfUrl(
       .createSignedUrl(storagePath, expiresIn);
 
     if (error || !data) {
-      console.error("Failed to get cached PDF URL:", error);
+      logger.error("Failed to get cached PDF URL:", error);
       return null;
     }
 
     return data.signedUrl;
   } catch (error) {
-    console.error("Get cached PDF URL error:", error);
+    logger.error("Get cached PDF URL error:", error);
     return null;
   }
 }
@@ -176,13 +177,13 @@ export async function deleteCachedPdf(storagePath: string): Promise<boolean> {
     const { error } = await supabase.storage.from("documents").remove([storagePath]);
 
     if (error) {
-      console.error("Delete cached PDF error:", error);
+      logger.error("Delete cached PDF error:", error);
       return false;
     }
 
     return true;
   } catch (error) {
-    console.error("Delete cached PDF error:", error);
+    logger.error("Delete cached PDF error:", error);
     return false;
   }
 }

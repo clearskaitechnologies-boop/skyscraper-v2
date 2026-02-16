@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -37,7 +38,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Error marking message as read:", error);
+    logger.error("Error marking message as read:", error);
     return NextResponse.json({ error: "Failed to mark message as read" }, { status: 500 });
   }
 }

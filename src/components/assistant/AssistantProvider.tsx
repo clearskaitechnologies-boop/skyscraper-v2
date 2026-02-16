@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useCallback,useContext, useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface AssistantContextValue {
   isOpen: boolean;
@@ -17,7 +18,7 @@ const AssistantContext = createContext<AssistantContextValue | null>(null);
 export function useAssistant() {
   const context = useContext(AssistantContext);
   if (!context) {
-    console.warn("useAssistant called outside provider - returning safe mock");
+    logger.warn("useAssistant called outside provider - returning safe mock");
     return {
       isOpen: false,
       draftMessage: "",

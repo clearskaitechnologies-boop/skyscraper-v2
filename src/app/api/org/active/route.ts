@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getActiveOrgSafe } from "@/lib/auth/getActiveOrgSafe";
@@ -37,7 +38,7 @@ export async function GET() {
       });
       demoModeValue = orgDetails?.demoMode ?? true;
     } catch (error) {
-      console.warn("[/api/org/active] demoMode query failed (column may not exist):", error);
+      logger.warn("[/api/org/active] demoMode query failed (column may not exist):", error);
       // Continue with default value
     }
 
@@ -51,7 +52,7 @@ export async function GET() {
       source: orgResult.source,
     });
   } catch (e: any) {
-    console.error("[/api/org/active] Error:", e);
+    logger.error("[/api/org/active] Error:", e);
     return NextResponse.json({ ok: false, reason: "error", error: e.message }, { status: 500 });
   }
 }

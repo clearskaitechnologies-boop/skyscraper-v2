@@ -10,6 +10,7 @@
  */
 
 import fs from "fs/promises";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
@@ -219,7 +220,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     //   },
     // });
   } catch (error: any) {
-    console.error("[PREVIEW_PDF] Generation error:", error);
+    logger.error("[PREVIEW_PDF] Generation error:", error);
     // As a last resort, return a category-based static PDF to avoid breaking embeds.
     try {
       const slug = params.slug;

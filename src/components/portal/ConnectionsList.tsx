@@ -7,6 +7,7 @@
 "use client";
 
 import { MapPin, MessageCircle, Star, UserCheck, Users, Verified } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -73,7 +74,7 @@ export function ConnectionsList({
           setConnections(accepted);
         }
       } catch (error) {
-        console.error("Failed to fetch connections:", error);
+        logger.error("Failed to fetch connections:", error);
       } finally {
         setLoading(false);
       }
@@ -265,7 +266,7 @@ export function ConnectionsListCompact({ maxDisplay = 3 }: { maxDisplay?: number
           setConnections(accepted);
         }
       } catch (error) {
-        console.error("Failed to fetch connections:", error);
+        logger.error("Failed to fetch connections:", error);
       } finally {
         setLoading(false);
       }

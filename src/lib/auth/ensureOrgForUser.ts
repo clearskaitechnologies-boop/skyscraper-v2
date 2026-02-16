@@ -11,6 +11,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 interface EnsureOrgParams {
   userId: string;
@@ -153,7 +154,7 @@ export async function ensureOrgForUser(params: EnsureOrgParams) {
           role: "owner",
         },
       });
-      console.log(`✅ Auto-created org for user ${email || userId}: ${newOrg.id}`);
+      logger.debug(`✅ Auto-created org for user ${email || userId}: ${newOrg.id}`);
       pendingCreations.delete(userId);
       return newOrg;
     })

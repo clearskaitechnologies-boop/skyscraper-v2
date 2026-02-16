@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -26,7 +27,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 
     return NextResponse.json({ artifact });
   } catch (error) {
-    console.error("Error fetching artifact:", error);
+    logger.error("Error fetching artifact:", error);
     return NextResponse.json({ error: "Failed to fetch artifact" }, { status: 500 });
   }
 }
@@ -62,7 +63,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     return NextResponse.json({ success: true, message: "Artifact updated" });
   } catch (error) {
-    console.error("Error updating artifact:", error);
+    logger.error("Error updating artifact:", error);
     return NextResponse.json({ error: "Failed to update artifact" }, { status: 500 });
   }
 }
@@ -90,7 +91,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     return NextResponse.json({ success: true, message: "Artifact deleted" });
   } catch (error) {
-    console.error("Error deleting artifact:", error);
+    logger.error("Error deleting artifact:", error);
     return NextResponse.json({ error: "Failed to delete artifact" }, { status: 500 });
   }
 }

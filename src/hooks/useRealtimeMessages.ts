@@ -19,6 +19,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -74,7 +75,7 @@ export function useRealtimeMessages(conversationId: string | null | undefined) {
         }
       } catch (err) {
         if (!cancelled) setError(String(err));
-        console.error("[useRealtimeMessages] Failed to load messages:", err);
+        logger.error("[useRealtimeMessages] Failed to load messages:", err);
       }
     }
 
@@ -192,7 +193,7 @@ export function useRealtimeMessages(conversationId: string | null | undefined) {
       } catch (err) {
         // Roll back optimistic insert
         setMessages((prev) => prev.filter((m) => m.id !== tempId));
-        console.error("[useRealtimeMessages] Send failed:", err);
+        logger.error("[useRealtimeMessages] Send failed:", err);
         return false;
       }
     },

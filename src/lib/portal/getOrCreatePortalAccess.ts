@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface PortalAccessResult {
   id: string;
@@ -58,7 +59,7 @@ export async function getOrCreatePortalAccess(
   });
 
   if (!firstClaim) {
-    console.log(`[getOrCreatePortalAccess] No claims found for org ${orgId}`);
+    logger.debug(`[getOrCreatePortalAccess] No claims found for org ${orgId}`);
     return null;
   }
 

@@ -2,6 +2,7 @@
 "use client";
 
 import { CheckCircle2, Copy, Eye, EyeOff, FileImage, Link2, Send, User } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -65,7 +66,7 @@ export function ClientShareWidget({
         setDocuments(docs);
       }
     } catch (error) {
-      console.error("Failed to fetch documents:", error);
+      logger.error("Failed to fetch documents:", error);
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ export function ClientShareWidget({
       const data = await res.json();
       setInviteLink(data.inviteUrl || data.link);
     } catch (error) {
-      console.error("Generate invite failed:", error);
+      logger.error("Generate invite failed:", error);
       alert("Failed to generate invite link");
     }
   };
@@ -116,7 +117,7 @@ export function ClientShareWidget({
 
       alert("✅ Invite sent successfully!");
     } catch (error) {
-      console.error("Send invite failed:", error);
+      logger.error("Send invite failed:", error);
       alert("Failed to send invite. Please try again.");
     } finally {
       setSendingInvite(false);
@@ -148,7 +149,7 @@ export function ClientShareWidget({
         prev.map((doc) => (doc.id === docId ? { ...doc, sharedWithClient: share } : doc))
       );
     } catch (error) {
-      console.error("Failed to toggle document share:", error);
+      logger.error("Failed to toggle document share:", error);
     }
   };
 

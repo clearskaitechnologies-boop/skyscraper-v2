@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Prisma singleton imported from @/lib/db/prisma
 
@@ -147,7 +148,7 @@ export async function shouldShowLowBalanceWarning(orgId: string): Promise<boolea
  * Monthly reset for token quotas (called by cron)
  */
 export async function resetMonthlyQuotas(): Promise<{ resetCount: number }> {
-  console.log("Starting monthly quota reset...");
+  logger.debug("Starting monthly quota reset...");
 
   const orgs = await prisma.org.findMany({
     select: {
@@ -202,6 +203,6 @@ export async function resetMonthlyQuotas(): Promise<{ resetCount: number }> {
     resetCount++;
   }
 
-  console.log(`Monthly reset complete: ${resetCount} orgs updated`);
+  logger.debug(`Monthly reset complete: ${resetCount} orgs updated`);
   return { resetCount };
 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -119,7 +120,7 @@ export async function POST(req: NextRequest) {
       assessment,
     });
   } catch (error: any) {
-    console.error("[API] Save damage assessment error:", error);
+    logger.error("[API] Save damage assessment error:", error);
 
     if (error.name === "ZodError") {
       return NextResponse.json({ error: "Invalid input", details: error.errors }, { status: 400 });
@@ -175,7 +176,7 @@ export async function GET(req: NextRequest) {
       assessments,
     });
   } catch (error: any) {
-    console.error("[API] List damage assessments error:", error);
+    logger.error("[API] List damage assessments error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch damage assessments" },
       { status: 500 }

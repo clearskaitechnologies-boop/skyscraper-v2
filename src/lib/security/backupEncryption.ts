@@ -6,6 +6,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 import { createReadStream, createWriteStream } from "fs";
 import { pipeline } from "stream/promises";
 
@@ -65,9 +66,9 @@ export async function encryptBackup(inputPath: string, outputPath: string): Prom
       output.end();
     });
 
-    console.log(`✅ Backup encrypted: ${outputPath}`);
+    logger.debug(`✅ Backup encrypted: ${outputPath}`);
   } catch (error) {
-    console.error("Failed to encrypt backup:", error);
+    logger.error("Failed to encrypt backup:", error);
     throw error;
   }
 }
@@ -119,10 +120,10 @@ export async function decryptBackup(inputPath: string, outputPath: string): Prom
       // Read remaining data (encrypted content + tag)
       pipeline(input, decipher, output)
         .then(() => {
-          console.log(`✅ Backup decrypted: ${outputPath}`);
+          logger.debug(`✅ Backup decrypted: ${outputPath}`);
         })
         .catch((error) => {
-          console.error("Failed to decrypt backup:", error);
+          logger.error("Failed to decrypt backup:", error);
           throw error;
         });
     }
@@ -144,19 +145,19 @@ export async function createEncryptedBackup(
 
   try {
     // Create unencrypted backup
-    console.log("Creating database backup...");
+    logger.debug("Creating database backup...");
     await execAsync(`pg_dump "${databaseUrl}" > ${tempPath}`);
 
     // Encrypt backup
-    console.log("Encrypting backup...");
+    logger.debug("Encrypting backup...");
     await encryptBackup(tempPath, outputPath);
 
     // Remove unencrypted temp file
     await execAsync(`rm ${tempPath}`);
 
-    console.log(`✅ Encrypted backup created: ${outputPath}`);
+    logger.debug(`✅ Encrypted backup created: ${outputPath}`);
   } catch (error) {
-    console.error("Failed to create encrypted backup:", error);
+    logger.error("Failed to create encrypted backup:", error);
     // Cleanup temp file if it exists
     await execAsync(`rm -f ${tempPath}`).catch(() => {});
     throw error;
@@ -178,19 +179,19 @@ export async function restoreEncryptedBackup(
 
   try {
     // Decrypt backup
-    console.log("Decrypting backup...");
+    logger.debug("Decrypting backup...");
     await decryptBackup(backupPath, tempPath);
 
     // Restore database
-    console.log("Restoring database...");
+    logger.debug("Restoring database...");
     await execAsync(`psql "${databaseUrl}" < ${tempPath}`);
 
     // Remove decrypted temp file
     await execAsync(`rm ${tempPath}`);
 
-    console.log(`✅ Database restored from encrypted backup`);
+    logger.debug(`✅ Database restored from encrypted backup`);
   } catch (error) {
-    console.error("Failed to restore encrypted backup:", error);
+    logger.error("Failed to restore encrypted backup:", error);
     // Cleanup temp file if it exists
     await execAsync(`rm -f ${tempPath}`).catch(() => {});
     throw error;
@@ -245,9 +246,9 @@ export function scheduleBackups(
       const outputPath = `${backupDir}/${filename}`;
 
       await createEncryptedBackup(databaseUrl, outputPath);
-      console.log(`✅ Scheduled backup completed: ${filename}`);
+      logger.debug(`✅ Scheduled backup completed: ${filename}`);
     } catch (error) {
-      console.error("Scheduled backup failed:", error);
+      logger.error("Scheduled backup failed:", error);
     }
   };
 
@@ -280,10 +281,10 @@ export async function cleanupOldBackups(
 
       if (stats.mtime < cutoffDate) {
         await unlink(filePath);
-        console.log(`🗑️ Deleted old backup: ${file}`);
+        logger.debug(`🗑️ Deleted old backup: ${file}`);
       }
     }
   } catch (error) {
-    console.error("Failed to cleanup old backups:", error);
+    logger.error("Failed to cleanup old backups:", error);
   }
 }

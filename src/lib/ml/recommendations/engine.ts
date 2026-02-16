@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface Recommendation {
   id: string;
@@ -36,7 +37,7 @@ export async function generateRecommendations(
   context: RecommendationContext
 ): Promise<Recommendation[]> {
   const { orgId, claimId, userId } = context;
-  console.log(`[ML] Generating recommendations for org ${orgId}`);
+  logger.debug(`[ML] Generating recommendations for org ${orgId}`);
 
   if (!orgId) {
     return [];
@@ -268,16 +269,16 @@ export async function generateRecommendations(
     // Sort by score (highest priority first)
     recommendations.sort((a, b) => (b.score || 0) - (a.score || 0));
 
-    console.log(`[ML] Generated ${recommendations.length} recommendations`);
+    logger.debug(`[ML] Generated ${recommendations.length} recommendations`);
     return recommendations.slice(0, 10); // Return top 10
   } catch (error) {
-    console.error("[ML] Error generating recommendations:", error);
+    logger.error("[ML] Error generating recommendations:", error);
     return [];
   }
 }
 
 export async function getRecommendationsForClaim(claimId: string): Promise<Recommendation[]> {
-  console.log(`[ML] Getting recommendations for claim ${claimId}`);
+  logger.debug(`[ML] Getting recommendations for claim ${claimId}`);
 
   try {
     const claim = await prisma.claims.findUnique({
@@ -294,13 +295,13 @@ export async function getRecommendationsForClaim(claimId: string): Promise<Recom
       claimId,
     });
   } catch (error) {
-    console.error("[ML] Error getting claim recommendations:", error);
+    logger.error("[ML] Error getting claim recommendations:", error);
     return [];
   }
 }
 
 export async function refreshRecommendations(orgId: string): Promise<number> {
-  console.log(`[ML] Refreshing recommendations for org ${orgId}`);
+  logger.debug(`[ML] Refreshing recommendations for org ${orgId}`);
 
   const recommendations = await generateRecommendations({ orgId });
   return recommendations.length;

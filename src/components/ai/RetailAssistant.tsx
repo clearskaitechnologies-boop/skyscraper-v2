@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, Send, ShoppingBag } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface Message {
@@ -57,7 +58,7 @@ export default function RetailAssistant({ jobId }: { jobId?: string }) {
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
-      console.error("Retail Assistant error:", error);
+      logger.error("Retail Assistant error:", error);
       setMessages((prev) => [
         ...prev,
         {

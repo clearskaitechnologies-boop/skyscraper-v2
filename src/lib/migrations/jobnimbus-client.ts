@@ -11,6 +11,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 // ============================================================================
 // Types
@@ -151,7 +152,7 @@ export class JobNimbusClient {
         // Rate limit handling
         if (res.status === 429) {
           const retryAfter = parseInt(res.headers.get("Retry-After") || "5", 10);
-          console.warn(`[JobNimbus] Rate limited. Waiting ${retryAfter}s...`);
+          logger.warn(`[JobNimbus] Rate limited. Waiting ${retryAfter}s...`);
           await this.sleep(retryAfter * 1000);
           continue;
         }
@@ -164,7 +165,7 @@ export class JobNimbusClient {
         return res.json() as Promise<T>;
       } catch (err: any) {
         lastError = err;
-        console.warn(`[JobNimbus] Attempt ${attempt} failed: ${err.message}`);
+        logger.warn(`[JobNimbus] Attempt ${attempt} failed: ${err.message}`);
         if (attempt < MAX_RETRIES) {
           await this.sleep(Math.pow(2, attempt) * 1000); // Exponential backoff
         }
@@ -208,7 +209,7 @@ export class JobNimbusClient {
       });
 
       all.push(...res.results);
-      console.log(`[JobNimbus] Fetched ${all.length} contacts...`);
+      logger.debug(`[JobNimbus] Fetched ${all.length} contacts...`);
 
       if (res.results.length < DEFAULT_PAGE_SIZE) break;
       offset += DEFAULT_PAGE_SIZE;
@@ -234,7 +235,7 @@ export class JobNimbusClient {
       });
 
       all.push(...res.results);
-      console.log(`[JobNimbus] Fetched ${all.length} jobs...`);
+      logger.debug(`[JobNimbus] Fetched ${all.length} jobs...`);
 
       if (res.results.length < DEFAULT_PAGE_SIZE) break;
       offset += DEFAULT_PAGE_SIZE;
@@ -259,7 +260,7 @@ export class JobNimbusClient {
       });
 
       all.push(...res.results);
-      console.log(`[JobNimbus] Fetched ${all.length} tasks...`);
+      logger.debug(`[JobNimbus] Fetched ${all.length} tasks...`);
 
       if (res.results.length < DEFAULT_PAGE_SIZE) break;
       offset += DEFAULT_PAGE_SIZE;

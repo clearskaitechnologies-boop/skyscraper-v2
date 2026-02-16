@@ -12,6 +12,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -119,7 +120,7 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error("[CREATE_REVIEW]", error);
+    logger.error("[CREATE_REVIEW]", error);
 
     if (error.name === "ZodError") {
       return NextResponse.json(
@@ -200,7 +201,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[GET_REVIEWS]", error);
+    logger.error("[GET_REVIEWS]", error);
     return NextResponse.json({ error: "Failed to fetch reviews" }, { status: 500 });
   }
 }

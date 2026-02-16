@@ -5,13 +5,14 @@
  */
 
 import { ClaimContext, RuleDefinition } from "../types";
+import { logger } from "@/lib/logger";
 
 /**
  * Get all active rules
  */
 export async function getAllRules(): Promise<RuleDefinition[]> {
   // rule model doesn't exist in schema
-  console.log("[ruleEngine] Would fetch rules from database");
+  logger.debug("[ruleEngine] Would fetch rules from database");
   return [];
 }
 
@@ -133,6 +134,6 @@ export function executeRuleActions(rules: RuleDefinition[]): string[] {
  */
 export async function createRule(data: Omit<RuleDefinition, "id">): Promise<RuleDefinition> {
   // rule model doesn't exist in schema
-  console.log(`[ruleEngine] Would create rule ${data.name}`);
+  logger.debug(`[ruleEngine] Would create rule ${data.name}`);
   throw new Error("Rule creation not available - model requires schema updates");
 }

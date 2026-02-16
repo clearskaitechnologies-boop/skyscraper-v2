@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -195,7 +196,7 @@ Always respond with valid JSON matching the requested schema.`,
       })
     );
   } catch (error: any) {
-    console.error("Damage analysis error:", error);
+    logger.error("Damage analysis error:", error);
     Sentry.captureException(error);
     return NextResponse.json(
       aiFail(error.message || "Analysis failed", "ANALYSIS_ERROR", { stack: error.stack }),

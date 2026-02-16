@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -56,7 +57,7 @@ export async function requireApiAuth(): Promise<ApiAuthResult | NextResponse> {
       user,
     };
   } catch (error) {
-    console.error("[requireApiAuth] Error:", error);
+    logger.error("[requireApiAuth] Error:", error);
     return NextResponse.json(
       { error: "Authentication failed. Please try again." },
       { status: 500 }
@@ -92,7 +93,7 @@ export async function requireApiOrg(): Promise<ApiAuthResult | NextResponse> {
       user: base.user,
     };
   } catch (error) {
-    console.error("[requireApiOrg] Error:", error);
+    logger.error("[requireApiOrg] Error:", error);
     return NextResponse.json({ error: "Failed to resolve organization context." }, { status: 500 });
   }
 }
@@ -144,7 +145,7 @@ export async function verifyClaimAccess(
 
     return { ok: true };
   } catch (error) {
-    console.error("[verifyClaimAccess] Error:", error);
+    logger.error("[verifyClaimAccess] Error:", error);
     return NextResponse.json({ error: "Failed to verify claim access." }, { status: 500 });
   }
 }

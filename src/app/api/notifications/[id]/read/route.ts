@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -39,7 +40,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json(notification);
   } catch (error) {
-    console.error("Error marking notification as read:", error);
+    logger.error("Error marking notification as read:", error);
     return NextResponse.json({ error: "Failed to mark notification as read" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -67,7 +68,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(branding);
   } catch (error: any) {
-    console.error("[branding/get] Error:", error);
+    logger.error("[branding/get] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

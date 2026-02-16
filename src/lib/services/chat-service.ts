@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import { pushNotificationService } from "./push-notification-service";
 
@@ -123,7 +124,7 @@ class ChatService {
 
       return { success: true, conversationId };
     } catch (error) {
-      console.error("Error creating conversation:", error);
+      logger.error("Error creating conversation:", error);
       return { success: false };
     }
   }
@@ -152,7 +153,7 @@ class ChatService {
 
       return this.getConversation(result[0].id, user1Id);
     } catch (error) {
-      console.error("Error finding direct conversation:", error);
+      logger.error("Error finding direct conversation:", error);
       return null;
     }
   }
@@ -225,7 +226,7 @@ class ChatService {
         unreadCount: parseInt(unreadResult[0]?.count || "0", 10),
       };
     } catch (error) {
-      console.error("Error getting conversation:", error);
+      logger.error("Error getting conversation:", error);
       return null;
     }
   }
@@ -255,7 +256,7 @@ class ChatService {
         return new Date(bTime).getTime() - new Date(aTime).getTime();
       });
     } catch (error) {
-      console.error("Error getting conversations:", error);
+      logger.error("Error getting conversations:", error);
       return [];
     }
   }
@@ -336,7 +337,7 @@ class ChatService {
         },
       };
     } catch (error) {
-      console.error("Error sending message:", error);
+      logger.error("Error sending message:", error);
       return { success: false };
     }
   }
@@ -409,7 +410,7 @@ class ChatService {
         attachments: m.attachments || [],
       }));
     } catch (error) {
-      console.error("Error getting messages:", error);
+      logger.error("Error getting messages:", error);
       return [];
     }
   }
@@ -443,7 +444,7 @@ class ChatService {
         `;
       }
     } catch (error) {
-      console.error("Error marking messages as read:", error);
+      logger.error("Error marking messages as read:", error);
     }
   }
 
@@ -464,7 +465,7 @@ class ChatService {
       `) as CountRow[];
       return parseInt(result[0]?.count || "0", 10);
     } catch (error) {
-      console.error("Error getting total unread count:", error);
+      logger.error("Error getting total unread count:", error);
       return 0;
     }
   }

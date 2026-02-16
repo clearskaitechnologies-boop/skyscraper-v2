@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Liveness probe endpoint
@@ -16,7 +17,7 @@ export async function GET() {
     const missingEnvVars = requiredEnvVars.filter((key) => !process.env[key]);
 
     if (missingEnvVars.length > 0) {
-      console.warn("[health/live] Missing env vars:", missingEnvVars);
+      logger.warn("[health/live] Missing env vars:", missingEnvVars);
     }
 
     return NextResponse.json({
@@ -30,7 +31,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[health/live] Unexpected error:", error);
+    logger.error("[health/live] Unexpected error:", error);
     // Still return 200 OK for liveness probe
     return NextResponse.json({
       status: "ok",

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
@@ -93,7 +94,7 @@ export async function GET(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[clients/search] Error:", error);
+    logger.error("[clients/search] Error:", error);
     return NextResponse.json(
       { error: "Search failed", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }

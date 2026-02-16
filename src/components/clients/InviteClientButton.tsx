@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2,Mail } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface InviteClientButtonProps {
@@ -30,7 +31,7 @@ export default function InviteClientButton({ clientId, email }: InviteClientButt
       setStatus("success");
       setTimeout(() => setStatus("idle"), 3000);
     } catch (error) {
-      console.error("Error inviting client:", error);
+      logger.error("Error inviting client:", error);
       setStatus("error");
       setTimeout(() => setStatus("idle"), 3000);
     } finally {

@@ -11,6 +11,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import type { Client as ClientModel } from "@prisma/client";
 
 import { safePortalQuery } from "@/lib/portal/safePortalQuery";
@@ -120,7 +121,7 @@ export async function getClientContext(): Promise<ClientContext> {
       claims,
     };
   } catch (error: any) {
-    console.error("[CLIENT_CONTEXT] Fatal error:", error);
+    logger.error("[CLIENT_CONTEXT] Fatal error:", error);
 
     // Return error state instead of throwing
     return {
@@ -184,7 +185,7 @@ export async function getClientClaim(
 
     return { claim, hasAccess };
   } catch (error: any) {
-    console.error("[CLIENT_CONTEXT] Fatal error in getClientClaim:", error);
+    logger.error("[CLIENT_CONTEXT] Fatal error in getClientClaim:", error);
     return {
       claim: null,
       hasAccess: false,

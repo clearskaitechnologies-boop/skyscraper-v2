@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface BrandingInfo {
   companyName: string;
@@ -74,7 +75,7 @@ export async function getOrgBranding(orgId: string): Promise<BrandingInfo> {
         "All work completed in compliance with the contract. Upon collection of funds, no materials or mechanic's lien will be filed against this property.",
     };
   } catch (error) {
-    console.error("[getOrgBranding] Error:", error);
+    logger.error("[getOrgBranding] Error:", error);
 
     // Return defaults on error
     return {

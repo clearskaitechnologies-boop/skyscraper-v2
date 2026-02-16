@@ -12,6 +12,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 import { DenialReason } from "./extractPdfText";
 
@@ -164,7 +165,7 @@ Return JSON format:
         recommendation: result.recommendation,
       });
     } catch (error) {
-      console.error("[REBUTTAL GENERATION ERROR]", error);
+      logger.error("[REBUTTAL GENERATION ERROR]", error);
 
       // Fallback rebuttal
       appealArgs.push({
@@ -219,7 +220,7 @@ Write a 150-200 word summary that:
 
     return response.choices[0].message.content || "Appeal summary unavailable.";
   } catch (error) {
-    console.error("[SUMMARY GENERATION ERROR]", error);
+    logger.error("[SUMMARY GENERATION ERROR]", error);
     return `This appeal contests the denial of claim ${claimDetails.claimNumber} for property located at ${claimDetails.propertyAddress}. We believe the denial is not supported by the policy terms or the factual evidence. We respectfully request reconsideration based on the detailed arguments and supporting documentation provided herein.`;
   }
 }
@@ -266,7 +267,7 @@ Format as plain text email with clear structure.`;
 
     return response.choices[0].message.content || "";
   } catch (error) {
-    console.error("[EMAIL GENERATION ERROR]", error);
+    logger.error("[EMAIL GENERATION ERROR]", error);
 
     return `Subject: Appeal of Claim Denial - Claim #${claimNumber}
 

@@ -7,6 +7,7 @@
 "use client";
 
 import { Loader2, Zap } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -42,7 +43,7 @@ export function DominusGodModeButton({ claimId, onComplete }: DominusGodModeButt
 
       onComplete?.();
     } catch (error) {
-      console.error("[DOMINUS] Error:", error);
+      logger.error("[DOMINUS] Error:", error);
       toast.error("Automation failed", { id: "dominus" });
     } finally {
       setIsRunning(false);

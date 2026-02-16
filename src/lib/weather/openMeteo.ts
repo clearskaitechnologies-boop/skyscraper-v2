@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Open-Meteo Weather Integration
  * Free, stable, no API key required
@@ -125,7 +127,7 @@ export async function geocodeAddress(
       lng: results[0].longitude,
     };
   } catch (error) {
-    console.error("Geocoding error:", error);
+    logger.error("Geocoding error:", error);
     return null;
   }
 }

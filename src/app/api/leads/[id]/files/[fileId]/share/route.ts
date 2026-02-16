@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -78,7 +79,7 @@ export async function PATCH(
       },
     });
 
-    console.log(`[Files Share] File ${fileId} shared=${sharedWithClient}`);
+    logger.debug(`[Files Share] File ${fileId} shared=${sharedWithClient}`);
 
     return NextResponse.json({
       success: true,
@@ -88,7 +89,7 @@ export async function PATCH(
       },
     });
   } catch (error: any) {
-    console.error("[Files Share PATCH] Error:", error);
+    logger.error("[Files Share PATCH] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

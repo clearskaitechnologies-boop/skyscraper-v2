@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { makeMockupBrief } from "@/lib/ai";
 import { trackAiUsage } from "@/lib/ai/trackUsage";
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
 
     return new Response(JSON.stringify({ data: { type: "mockup-brief", brief } }), { status: 200 });
   } catch (error) {
-    console.error("[GENERATE-MOCKUP] Error:", error);
+    logger.error("[GENERATE-MOCKUP] Error:", error);
     return new Response(JSON.stringify({ error: "Mockup generation failed" }), { status: 500 });
   }
 }

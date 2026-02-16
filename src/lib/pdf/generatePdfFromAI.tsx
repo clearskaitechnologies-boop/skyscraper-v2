@@ -4,6 +4,7 @@
  */
 
 import { renderToBuffer } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 
 import { buildAIContentFromTemplate } from "../ai/buildAIContentFromTemplate";
 import { updateDocumentStatus } from "../documents/createGeneratedDocument";
@@ -71,7 +72,7 @@ export async function generatePdfFromAI({
       size: pdfBuffer.length,
     };
   } catch (error) {
-    console.error("PDF generation failed:", error);
+    logger.error("PDF generation failed:", error);
 
     // Capture to Sentry
     if (typeof window === "undefined") {

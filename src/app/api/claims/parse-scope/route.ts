@@ -7,6 +7,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import type OpenAI from "openai";
 import pdf from "pdf-parse";
 
@@ -179,7 +180,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, data: parsed });
   } catch (error: any) {
-    console.error("[parse-scope] Error:", error);
+    logger.error("[parse-scope] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to parse scope of work" },
       { status: 500 }

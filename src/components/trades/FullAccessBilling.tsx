@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth, useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { Check, MessageCircle, Send, Sparkles, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -47,7 +48,7 @@ export function FullAccessBilling() {
         });
       }
     } catch (error) {
-      console.error("Failed to fetch Full Access status:", error);
+      logger.error("Failed to fetch Full Access status:", error);
     } finally {
       setLoading(false);
     }
@@ -78,7 +79,7 @@ export function FullAccessBilling() {
         toast.error(data.error || "Failed to start checkout");
       }
     } catch (error) {
-      console.error("Subscribe error:", error);
+      logger.error("Subscribe error:", error);
       toast.error("Failed to start checkout");
     } finally {
       setActionLoading(false);
@@ -110,7 +111,7 @@ export function FullAccessBilling() {
         toast.error(data.error || "Failed to cancel subscription");
       }
     } catch (error) {
-      console.error("Cancel error:", error);
+      logger.error("Cancel error:", error);
       toast.error("Failed to cancel subscription");
     } finally {
       setActionLoading(false);

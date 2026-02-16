@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -152,7 +153,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
             <p>Log in to view the full order details.</p>
           `,
         });
-        console.log(`[VENDOR_ORDER] Team notification sent for order ${order.orderNumber}`);
+        logger.debug(`[VENDOR_ORDER] Team notification sent for order ${order.orderNumber}`);
       }
 
       // Create in-app notification for the team
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       message: "Order submitted successfully",
     });
   } catch (error) {
-    console.error("Failed to submit order:", error);
+    logger.error("Failed to submit order:", error);
     return NextResponse.json({ error: "Failed to submit order" }, { status: 500 });
   }
 }

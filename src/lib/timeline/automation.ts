@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // ITEM 16: Auto-generate timeline events from job status changes
 export async function createTimelineEvent(data: {
@@ -19,10 +20,10 @@ export async function createTimelineEvent(data: {
       },
     });
 
-    console.log(`[TIMELINE] Created event: ${data.eventType} for job ${data.retailJobId}`);
+    logger.debug(`[TIMELINE] Created event: ${data.eventType} for job ${data.retailJobId}`);
     return event;
   } catch (error) {
-    console.error("Timeline event creation error:", error);
+    logger.error("Timeline event creation error:", error);
     throw error;
   }
 }

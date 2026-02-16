@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ ok: true, orders });
   } catch (error) {
-    console.error("[MEASUREMENTS_LIST_ERROR]", error);
+    logger.error("[MEASUREMENTS_LIST_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to load" },
       { status: 500 }
@@ -114,7 +115,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, order }, { status: 201 });
   } catch (error) {
-    console.error("[MEASUREMENTS_CREATE_ERROR]", error);
+    logger.error("[MEASUREMENTS_CREATE_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to create order" },
       { status: 500 }

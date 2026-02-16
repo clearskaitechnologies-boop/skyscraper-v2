@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
@@ -165,7 +166,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[VIN] Error fetching vendors:", error);
+    logger.error("[VIN] Error fetching vendors:", error);
     return NextResponse.json({ error: "Failed to fetch vendors" }, { status: 500 });
   }
 }
@@ -232,7 +233,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, vendor });
   } catch (error) {
-    console.error("[VIN] Error creating vendor:", error);
+    logger.error("[VIN] Error creating vendor:", error);
     return NextResponse.json({ error: "Failed to create vendor" }, { status: 500 });
   }
 }

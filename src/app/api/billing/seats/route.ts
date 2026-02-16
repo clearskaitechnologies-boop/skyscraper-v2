@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { checkSeatAvailability } from "@/lib/billing/seat-enforcement";
@@ -69,7 +70,7 @@ export async function GET() {
       pricing: summary,
     });
   } catch (error: any) {
-    console.error("[billing/seats] Error:", error);
+    logger.error("[billing/seats] Error:", error);
     return NextResponse.json({ error: error?.message || "Failed to check seats" }, { status: 500 });
   }
 }

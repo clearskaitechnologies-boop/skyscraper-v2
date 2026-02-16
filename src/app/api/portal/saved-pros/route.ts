@@ -1,5 +1,6 @@
 // ORG-SCOPE: Scoped by userId/clientId — queries clientSavedPro by client.id (derived from auth userId). No cross-tenant risk.
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -70,7 +71,7 @@ export async function GET() {
 
     return NextResponse.json({ pros });
   } catch (error) {
-    console.error("Error fetching saved pros:", error);
+    logger.error("Error fetching saved pros:", error);
     return NextResponse.json({ error: "Failed to fetch saved pros" }, { status: 500 });
   }
 }

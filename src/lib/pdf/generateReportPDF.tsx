@@ -13,6 +13,7 @@
  */
 
 import { Document, Font, Image } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 import QRCode from "qrcode";
 import React from "react";
 
@@ -133,7 +134,7 @@ async function generateQRCode(url: string): Promise<string> {
   try {
     return await QRCode.toDataURL(url);
   } catch (error) {
-    console.error("QR generation error:", error);
+    logger.error("QR generation error:", error);
 
     // Capture to Sentry (non-critical)
     if (typeof window === "undefined") {

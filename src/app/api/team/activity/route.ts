@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
@@ -41,7 +42,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(activities);
   } catch (error) {
-    console.error("Failed to fetch activity logs:", error);
+    logger.error("Failed to fetch activity logs:", error);
     return NextResponse.json({ error: "Failed to fetch activity logs" }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(activity);
   } catch (error) {
-    console.error("Failed to create activity log:", error);
+    logger.error("Failed to create activity log:", error);
     return NextResponse.json({ error: "Failed to create activity log" }, { status: 500 });
   }
 }

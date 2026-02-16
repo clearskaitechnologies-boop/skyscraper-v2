@@ -1,5 +1,6 @@
 // Pro-side API to toggle file visibility in portal
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -58,7 +59,7 @@ export async function PATCH(
       message: `File visibility ${visibleToClient ? "enabled" : "disabled"} for client portal`,
     });
   } catch (error) {
-    console.error("[CLAIM_FILE_PATCH_ERROR]", error);
+    logger.error("[CLAIM_FILE_PATCH_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -74,7 +75,7 @@ export async function POST(req: NextRequest) {
       updated: result?.count || 0,
     });
   } catch (error) {
-    console.error("Bulk action error:", error);
+    logger.error("Bulk action error:", error);
     return NextResponse.json({ error: "Failed to perform bulk action" }, { status: 500 });
   }
 }

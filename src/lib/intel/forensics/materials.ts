@@ -3,6 +3,7 @@
 // This is how SkaiScraper beats desk reviewers, engineers, and adjusters
 
 import { getOpenAI } from "@/lib/openai";
+import { logger } from "@/lib/logger";
 
 /**
  * MATERIAL FORENSICS ENGINE
@@ -85,7 +86,7 @@ export async function analyzeMaterialForensics(
     const parsed = JSON.parse(result);
     return parsed as MaterialForensicsOutput;
   } catch (err) {
-    console.error("❌ MATERIAL FORENSICS ERROR:", err);
+    logger.error("❌ MATERIAL FORENSICS ERROR:", err);
     throw new Error("Failed to analyze material forensics");
   }
 }

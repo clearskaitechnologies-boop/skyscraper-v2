@@ -1,11 +1,12 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 
 // Visual Crossing is the primary provider (Weatherstack hit usage limit)
 const VISUALCROSSING_API_KEY = process.env.VISUALCROSSING_API_KEY;
 const WEATHERSTACK_API_KEY = process.env.WEATHERSTACK_API_KEY || process.env.WEATHER_STACK_API_KEY;
 
 if (!VISUALCROSSING_API_KEY && !WEATHERSTACK_API_KEY) {
-  console.warn("[WEATHER] No API keys configured – weather will return null fallback.");
+  logger.warn("[WEATHER] No API keys configured – weather will return null fallback.");
 }
 
 export type DashboardWeather = {
@@ -40,7 +41,7 @@ async function fetchFromVisualCrossing(location: string): Promise<DashboardWeath
   });
 
   try {
-    console.log(`[VISUALCROSSING] Fetching weather for: ${location}`);
+    logger.debug(`[VISUALCROSSING] Fetching weather for: ${location}`);
 
     const res = await fetch(`${baseUrl}/${encodeURIComponent(location)}?${params.toString()}`, {
       next: { revalidate: 300 }, // Cache for 5 minutes
@@ -81,7 +82,7 @@ async function fetchFromVisualCrossing(location: string): Promise<DashboardWeath
 
     return weatherData;
   } catch (err) {
-    console.error("[VISUALCROSSING] Fetch failed:", err);
+    logger.error("[VISUALCROSSING] Fetch failed:", err);
     return null;
   }
 }
@@ -102,7 +103,7 @@ async function fetchFromWeatherstack(location: string): Promise<DashboardWeather
   });
 
   try {
-    console.log(`[WEATHERSTACK] Fetching weather for: ${location}`);
+    logger.debug(`[WEATHERSTACK] Fetching weather for: ${location}`);
 
     const res = await fetch(`${baseUrl}?${params.toString()}`, {
       next: { revalidate: 300 }, // Cache for 5 minutes
@@ -151,7 +152,7 @@ async function fetchFromWeatherstack(location: string): Promise<DashboardWeather
 
     return weatherData;
   } catch (err) {
-    console.error("[WEATHERSTACK] Fetch failed:", err);
+    logger.error("[WEATHERSTACK] Fetch failed:", err);
     return null;
   }
 }
@@ -171,12 +172,12 @@ export async function getDashboardWeather(location: string): Promise<DashboardWe
   }
 
   // Fall back to Weatherstack
-  console.log("[WEATHER] Visual Crossing failed, trying Weatherstack fallback...");
+  logger.debug("[WEATHER] Visual Crossing failed, trying Weatherstack fallback...");
   const wsResult = await fetchFromWeatherstack(location);
   if (wsResult) {
     return wsResult;
   }
 
-  console.warn("[WEATHER] All providers failed for location:", location);
+  logger.warn("[WEATHER] All providers failed for location:", location);
   return null;
 }

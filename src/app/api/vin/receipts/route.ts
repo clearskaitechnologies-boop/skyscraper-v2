@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -52,7 +53,7 @@ export async function GET(request: NextRequest) {
       })),
     });
   } catch (error) {
-    console.error("[VIN Receipts] Error:", error);
+    logger.error("[VIN Receipts] Error:", error);
     return NextResponse.json({ error: "Failed to fetch receipts" }, { status: 500 });
   }
 }
@@ -145,7 +146,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true, receipt });
   } catch (error) {
-    console.error("[VIN Receipts] Error:", error);
+    logger.error("[VIN Receipts] Error:", error);
     return NextResponse.json({ error: "Failed to create receipt" }, { status: 500 });
   }
 }

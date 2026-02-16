@@ -1,4 +1,5 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -68,7 +69,7 @@ export async function POST() {
       nextStep: "Refresh the page or go to /dashboard",
     });
   } catch (error) {
-    console.error("fix-identity error:", error);
+    logger.error("fix-identity error:", error);
     return NextResponse.json(
       {
         ok: false,

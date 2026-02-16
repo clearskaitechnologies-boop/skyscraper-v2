@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error exporting invitation analytics:", error);
+    logger.error("Error exporting invitation analytics:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

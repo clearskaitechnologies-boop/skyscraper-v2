@@ -8,6 +8,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
@@ -152,7 +153,7 @@ export async function GET(req: NextRequest) {
       }
     } catch (analyticsError) {
       // Don't fail the request if analytics fails
-      console.warn("Analytics tracking failed:", analyticsError);
+      logger.warn("Analytics tracking failed:", analyticsError);
     }
 
     return NextResponse.json({
@@ -171,7 +172,7 @@ export async function GET(req: NextRequest) {
       rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
     });
   } catch (error: any) {
-    console.error("❌ [GET /api/public/search] Error:", error);
+    logger.error("❌ [GET /api/public/search] Error:", error);
     return NextResponse.json({ error: "Failed to search contractors" }, { status: 500 });
   }
 }

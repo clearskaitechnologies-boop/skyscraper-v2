@@ -1,6 +1,7 @@
 "use client";
 
 import { MessageSquare, Plus,Send } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +62,7 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
         setThreads(data.threads || []);
       }
     } catch (error) {
-      console.error("Failed to fetch threads:", error);
+      logger.error("Failed to fetch threads:", error);
       toast({
         title: "Error",
         description: "Failed to load messages",
@@ -80,7 +81,7 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
         setThreadMessages(data.messages || []);
       }
     } catch (error) {
-      console.error("Failed to fetch thread messages:", error);
+      logger.error("Failed to fetch thread messages:", error);
     }
   };
 
@@ -137,7 +138,7 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
         });
       }
     } catch (error) {
-      console.error("Failed to send message:", error);
+      logger.error("Failed to send message:", error);
       toast({
         title: "Error",
         description: "Failed to send message",

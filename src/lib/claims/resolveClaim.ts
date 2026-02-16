@@ -9,6 +9,7 @@
  */
 
 import { getResolvedOrgIdSafe } from "@/lib/auth/getResolvedOrgId";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export type ResolveClaimResult =
@@ -33,7 +34,7 @@ export async function resolveClaim(
       return { ok: false, reason: "NO_ORG", inputId };
     }
 
-    console.log(`[resolveClaim] Looking up claim: ${inputId} for orgId: ${orgId}`);
+    logger.debug(`[resolveClaim] Looking up claim: ${inputId} for orgId: ${orgId}`);
 
     // Query by id OR claimNumber
     const claim = await prisma.claims.findFirst({
@@ -44,7 +45,7 @@ export async function resolveClaim(
     });
 
     if (!claim) {
-      console.error(`[resolveClaim] NOT_FOUND: ${inputId} for orgId: ${orgId}`);
+      logger.error(`[resolveClaim] NOT_FOUND: ${inputId} for orgId: ${orgId}`);
       return { ok: false, reason: "NOT_FOUND", inputId, orgId };
     }
 
@@ -63,7 +64,7 @@ export async function resolveClaim(
       foundBy,
     };
   } catch (error: any) {
-    console.error("[resolveClaim] Error:", error);
+    logger.error("[resolveClaim] Error:", error);
     return {
       ok: false,
       reason: "NOT_FOUND",

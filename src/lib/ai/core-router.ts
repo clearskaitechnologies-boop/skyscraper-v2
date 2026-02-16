@@ -12,6 +12,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 export interface RouterExecuteOptions {
   imageUrl?: string;
@@ -53,7 +54,7 @@ export class AICoreRouter {
           };
       }
     } catch (error) {
-      console.error(`[AICoreRouter] Error executing ${capability}:`, error);
+      logger.error(`[AICoreRouter] Error executing ${capability}:`, error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error",
@@ -130,7 +131,7 @@ Respond with JSON:
         data: parsed,
       };
     } catch (error) {
-      console.error("[AICoreRouter] Classification error:", error);
+      logger.error("[AICoreRouter] Classification error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Classification failed",
@@ -203,7 +204,7 @@ Respond with JSON:
         data: parsed,
       };
     } catch (error) {
-      console.error("[AICoreRouter] Segmentation error:", error);
+      logger.error("[AICoreRouter] Segmentation error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Segmentation failed",
@@ -276,7 +277,7 @@ Respond with JSON:
         data: parsed,
       };
     } catch (error) {
-      console.error("[AICoreRouter] Keypoint detection error:", error);
+      logger.error("[AICoreRouter] Keypoint detection error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Keypoint detection failed",
@@ -342,7 +343,7 @@ Keep captions concise but informative (2-3 sentences).`,
         },
       };
     } catch (error) {
-      console.error("[AICoreRouter] Caption generation error:", error);
+      logger.error("[AICoreRouter] Caption generation error:", error);
       return {
         success: false,
         error: error instanceof Error ? error.message : "Caption generation failed",

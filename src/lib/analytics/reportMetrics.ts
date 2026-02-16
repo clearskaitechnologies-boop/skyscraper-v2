@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ReportMetrics {
   totalReports: number;
@@ -135,7 +136,7 @@ export async function getReportMetrics(orgId: string): Promise<ReportMetrics> {
       averageReportBuildTime,
     };
   } catch (error) {
-    console.error("[ReportMetrics] Failed to fetch metrics:", error);
+    logger.error("[ReportMetrics] Failed to fetch metrics:", error);
     // Return zeros on error
     return {
       totalReports: 0,
@@ -172,9 +173,9 @@ export async function trackReportEvent(
     //   },
     // });
 
-    console.log(`[ReportMetrics] Tracked ${event} for claim ${claimId}`);
+    logger.debug(`[ReportMetrics] Tracked ${event} for claim ${claimId}`);
   } catch (error) {
-    console.error("[ReportMetrics] Failed to track event:", error);
+    logger.error("[ReportMetrics] Failed to track event:", error);
     // Don't throw - metrics should never block main flow
   }
 }
@@ -240,7 +241,7 @@ export async function getReportActivityBreakdown(
       pdfs: Number(pdfsResult?.count || 0),
     };
   } catch (error) {
-    console.error("[ReportMetrics] Failed to get activity breakdown:", error);
+    logger.error("[ReportMetrics] Failed to get activity breakdown:", error);
     return { created: 0, finalized: 0, submitted: 0, pdfs: 0 };
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import { diff_match_patch } from "diff-match-patch";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -70,7 +71,7 @@ export async function createDocumentVersion(
 
     return version;
   } catch (error) {
-    console.error("Failed to create document version:", error);
+    logger.error("Failed to create document version:", error);
     throw error;
   }
 }
@@ -175,7 +176,7 @@ export async function restoreVersion(
 
     return true;
   } catch (error) {
-    console.error("Failed to restore version:", error);
+    logger.error("Failed to restore version:", error);
     return false;
   }
 }
@@ -219,7 +220,7 @@ export async function compareVersions(
       changes,
     };
   } catch (error) {
-    console.error("Failed to compare versions:", error);
+    logger.error("Failed to compare versions:", error);
     return null;
   }
 }
@@ -366,7 +367,7 @@ export async function autoVersion(
     // Create version
     return await createDocumentVersion(documentId, newContent, userId, "Auto-saved version");
   } catch (error) {
-    console.error("Auto-versioning failed:", error);
+    logger.error("Auto-versioning failed:", error);
     return null;
   }
 }

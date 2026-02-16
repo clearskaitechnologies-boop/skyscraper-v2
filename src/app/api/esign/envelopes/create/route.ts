@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -98,7 +99,7 @@ export async function POST(req: NextRequest) {
       message: "Envelope created using simplified signature model",
     });
   } catch (error) {
-    console.error("[ENVELOPE_CREATE_ERROR]", error);
+    logger.error("[ENVELOPE_CREATE_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Failed to create envelope" },
       { status: 500 }

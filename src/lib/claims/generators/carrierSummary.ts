@@ -17,6 +17,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import { formatCodeRequirementsForCarrier, generateCodeSummary } from "./code";
 import { generateNarrative } from "./narrative";
@@ -43,7 +44,7 @@ export interface CarrierSubmissionPacket {
  */
 export async function generateCarrierSummary(claimId: string): Promise<CarrierSubmissionPacket> {
   try {
-    console.log(`[carrier-summary] Generating submission packet for claim ${claimId}`);
+    logger.debug(`[carrier-summary] Generating submission packet for claim ${claimId}`);
 
     // 1. Fetch claim with all relations
     const claim = await prisma.claims.findUnique({
@@ -124,7 +125,7 @@ export async function generateCarrierSummary(claimId: string): Promise<CarrierSu
     // 15. Build recommended actions
     const recommendedActions = buildRecommendedActions(claim, narrative, codeSummary);
 
-    console.log(`[carrier-summary] Generated complete packet for claim ${claimId}`);
+    logger.debug(`[carrier-summary] Generated complete packet for claim ${claimId}`);
 
     return {
       executiveSummary,
@@ -143,7 +144,7 @@ export async function generateCarrierSummary(claimId: string): Promise<CarrierSu
       generatedAt: new Date(),
     };
   } catch (error) {
-    console.error("[carrier-summary] Generation failed:", error);
+    logger.error("[carrier-summary] Generation failed:", error);
     throw new Error(
       `Failed to generate carrier summary: ${error instanceof Error ? error.message : "Unknown error"}`
     );

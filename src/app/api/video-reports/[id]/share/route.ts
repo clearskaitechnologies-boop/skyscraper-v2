@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -104,7 +105,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("Error sharing video report:", error);
+    logger.error("Error sharing video report:", error);
     return NextResponse.json(
       { error: "Failed to create share link", details: message },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -132,7 +133,7 @@ Keep responses concise and actionable. Current user: ${userId}`,
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
         controller.close();
       } catch (error) {
-        console.error("AI streaming error:", error);
+        logger.error("AI streaming error:", error);
         controller.error(error);
       }
     },

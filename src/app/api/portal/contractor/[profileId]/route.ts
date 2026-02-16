@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -152,7 +153,7 @@ export async function GET(
 
     return NextResponse.json({ profile });
   } catch (error: unknown) {
-    console.error("[GET /api/portal/contractor/[profileId]] Error:", error);
+    logger.error("[GET /api/portal/contractor/[profileId]] Error:", error);
     return NextResponse.json({ error: "Failed to fetch contractor" }, { status: 500 });
   }
 }

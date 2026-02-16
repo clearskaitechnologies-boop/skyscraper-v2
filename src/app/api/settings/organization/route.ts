@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -33,7 +34,7 @@ export async function GET() {
       planKey: org?.planKey ?? "solo",
     });
   } catch (error) {
-    console.error("[API] GET /api/settings/organization error:", error);
+    logger.error("[API] GET /api/settings/organization error:", error);
     return NextResponse.json({ error: "Failed to fetch org settings" }, { status: 500 });
   }
 }
@@ -76,7 +77,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("[API] POST /api/settings/organization error:", error);
+    logger.error("[API] POST /api/settings/organization error:", error);
     return NextResponse.json({ error: "Failed to save org settings" }, { status: 500 });
   }
 }

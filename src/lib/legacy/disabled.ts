@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * LEGACY FEATURE GATING
  *
@@ -21,7 +23,7 @@ const gatedFeatures = new Set<string>();
  */
 export function legacyDisabled(key: string, reason: string): void {
   if (!gatedFeatures.has(key)) {
-    console.warn(`🔶 LEGACY FEATURE DISABLED: "${key}" is not available. ${reason}.`);
+    logger.warn(`🔶 LEGACY FEATURE DISABLED: "${key}" is not available. ${reason}.`);
     gatedFeatures.add(key);
   }
 }

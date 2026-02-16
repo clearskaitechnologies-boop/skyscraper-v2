@@ -1,6 +1,7 @@
 "use client";
 
 import { Camera, CloudRain, FilePlus, FileText, Hammer, MapPin, Sparkles } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -31,7 +32,7 @@ export default function ToolbarActions() {
         setBalance(data.balance ?? 0);
       }
     } catch (error) {
-      console.error("Failed to check balance:", error);
+      logger.error("Failed to check balance:", error);
     }
   };
 

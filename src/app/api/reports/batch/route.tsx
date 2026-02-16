@@ -1,6 +1,7 @@
 // app/api/reports/batch/route.ts
 
 import { renderToBuffer } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ClaimsReportPDF } from "@/components/pdf/ClaimsReportPDF";
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
           url: downloadUrl,
         });
       } catch (error) {
-        console.error(`Failed to generate report for claim ${claim.id}:`, error);
+        logger.error(`Failed to generate report for claim ${claim.id}:`, error);
         // Continue with other reports
       }
     }
@@ -105,7 +106,7 @@ export async function POST(req: NextRequest) {
     // TODO: Send email if requested
     if (emailWhenDone && generatedReports.length > 0) {
       // Implement email notification
-      console.log("Email notification requested but not yet implemented");
+      logger.debug("Email notification requested but not yet implemented");
     }
 
     return NextResponse.json({
@@ -115,7 +116,7 @@ export async function POST(req: NextRequest) {
       reports: generatedReports,
     });
   } catch (error) {
-    console.error("Batch report generation error:", error);
+    logger.error("Batch report generation error:", error);
     return NextResponse.json({ error: "Failed to generate batch reports" }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@
  */
 
 import { report_templates } from "@prisma/client";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { getSectionByKey } from "@/lib/reports/templateSections";
@@ -87,7 +88,7 @@ export async function generateReportSection(
     // Get max tokens for this section
     const maxTokens = getMaxTokensForSection(sectionConfig.sectionKey);
 
-    console.log(`[ReportGen] Generating section: ${sectionConfig.sectionKey}`);
+    logger.debug(`[ReportGen] Generating section: ${sectionConfig.sectionKey}`);
 
     // Call OpenAI
     const completion = await openai.chat.completions.create({
@@ -160,7 +161,7 @@ export async function generateReportSection(
 
     // Retry logic
     if (retryCount < GENERATION_CONFIG.maxRetries) {
-      console.log(`[ReportGen] Retrying (${retryCount + 1}/${GENERATION_CONFIG.maxRetries})...`);
+      logger.debug(`[ReportGen] Retrying (${retryCount + 1}/${GENERATION_CONFIG.maxRetries})...`);
       await new Promise((resolve) => setTimeout(resolve, GENERATION_CONFIG.retryDelay));
       return generateReportSection(sectionConfig, context, retryCount + 1);
     }
@@ -209,10 +210,10 @@ export async function generateFullReport(
   context: ReportGenerationContext,
   reportId: string
 ): Promise<GeneratedReport> {
-  console.log(`[ReportGen] Starting full report generation for template: ${template.name}`);
+  logger.debug(`[ReportGen] Starting full report generation for template: ${template.name}`);
 
   const sections = parseSectionsFromTemplate(template);
-  console.log(`[ReportGen] Total sections: ${sections.length}`);
+  logger.debug(`[ReportGen] Total sections: ${sections.length}`);
 
   const startTime = Date.now();
   let totalTokens = 0;
@@ -228,7 +229,7 @@ export async function generateFullReport(
     const sectionConfig = sections.find((s) => s.sectionKey === sectionKey && s.enabled);
 
     if (!sectionConfig) {
-      console.log(`[ReportGen] Skipping disabled or missing section: ${sectionKey}`);
+      logger.debug(`[ReportGen] Skipping disabled or missing section: ${sectionKey}`);
       continue;
     }
 
@@ -247,9 +248,9 @@ export async function generateFullReport(
   }
 
   const duration = Date.now() - startTime;
-  console.log(`[ReportGen] ✓ Full report generated in ${duration}ms`);
-  console.log(`[ReportGen] Total tokens used: ${totalTokens}`);
-  console.log(`[ReportGen] Sections generated: ${generatedSections.length}`);
+  logger.debug(`[ReportGen] ✓ Full report generated in ${duration}ms`);
+  logger.debug(`[ReportGen] Total tokens used: ${totalTokens}`);
+  logger.debug(`[ReportGen] Sections generated: ${generatedSections.length}`);
 
   return {
     reportId,

@@ -8,6 +8,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
@@ -47,7 +48,7 @@ export async function GET() {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      console.error("[API /retail/list] Supabase error:", error);
+      logger.error("[API /retail/list] Supabase error:", error);
       return NextResponse.json({ ok: false, error: "DATABASE_ERROR" }, { status: 500 });
     }
 
@@ -56,7 +57,7 @@ export async function GET() {
       packets: packets || [],
     });
   } catch (err) {
-    console.error("[API /retail/list] Unexpected error:", err);
+    logger.error("[API /retail/list] Unexpected error:", err);
     return NextResponse.json({ ok: false, error: "INTERNAL_ERROR" }, { status: 500 });
   }
 }

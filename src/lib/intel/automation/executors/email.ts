@@ -5,6 +5,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { logger } from "@/lib/logger";
 
 import { Resend } from "resend";
 
@@ -18,7 +19,7 @@ export async function executeSendEmail(
   audience: "ADJUSTER" | "HOMEOWNER",
   config?: any
 ) {
-  console.log(`[DOMINUS] Sending email to ${audience} for ${claimId}`);
+  logger.debug(`[DOMINUS] Sending email to ${audience} for ${claimId}`);
 
   // Fetch claim
   const claim = await prisma.claims.findUnique({
@@ -31,7 +32,7 @@ export async function executeSendEmail(
   const recipientEmail = audience === "ADJUSTER" ? claim.adjusterEmail : claim.homeowner_email;
 
   if (!recipientEmail) {
-    console.log(`[DOMINUS] No ${audience} email found - skipping`);
+    logger.debug(`[DOMINUS] No ${audience} email found - skipping`);
     return { skipped: true, reason: `No ${audience} email` };
   }
 
@@ -74,7 +75,7 @@ export async function executeSendEmail(
       },
     });
 
-    console.log(`[DOMINUS] Email sent successfully to ${recipientEmail}`);
+    logger.debug(`[DOMINUS] Email sent successfully to ${recipientEmail}`);
 
     return {
       success: true,
@@ -82,7 +83,7 @@ export async function executeSendEmail(
       recipient: recipientEmail,
     };
   } catch (error) {
-    console.error(`[DOMINUS] Email send failed:`, error);
+    logger.error(`[DOMINUS] Email send failed:`, error);
     return {
       success: false,
       error: String(error),

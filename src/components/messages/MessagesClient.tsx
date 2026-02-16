@@ -1,6 +1,7 @@
 "use client";
 
 import { FilePenLine, Loader2, MessageSquare, Plus, Trash2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -61,7 +62,7 @@ export default function MessagesClient({ userId, orgId }: MessagesClientProps) {
     try {
       const res = await fetch(`/api/messages/threads?orgId=${orgId}`);
       if (!res.ok) {
-        if (!silent) console.warn("No threads found or API unavailable");
+        if (!silent) logger.warn("No threads found or API unavailable");
         if (!silent) setThreads([]);
         if (!silent) setLoading(false);
         return;
@@ -70,7 +71,7 @@ export default function MessagesClient({ userId, orgId }: MessagesClientProps) {
       setThreads(data.threads || []);
       if (!silent) setLoading(false);
     } catch (error) {
-      if (!silent) console.error("Failed to fetch threads:", error);
+      if (!silent) logger.error("Failed to fetch threads:", error);
       if (!silent) setThreads([]);
       if (!silent) setLoading(false);
     }
@@ -112,7 +113,7 @@ export default function MessagesClient({ userId, orgId }: MessagesClientProps) {
       });
       setMessages(msgArray);
     } catch (error) {
-      if (!silent) console.error("Failed to fetch thread:", error);
+      if (!silent) logger.error("Failed to fetch thread:", error);
       if (!silent) setMessages([]);
     } finally {
       if (!silent) setThreadLoading(false);
@@ -154,7 +155,7 @@ export default function MessagesClient({ userId, orgId }: MessagesClientProps) {
         toast.error("Failed to delete conversation");
       }
     } catch (error) {
-      console.error("Failed to delete thread:", error);
+      logger.error("Failed to delete thread:", error);
       toast.error("Failed to delete conversation");
     }
   };

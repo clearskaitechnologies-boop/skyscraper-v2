@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -86,7 +87,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ job
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
   } catch (error) {
-    console.error("[Portal Jobs Actions] Error:", error);
+    logger.error("[Portal Jobs Actions] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

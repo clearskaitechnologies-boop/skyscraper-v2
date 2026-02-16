@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect,useState } from "react";
+import { logger } from "@/lib/logger";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,7 @@ export function CompletionChecklist({ claimId, onStatusChange }: CompletionCheck
         });
       }
     } catch (error) {
-      console.error("Failed to fetch status:", error);
+      logger.error("Failed to fetch status:", error);
     }
   };
 

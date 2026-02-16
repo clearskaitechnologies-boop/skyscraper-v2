@@ -6,6 +6,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
         select: { id: true },
       });
       if (!existingContact) {
-        console.warn(`[Intake] Provided contactId ${finalContactId} not found, will auto-create`);
+        logger.warn(`[Intake] Provided contactId ${finalContactId} not found, will auto-create`);
         finalContactId = null;
       }
     }
@@ -165,13 +166,13 @@ export async function POST(req: Request) {
         },
       })
       .catch((err) => {
-        console.error("[Intake] Failed to log activity:", err);
+        logger.error("[Intake] Failed to log activity:", err);
         // Non-critical, continue
       });
 
     return NextResponse.json({ claimId: claim.id }, { status: 201 });
   } catch (error: any) {
-    console.error("[Intake API] Error:", error);
+    logger.error("[Intake API] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to create claim" }, { status: 500 });
   }
 }

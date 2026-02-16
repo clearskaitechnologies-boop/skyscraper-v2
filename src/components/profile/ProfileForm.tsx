@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { logger } from "@/lib/logger";
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -81,7 +82,7 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
 
       onSuccess?.();
     } catch (error) {
-      console.error("Profile update error:", error);
+      logger.error("Profile update error:", error);
       toast({
         title: "Error",
         description: "Failed to update profile. Please try again.",

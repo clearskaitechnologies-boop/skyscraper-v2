@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * WEATHER VERIFICATION BUILDER
  *
@@ -31,7 +33,7 @@ export interface WeatherRequest {
 export async function buildWeatherVerification(
   request: WeatherRequest
 ): Promise<WeatherVerificationData> {
-  console.log("[WEATHER_VERIFY] Building verification for:", request.dateOfLoss);
+  logger.debug("[WEATHER_VERIFY] Building verification for:", request.dateOfLoss);
 
   const [weatherStack, noaaData, radarImages] = await Promise.allSettled([
     fetchWeatherStackData(request),
@@ -67,7 +69,7 @@ async function fetchWeatherStackData(request: WeatherRequest): Promise<{
 } | null> {
   const apiKey = process.env.WEATHERSTACK_API_KEY;
   if (!apiKey) {
-    console.warn("[WEATHER_VERIFY] WeatherStack API key not configured");
+    logger.warn("[WEATHER_VERIFY] WeatherStack API key not configured");
     return null;
   }
 
@@ -90,7 +92,7 @@ async function fetchWeatherStackData(request: WeatherRequest): Promise<{
       travelPath: "Storm system tracked from southwest",
     };
   } catch (error) {
-    console.error("[WEATHER_VERIFY] WeatherStack error:", error);
+    logger.error("[WEATHER_VERIFY] WeatherStack error:", error);
     return null;
   }
 }
@@ -113,7 +115,7 @@ async function fetchNOAAData(request: WeatherRequest): Promise<{
 
     const response = await fetch(reportsUrl);
     if (!response.ok) {
-      console.warn("[WEATHER_VERIFY] NOAA reports not available");
+      logger.warn("[WEATHER_VERIFY] NOAA reports not available");
       return {
         reports: [`https://www.spc.noaa.gov/climo/reports/${year}${month}${day}.html`],
         warnings: ["Severe Thunderstorm Warning issued for area"],
@@ -134,7 +136,7 @@ async function fetchNOAAData(request: WeatherRequest): Promise<{
           : ["Severe weather conditions reported in area"],
     };
   } catch (error) {
-    console.error("[WEATHER_VERIFY] NOAA error:", error);
+    logger.error("[WEATHER_VERIFY] NOAA error:", error);
     return null;
   }
 }
@@ -159,7 +161,7 @@ async function fetchRadarLoops(request: WeatherRequest): Promise<{
       ],
     };
   } catch (error) {
-    console.error("[WEATHER_VERIFY] Radar error:", error);
+    logger.error("[WEATHER_VERIFY] Radar error:", error);
     return null;
   }
 }

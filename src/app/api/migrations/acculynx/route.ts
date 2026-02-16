@@ -16,6 +16,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { runAccuLynxMigration } from "@/lib/migrations/migration-engine";
 import { getCurrentUserPermissions } from "@/lib/permissions";
@@ -53,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Run migration
-    console.log(`[API] Migration started by ${userId} for org ${orgId} (dryRun=${!!dryRun})`);
+    logger.debug(`[API] Migration started by ${userId} for org ${orgId} (dryRun=${!!dryRun})`);
 
     const result = await runAccuLynxMigration({
       orgId,
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
       durationMs: result.durationMs,
     });
   } catch (err: any) {
-    console.error("[API] /api/migrations/acculynx error:", err);
+    logger.error("[API] /api/migrations/acculynx error:", err);
     return NextResponse.json(
       { ok: false, error: err.message || "Migration failed" },
       { status: 500 }

@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Structured Logging with Context
  * Provides consistent logging across the application
@@ -112,7 +114,7 @@ class StructuredLogger {
         console.debug(formatted);
         break;
       case "info":
-        console.log(formatted);
+        logger.debug("formatted", { formatted });
         break;
       case "warn":
         console.warn(formatted);

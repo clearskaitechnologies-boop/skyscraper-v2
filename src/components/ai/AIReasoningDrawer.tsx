@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   Brain,
   ChevronDown,
@@ -74,7 +75,7 @@ export function AIReasoningDrawer({ claimId, explanation, trigger }: AIReasoning
       const result = await response.json();
       setData(result.explanation);
     } catch (err) {
-      console.error("Failed to fetch AI explanation:", err);
+      logger.error("Failed to fetch AI explanation:", err);
     } finally {
       setLoading(false);
     }

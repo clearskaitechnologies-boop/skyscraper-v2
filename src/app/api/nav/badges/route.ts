@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Failed to fetch badge counts:", error);
+    logger.error("Failed to fetch badge counts:", error);
     return NextResponse.json(
       { success: false, error: "Failed to fetch badge counts" },
       { status: 500 }

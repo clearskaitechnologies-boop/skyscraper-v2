@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * AI Photo Annotation Engine
  *
@@ -188,7 +190,7 @@ export async function annotatePhotos(
 
     return { success: true, data: annotatedPhotos };
   } catch (error) {
-    console.error("[Photo Annotator] Failed to annotate photos:", error);
+    logger.error("[Photo Annotator] Failed to annotate photos:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

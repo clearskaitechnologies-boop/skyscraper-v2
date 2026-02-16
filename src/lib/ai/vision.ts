@@ -11,6 +11,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import { withConditionalCache } from "./cache";
 import { withConditionalDedupe } from "./dedupe";
 import { trackPerformance } from "./perf";
@@ -158,7 +159,7 @@ async function _analyzeImageInternal(
       analyzedAt: new Date(),
     };
   } catch (error) {
-    console.error("[Vision] Analysis error:", error);
+    logger.error("[Vision] Analysis error:", error);
 
     // Return safe fallback
     return {

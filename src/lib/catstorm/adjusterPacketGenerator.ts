@@ -4,6 +4,7 @@
  */
 
 import { getCarrierSubmissionRequirements } from '@/lib/carrier/carrierRouting';
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -29,7 +30,7 @@ export async function generateAdjusterPacket(
   documentUrls: string[];
   emailSent: boolean;
 }> {
-  console.log('📦 Generating adjuster packet...');
+  logger.debug('📦 Generating adjuster packet...');
 
   const claim = await prisma.claims.findUnique({
     where: { id: data.claim_id },
@@ -96,7 +97,7 @@ export async function generateAdjusterPacket(
   // Send to adjuster and carrier
   const emailSent = await sendAdjusterPacket(claim, adjusterPacket);
 
-  console.log('✅ Adjuster packet generated');
+  logger.debug('✅ Adjuster packet generated');
 
   return {
     packetId: adjusterPacket.id,
@@ -308,12 +309,12 @@ async function sendAdjusterPacket(claim: any, packet: any): Promise<boolean> {
     }
 
     if (recipients.length === 0) {
-      console.log('⚠️  No email recipients found');
+      logger.debug('⚠️  No email recipients found');
       return false;
     }
 
     // In production, send actual emails via your email service
-    console.log(`📧 Adjuster packet would be sent to: ${recipients.join(', ')}`);
+    logger.debug(`📧 Adjuster packet would be sent to: ${recipients.join(', ')}`);
     
     // Log activity
     await prisma.activities.create({
@@ -334,7 +335,7 @@ async function sendAdjusterPacket(claim: any, packet: any): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error('❌ Error sending adjuster packet:', error);
+    logger.error('❌ Error sending adjuster packet:', error);
     return false;
   }
 }

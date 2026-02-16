@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
@@ -103,7 +104,7 @@ export async function POST(req: NextRequest) {
       { status: 200 }
     );
   } catch (err) {
-    console.error("Error in weather build-smart route:", err);
+    logger.error("Error in weather build-smart route:", err);
     return NextResponse.json({ error: "Failed to generate weather report" }, { status: 500 });
   }
 }

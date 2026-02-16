@@ -8,6 +8,7 @@
  */
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -183,7 +184,7 @@ export async function logOrgContext(prefix = "[OrgContext]") {
       email: report.email,
     });
   } else {
-    console.warn(`${prefix} ⚠️ ${report.status}:`, report);
+    logger.warn(`${prefix} ⚠️ ${report.status}:`, report);
   }
 
   return report;

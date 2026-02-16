@@ -7,6 +7,7 @@
  */
 
 import { Briefcase, FileText, Loader2, Users } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import {
@@ -82,7 +83,7 @@ export function JobClaimSelector({
           }
         }
       } catch (e) {
-        console.error("Failed to fetch claims:", e);
+        logger.error("Failed to fetch claims:", e);
       }
 
       // Fetch leads/jobs (retail, financed, repair, leads) unless claimsOnly
@@ -103,7 +104,7 @@ export function JobClaimSelector({
             }
           }
         } catch (e) {
-          console.error("Failed to fetch leads:", e);
+          logger.error("Failed to fetch leads:", e);
         }
       }
 

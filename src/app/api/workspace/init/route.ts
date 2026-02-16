@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureDemoDataForOrg } from "@/lib/demoSeed";
@@ -20,7 +21,7 @@ export async function POST() {
     }
 
     const userId = user.id;
-    console.log("[WORKSPACE_INIT] Starting for user:", userId);
+    logger.debug("[WORKSPACE_INIT] Starting for user:", userId);
 
     // 1. Check if user already has an org
     const existingMembership = await prisma.user_organizations.findFirst({
@@ -53,7 +54,7 @@ export async function POST() {
       : user.emailAddresses[0]?.emailAddress?.split("@")[0] + "'s Company" || "My Company";
     const fallbackClerkOrgId = `workspace_${userId}_${Date.now()}`;
 
-    console.log("[WORKSPACE_INIT] Creating new org:", orgName);
+    logger.debug("[WORKSPACE_INIT] Creating new org:", orgName);
 
     const newOrg = await prisma.org.create({
       data: {
@@ -93,7 +94,7 @@ export async function POST() {
         orgId: newOrg.id,
         userId,
       });
-      console.log("[workspace/init] Demo data seeded:", seedResult);
+      logger.debug("[workspace/init] Demo data seeded:", seedResult);
     } catch (seedError) {
       console.error("[workspace/init] Demo seed failed (non-fatal):", seedError);
       // Continue anyway - org is created, demo data is optional
@@ -107,7 +108,7 @@ export async function POST() {
           role: "ADMIN",
         },
       });
-      console.log("[workspace/init] Updated Clerk metadata");
+      logger.debug("[workspace/init] Updated Clerk metadata");
     } catch (metadataError) {
       console.error("[workspace/init] Clerk metadata update failed (non-fatal):", metadataError);
       // Non-fatal - org is created, Clerk metadata is optional
@@ -127,7 +128,7 @@ export async function POST() {
       message: "Workspace initialized successfully",
     });
   } catch (error: any) {
-    console.error("[WORKSPACE_INIT] Fatal error:", error);
+    logger.error("[WORKSPACE_INIT] Fatal error:", error);
     return NextResponse.json(
       {
         error: "Failed to initialize workspace",

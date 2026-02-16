@@ -1,6 +1,7 @@
 "use client";
 
 import "mapbox-gl/dist/mapbox-gl.css";
+import { logger } from "@/lib/logger";
 
 import mapboxgl from "mapbox-gl";
 import { useEffect, useRef, useState } from "react";
@@ -50,7 +51,7 @@ export default function MapViewV2({
         "Maps require Mapbox configuration. Contact your administrator to enable map features."
       );
       setIsLoading(false);
-      console.warn("[MapViewV2] NEXT_PUBLIC_MAPBOX_TOKEN not configured. Maps unavailable.");
+      logger.warn("[MapViewV2] NEXT_PUBLIC_MAPBOX_TOKEN not configured. Maps unavailable.");
       return;
     }
 
@@ -74,12 +75,12 @@ export default function MapViewV2({
       });
 
       map.current.on("error", (e) => {
-        console.error("[MapViewV2] Map error:", e);
+        logger.error("[MapViewV2] Map error:", e);
         setError("Map temporarily unavailable. Please refresh the page.");
         setIsLoading(false);
       });
     } catch (err) {
-      console.error("[MapViewV2] Initialization error:", err);
+      logger.error("[MapViewV2] Initialization error:", err);
       setError("Failed to initialize map. Please refresh the page.");
       setIsLoading(false);
     }

@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -64,7 +65,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json({ connections: enrichedConnections });
   } catch (error) {
-    console.error("[GET /api/connections/my] Error:", error);
+    logger.error("[GET /api/connections/my] Error:", error);
     return NextResponse.json({ error: "Failed to fetch connections" }, { status: 500 });
   }
 }

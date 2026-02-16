@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getRecentReportEvents } from "@/lib/metrics";
@@ -44,7 +45,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       const allEvents = await getRecentReportEvents(org.id, 100);
       events = allEvents.filter((e) => e.reportId === params.id);
     } catch (err) {
-      console.error("Events fetch error:", err);
+      logger.error("Events fetch error:", err);
       // Continue without events if report_events table doesn't exist yet
     }
 
@@ -53,7 +54,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
       events,
     });
   } catch (error) {
-    console.error("Report detail error:", error);
+    logger.error("Report detail error:", error);
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to fetch report",

@@ -4,6 +4,7 @@
  */
 
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
 
 export type TradesNotificationType =
   | "trade_connection_request"
@@ -52,7 +53,7 @@ export async function createTradesNotification({
 
     return { id, title, message, read: false, createdAt: new Date() };
   } catch (error) {
-    console.error("Failed to create trades notification:", error);
+    logger.error("Failed to create trades notification:", error);
     throw error;
   }
 }

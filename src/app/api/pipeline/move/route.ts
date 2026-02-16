@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ error: "claimId or leadId required" }, { status: 400 });
   } catch (error) {
-    console.error("[PIPELINE_MOVE]", error);
+    logger.error("[PIPELINE_MOVE]", error);
     return NextResponse.json(
       { error: "Failed to move job: " + (error instanceof Error ? error.message : String(error)) },
       { status: 500 }

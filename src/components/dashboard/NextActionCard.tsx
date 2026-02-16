@@ -1,4 +1,5 @@
 import { AlertCircle, ArrowRight, Clock, FileText, User } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -143,7 +144,7 @@ async function getNextAction(): Promise<NextAction> {
       icon: <FileText className="h-5 w-5" />,
     };
   } catch (error) {
-    console.error("[NextActionCard] Error fetching next action:", error);
+    logger.error("[NextActionCard] Error fetching next action:", error);
     return {
       type: "none",
       title: "Dashboard Loading",

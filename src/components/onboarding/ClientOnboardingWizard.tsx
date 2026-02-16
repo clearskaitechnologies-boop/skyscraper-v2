@@ -8,6 +8,7 @@
  */
 
 import { useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import {
   ArrowLeft,
   ArrowRight,
@@ -253,7 +254,7 @@ export function ClientOnboardingWizard({ onComplete, onSkip }: ClientOnboardingW
       onComplete();
       router.push("/portal");
     } catch (err) {
-      console.error("[ONBOARDING] Error:", err);
+      logger.error("[ONBOARDING] Error:", err);
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setIsSubmitting(false);

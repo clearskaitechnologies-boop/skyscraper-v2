@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -70,7 +71,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error checking branding status:", error);
+    logger.error("Error checking branding status:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

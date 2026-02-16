@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { PerilType, WeatherWizardPayload } from "@/lib/weather/types";
@@ -60,7 +61,7 @@ export function WeatherWizardClient({ initialClaimId }: WeatherWizardClientProps
         const data = await res.json();
         setClaims(data.claims || []);
       } catch (err) {
-        console.error("Failed to load claims:", err);
+        logger.error("Failed to load claims:", err);
       } finally {
         setLoadingClaims(false);
       }
@@ -126,7 +127,7 @@ export function WeatherWizardClient({ initialClaimId }: WeatherWizardClientProps
         router.push(`/weather/${data.reportId}`);
       }
     } catch (err) {
-      console.error("Error generating weather report:", err);
+      logger.error("Error generating weather report:", err);
       alert("Failed to generate weather report. Please try again.");
     } finally {
       setLoading(false);

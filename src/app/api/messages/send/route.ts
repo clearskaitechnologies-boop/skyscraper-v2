@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -185,7 +186,7 @@ export async function POST(req: Request) {
           },
         });
       } catch (notifError) {
-        console.log("[messages/send] Notification skipped:", notifError);
+        logger.debug("[messages/send] Notification skipped:", notifError);
       }
     }
 
@@ -195,7 +196,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(message);
   } catch (error) {
-    console.error("Message send error:", error);
+    logger.error("Message send error:", error);
     if (error instanceof z.ZodError) {
       return NextResponse.json({ error: "Invalid input", details: error.errors }, { status: 400 });
     }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useAuth } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useCallback, useEffect, useState } from "react";
 
 export interface OrgContextData {
@@ -89,7 +90,7 @@ export function useOrgContext(): UseOrgContextResult {
         setError(data.error || null);
       }
     } catch (err: any) {
-      console.error("[useOrgContext] Fetch error:", err);
+      logger.error("[useOrgContext] Fetch error:", err);
       setError(err.message || "Failed to fetch organization");
       setOrg(null);
     } finally {

@@ -12,6 +12,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // ============================================================================
 // KILL SWITCHES (Global, runtime-controlled)
@@ -123,7 +124,7 @@ export async function getFeatureFlags(orgId: string): Promise<FeatureFlags> {
       ),
     };
   } catch (error) {
-    console.error("Error fetching feature flags:", error);
+    logger.error("Error fetching feature flags:", error);
     return DEFAULT_FLAGS;
   }
 }
@@ -148,7 +149,7 @@ export async function updateFeatureFlags(
   flags: Partial<FeatureFlags>
 ): Promise<void> {
   // TODO: Add featureFlags JSONB column to Org model
-  console.log(`Feature flags update requested for Org ${orgId}:`, flags);
+  logger.debug(`Feature flags update requested for Org ${orgId}:`, flags);
   // await prisma.org.update({
   //   where: { id: orgId },
   //   data: {

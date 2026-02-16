@@ -4,6 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -238,7 +239,7 @@ export async function POST(request: NextRequest) {
       suggestions,
     });
   } catch (error) {
-    console.error("[VIN AI Match] Error:", error);
+    logger.error("[VIN AI Match] Error:", error);
     return NextResponse.json({ error: "Failed to generate vendor matches" }, { status: 500 });
   }
 }

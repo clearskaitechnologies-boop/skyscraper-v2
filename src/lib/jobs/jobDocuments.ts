@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { notifyNewDocument } from "@/lib/websocket/pipelineSync";
 
@@ -86,7 +87,7 @@ export async function linkDocumentToJob(
       metadata: { category },
     });
   } catch (error) {
-    console.error("Failed to link document:", error);
+    logger.error("Failed to link document:", error);
     throw error;
   }
 }
@@ -163,7 +164,7 @@ export async function uploadJobDocument(
       tags: data.tags,
     };
   } catch (error) {
-    console.error("Failed to upload job document:", error);
+    logger.error("Failed to upload job document:", error);
     throw error;
   }
 }
@@ -270,7 +271,7 @@ export async function unlinkDocument(
       description: link.document.name,
     });
   } catch (error) {
-    console.error("Failed to unlink document:", error);
+    logger.error("Failed to unlink document:", error);
     throw error;
   }
 }
@@ -307,7 +308,7 @@ export async function updateDocumentCategory(
       description: `Changed to ${newCategory}`,
     });
   } catch (error) {
-    console.error("Failed to update document category:", error);
+    logger.error("Failed to update document category:", error);
     throw error;
   }
 }

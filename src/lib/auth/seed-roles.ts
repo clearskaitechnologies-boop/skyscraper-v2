@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export async function seedRoles() {
   const roles = ["ADMIN", "MANAGER", "FIELD", "VIEWER"];
@@ -11,7 +12,7 @@ export async function seedRoles() {
     });
   }
 
-  console.log("✅ Roles seeded:", roles);
+  logger.debug("✅ Roles seeded:", roles);
 }
 
 // Run this manually or via an admin endpoint

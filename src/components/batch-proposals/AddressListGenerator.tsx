@@ -8,6 +8,7 @@
  */
 
 import { Download, FileSpreadsheet, MapPin } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -56,7 +57,7 @@ export function AddressListGenerator({
 
       toast.success(`Generated ${generatedAddresses.length} addresses`);
     } catch (error) {
-      console.error("Address generation error:", error);
+      logger.error("Address generation error:", error);
       toast.error("Failed to generate address list");
     } finally {
       setGenerating(false);

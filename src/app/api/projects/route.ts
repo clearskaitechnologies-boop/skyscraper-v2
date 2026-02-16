@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { onStageChange } from "@/lib/automation";
 import { getCurrentUserPermissions, requirePermission } from "@/lib/permissions";
@@ -92,7 +93,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error fetching projects:", error);
+    logger.error("Error fetching projects:", error);
     return Response.json({ error: "Failed to fetch projects" }, { status: 500 });
   }
 }
@@ -177,7 +178,7 @@ export async function POST(request: NextRequest) {
 
     return Response.json(project, { status: 201 });
   } catch (error) {
-    console.error("Error creating project:", error);
+    logger.error("Error creating project:", error);
     return Response.json({ error: "Failed to create project" }, { status: 500 });
   }
 }

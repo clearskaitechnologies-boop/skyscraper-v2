@@ -7,6 +7,7 @@
 // ============================================================================
 
 import { useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { toast } from "sonner";
 
@@ -105,7 +106,7 @@ export function usePdfExport() {
       const data = await response.json();
       return data;
     } catch (err: any) {
-      console.error("[PDF_EXPORT] Capability check failed:", err);
+      logger.error("[PDF_EXPORT] Capability check failed:", err);
       return null;
     }
   };

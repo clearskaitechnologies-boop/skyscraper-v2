@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getProductEventsSummary } from "@/lib/analytics/track";
 import { requireApiAuth } from "@/lib/auth/apiAuth";
@@ -16,7 +17,7 @@ export async function GET() {
 
     return NextResponse.json({ events });
   } catch (error) {
-    console.error("[OPS_FUNNEL_STATS] Failed:", error);
+    logger.error("[OPS_FUNNEL_STATS] Failed:", error);
     return NextResponse.json({ events: [] });
   }
 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 import { generateRecommendations } from "@/lib/ml/recommendations/engine";
@@ -27,7 +28,7 @@ async function GET_INNER(req: NextRequest, ctx: AiBillingContext) {
 
     // If none exist, auto-generate once
     if (recommendations.length === 0) {
-      console.log("[GET /api/ai/recommendations] No recommendations found, generating...");
+      logger.debug("[GET /api/ai/recommendations] No recommendations found, generating...");
 
       const bundle = await generateRecommendations({
         orgId,
@@ -68,7 +69,7 @@ async function GET_INNER(req: NextRequest, ctx: AiBillingContext) {
 
     return NextResponse.json({ contacts, actions });
   } catch (error) {
-    console.error("[GET /api/ai/recommendations] Error:", error);
+    logger.error("[GET /api/ai/recommendations] Error:", error);
     return NextResponse.json({ error: "Failed to fetch recommendations" }, { status: 500 });
   }
 }

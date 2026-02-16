@@ -10,6 +10,7 @@
  */
 
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
@@ -27,7 +28,7 @@ export async function GET(request: Request) {
   if (authError) return authError;
 
   try {
-    console.log("[AI-INSIGHTS] Starting weekly insights generation...");
+    logger.debug("[AI-INSIGHTS] Starting weekly insights generation...");
 
     // Get active organizations with recent activity
     const activeOrgs = await prisma.org.findMany({
@@ -78,7 +79,7 @@ export async function GET(request: Request) {
       }
     }
 
-    console.log("[AI-INSIGHTS] Completed:", insights);
+    logger.debug("[AI-INSIGHTS] Completed:", insights);
 
     return NextResponse.json({
       ok: true,
@@ -86,7 +87,7 @@ export async function GET(request: Request) {
       ms: Date.now() - started,
     });
   } catch (error: any) {
-    console.error("[AI-INSIGHTS] Cron error:", error);
+    logger.error("[AI-INSIGHTS] Cron error:", error);
     Sentry.captureException(error, { tags: { cron: "ai-insights" } });
 
     return NextResponse.json(

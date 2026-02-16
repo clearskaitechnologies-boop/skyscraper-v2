@@ -1,4 +1,5 @@
 import { ClaimContext } from "@/lib/claim/buildClaimContext";
+import { logger } from "@/lib/logger";
 import { logCacheOperation } from "@/lib/observability/logger";
 import { recordCacheStat } from "@/lib/telemetry";
 import { createRedisClientSafely } from "@/lib/upstash";
@@ -43,7 +44,7 @@ export async function getCachedClaimContext(claimId: string): Promise<ClaimConte
 
     return cached;
   } catch (error) {
-    console.error("[CACHE] Failed to get claim context:", error);
+    logger.error("[CACHE] Failed to get claim context:", error);
     return null;
   }
 }
@@ -70,7 +71,7 @@ export async function setCachedClaimContext(claimId: string, context: ClaimConte
       durationMs: Date.now() - startTime,
     });
   } catch (error) {
-    console.error("[CACHE] Failed to cache claim context:", error);
+    logger.error("[CACHE] Failed to cache claim context:", error);
   }
 }
 
@@ -90,7 +91,7 @@ export async function invalidateClaimContext(claimId: string): Promise<void> {
       key: `claim_context:${claimId}`,
     });
   } catch (error) {
-    console.error("[CACHE] Failed to invalidate claim context:", error);
+    logger.error("[CACHE] Failed to invalidate claim context:", error);
   }
 }
 
@@ -113,7 +114,7 @@ export async function invalidateOrgClaimContexts(orgId: string): Promise<void> {
     // More precise approach would be to store orgId in the key
     await redis.del(...keys);
   } catch (error) {
-    console.error("[CACHE] Failed to invalidate org claim contexts:", error);
+    logger.error("[CACHE] Failed to invalidate org claim contexts:", error);
   }
 }
 
@@ -133,7 +134,7 @@ export async function getClaimContextCacheStats(): Promise<{
       cachedClaims: keys.length,
     };
   } catch (error) {
-    console.error("[CACHE] Failed to get cache stats:", error);
+    logger.error("[CACHE] Failed to get cache stats:", error);
     return { cachedClaims: 0 };
   }
 }

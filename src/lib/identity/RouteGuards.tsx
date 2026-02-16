@@ -13,6 +13,7 @@
  */
 
 import { useRouter } from "next/navigation";
+import { logger } from "@/lib/logger";
 import React, { useEffect } from "react";
 
 import { useUserIdentity } from "./UserIdentityContext";
@@ -63,7 +64,7 @@ export function ProOnlyGuard({ children, fallback, redirectTo = "/portal" }: Gua
 
   useEffect(() => {
     if (!isLoading && isClient) {
-      console.log("[ProOnlyGuard] Client detected, redirecting to:", redirectTo);
+      logger.debug("[ProOnlyGuard] Client detected, redirecting to:", redirectTo);
       router.replace(redirectTo);
     }
   }, [isLoading, isClient, redirectTo, router]);
@@ -97,7 +98,7 @@ export function ClientOnlyGuard({ children, fallback, redirectTo = "/dashboard" 
 
   useEffect(() => {
     if (!isLoading && isPro) {
-      console.log("[ClientOnlyGuard] Pro detected, redirecting to:", redirectTo);
+      logger.debug("[ClientOnlyGuard] Pro detected, redirecting to:", redirectTo);
       router.replace(redirectTo);
     }
   }, [isLoading, isPro, redirectTo, router]);
@@ -130,7 +131,7 @@ export function AuthenticatedGuard({ children, fallback, redirectTo = "/sign-in"
 
   useEffect(() => {
     if (!isLoading && !identity) {
-      console.log("[AuthenticatedGuard] No identity, redirecting to:", redirectTo);
+      logger.debug("[AuthenticatedGuard] No identity, redirecting to:", redirectTo);
       router.replace(redirectTo);
     }
   }, [isLoading, identity, redirectTo, router]);

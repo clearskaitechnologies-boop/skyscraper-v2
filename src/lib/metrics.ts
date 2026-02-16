@@ -6,6 +6,7 @@
 // =====================================================
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface DailyMetrics {
   date: string;
@@ -157,7 +158,7 @@ export async function getRecentReportEvents(orgId: string, limit = 50) {
     return events;
   } catch (error) {
     // Table may not exist yet
-    console.error("Error fetching report events:", error);
+    logger.error("Error fetching report events:", error);
     return [];
   }
 }

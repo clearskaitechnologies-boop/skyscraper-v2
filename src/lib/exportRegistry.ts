@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Report Export Registry
  * DEPRECATED: reportExport model doesn't exist in schema.
@@ -32,7 +34,7 @@ export async function createExportRecord(params: CreateExportParams) {
  */
 export async function getClaimExports(claimId: string, orgId: string) {
   // reportExport model doesn't exist in schema
-  console.log(`[exportRegistry] Would get exports for claim ${claimId}`);
+  logger.debug(`[exportRegistry] Would get exports for claim ${claimId}`);
   return [];
 }
 
@@ -45,6 +47,6 @@ export async function getExportsByType(
   type: "report" | "supplement" | "mockup"
 ) {
   // reportExport model doesn't exist in schema
-  console.log(`[exportRegistry] Would get exports by type ${type} for claim ${claimId}`);
+  logger.debug(`[exportRegistry] Would get exports by type ${type} for claim ${claimId}`);
   return [];
 }

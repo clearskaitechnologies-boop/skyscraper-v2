@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface Contractor {
   id: string;
@@ -45,7 +46,7 @@ export async function getContractor(contractorId: string): Promise<Contractor | 
       updated_at: contractor.updated_at,
     };
   } catch (error) {
-    console.error(`[ContractorsData] Error getting contractor ${contractorId}:`, error);
+    logger.error(`[ContractorsData] Error getting contractor ${contractorId}:`, error);
     return null;
   }
 }
@@ -96,7 +97,7 @@ export async function listContractors(options?: {
       total,
     };
   } catch (error) {
-    console.error("[ContractorsData] Error listing contractors:", error);
+    logger.error("[ContractorsData] Error listing contractors:", error);
     return { contractors: [], total: 0 };
   }
 }
@@ -137,7 +138,7 @@ export async function searchContractors(
       updated_at: c.updated_at,
     }));
   } catch (error) {
-    console.error(`[ContractorsData] Error searching contractors for "${query}":`, error);
+    logger.error(`[ContractorsData] Error searching contractors for "${query}":`, error);
     return [];
   }
 }
@@ -167,7 +168,7 @@ export async function getContractorsBySpecialty(specialty: string): Promise<Cont
       updated_at: c.updated_at,
     }));
   } catch (error) {
-    console.error(`[ContractorsData] Error getting contractors by specialty ${specialty}:`, error);
+    logger.error(`[ContractorsData] Error getting contractors by specialty ${specialty}:`, error);
     return [];
   }
 }

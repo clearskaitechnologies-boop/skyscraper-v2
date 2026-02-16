@@ -6,6 +6,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -108,7 +109,7 @@ export async function captureError(params: {
 
     return event;
   } catch (error) {
-    console.error("Failed to capture error:", error);
+    logger.error("Failed to capture error:", error);
     throw error;
   }
 }
@@ -287,7 +288,7 @@ export async function getErrorStats(
       newErrors,
     };
   } catch (error) {
-    console.error("Failed to get error stats:", error);
+    logger.error("Failed to get error stats:", error);
     throw error;
   }
 }
@@ -399,7 +400,7 @@ async function sendErrorAlert(event: ErrorEvent): Promise<void> {
     // await sendSlackAlert(event);
     // await sendPagerDutyAlert(event);
   } catch (error) {
-    console.error("Failed to send error alert:", error);
+    logger.error("Failed to send error alert:", error);
   }
 }
 
@@ -466,7 +467,7 @@ export async function getErrorContext(eventId: string): Promise<{
       userActivity,
     };
   } catch (error) {
-    console.error("Failed to get error context:", error);
+    logger.error("Failed to get error context:", error);
     throw error;
   }
 }

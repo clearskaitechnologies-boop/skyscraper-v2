@@ -1,5 +1,6 @@
 // Enhanced Firebase Storage utilities with upload, preview, and thumbnail generation
 import {
+import { logger } from "@/lib/logger";
   deleteObject,
   getDownloadURL,
   getMetadata,
@@ -63,7 +64,7 @@ export async function uploadFileWithProgress(
         });
       },
       (error) => {
-        console.error("Upload failed:", error);
+        logger.error("Upload failed:", error);
         toast.error(`Upload failed: ${error.message}`);
         reject(error);
       },
@@ -168,7 +169,7 @@ export async function uploadWithThumbnail(
       const thumbnailPath = filePath.replace(/(\.[^.]+)$/, "_thumb$1");
       thumbnailUrl = await uploadFileWithProgress(thumbnail, thumbnailPath);
     } catch (error) {
-      console.warn("Failed to generate thumbnail:", error);
+      logger.warn("Failed to generate thumbnail:", error);
       // Continue without thumbnail
     }
   }
@@ -209,7 +210,7 @@ export async function listOrganizationFiles(
     try {
       return await getFileMetadata(itemRef.fullPath);
     } catch (error) {
-      console.error(`Failed to get metadata for ${itemRef.fullPath}:`, error);
+      logger.error(`Failed to get metadata for ${itemRef.fullPath}:`, error);
       return null;
     }
   });

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOrgContext } from "@/lib/org/getOrgContext";
 import prisma from "@/lib/prisma";
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       jobCategory,
     });
   } catch (error) {
-    console.error("[LEAD_ROUTE] Error:", error);
+    logger.error("[LEAD_ROUTE] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to route lead",

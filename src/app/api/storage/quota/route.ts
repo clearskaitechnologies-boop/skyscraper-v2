@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import {
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
       allPlans: STORAGE_LIMITS,
     });
   } catch (error) {
-    console.error("[Storage Quota] Error:", error);
+    logger.error("[Storage Quota] Error:", error);
     return NextResponse.json({ error: "Failed to get storage quota" }, { status: 500 });
   }
 }

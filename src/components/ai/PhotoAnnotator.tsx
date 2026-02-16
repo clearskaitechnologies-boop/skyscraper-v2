@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertTriangle, Camera, CheckCircle2, FileText, Upload, X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -62,7 +63,7 @@ export function PhotoAnnotator() {
 
           toast.success(`Photo ${i + 1}/${photos.length} analyzed`);
         } catch (error) {
-          console.error(`Failed to analyze photo ${i + 1}:`, error);
+          logger.error(`Failed to analyze photo ${i + 1}:`, error);
 
           // Add fallback result for failed analysis
           analysisResults.push({
@@ -80,7 +81,7 @@ export function PhotoAnnotator() {
       setResults(analysisResults);
       toast.success(`Analysis complete! ${analysisResults.length} photos processed.`);
     } catch (error) {
-      console.error("Analysis error:", error);
+      logger.error("Analysis error:", error);
       toast.error("Failed to complete analysis");
     } finally {
       setAnalyzing(false);

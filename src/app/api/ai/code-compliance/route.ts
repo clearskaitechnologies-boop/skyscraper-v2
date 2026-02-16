@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 import { safeOrgContext } from "@/lib/auth/orgContext";
@@ -173,7 +174,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    console.error("[Code Compliance] Error:", error);
+    logger.error("[Code Compliance] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to check compliance",

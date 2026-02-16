@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
       clientLink,
     });
   } catch (error) {
-    console.error("Error adding client to claim:", error);
+    logger.error("Error adding client to claim:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -141,7 +142,7 @@ export async function GET(request: NextRequest) {
       clientClaims,
     });
   } catch (error) {
-    console.error("Error fetching client claims:", error);
+    logger.error("Error fetching client claims:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

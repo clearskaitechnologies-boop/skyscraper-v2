@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Estimate Builder - Generate estimates
  * Stub file for legacy imports
@@ -13,7 +15,7 @@ export interface EstimateResult {
  * @deprecated Use estimate AI functions instead
  */
 export async function generateEstimate(claim_id: string): Promise<EstimateResult> {
-  console.warn('generateEstimate is deprecated');
+  logger.warn('generateEstimate is deprecated');
   return {
     total: 0,
     lineItems: []

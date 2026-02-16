@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -45,7 +46,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json(note);
   } catch (error) {
-    console.error("Error updating note:", error);
+    logger.error("Error updating note:", error);
     return NextResponse.json({ error: "Failed to update note" }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting note:", error);
+    logger.error("Error deleting note:", error);
     return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
   }
 }

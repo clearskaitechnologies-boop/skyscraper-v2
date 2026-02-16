@@ -9,6 +9,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { LOB_ENABLED } from "@/lib/lob/client";
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
     );
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Failed to send mailers";
-    console.error("[Mailers] Send error:", error);
+    logger.error("[Mailers] Send error:", error);
     return NextResponse.json(
       {
         success: false,

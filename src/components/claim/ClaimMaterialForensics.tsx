@@ -4,6 +4,7 @@
 // 🧬 MATERIAL FORENSICS UI — Engineering-grade failure analysis display
 
 import { useEffect,useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { MaterialForensicsOutput } from "@/lib/intel/forensics/materials";
 
@@ -45,7 +46,7 @@ export default function ClaimMaterialForensics({ claimId, data: initialData }: C
         throw new Error("Failed to fetch forensic data");
       }
     } catch (err) {
-      console.error("Forensic fetch error:", err);
+      logger.error("Forensic fetch error:", err);
       setError("Failed to load forensic analysis");
     } finally {
       setLoading(false);
@@ -74,7 +75,7 @@ export default function ClaimMaterialForensics({ claimId, data: initialData }: C
       });
       alert("✅ Material forensics generated successfully!");
     } catch (err) {
-      console.error("Generation error:", err);
+      logger.error("Generation error:", err);
       setError("Failed to generate forensic analysis");
       alert("❌ Forensic generation failed. Please try again.");
     } finally {

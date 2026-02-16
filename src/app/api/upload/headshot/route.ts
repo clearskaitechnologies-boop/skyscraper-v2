@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -56,7 +57,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (error) {
-      console.error("Supabase upload error, trying Firebase:", error);
+      logger.error("Supabase upload error, trying Firebase:", error);
 
       // Try Firebase fallback
       try {
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
           });
 
           const downloadUrl = await getDownloadURL(storageRef);
-          console.log("[Headshot Upload] Firebase success:", { firebasePath, downloadUrl });
+          logger.debug("[Headshot Upload] Firebase success:", { firebasePath, downloadUrl });
 
           return NextResponse.json({ url: downloadUrl, storage: "firebase" });
         }
@@ -97,7 +98,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ url: publicUrl, storage: "supabase" });
   } catch (error) {
-    console.error("Headshot upload error:", error);
+    logger.error("Headshot upload error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

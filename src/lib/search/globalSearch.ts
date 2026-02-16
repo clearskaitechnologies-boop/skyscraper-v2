@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type SearchableEntity = "JOB" | "CLAIM" | "LEAD" | "CLIENT" | "DOCUMENT" | "MESSAGE" | "ALL";
 
@@ -78,7 +79,7 @@ export async function globalSearch(
 
     return results.slice(0, limit);
   } catch (error) {
-    console.error("Global search failed:", error);
+    logger.error("Global search failed:", error);
     return [];
   }
 }

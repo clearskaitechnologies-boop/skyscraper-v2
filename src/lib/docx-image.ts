@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 // lib/docx-image.ts
 // Universal helper for embedding remote images into DOCX (works with docx v7 and v8+)
 
@@ -29,7 +31,7 @@ export async function fetchImageAsBuffer(
 
     return { buffer, width, height };
   } catch (error) {
-    console.error(`Error fetching image from ${url}:`, error);
+    logger.error(`Error fetching image from ${url}:`, error);
     throw new Error(
       `Failed to load image: ${error instanceof Error ? error.message : "Unknown error"}`
     );

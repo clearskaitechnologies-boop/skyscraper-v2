@@ -1,4 +1,5 @@
 import { clerkClient } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 /**
  * Cache for user names to reduce Clerk API calls
@@ -35,7 +36,7 @@ export async function getUserName(userId: string): Promise<string> {
 
     return name;
   } catch (error) {
-    console.error("Failed to fetch user name from Clerk:", error);
+    logger.error("Failed to fetch user name from Clerk:", error);
     return "User";
   }
 }

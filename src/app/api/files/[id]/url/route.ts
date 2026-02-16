@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDelegate } from '@/lib/db/modelAliases';
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ url: signedUrl });
   } catch (error) {
-    console.error("Failed to generate file URL:", error);
+    logger.error("Failed to generate file URL:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

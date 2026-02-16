@@ -7,6 +7,7 @@
 "use client";
 
 import { AlertCircle,Camera, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 interface AnalyzePhotosButtonProps {
@@ -44,7 +45,7 @@ export function AnalyzePhotosButton({
 
       onComplete?.(data.result);
     } catch (err: any) {
-      console.error("[AnalyzePhotos] Error:", err);
+      logger.error("[AnalyzePhotos] Error:", err);
       setError(err.message);
     } finally {
       setIsAnalyzing(false);

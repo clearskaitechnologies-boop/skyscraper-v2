@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -127,7 +128,7 @@ export async function GET(
       employeeCount: employees.length,
     });
   } catch (error) {
-    console.error("[portal/company] Error:", error);
+    logger.error("[portal/company] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

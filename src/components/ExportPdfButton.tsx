@@ -7,6 +7,7 @@
 "use client";
 
 import { Download, FileText,Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 
 import { Button } from "@/components/ui/button";
 import { usePdfExport } from "@/hooks/usePdfExport";
@@ -144,7 +145,7 @@ export function ExportPdfButtonWithCapabilities({
     // Optional: Check capabilities before export
     const capabilities = await checkCapabilities();
     if (capabilities) {
-      console.log(`[PDF_EXPORT] Using strategy: ${capabilities.strategy}`);
+      logger.debug(`[PDF_EXPORT] Using strategy: ${capabilities.strategy}`);
     }
 
     const result = await exportPdf({

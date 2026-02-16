@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { ensurePublicDemoOrg } from "@/lib/demo/ensurePublicDemo";
 import prisma from "@/lib/prisma";
@@ -87,7 +88,7 @@ export async function GET() {
 
     return NextResponse.json({ success: true, claims: dto });
   } catch (error: any) {
-    console.error("[api/public/claims] error", error);
+    logger.error("[api/public/claims] error", error);
     return NextResponse.json(
       {
         success: false,

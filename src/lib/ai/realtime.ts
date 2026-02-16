@@ -11,6 +11,7 @@
  */
 
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 
@@ -31,7 +32,7 @@ export interface StreamOptions {
  *
  * Usage:
  *   for await (const chunk of openAIStream(options)) {
- *     console.log(chunk); // Each token as it arrives
+ *     logger.debug("chunk", { chunk }); // Each token as it arrives
  *   }
  */
 export async function* openAIStream(options: StreamOptions): AsyncGenerator<string, void, unknown> {
@@ -53,7 +54,7 @@ export async function* openAIStream(options: StreamOptions): AsyncGenerator<stri
       }
     }
   } catch (error) {
-    console.error("[Streaming] Error:", error);
+    logger.error("[Streaming] Error:", error);
     throw error;
   }
 }
@@ -105,7 +106,7 @@ export function createSSEStream(options: StreamOptions): ReadableStream {
 
         controller.close();
       } catch (error) {
-        console.error("[SSE Stream] Error:", error);
+        logger.error("[SSE Stream] Error:", error);
 
         // Send error event
         const errorData = JSON.stringify({

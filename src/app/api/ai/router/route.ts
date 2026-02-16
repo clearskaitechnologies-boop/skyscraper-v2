@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { AICoreRouter, getRegistryStats, listAIModules, listAITasks } from "@/lib/ai/router";
 import { AiBillingContext, createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -42,7 +43,7 @@ async function POST_INNER(request: NextRequest, ctx: AiBillingContext) {
 
     return NextResponse.json(result, { status: statusCode });
   } catch (error: any) {
-    console.error("[AI Router] Unexpected error:", error);
+    logger.error("[AI Router] Unexpected error:", error);
 
     return NextResponse.json(
       {

@@ -1,6 +1,7 @@
 "use client";
 
 import { Mail, Phone, Plus, Search,X } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -63,7 +64,7 @@ export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
         setLinkedTrades(data.trades || []);
       }
     } catch (error) {
-      console.error("Failed to fetch linked trades:", error);
+      logger.error("Failed to fetch linked trades:", error);
     } finally {
       setLoading(false);
     }
@@ -77,7 +78,7 @@ export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
         setAvailableTrades(data.trades || []);
       }
     } catch (error) {
-      console.error("Failed to fetch available trades:", error);
+      logger.error("Failed to fetch available trades:", error);
     }
   };
 

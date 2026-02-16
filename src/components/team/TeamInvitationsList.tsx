@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle, Clock, Loader2, Mail,XCircle } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 interface Invitation {
@@ -28,7 +29,7 @@ export default function TeamInvitationsList() {
         setInvitations(data);
       }
     } catch (error) {
-      console.error("Failed to fetch invitations:", error);
+      logger.error("Failed to fetch invitations:", error);
     } finally {
       setLoading(false);
     }

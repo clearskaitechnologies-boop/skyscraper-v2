@@ -40,6 +40,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * Helper: Ensure vendor exists for this org
@@ -73,16 +74,16 @@ export async function ensureVendorForOrg(
         where: { id: existing.id },
         data: vendorData,
       });
-      console.log("[ensureVendorForOrg] Updated vendor:", existing.id);
+      logger.debug("[ensureVendorForOrg] Updated vendor:", existing.id);
     } else {
       // Create new vendor
       const newVendor = await prisma.vendor.create({
         data: { slug: vendorSlug, ...vendorData },
       });
-      console.log("[ensureVendorForOrg] Created vendor:", newVendor.id);
+      logger.debug("[ensureVendorForOrg] Created vendor:", newVendor.id);
     }
   } catch (error) {
-    console.error("[ensureVendorForOrg] Error:", error);
+    logger.error("[ensureVendorForOrg] Error:", error);
     // Don't throw - this is a sync operation, not critical to profile save
   }
 }
@@ -112,12 +113,12 @@ export async function getOrCreateClientThread(orgId: string, clientId: string) {
           participants: [clientId, orgId],
         },
       });
-      console.log("[getOrCreateClientThread] Created thread:", thread.id);
+      logger.debug("[getOrCreateClientThread] Created thread:", thread.id);
     }
 
     return thread;
   } catch (error) {
-    console.error("[getOrCreateClientThread] Error:", error);
+    logger.error("[getOrCreateClientThread] Error:", error);
     throw error;
   }
 }
@@ -153,10 +154,10 @@ export async function createSharedDocument(
       },
     });
 
-    console.log("[createSharedDocument] Created doc:", doc.id);
+    logger.debug("[createSharedDocument] Created doc:", doc.id);
     return doc;
   } catch (error) {
-    console.error("[createSharedDocument] Error:", error);
+    logger.error("[createSharedDocument] Error:", error);
     throw error;
   }
 }

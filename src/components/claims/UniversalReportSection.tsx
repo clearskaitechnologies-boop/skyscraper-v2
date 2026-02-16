@@ -1,6 +1,7 @@
 "use client";
 
 import { Download, FileText, Lock, Send } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -90,7 +91,7 @@ export function UniversalReportSection({ claim, claimReport }: UniversalReportSe
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
-      console.error("PDF download error:", error);
+      logger.error("PDF download error:", error);
       alert("Failed to download PDF. Please try again.");
     } finally {
       setIsDownloading(false);

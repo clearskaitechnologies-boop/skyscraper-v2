@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type AuditAction =
   | "USER_LOGIN"
@@ -268,7 +269,7 @@ async function triggerSecurityAlert(auditLogId: string): Promise<void> {
   if (!entry) return;
 
   // TODO: Send alert via email/SMS/webhook
-  console.log("Security alert triggered:", entry);
+  logger.debug("Security alert triggered:", entry);
 }
 
 /**

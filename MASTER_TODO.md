@@ -110,6 +110,7 @@
 </details>
 
 <<<<<<< HEAD
+
 <details>
 <summary>Infrastructure Hardening Sprint (Session 2026-02-16)</summary>
 
@@ -159,7 +160,9 @@
 </details>
 
 =======
->>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
+
+> > > > > > > 76fe8d649fa350a9d40704795767d2177890b059
+
 ---
 
 ## IMMEDIATE PRIORITY — Service Layer Completion
@@ -247,6 +250,7 @@
 ---
 
 <<<<<<< HEAD
+
 ## PHASE 1 — Critical Infrastructure (Week 1-2) ✅ COMPLETED
 
 _Blocks 10K-user readiness. Do first._
@@ -295,14 +299,15 @@ _Blocks 10K-user readiness. Do first._
 ### 1.1 — Fix OpenAI Singleton (20+ files)
 
 =======
+
 ## PHASE 1 — Critical Infrastructure (Week 1-2)
 
 _Blocks 10K-user readiness. Do first._
 
 ### 1.1 — Fix OpenAI Singleton (20+ files)
 
->>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
-**Status**: `src/lib/ai/client.ts` has proper `getClient()` singleton BUT 20+ API routes still create their own `new OpenAI()` — cold-start penalty, memory waste.
+> > > > > > > 76fe8d649fa350a9d40704795767d2177890b059
+> > > > > > > **Status**: `src/lib/ai/client.ts` has proper `getClient()` singleton BUT 20+ API routes still create their own `new OpenAI()` — cold-start penalty, memory waste.
 
 **Files to migrate:**
 
@@ -359,6 +364,7 @@ src/app/api/weather/*/route.ts (multiple)
 ## PHASE 2 — CRM Migration Engines (Week 2-3)
 
 <<<<<<< HEAD
+
 ### 2.1 — Harden AccuLynx Engine ✅ EXISTS
 
 **Existing infrastructure verified:**
@@ -391,8 +397,8 @@ src/app/api/weather/*/route.ts (multiple)
 
 - [x] **2.3.1** Created `base-engine.ts` abstract class
 - [ ] **2.3.2** CSV import support — future enhancement
-- [ ] **2.3.3** Migration wizard UI — future enhancement
-=======
+- [ ] # **2.3.3** Migration wizard UI — future enhancement
+
 ### 2.1 — Harden AccuLynx Engine
 
 **Existing infrastructure:**
@@ -426,7 +432,7 @@ src/app/api/weather/*/route.ts (multiple)
 - [ ] **2.3.1** Create `base-client.ts` abstract class
 - [ ] **2.3.2** CSV import support
 - [ ] **2.3.3** Migration wizard UI at `/settings/integrations/migrate`
->>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
+  > > > > > > > 76fe8d649fa350a9d40704795767d2177890b059
 
 ---
 

@@ -5,6 +5,7 @@
  */
 
 import { createNotification, CreateNotificationData } from "./create-notification";
+import { logger } from "@/lib/logger";
 
 export interface SendNotificationOptions {
   channels?: ("in_app" | "email" | "push")[];
@@ -30,19 +31,19 @@ export async function sendNotification(
 
     // Email notifications would go here
     if (channels.includes("email")) {
-      console.log(`[SendNotification] Would send email to user ${data.userId}`);
+      logger.debug(`[SendNotification] Would send email to user ${data.userId}`);
       // TODO: Queue email via email_queue
     }
 
     // Push notifications would go here
     if (channels.includes("push")) {
-      console.log(`[SendNotification] Would send push to user ${data.userId}`);
+      logger.debug(`[SendNotification] Would send push to user ${data.userId}`);
       // TODO: Send via push service
     }
 
     return true;
   } catch (error) {
-    console.error("[SendNotification] Error:", error);
+    logger.error("[SendNotification] Error:", error);
     return false;
   }
 }

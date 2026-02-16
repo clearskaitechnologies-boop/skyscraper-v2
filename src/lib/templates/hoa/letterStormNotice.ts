@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * HOA Storm Notice Letter Template Stub
  *
@@ -20,7 +22,7 @@ export interface StormNoticeData {
  * Stub implementation
  */
 export function generateStormNoticeLetter(data: StormNoticeData): string {
-  console.log("[HOALetter] Stub: Would generate storm notice letter");
+  logger.debug("[HOALetter] Stub: Would generate storm notice letter");
   return `
     Dear ${data.hoaName},
     
@@ -38,7 +40,7 @@ export function generateStormNoticeLetter(data: StormNoticeData): string {
  * Generate letter as PDF buffer
  */
 export async function generateStormNoticePDF(data: StormNoticeData): Promise<Buffer> {
-  console.log("[HOALetter] Stub: Would generate PDF");
+  logger.debug("[HOALetter] Stub: Would generate PDF");
   return Buffer.from(generateStormNoticeLetter(data));
 }
 

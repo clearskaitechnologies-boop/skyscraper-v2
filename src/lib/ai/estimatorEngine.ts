@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * PHASE 39: Estimator Engine
  * 
@@ -55,7 +57,7 @@ export function parseScope(scopeJson: any): ParsedScope {
       })),
     };
   } catch (error) {
-    console.error("[parseScope] Error:", error);
+    logger.error("[parseScope] Error:", error);
     throw new Error("Failed to parse scope JSON");
   }
 }

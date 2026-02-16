@@ -1,5 +1,6 @@
 // src/app/api/ai/dashboard-assistant/route.ts
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
@@ -212,7 +213,7 @@ Report prepared: ${new Date().toLocaleDateString()}`,
     const output = mockResponses[action];
 
     // Log the AI action for analytics
-    console.log(`[Dashboard AI] Generated ${action} for claim ${claimId}`);
+    logger.debug(`[Dashboard AI] Generated ${action} for claim ${claimId}`);
 
     // Save as artifact for persistence (for depreciation and report actions)
     if (
@@ -257,7 +258,7 @@ Report prepared: ${new Date().toLocaleDateString()}`,
       },
     });
   } catch (error) {
-    console.error("[Dashboard AI API] Error:", error);
+    logger.error("[Dashboard AI API] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

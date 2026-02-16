@@ -4,6 +4,7 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 import puppeteer, { type Browser } from "puppeteer";
 
 /**
@@ -29,7 +30,7 @@ export async function htmlToPdfBuffer(
 
     try {
       if (attempt > 0) {
-        console.log(`[htmlToPdfBuffer] Retry attempt ${attempt}/${maxRetries}`);
+        logger.debug(`[htmlToPdfBuffer] Retry attempt ${attempt}/${maxRetries}`);
         // Wait before retry
         await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
       }
@@ -73,7 +74,7 @@ export async function htmlToPdfBuffer(
       await browser.close();
       browser = null;
 
-      console.log(`[htmlToPdfBuffer] Success on attempt ${attempt + 1}`);
+      logger.debug(`[htmlToPdfBuffer] Success on attempt ${attempt + 1}`);
       return Buffer.from(pdfBuffer);
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Unknown error");
@@ -83,7 +84,7 @@ export async function htmlToPdfBuffer(
         try {
           await browser.close();
         } catch (e) {
-          console.error("[htmlToPdfBuffer] Error closing browser:", e);
+          logger.error("[htmlToPdfBuffer] Error closing browser:", e);
         }
       }
 
@@ -142,7 +143,7 @@ export async function uploadReport({
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       if (attempt > 0) {
-        console.log(`[uploadReport] Retry attempt ${attempt}/${retries}`);
+        logger.debug(`[uploadReport] Retry attempt ${attempt}/${retries}`);
         await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
       }
 
@@ -159,7 +160,7 @@ export async function uploadReport({
       // Get public URL
       const { data } = supabase.storage.from(bucket).getPublicUrl(key);
 
-      console.log(`[uploadReport] Success on attempt ${attempt + 1}`);
+      logger.debug(`[uploadReport] Success on attempt ${attempt + 1}`);
       return data.publicUrl;
     } catch (error) {
       lastError = error instanceof Error ? error : new Error("Unknown error");

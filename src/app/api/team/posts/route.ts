@@ -7,6 +7,7 @@ export const revalidate = 0;
 
 // import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json([]);
   } catch (error) {
-    console.error("Error fetching team posts:", error);
+    logger.error("Error fetching team posts:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ description: "Not implemented" }, { status: 501 });
   } catch (error) {
-    console.error("Error creating team post:", error);
+    logger.error("Error creating team post:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

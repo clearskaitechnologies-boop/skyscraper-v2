@@ -3,6 +3,7 @@
 // about `process` or `@prisma/client` types, run `pnpm install` and
 // `npx prisma generate` locally.
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 declare const process: any;
 
@@ -133,9 +134,9 @@ export async function handleStripeEvent(evt: any) {
               },
             });
 
-            console.log(`Successfully added ${tokens} tokens to wallet for org ${orgId}`);
+            logger.debug(`Successfully added ${tokens} tokens to wallet for org ${orgId}`);
           } catch (walletError) {
-            console.warn("TokenWallet update failed, falling back to tokens_ledger", walletError);
+            logger.warn("TokenWallet update failed, falling back to tokens_ledger", walletError);
 
             // Fallback to legacy tokens_ledger
             const agg: any =
@@ -145,7 +146,7 @@ export async function handleStripeEvent(evt: any) {
             await prisma.$executeRaw`INSERT INTO tokens_ledger (id, org_id, amount_change, balance_after, kind, reason, created_at) VALUES (gen_random_uuid(), ${orgId}::uuid, ${tokens}, ${newBalance}, 'purchase', 'stripe_checkout', now())`;
           }
         } catch (e) {
-          console.error("Token purchase processing failed", e);
+          logger.error("Token purchase processing failed", e);
         }
       }
       break;

@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface UsageMetrics {
   orgId: string;
@@ -62,7 +63,7 @@ export async function trackAPICall(
     await trackEndpointUsage(orgId, endpoint);
   } catch (error) {
     // Don't fail requests if tracking fails
-    console.error("Failed to track API call:", error);
+    logger.error("Failed to track API call:", error);
   }
 }
 
@@ -101,7 +102,7 @@ export async function trackStorageUsage(orgId: string, bytes: number): Promise<v
       })
       .catch(() => {});
   } catch (error) {
-    console.error("Failed to track storage usage:", error);
+    logger.error("Failed to track storage usage:", error);
   }
 }
 
@@ -153,7 +154,7 @@ export async function trackFeatureUsage(
       })
       .catch(() => {});
   } catch (error) {
-    console.error("Failed to track feature usage:", error);
+    logger.error("Failed to track feature usage:", error);
   }
 }
 
@@ -212,7 +213,7 @@ export async function trackActiveUser(orgId: string, userId: string): Promise<vo
       })
       .catch(() => {});
   } catch (error) {
-    console.error("Failed to track active user:", error);
+    logger.error("Failed to track active user:", error);
   }
 }
 

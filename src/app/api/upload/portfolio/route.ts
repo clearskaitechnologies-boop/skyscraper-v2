@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -61,7 +62,7 @@ export async function POST(req: NextRequest) {
         });
 
       if (error) {
-        console.error("Supabase upload error:", error);
+        logger.error("Supabase upload error:", error);
         return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });
       }
 
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ urls: uploadedUrls });
   } catch (error) {
-    console.error("Portfolio upload error:", error);
+    logger.error("Portfolio upload error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

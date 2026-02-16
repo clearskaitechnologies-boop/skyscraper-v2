@@ -1,5 +1,6 @@
 // MODULE 2: Notifications - Mark as read (supports both client and pro)
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -141,7 +142,7 @@ export async function POST(req: NextRequest) {
       { status: 400 }
     );
   } catch (error) {
-    console.error("[NOTIFICATIONS_MARK_READ]", error);
+    logger.error("[NOTIFICATIONS_MARK_READ]", error);
     return NextResponse.json({ error: "Failed to mark as read" }, { status: 500 });
   }
 }

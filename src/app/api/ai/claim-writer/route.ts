@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateClaimNarrative } from "@/lib/ai/claimWriter";
@@ -47,7 +48,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(aiOk(result));
   } catch (err: any) {
-    console.error("claim-writer route error:", err);
+    logger.error("claim-writer route error:", err);
 
     return NextResponse.json(
       aiFail("Internal server error in claim-writer", "SERVER", {

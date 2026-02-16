@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -73,7 +74,7 @@ export async function GET() {
       version: "3.0.0",
     });
   } catch (error) {
-    console.error("[health/ready] Database check failed:", error);
+    logger.error("[health/ready] Database check failed:", error);
     return NextResponse.json(
       {
         status: "not_ready",

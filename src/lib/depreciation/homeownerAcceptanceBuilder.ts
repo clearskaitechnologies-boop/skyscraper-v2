@@ -10,6 +10,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface HomeownerAcceptance {
   homeowner: {
@@ -53,7 +54,7 @@ export async function buildHomeownerAcceptance(
   homeownerName?: string,
   signatureType: "DIGITAL" | "MANUAL" = "DIGITAL"
 ): Promise<HomeownerAcceptance> {
-  console.log(`[Homeowner Acceptance Builder] Building for claim ${claimId}`);
+  logger.debug(`[Homeowner Acceptance Builder] Building for claim ${claimId}`);
 
   // Fetch claim data
   const claim = await prisma.claims.findFirst({

@@ -1,4 +1,5 @@
 import * as Sentry from "@sentry/nextjs";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { withOrgScope } from "@/lib/auth/tenant";
@@ -19,7 +20,7 @@ export const POST = withOrgScope(
       const body = await req.json();
       const claimData = body.claimData || {};
 
-      console.log(`[PDF_GENERATION_API] Generating PDF for template ${templateId}, org ${orgId}`);
+      logger.debug(`[PDF_GENERATION_API] Generating PDF for template ${templateId}, org ${orgId}`);
 
       // Generate PDF with branding
       const pdfBuffer = await generateTemplatePDF({
@@ -37,7 +38,7 @@ export const POST = withOrgScope(
         },
       });
     } catch (error: any) {
-      console.error(`[PDF_GENERATION_API] Error:`, error);
+      logger.error(`[PDF_GENERATION_API] Error:`, error);
 
       Sentry.captureException(error, {
         tags: {

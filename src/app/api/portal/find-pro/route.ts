@@ -5,6 +5,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -531,7 +532,7 @@ export async function GET(req: NextRequest) {
       hasMore: pros.length === limit,
     });
   } catch (error) {
-    console.error("Find pro error:", error);
+    logger.error("Find pro error:", error);
     return NextResponse.json({ error: "Failed to search for contractors" }, { status: 500 });
   }
 }

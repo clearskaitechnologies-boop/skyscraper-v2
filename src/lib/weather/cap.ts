@@ -4,6 +4,7 @@
  */
 
 import type { WeatherEvent } from "@/types/weather";
+import { logger } from "@/lib/logger";
 
 const CAP_API_BASE = process.env.CAP_API_BASE || "https://api.weather.gov/alerts";
 
@@ -45,13 +46,13 @@ export async function fetchCAPAlerts(opts: {
     });
 
     if (!res.ok) {
-      console.warn(`CAP fetch failed: ${res.status} ${res.statusText}`);
+      logger.warn(`CAP fetch failed: ${res.status} ${res.statusText}`);
       return [];
     }
 
     const text = await res.text();
     if (!text || text.trim().length === 0) {
-      console.warn("CAP returned empty response");
+      logger.warn("CAP returned empty response");
       return [];
     }
 
@@ -63,7 +64,7 @@ export async function fetchCAPAlerts(opts: {
       return [];
     }
   } catch (error) {
-    console.error("CAP fetch error:", error);
+    logger.error("CAP fetch error:", error);
     return [];
   }
 }

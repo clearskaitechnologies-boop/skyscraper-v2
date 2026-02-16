@@ -1,4 +1,5 @@
 import { useCallback,useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { supabase } from "@/integrations/supabase/client";
 
@@ -108,12 +109,12 @@ export function useSSEChat() {
                 ]);
               }
             } catch (e) {
-              console.error("Failed to parse SSE data:", e);
+              logger.error("Failed to parse SSE data:", e);
             }
           }
         }
       } catch (error: any) {
-        console.error("Chat error:", error);
+        logger.error("Chat error:", error);
         setMessages((prev) => [
           ...prev,
           {

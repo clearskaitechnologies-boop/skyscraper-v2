@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, Circle, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from "react";
 import { toast } from "sonner";
 
@@ -34,7 +35,7 @@ export function CompletionStatusPanel({ claimId }: CompletionStatusPanelProps) {
       if (docsRes.ok) setDocuments(await docsRes.json());
       if (photosRes.ok) setPhotos(await photosRes.json());
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      logger.error("Failed to fetch data:", error);
     } finally {
       setLoading(false);
     }

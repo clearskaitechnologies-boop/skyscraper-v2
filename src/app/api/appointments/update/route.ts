@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -67,7 +68,7 @@ export async function PATCH(req: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("Error updating appointment:", error);
+    logger.error("Error updating appointment:", error);
     return NextResponse.json({ error: "Failed to update appointment" }, { status: 500 });
   }
 }

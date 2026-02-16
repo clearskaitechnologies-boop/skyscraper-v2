@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle, Code, Eye, Plus, Save, Trash2, XCircle } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -69,7 +70,7 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
       const data = await response.json();
       setRules(data.rules || []);
     } catch (err) {
-      console.error("Failed to fetch rules:", err);
+      logger.error("Failed to fetch rules:", err);
       toast({
         title: "Error",
         description: "Failed to load rules",

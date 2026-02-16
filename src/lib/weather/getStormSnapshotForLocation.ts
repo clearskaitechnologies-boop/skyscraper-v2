@@ -1,4 +1,5 @@
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import type { NormalizedLocation, StormSnapshot } from "./storm-types";
 import { fetchVisualCrossingStormData } from "./visualcrossing";
@@ -22,18 +23,18 @@ export async function getStormSnapshotForLocation(
   // Check cache
   const cached = cache.get(cacheKey);
   if (cached && cached.expires > Date.now()) {
-    console.log(`[STORM_INTEL] Cache hit for ${location.address}`);
+    logger.debug(`[STORM_INTEL] Cache hit for ${location.address}`);
     return cached.data;
   }
 
-  console.log(`[STORM_INTEL] Fetching fresh storm data for ${location.address}`);
+  logger.debug(`[STORM_INTEL] Fetching fresh storm data for ${location.address}`);
 
   // Try Visual Crossing first (better for historical storm events)
   let snapshot = await fetchVisualCrossingStormData(location);
 
   // Fallback to Weatherstack if Visual Crossing fails
   if (!snapshot) {
-    console.log(`[STORM_INTEL] Visual Crossing failed, trying Weatherstack fallback`);
+    logger.debug(`[STORM_INTEL] Visual Crossing failed, trying Weatherstack fallback`);
     const weather = await getDashboardWeather(`${location.latitude},${location.longitude}`);
 
     if (weather) {
@@ -46,14 +47,14 @@ export async function getStormSnapshotForLocation(
         stormsLast12Months: 0,
         provider: "WEATHERSTACK",
       };
-      console.log(`[STORM_INTEL] ⚠️ Using Weatherstack fallback (limited data)`);
+      logger.debug(`[STORM_INTEL] ⚠️ Using Weatherstack fallback (limited data)`);
     }
   }
 
   if (snapshot) {
-    console.log(`[STORM_INTEL] ✅ Storm data retrieved via ${snapshot.provider}`);
+    logger.debug(`[STORM_INTEL] ✅ Storm data retrieved via ${snapshot.provider}`);
   } else {
-    console.log(`[STORM_INTEL] ⚠️ No storm data available for location`);
+    logger.debug(`[STORM_INTEL] ⚠️ No storm data available for location`);
   }
 
   // Cache result
@@ -70,5 +71,5 @@ export async function getStormSnapshotForLocation(
  */
 export function clearStormCache(): void {
   cache.clear();
-  console.log(`[STORM_INTEL] Cache cleared`);
+  logger.debug(`[STORM_INTEL] Cache cleared`);
 }

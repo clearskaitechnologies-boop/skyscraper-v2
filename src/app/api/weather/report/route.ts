@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -41,7 +42,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ reports }, { status: 200 });
   } catch (err) {
-    console.error("[API Error] GET /api/weather/report:", err);
+    logger.error("[API Error] GET /api/weather/report:", err);
     return NextResponse.json({ error: "Failed to fetch reports." }, { status: 500 });
   }
 }
@@ -160,7 +161,7 @@ export async function POST(req: NextRequest) {
         });
 
         pdfSaved = true;
-        console.log(`[Weather API] PDF saved for claim ${body.claim_id}`);
+        logger.debug(`[Weather API] PDF saved for claim ${body.claim_id}`);
       }
     } catch (pdfError) {
       console.error("[Weather API] PDF generation failed (non-critical):", pdfError);
@@ -169,7 +170,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ report, pdfSaved }, { status: 200 });
   } catch (err) {
-    console.error("[API Error] /api/weather/report:", err);
+    logger.error("[API Error] /api/weather/report:", err);
     return NextResponse.json(
       {
         error: "Failed to build weather report.",

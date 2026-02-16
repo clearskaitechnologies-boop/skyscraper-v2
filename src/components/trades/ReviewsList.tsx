@@ -6,6 +6,7 @@
 "use client";
 
 import { Star } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -47,7 +48,7 @@ export function ReviewsList({ proId, limit }: ReviewsListProps) {
         throw new Error(data.error || "Failed to load reviews");
       }
     } catch (error: any) {
-      console.error("Failed to load reviews:", error);
+      logger.error("Failed to load reviews:", error);
       toast.error(error.message || "Failed to load reviews");
     } finally {
       setLoading(false);

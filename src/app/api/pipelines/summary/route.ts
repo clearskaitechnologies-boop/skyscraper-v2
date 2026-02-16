@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -110,15 +111,18 @@ export async function GET(request: NextRequest) {
       }
     }
 
-    const formattedRecentUpdates = recentActivities.map((activity) => ({
-      id: activity.id,
-      leadId: activity.leadId || "",
-      fromStage: (activity.metadata as any)?.fromStage || "",
-      toStage: (activity.metadata as any)?.toStage || "",
-      updatedAt: activity.createdAt,
-      updatedBy:
-        activity.userName || (activity.userId ? userMap.get(activity.userId) : null) || "System",
-    }));
+    const formattedRecentUpdates = recentActivities.map((activity) => {
+      const metadata = safeParse(PipelineActivityMetadataSchema, activity.metadata);
+      return {
+        id: activity.id,
+        leadId: activity.leadId || "",
+        fromStage: metadata?.fromStage || "",
+        toStage: metadata?.toStage || "",
+        updatedAt: activity.createdAt,
+        updatedBy:
+          activity.userName || (activity.userId ? userMap.get(activity.userId) : null) || "System",
+      };
+    });
 
     // Generate next actions based on lead age and stage
     const nextActions = leads
@@ -181,7 +185,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(summary);
   } catch (error) {
-    console.error("Error fetching pipeline summary:", error);
+    logger.error("Error fetching pipeline summary:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

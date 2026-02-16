@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type WebhookEvent =
   | "claim.created"
@@ -56,7 +57,7 @@ export async function registerWebhook(
 
     return endpoint;
   } catch (error) {
-    console.error("Failed to register webhook:", error);
+    logger.error("Failed to register webhook:", error);
     throw new Error("Failed to register webhook");
   }
 }
@@ -95,7 +96,7 @@ export async function triggerWebhook(
     // Send to all endpoints in parallel
     await Promise.allSettled(endpoints.map((endpoint) => sendWebhook(endpoint, payload)));
   } catch (error) {
-    console.error("Webhook trigger failed:", error);
+    logger.error("Webhook trigger failed:", error);
   }
 }
 
@@ -129,7 +130,7 @@ async function sendWebhook(endpoint: any, payload: WebhookPayload): Promise<void
     });
 
     if (!response.ok) {
-      console.error(`Webhook delivery failed: ${response.status}`);
+      logger.error(`Webhook delivery failed: ${response.status}`);
 
       // Retry logic
       if (shouldRetry(response.status)) {
@@ -137,7 +138,7 @@ async function sendWebhook(endpoint: any, payload: WebhookPayload): Promise<void
       }
     }
   } catch (error) {
-    console.error("Webhook send failed:", error);
+    logger.error("Webhook send failed:", error);
 
     // Log failure
     await logWebhookDelivery({
@@ -163,7 +164,7 @@ async function retryWebhook(
   maxAttempts: number = 3
 ): Promise<void> {
   if (attempt >= maxAttempts) {
-    console.error(`Webhook max retries reached for ${endpoint.url}`);
+    logger.error(`Webhook max retries reached for ${endpoint.url}`);
     return;
   }
 
@@ -283,7 +284,7 @@ async function logWebhookDelivery(data: {
       })
       .catch(() => {});
   } catch (error) {
-    console.error("Failed to log webhook delivery:", error);
+    logger.error("Failed to log webhook delivery:", error);
   }
 }
 

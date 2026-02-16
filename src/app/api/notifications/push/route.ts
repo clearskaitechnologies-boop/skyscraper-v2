@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -39,11 +40,11 @@ export async function GET(req: NextRequest) {
         subscriptions,
       });
     } catch (error) {
-      console.log("Push subscriptions table may not exist:", error);
+      logger.debug("Push subscriptions table may not exist:", error);
       return NextResponse.json({ subscribed: false, subscriptions: [] });
     }
   } catch (error) {
-    console.error("Error getting push status:", error);
+    logger.error("Error getting push status:", error);
     return NextResponse.json({ error: "Failed to get push status" }, { status: 500 });
   }
 }
@@ -77,11 +78,11 @@ export async function POST(req: NextRequest) {
       const result = await pushNotificationService.subscribe(user.id, subscription, deviceInfo);
       return NextResponse.json(result);
     } catch (error) {
-      console.error("Error subscribing to push (table may not exist):", error);
+      logger.error("Error subscribing to push (table may not exist):", error);
       return NextResponse.json({ success: true });
     }
   } catch (error) {
-    console.error("Error subscribing to push:", error);
+    logger.error("Error subscribing to push:", error);
     return NextResponse.json({ error: "Failed to subscribe" }, { status: 500 });
   }
 }
@@ -105,11 +106,11 @@ export async function DELETE(req: NextRequest) {
       await pushNotificationService.unsubscribe(endpoint);
       return NextResponse.json({ success: true });
     } catch (error) {
-      console.error("Error unsubscribing from push:", error);
+      logger.error("Error unsubscribing from push:", error);
       return NextResponse.json({ success: true });
     }
   } catch (error) {
-    console.error("Error unsubscribing from push:", error);
+    logger.error("Error unsubscribing from push:", error);
     return NextResponse.json({ error: "Failed to unsubscribe" }, { status: 500 });
   }
 }

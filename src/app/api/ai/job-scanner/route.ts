@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
 import prisma from "@/lib/prisma";
@@ -353,7 +354,7 @@ export async function GET(req: NextRequest) {
       scannedAt: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("AI Job Scanner error:", error);
+    logger.error("AI Job Scanner error:", error);
 
     // Return fallback recommendations on error instead of failing
     const fallbackRecommendations = [

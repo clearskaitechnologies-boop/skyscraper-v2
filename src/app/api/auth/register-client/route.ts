@@ -6,6 +6,7 @@
  */
 
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -89,7 +90,7 @@ export async function POST(req: NextRequest) {
       message: "Client account created successfully",
     });
   } catch (error: any) {
-    console.error("[/api/auth/register-client] Error:", error);
+    logger.error("[/api/auth/register-client] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create client account" },
       { status: 500 }

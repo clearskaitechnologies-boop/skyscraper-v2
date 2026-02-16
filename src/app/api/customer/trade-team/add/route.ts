@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -79,7 +80,7 @@ export async function POST(req: NextRequest) {
       message: `${company.name} added to your trade team`,
     });
   } catch (error: unknown) {
-    console.error("❌ [POST /api/customer/trade-team/add] Error:", error);
+    logger.error("❌ [POST /api/customer/trade-team/add] Error:", error);
     return NextResponse.json({ error: "Failed to add contractor" }, { status: 500 });
   }
 }

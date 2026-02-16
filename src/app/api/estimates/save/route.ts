@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -71,7 +72,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ estimateId: estimates.id, estimates });
   } catch (err) {
-    console.error("Error in /api/estimates/save:", err);
+    logger.error("Error in /api/estimates/save:", err);
     return NextResponse.json({ error: "Failed to save estimates." }, { status: 500 });
   }
 }

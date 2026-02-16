@@ -4,6 +4,7 @@
  */
 
 import { getReportById } from "@/config/communityReports";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { generateReport, type ReportConfig } from "@/lib/reports/generator";
 
@@ -22,7 +23,7 @@ export async function generateCommunityReport(
 ): Promise<{ artifactUrl: string }> {
   const { orderId, reportSku, orgId } = params;
 
-  console.log(`[COMMUNITY_REPORT] Starting generation for order: ${orderId}`);
+  logger.debug(`[COMMUNITY_REPORT] Starting generation for order: ${orderId}`);
 
   try {
     // Update order status to GENERATING
@@ -66,13 +67,13 @@ export async function generateCommunityReport(
       WHERE id = ${orderId}::uuid
     `;
 
-    console.log(`[COMMUNITY_REPORT] Completed order ${orderId}: ${generatedReport.url}`);
+    logger.debug(`[COMMUNITY_REPORT] Completed order ${orderId}: ${generatedReport.url}`);
 
     return {
       artifactUrl: generatedReport.url,
     };
   } catch (error: any) {
-    console.error(`[COMMUNITY_REPORT] Failed to generate order ${orderId}:`, error);
+    logger.error(`[COMMUNITY_REPORT] Failed to generate order ${orderId}:`, error);
 
     // Mark order as failed
     try {
@@ -119,7 +120,7 @@ export async function getCommunityReportOrders(orgId: string): Promise<any[]> {
 
     return orders;
   } catch (error) {
-    console.error("[COMMUNITY_REPORT] Failed to get orders:", error);
+    logger.error("[COMMUNITY_REPORT] Failed to get orders:", error);
     return [];
   }
 }

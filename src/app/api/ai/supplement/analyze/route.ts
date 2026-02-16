@@ -6,6 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -254,7 +255,7 @@ Return your analysis as valid JSON.`;
 
     return NextResponse.json(result);
   } catch (error) {
-    console.error("Supplement analysis error:", error);
+    logger.error("Supplement analysis error:", error);
     // Return demo data on error
     return NextResponse.json(getDemoAnalysis());
   }

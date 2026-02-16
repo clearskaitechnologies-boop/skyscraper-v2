@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -50,7 +51,7 @@ export async function GET() {
         : null,
     });
   } catch (error) {
-    console.error("[Billing Subscription] Error:", error);
+    logger.error("[Billing Subscription] Error:", error);
     return NextResponse.json({ error: "Failed to fetch subscription" }, { status: 500 });
   }
 }

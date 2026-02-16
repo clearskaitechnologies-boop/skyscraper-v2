@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
         });
 
     if (!order) {
-      console.warn("[MEASUREMENTS_WEBHOOK] Order not found:", { orderId, externalId });
+      logger.warn("[MEASUREMENTS_WEBHOOK] Order not found:", { orderId, externalId });
       return NextResponse.json({ ok: false, message: "Order not found" }, { status: 404 });
     }
 
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true, message: "Webhook processed" });
   } catch (error) {
-    console.error("[MEASUREMENTS_WEBHOOK_ERROR]", error);
+    logger.error("[MEASUREMENTS_WEBHOOK_ERROR]", error);
     return NextResponse.json(
       { ok: false, message: error instanceof Error ? error.message : "Webhook processing failed" },
       { status: 500 }

@@ -21,6 +21,7 @@
  */
 
 import { callOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 import { generateCodeSummary } from "./code";
@@ -48,8 +49,8 @@ export async function generateAppeal(
   denialDetails?: string
 ): Promise<AppealPackage> {
   try {
-    console.log(`[appeal] Generating appeal for claim ${claimId}`);
-    console.log(`[appeal] Denial reason: ${denialReason}`);
+    logger.debug(`[appeal] Generating appeal for claim ${claimId}`);
+    logger.debug(`[appeal] Denial reason: ${denialReason}`);
 
     // 1. Fetch claim with all evidence
     const claim = await prisma.claims.findUnique({
@@ -133,7 +134,7 @@ export async function generateAppeal(
     // 10. Identify contradictions
     const contradictions = identifyContradictions(context);
 
-    console.log(`[appeal] Generated appeal package for claim ${claimId}`);
+    logger.debug(`[appeal] Generated appeal package for claim ${claimId}`);
 
     return {
       appealLetter,
@@ -154,7 +155,7 @@ export async function generateAppeal(
       generatedAt: new Date(),
     };
   } catch (error) {
-    console.error("[appeal] Generation failed:", error);
+    logger.error("[appeal] Generation failed:", error);
     throw new Error(`Failed to generate appeal: ${error instanceof Error ? error.message : "Unknown error"}`);
   }
 }

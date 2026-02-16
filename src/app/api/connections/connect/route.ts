@@ -4,6 +4,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -98,7 +99,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true, connection });
   } catch (error) {
-    console.error("[POST /api/connections/connect] Error:", error);
+    logger.error("[POST /api/connections/connect] Error:", error);
     return NextResponse.json({ error: "Failed to create connection" }, { status: 500 });
   }
 }

@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -51,7 +52,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, message: msg });
   } catch (e: any) {
-    console.error("[Message:post-update]", e);
+    logger.error("[Message:post-update]", e);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

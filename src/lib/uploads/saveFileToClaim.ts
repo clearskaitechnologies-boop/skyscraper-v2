@@ -13,6 +13,7 @@
  */
 
 import { prismaModel } from "@/lib/db/prismaModel";
+import { logger } from "@/lib/logger";
 import { uploadSupabase } from "@/lib/storage";
 import { emitEvent } from "@/lib/telemetry";
 
@@ -137,8 +138,8 @@ function validateFile(file: File): void {
  *   visibleToClient: true
  * });
  *
- * console.log(`File uploaded: ${result.publicUrl}`);
- * console.log(`DB record ID: ${result.id}`);
+ * logger.debug(`File uploaded: ${result.publicUrl}`);
+ * logger.debug(`DB record ID: ${result.id}`);
  * ```
  */
 export async function saveFileToClaim(
@@ -187,7 +188,7 @@ export async function saveFileToClaim(
   // Upload to Supabase Storage
   const { url: publicUrl, path: storageKey } = await uploadSupabase(file, bucket, folder);
 
-  console.log(`[saveFileToClaim] Uploaded ${file.name} to ${storageKey}`);
+  logger.debug(`[saveFileToClaim] Uploaded ${file.name} to ${storageKey}`);
 
   // Graceful degradation: documents table shapes may differ. Avoid type errors by skipping DB write.
   // If needed in future, replace with prismaModel.documents.create using the correct schema.
@@ -244,7 +245,7 @@ export async function saveFileToClaim(
  *
  * const successful = results.filter(r => r.success);
  * const failed = results.filter(r => !r.success);
- * console.log(`${successful.length} uploaded, ${failed.length} failed`);
+ * logger.debug(`${successful.length} uploaded, ${failed.length} failed`);
  * ```
  */
 export async function saveMultipleFilesToClaim(
@@ -266,7 +267,7 @@ export async function saveMultipleFilesToClaim(
         fileName: file.name,
       };
     } catch (error: any) {
-      console.error(`[saveMultipleFilesToClaim] Failed to upload ${file.name}:`, error);
+      logger.error(`[saveMultipleFilesToClaim] Failed to upload ${file.name}:`, error);
       return {
         success: false,
         error: error.message || "Upload failed",

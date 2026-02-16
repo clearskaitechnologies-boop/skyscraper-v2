@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export interface TrackEventPayload {
   name: string;
@@ -67,7 +68,7 @@ export async function track(
     } as any);
   } catch (error: unknown) {
     const e = error instanceof Error ? error : new Error(String(error));
-    console.error("Failed to track event:", e);
+    logger.error("Failed to track event:", e);
   }
 }
 
@@ -104,6 +105,6 @@ export async function logError({
     } as any);
   } catch (error: unknown) {
     const e = error instanceof Error ? error : new Error(String(error));
-    console.error("Failed to log error:", e);
+    logger.error("Failed to log error:", e);
   }
 }

@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { createBillingPortalSession } from "@/lib/billing/portal";
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ url: portalUrl });
   } catch (error) {
-    console.error("Portal session error:", error);
+    logger.error("Portal session error:", error);
     return NextResponse.json({ error: "Failed to create portal session" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, ChevronLeft, ChevronRight } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -111,7 +112,7 @@ export default function CreateClaimWizard({
           setProperties(propertiesData);
         }
       } catch (error) {
-        console.error("Error loading data:", error);
+        logger.error("Error loading data:", error);
       }
     };
 
@@ -283,7 +284,7 @@ export default function CreateClaimWizard({
         });
       }
     } catch (error) {
-      console.error("Failed to fetch AI estimate:", error);
+      logger.error("Failed to fetch AI estimate:", error);
     } finally {
       setLoadingAiEstimate(false);
     }
@@ -356,7 +357,7 @@ export default function CreateClaimWizard({
         router.push(`/claims/${claim.id}`);
       }
     } catch (error) {
-      console.error("Error creating claim:", error);
+      logger.error("Error creating claim:", error);
       toast.error(error instanceof Error ? error.message : "Failed to create claim");
     } finally {
       setIsLoading(false);

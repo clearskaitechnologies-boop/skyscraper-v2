@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, DollarSign,Loader2, Package, Plus, Save, Trash2, Users } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect,useState } from "react";
 import { toast } from "sonner";
 
@@ -64,7 +65,7 @@ export function JobCostingPanel({ jobId }: JobCostingPanelProps) {
         });
       }
     } catch (error) {
-      console.error("Failed to fetch job cost:", error);
+      logger.error("Failed to fetch job cost:", error);
       setError("Unable to load job costing data");
       toast.error("Failed to load job costing data");
     } finally {
@@ -90,7 +91,7 @@ export function JobCostingPanel({ jobId }: JobCostingPanelProps) {
 
       toast.success("Job costing saved successfully");
     } catch (error) {
-      console.error("Failed to save job cost:", error);
+      logger.error("Failed to save job cost:", error);
       toast.error("Failed to save job costing data");
     } finally {
       setSaving(false);

@@ -5,6 +5,7 @@
  */
 
 import { fetchSafe } from '@/lib/fetchSafe';
+import { logger } from "@/lib/logger";
 
 interface AttomPropertyData {
   address: {
@@ -129,7 +130,7 @@ export async function fetchAttomPropertyData(
       },
     };
   } catch (error) {
-    console.error("Attom API error:", error);
+    logger.error("Attom API error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to fetch property data",
@@ -198,7 +199,7 @@ export async function fetchCoreLogicPropertyData(
       },
     };
   } catch (error) {
-    console.error("CoreLogic API error:", error);
+    logger.error("CoreLogic API error:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Failed to fetch property data",
@@ -221,7 +222,7 @@ export async function enrichPropertyProfile(
 
   // If Attom fails, try CoreLogic
   if (!result.success && process.env.CORELOGIC_API_KEY) {
-    console.log("Attom failed, trying CoreLogic...");
+    logger.debug("Attom failed, trying CoreLogic...");
     result = await fetchCoreLogicPropertyData(address, city, state, zipCode);
   }
 

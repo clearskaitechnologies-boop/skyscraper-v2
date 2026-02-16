@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import type {
   AnnotatedPhoto,
@@ -53,7 +54,7 @@ export async function fetchWeatherData(propertyId: string): Promise<WeatherCause
       ],
     };
   } catch (error) {
-    console.error("Error fetching weather data:", error);
+    logger.error("Error fetching weather data:", error);
     return null;
   }
 }
@@ -102,7 +103,7 @@ export async function fetchClaimData(claimId: string): Promise<{
 
     return { coverSheet, inspection };
   } catch (error) {
-    console.error("Error fetching claim data:", error);
+    logger.error("Error fetching claim data:", error);
     return { coverSheet: null, inspection: null };
   }
 }
@@ -131,7 +132,7 @@ export async function fetchPhotos(claimId: string): Promise<AnnotatedPhoto[]> {
       timestamp: file.createdAt,
     }));
   } catch (error) {
-    console.error("Error fetching photos:", error);
+    logger.error("Error fetching photos:", error);
     return [];
   }
 }
@@ -212,7 +213,7 @@ export async function fetchCodeData(claimId: string): Promise<CodeComplianceData
       iceWaterShieldRequired: needsIceShield,
     };
   } catch (error) {
-    console.error("Error fetching code data:", error);
+    logger.error("Error fetching code data:", error);
     return null;
   }
 }
@@ -261,7 +262,7 @@ export async function fetchScopeData(claimId: string): Promise<ScopePricingData 
       xactimateCompatible: true,
     };
   } catch (error) {
-    console.error("Error fetching scope data:", error);
+    logger.error("Error fetching scope data:", error);
     return null;
   }
 }
@@ -302,7 +303,7 @@ export async function fetchTimeline(claimId: string): Promise<TimelineEvent[]> {
 
     return events.sort((a, b) => a.date.getTime() - b.date.getTime());
   } catch (error) {
-    console.error("Error fetching timeline:", error);
+    logger.error("Error fetching timeline:", error);
     return [];
   }
 }
@@ -565,7 +566,7 @@ export async function assembleClaimFolder(
       warnings: warnings.length > 0 ? warnings : undefined,
     };
   } catch (error) {
-    console.error("Error assembling claim folder:", error);
+    logger.error("Error assembling claim folder:", error);
     errors.push("An unexpected error occurred while assembling the folder.");
     return { success: false, errors };
   }

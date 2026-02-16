@@ -30,6 +30,7 @@
  */
 
 import { nanoid } from "nanoid";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiAuth, verifyClaimAccess } from "@/lib/auth/apiAuth";
@@ -89,7 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
-    console.error("[Assets GET] Error:", error);
+    logger.error("[Assets GET] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       return handleJsonAction(req, claimId, orgId!, userId!);
     }
   } catch (error: any) {
-    console.error("[Assets POST] Error:", error);
+    logger.error("[Assets POST] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

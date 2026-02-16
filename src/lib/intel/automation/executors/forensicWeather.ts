@@ -5,13 +5,14 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { logger } from "@/lib/logger";
 
 import { buildMasterReportPayload } from "@/lib/intel/master/buildMasterPayload";
 import { generateForensicWeatherReport } from "@/lib/intel/reports/forensic-weather";
 import prisma from "@/lib/prisma";
 
 export async function executeForensicWeather(claimId: string, orgId: string) {
-  console.log(`[DOMINUS] Executing Forensic Weather for ${claimId}`);
+  logger.debug(`[DOMINUS] Executing Forensic Weather for ${claimId}`);
 
   // Build master payload
   const payload = await buildMasterReportPayload({ claimId, orgId });

@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
             "Here's a demo response. Ask about supplements, weather, or documentation.";
           return NextResponse.json({ ok: true, reply: response, response });
         } catch (err: any) {
-          console.error("[CLAIM_AI_DEMO_FAIL] OpenAI Error:", err);
+          logger.error("[CLAIM_AI_DEMO_FAIL] OpenAI Error:", err);
           return NextResponse.json(
             {
               ok: true,
@@ -108,11 +109,11 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
 
     // Handle AI Assistant Chat
     if (message) {
-      console.log("[CLAIM_AI_REQUEST] Starting for claim:", claimId);
+      logger.debug("[CLAIM_AI_REQUEST] Starting for claim:", claimId);
 
       // Check if OpenAI is configured
       if (!process.env.OPENAI_API_KEY) {
-        console.error("[CLAIM_AI_ERROR] OPENAI_API_KEY missing");
+        logger.error("[CLAIM_AI_ERROR] OPENAI_API_KEY missing");
         return NextResponse.json(
           {
             ok: false,
@@ -125,12 +126,12 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
       }
 
       // Build full claim context using canonical builder
-      console.log("[CLAIM_AI] Building context...");
+      logger.debug("[CLAIM_AI] Building context...");
       let claimContext;
       try {
         claimContext = await buildClaimContext(claimId);
       } catch (error) {
-        console.error("[CLAIM_AI_ERROR] Context build failed:", error);
+        logger.error("[CLAIM_AI_ERROR] Context build failed:", error);
         return NextResponse.json(
           {
             ok: false,
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
         );
       }
 
-      console.log("[CLAIM_AI_CONTEXT_OK] Context built successfully");
+      logger.debug("[CLAIM_AI_CONTEXT_OK] Context built successfully");
 
       // Build rich system prompt with full context
       const contextSummary = `
@@ -187,7 +188,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
       try {
         const openai = getOpenAI();
 
-        console.log("[CLAIM_AI] Calling OpenAI...");
+        logger.debug("[CLAIM_AI] Calling OpenAI...");
 
         const completion = await openai.chat.completions.create({
           model: "gpt-4o",
@@ -204,7 +205,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
           completion.choices[0]?.message?.content ||
           "I couldn't generate a response. Please try again.";
 
-        console.log("[CLAIM_AI_SUCCESS] Generated reply:", response.substring(0, 100) + "...");
+        logger.debug("[CLAIM_AI_SUCCESS] Generated reply:", response.substring(0, 100) + "...");
 
         return NextResponse.json({
           ok: true,
@@ -268,7 +269,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
       { status: 400 }
     );
   } catch (error: any) {
-    console.error("[AI Analysis] Error:", error);
+    logger.error("[AI Analysis] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
@@ -320,7 +321,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
       },
     });
   } catch (error: any) {
-    console.error("[AI Analysis] Error:", error);
+    logger.error("[AI Analysis] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

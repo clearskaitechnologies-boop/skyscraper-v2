@@ -8,6 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
@@ -22,8 +23,8 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const body = await req.json();
     const { claimId, images, property } = body;
 
-    console.log("[Report Builder] Request received for claimId:", claimId);
-    console.log("[Report Builder] Images count:", images?.length);
+    logger.debug("[Report Builder] Request received for claimId:", claimId);
+    logger.debug("[Report Builder] Images count:", images?.length);
 
     if (!claimId) {
       return NextResponse.json({ success: false, error: "claimId is required" }, { status: 400 });
@@ -75,7 +76,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       );
     }
 
-    console.log("[Report Builder] Starting analysis for claim:", claimId);
+    logger.debug("[Report Builder] Starting analysis for claim:", claimId);
     console.log(
       "[Report Builder] Processing",
       validImages.length,
@@ -105,7 +106,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       );
     }
 
-    console.log("[Report Builder] Analysis complete, generating PDF");
+    logger.debug("[Report Builder] Analysis complete, generating PDF");
 
     // Build report data
     const reportData = {
@@ -126,8 +127,8 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     // Generate PDF
     const pdfBuffer = await generatePDFBuffer(reportData);
 
-    console.log("[Report Builder] PDF generated successfully");
-    console.log("[Report Builder] PDF size:", (pdfBuffer.length / 1024).toFixed(2), "KB");
+    logger.debug("[Report Builder] PDF generated successfully");
+    logger.debug("[Report Builder] PDF size:", (pdfBuffer.length / 1024).toFixed(2), "KB");
 
     // Return PDF as downloadable file
     return new NextResponse(pdfBuffer as any, {
@@ -139,7 +140,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       },
     });
   } catch (error) {
-    console.error("[Report Builder] Error:", error);
+    logger.error("[Report Builder] Error:", error);
     return NextResponse.json(
       {
         success: false,

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -34,7 +35,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting Appointment:", error);
+    logger.error("Error deleting Appointment:", error);
     return NextResponse.json({ error: "Failed to delete Appointment" }, { status: 500 });
   }
 }

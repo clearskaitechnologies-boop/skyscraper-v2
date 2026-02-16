@@ -1,5 +1,6 @@
 // app/api/report-templates/[id]/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -36,7 +37,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    console.error("DELETE /api/report-templates/[id] error:", err);
+    logger.error("DELETE /api/report-templates/[id] error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to delete template" },
       { status: 500 }

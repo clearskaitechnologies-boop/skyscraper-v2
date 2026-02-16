@@ -1,4 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
@@ -166,7 +167,7 @@ export async function TasksToday() {
                       className="rounded bg-green-100 px-3 py-1 text-xs text-green-700 transition-colors hover:bg-green-200"
                       onClick={() => {
                         // TODO: Implement complete tasks
-                        console.log("Complete tasks:", tasks.id);
+                        logger.debug("Complete tasks:", tasks.id);
                       }}
                     >
                       Complete

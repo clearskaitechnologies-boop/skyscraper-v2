@@ -1,6 +1,7 @@
 "use client";
 
 import { Check, Crown, Loader2, Sparkles } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -49,7 +50,7 @@ export function SubscriptionClient({
           setPlans(data.plans);
         }
       } catch (err) {
-        console.error("Failed to fetch plans:", err);
+        logger.error("Failed to fetch plans:", err);
         toast.error("Failed to load subscription plans");
       } finally {
         setLoading(false);
@@ -84,7 +85,7 @@ export function SubscriptionClient({
         throw new Error("No checkout URL returned");
       }
     } catch (err) {
-      console.error("Checkout error:", err);
+      logger.error("Checkout error:", err);
       toast.error(err instanceof Error ? err.message : "Failed to start checkout");
     } finally {
       setUpgrading(null);
@@ -112,7 +113,7 @@ export function SubscriptionClient({
         throw new Error("No portal URL returned");
       }
     } catch (err) {
-      console.error("Portal error:", err);
+      logger.error("Portal error:", err);
       toast.error(err instanceof Error ? err.message : "Failed to open billing portal");
     } finally {
       setPortalLoading(false);

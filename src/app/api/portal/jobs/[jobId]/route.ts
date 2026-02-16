@@ -3,6 +3,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -89,7 +90,7 @@ export async function GET(req: NextRequest, { params }: { params: { jobId: strin
 
     return NextResponse.json({ job: jobData });
   } catch (error) {
-    console.error("[Job Detail] Error:", error);
+    logger.error("[Job Detail] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

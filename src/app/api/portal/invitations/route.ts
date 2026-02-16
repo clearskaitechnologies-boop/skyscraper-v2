@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
@@ -78,7 +79,7 @@ export async function GET() {
 
     return NextResponse.json({ invitations });
   } catch (error: any) {
-    console.error("[portal/invitations] Failed to fetch:", error);
+    logger.error("[portal/invitations] Failed to fetch:", error);
     return NextResponse.json({ error: "Failed to fetch invitations" }, { status: 500 });
   }
 }

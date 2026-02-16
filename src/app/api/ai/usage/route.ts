@@ -9,6 +9,7 @@ export const revalidate = 0;
 // Returns: { mockup: { used, limit }, dol: { used, limit }, weather: { used, limit } }
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { getUsageSummary } from "@/modules/ai/core/tokens";
@@ -21,7 +22,7 @@ async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string 
 
     return NextResponse.json(summary);
   } catch (error: any) {
-    console.error("[AI Usage API]", error);
+    logger.error("[AI Usage API]", error);
     return NextResponse.json({ error: error.message || "Failed to get usage" }, { status: 500 });
   }
 }

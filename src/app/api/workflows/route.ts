@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
       workflow,
     });
   } catch (error) {
-    console.error("Workflow creation error:", error);
+    logger.error("Workflow creation error:", error);
     return NextResponse.json({ error: "Failed to create workflow" }, { status: 500 });
   }
 }
@@ -73,7 +74,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ workflows });
   } catch (error) {
-    console.error("Workflow fetch error:", error);
+    logger.error("Workflow fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch workflows" }, { status: 500 });
   }
 }
@@ -118,7 +119,7 @@ export async function executeWorkflow(trigger: string, data: any, orgId: string)
       }
       results.push({ workflowId: workflow.id, action: workflow.actionType, success: true });
     } catch (error) {
-      console.error(`[WORKFLOW] Failed: ${workflow.actionType}`, error);
+      logger.error(`[WORKFLOW] Failed: ${workflow.actionType}`, error);
       results.push({
         workflowId: workflow.id,
         action: workflow.actionType,
@@ -139,7 +140,7 @@ async function executeSendEmail(
   orgId: string
 ) {
   if (!resend) {
-    console.warn("[WORKFLOW] Resend not configured, skipping email");
+    logger.warn("[WORKFLOW] Resend not configured, skipping email");
     return;
   }
 

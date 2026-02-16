@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import JSZip from "jszip";
 import { NextRequest, NextResponse } from "next/server";
@@ -172,7 +173,7 @@ https://skaiscrape.com`
     });
 
     if (error) {
-      console.error("[CompletePacket] Upload error:", error);
+      logger.error("[CompletePacket] Upload error:", error);
       return NextResponse.json(
         { error: `Failed to upload ZIP: ${error.message}` },
         { status: 500 }
@@ -208,7 +209,7 @@ https://skaiscrape.com`
       fileName,
     });
   } catch (error) {
-    console.error("[CompletePacket] Error:", error);
+    logger.error("[CompletePacket] Error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }

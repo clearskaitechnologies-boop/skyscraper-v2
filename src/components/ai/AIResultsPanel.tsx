@@ -6,6 +6,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   Box,
@@ -18,7 +19,7 @@ import {
   FileText,
   Zap,
 } from "lucide-react";
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 interface AIResult {
   task: string;
@@ -71,7 +72,7 @@ export function AIResultsPanel({
       setAnalysis(data.analysis);
       setError(null);
     } catch (err: any) {
-      console.error("[AIResultsPanel] Error:", err);
+      logger.error("[AIResultsPanel] Error:", err);
       setError(err.message);
     } finally {
       setLoading(false);

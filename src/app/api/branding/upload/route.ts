@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -17,7 +18,7 @@ function getSupabaseAdmin() {
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !key) {
-    console.warn("[Branding Upload] Supabase not configured, falling back to base64");
+    logger.warn("[Branding Upload] Supabase not configured, falling back to base64");
     return null;
   }
 
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
         });
 
         if (error) {
-          console.error("[Branding Upload] Supabase error:", error);
+          logger.error("[Branding Upload] Supabase error:", error);
           throw error;
         }
 
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
           data: { publicUrl },
         } = supabase.storage.from(bucket).getPublicUrl(filename);
 
-        console.log("[Branding Upload] Supabase success:", { filename, publicUrl });
+        logger.debug("[Branding Upload] Supabase success:", { filename, publicUrl });
 
         return NextResponse.json({
           url: publicUrl,
@@ -144,7 +145,7 @@ export async function POST(request: NextRequest) {
         });
 
         const downloadUrl = await getDownloadURL(storageRef);
-        console.log("[Branding Upload] Firebase success:", { firebasePath, downloadUrl });
+        logger.debug("[Branding Upload] Firebase success:", { firebasePath, downloadUrl });
 
         return NextResponse.json({
           url: downloadUrl,
@@ -160,14 +161,14 @@ export async function POST(request: NextRequest) {
     const base64 = buffer.toString("base64");
     const dataUrl = `data:${file.type};base64,${base64}`;
 
-    console.log("[Branding Upload] Using base64 final fallback");
+    logger.debug("[Branding Upload] Using base64 final fallback");
 
     return NextResponse.json({
       url: dataUrl,
       description: "Image uploaded (base64 fallback)",
     });
   } catch (error) {
-    console.error("[Branding Upload] Error:", error);
+    logger.error("[Branding Upload] Error:", error);
 
     if (error instanceof Error) {
       return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });

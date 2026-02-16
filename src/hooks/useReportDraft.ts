@@ -4,6 +4,7 @@
  */
 
 import { useCallback, useState } from "react";
+import { logger } from "@/lib/logger";
 
 import type { Citation } from "@/lib/citations";
 import { exportPdfFromHtml, useOffscreen } from "@/lib/pdfExportClient";
@@ -80,7 +81,7 @@ export function useReportDraft(initial?: Partial<ReportDraftState>) {
         await exportPdfFromHtml(mountRef.current!, `clearskai-${mode}-report.pdf`);
         return true;
       } catch (error) {
-        console.error("Export PDF error:", error);
+        logger.error("Export PDF error:", error);
         return false;
       } finally {
         setBusy(false);

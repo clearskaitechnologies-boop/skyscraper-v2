@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 /**
  * Security utility for server actions
@@ -33,7 +34,7 @@ export async function verifyClaimAccess(
 
     return !!claim;
   } catch (error) {
-    console.error("[verifyClaimAccess] Verification failed:", error);
+    logger.error("[verifyClaimAccess] Verification failed:", error);
     return false;
   }
 }
@@ -58,7 +59,7 @@ export async function verifyReportAccess(reportId: string, orgId: string | null)
 
     return !!report;
   } catch (error) {
-    console.error("[verifyReportAccess] Verification failed:", error);
+    logger.error("[verifyReportAccess] Verification failed:", error);
     return false;
   }
 }
@@ -131,7 +132,7 @@ export async function checkPermission(userId: string, action: string): Promise<b
     // For now, all authenticated users have basic permissions
     return true;
   } catch (error) {
-    console.error("[checkPermission] Permission check failed:", error);
+    logger.error("[checkPermission] Permission check failed:", error);
     return false;
   }
 }

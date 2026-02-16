@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -85,7 +86,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ task
 
     return NextResponse.json({ task });
   } catch (error: any) {
-    console.error("[Task Update] PUT error:", error);
+    logger.error("[Task Update] PUT error:", error);
 
     if (error.name === "ZodError") {
       return NextResponse.json(
@@ -135,7 +136,7 @@ export async function DELETE(
 
     return NextResponse.json({ success: true });
   } catch (error: any) {
-    console.error("[Task Delete] DELETE error:", error);
+    logger.error("[Task Delete] DELETE error:", error);
     return NextResponse.json(
       { error: "Failed to delete task", description: error.message },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { onStageChange } from "@/lib/automation";
 import { getUserName } from "@/lib/clerk-utils";
@@ -124,7 +125,7 @@ export async function GET(request: NextRequest) {
       summary,
     });
   } catch (error) {
-    console.error("Error fetching pipeline:", error);
+    logger.error("Error fetching pipeline:", error);
     return Response.json({ error: "Failed to fetch pipeline" }, { status: 500 });
   }
 }
@@ -185,7 +186,7 @@ export async function PUT(request: NextRequest) {
       project: updatedProject,
     });
   } catch (error) {
-    console.error("Error updating project stage:", error);
+    logger.error("Error updating project stage:", error);
     return Response.json({ error: "Failed to update project stage" }, { status: 500 });
   }
 }

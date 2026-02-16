@@ -4,6 +4,7 @@
  */
 
 import { ExecutiveSummarySchema } from "@/ai/schemas/executive-summary.schema";
+import { logger } from "@/lib/logger";
 import { PhotoEvidenceSchema } from "@/ai/schemas/photo-evidence.schema";
 import { ScopeMatrixSchema } from "@/ai/schemas/scope-matrix.schema";
 
@@ -46,7 +47,7 @@ export async function buildAIContentFromTemplate({
     const prompt = SECTION_PROMPTS[section.sectionKey];
 
     if (!schema || !prompt) {
-      console.warn(`No schema/prompt for section: ${section.sectionKey}`);
+      logger.warn(`No schema/prompt for section: ${section.sectionKey}`);
       continue;
     }
 

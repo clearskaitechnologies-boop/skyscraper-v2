@@ -6,6 +6,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -194,7 +195,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error("[Products API] Error:", error);
+    logger.error("[Products API] Error:", error);
     return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 });
   }
 }

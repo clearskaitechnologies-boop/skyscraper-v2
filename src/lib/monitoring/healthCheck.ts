@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * System Health Monitoring
  *
@@ -43,7 +45,7 @@ async function checkDatabase(): Promise<{
       latency,
     };
   } catch (error) {
-    console.error("Database health check failed:", error);
+    logger.error("Database health check failed:", error);
     return { status: "down" };
   }
 }

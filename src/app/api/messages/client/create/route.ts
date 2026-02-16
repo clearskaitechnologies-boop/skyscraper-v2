@@ -1,4 +1,5 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -147,7 +148,7 @@ export async function POST(req: NextRequest) {
       threadId: thread.id,
     });
   } catch (error: any) {
-    console.error("[messages/client/create] Error:", error);
+    logger.error("[messages/client/create] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },
       { status: 500 }

@@ -5,6 +5,7 @@
  */
 
 import { randomUUID } from "node:crypto";
+import { logger } from "@/lib/logger";
 
 import { runAIFinancialAnalysis } from "@/lib/intel/financial/ai";
 import { calculateFinancialAnalysis } from "@/lib/intel/financial/engine";
@@ -12,7 +13,7 @@ import { buildMasterReportPayload } from "@/lib/intel/master/buildMasterPayload"
 import prisma from "@/lib/prisma";
 
 export async function executeFinancialAnalysis(claimId: string, orgId: string) {
-  console.log(`[DOMINUS] Executing Financial Analysis for ${claimId}`);
+  logger.debug(`[DOMINUS] Executing Financial Analysis for ${claimId}`);
 
   // Build master payload
   const payload = await buildMasterReportPayload({ claimId, orgId });

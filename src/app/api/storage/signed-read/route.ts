@@ -12,6 +12,7 @@ export const revalidate = 0;
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -54,7 +55,7 @@ export async function POST(req: Request) {
 
     // Verify path belongs to org (security check)
     if (!path.startsWith(`orgs/${orgId}/`)) {
-      console.warn(`Access denied: User ${orgId} attempted to access ${path}`);
+      logger.warn(`Access denied: User ${orgId} attempted to access ${path}`);
       return NextResponse.json(
         {
           error: "Forbidden: Path does not belong to your organization",
@@ -69,7 +70,7 @@ export async function POST(req: Request) {
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
     if (!supabaseUrl || !serviceKey) {
-      console.error("Supabase configuration missing");
+      logger.error("Supabase configuration missing");
       return NextResponse.json(
         {
           error: "Storage not configured. Contact administrator.",
@@ -93,7 +94,7 @@ export async function POST(req: Request) {
       .createSignedUrl(path, expiresIn);
 
     if (error) {
-      console.error("Failed to create signed read URL:", error);
+      logger.error("Failed to create signed read URL:", error);
       return NextResponse.json(
         {
           error: error.message || "Failed to generate read URL",
@@ -110,7 +111,7 @@ export async function POST(req: Request) {
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     });
   } catch (error: any) {
-    console.error("Signed read URL generation failed:", error);
+    logger.error("Signed read URL generation failed:", error);
 
     // Handle auth errors
     if (error.message?.includes("Unauthorized") || error.message?.includes("organization")) {

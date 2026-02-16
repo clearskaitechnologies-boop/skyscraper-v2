@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Phase 3.6 - Claim Memory Retrieval Service
  *
@@ -25,7 +27,7 @@ export async function getRelevantClaimChunks(params: {
   minSimilarity?: number;
 }): Promise<MemoryChunk[]> {
   // claimsMemoryChunk model doesn't exist in schema
-  console.log(`[claimMemory] Would search for chunks in claim ${params.claimId}`);
+  logger.debug(`[claimMemory] Would search for chunks in claim ${params.claimId}`);
   return [];
 }
 

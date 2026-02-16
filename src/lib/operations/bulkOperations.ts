@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { logAudit } from "@/middleware/auditLog";
 
@@ -313,7 +314,7 @@ export async function bulkExport(
 
     return { csv, filename };
   } catch (error) {
-    console.error("Bulk export failed:", error);
+    logger.error("Bulk export failed:", error);
     throw new Error("Bulk export failed");
   }
 }

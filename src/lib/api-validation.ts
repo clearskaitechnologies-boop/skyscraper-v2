@@ -3,6 +3,7 @@
 // ============================================================================
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 import { z } from "zod";
 
 export class ValidationError extends Error {
@@ -48,7 +49,7 @@ export function withTimeout<T>(promise: Promise<T>, timeoutMs: number = 30000): 
 
 // Standard error response handler
 export function handleApiError(error: unknown) {
-  console.error("[API_ERROR]", error);
+  logger.error("[API_ERROR]", error);
 
   if (error instanceof ValidationError) {
     return NextResponse.json(

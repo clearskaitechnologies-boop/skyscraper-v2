@@ -2,6 +2,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getCurrentUserPermissions } from "@/lib/permissions";
 
@@ -29,7 +30,7 @@ export async function POST(_request: NextRequest) {
       { status: 501 }
     );
   } catch (error) {
-    console.error("Error in retail jobs POST:", error);
+    logger.error("Error in retail jobs POST:", error);
     return Response.json({ error: "Failed to process retail job request" }, { status: 500 });
   }
 }
@@ -51,7 +52,7 @@ export async function GET(_request: NextRequest) {
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error in retail jobs GET:", error);
+    logger.error("Error in retail jobs GET:", error);
     return Response.json({ error: "Failed to fetch retail jobs" }, { status: 500 });
   }
 }

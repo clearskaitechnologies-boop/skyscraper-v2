@@ -1,5 +1,6 @@
 // src/app/api/estimates/[id]/draft-email/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { draftPacketEmail } from "@/lib/email/draftPacketEmail";
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       ...draft,
     });
   } catch (err) {
-    console.error("Error drafting estimates email:", err);
+    logger.error("Error drafting estimates email:", err);
     return NextResponse.json({ error: "Failed to draft email" }, { status: 500 });
   }
 }

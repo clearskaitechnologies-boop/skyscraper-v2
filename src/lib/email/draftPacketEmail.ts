@@ -1,5 +1,6 @@
 // src/lib/email/draftPacketEmail.ts
 import { getOpenAI } from "@/lib/openai";
+import { logger } from "@/lib/logger";
 
 import type { DraftedPacketEmail,PacketRecipientType } from "./types";
 
@@ -137,7 +138,7 @@ Format as JSON:
       packetUrl,
     };
   } catch (error) {
-    console.error("Error drafting packet email:", error);
+    logger.error("Error drafting packet email:", error);
     
     // Fallback to simple template
     const fallbackSubject = recipientType === "adjuster"

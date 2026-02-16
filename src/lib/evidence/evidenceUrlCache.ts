@@ -6,6 +6,7 @@
  */
 
 import { logCacheOperation } from "@/lib/observability/logger";
+import { logger } from "@/lib/logger";
 import { recordCacheStat } from "@/lib/telemetry";
 import { getUpstashRedis } from "@/lib/upstash";
 
@@ -88,7 +89,7 @@ export async function getCachedEvidenceUrl(storagePath: string): Promise<string 
 
     return cached.url;
   } catch (error) {
-    console.error("[getCachedEvidenceUrl] Error:", error);
+    logger.error("[getCachedEvidenceUrl] Error:", error);
     return null;
   }
 }
@@ -135,7 +136,7 @@ export async function setCachedEvidenceUrl(
     });
   } catch (error) {
     // Cache failures should not break the application
-    console.error("[setCachedEvidenceUrl] Error (non-fatal):", error);
+    logger.error("[setCachedEvidenceUrl] Error (non-fatal):", error);
   }
 }
 
@@ -190,7 +191,7 @@ export async function invalidateEvidenceUrl(storagePath: string): Promise<void> 
       duration: 0,
     });
   } catch (error) {
-    console.error("[invalidateEvidenceUrl] Error (non-fatal):", error);
+    logger.error("[invalidateEvidenceUrl] Error (non-fatal):", error);
   }
 }
 
@@ -216,7 +217,7 @@ export async function getEvidenceUrlCacheStats(): Promise<{
       keyPattern: CACHE_PREFIX,
     };
   } catch (error) {
-    console.error("[getEvidenceUrlCacheStats] Error:", error);
+    logger.error("[getEvidenceUrlCacheStats] Error:", error);
     return { totalKeys: 0, keyPattern: CACHE_PREFIX };
   }
 }

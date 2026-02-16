@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 
 import { ensureOrgForUser } from "@/lib/org/ensureOrgForUser";
 import prisma from "@/lib/prisma";
@@ -98,7 +99,7 @@ export async function safeOrgContext(): Promise<SafeOrgContext> {
           orgId: org.id,
           userId,
         }).catch((err) => {
-          console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+          logger.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
         });
 
         const mappedMembership = {
@@ -145,7 +146,7 @@ export async function safeOrgContext(): Promise<SafeOrgContext> {
           orgId: legacyUser.orgId,
           userId,
         }).catch((err) => {
-          console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+          logger.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
         });
 
         const syntheticMembership = {
@@ -170,18 +171,18 @@ export async function safeOrgContext(): Promise<SafeOrgContext> {
     }
 
     // Final fallback: attempt auto-onboarding (create org + membership)
-    console.log("[safeOrgContext] No org membership found, attempting auto-onboard for:", userId);
+    logger.debug("[safeOrgContext] No org membership found, attempting auto-onboard for:", userId);
     const ensured = await ensureOrgForUser();
 
     if (ensured) {
-      console.log("[safeOrgContext] ✅ Auto-onboarded user to org:", ensured.orgId);
+      logger.debug("[safeOrgContext] ✅ Auto-onboarded user to org:", ensured.orgId);
 
       // 🛡️ HARDEN: Ensure workspace primitives exist (idempotent, non-blocking)
       await ensureWorkspaceForOrg({
         orgId: ensured.orgId,
         userId,
       }).catch((err) => {
-        console.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
+        logger.error("[safeOrgContext] ensureWorkspace failed (non-fatal):", err);
       });
 
       return {

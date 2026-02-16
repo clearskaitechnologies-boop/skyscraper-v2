@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Advanced Storage System
  *
@@ -78,7 +80,7 @@ export async function uploadFile(
 
     throw new Error("S3/R2 upload not yet implemented");
   } catch (error) {
-    console.error("File upload failed:", error);
+    logger.error("File upload failed:", error);
     throw new Error("Failed to upload file");
   }
 }
@@ -117,7 +119,7 @@ export async function generatePresignedUploadUrl(
 
     throw new Error("Presigned URL generation not yet implemented");
   } catch (error) {
-    console.error("Presigned URL generation failed:", error);
+    logger.error("Presigned URL generation failed:", error);
     throw new Error("Failed to generate presigned URL");
   }
 }
@@ -139,7 +141,7 @@ export async function generatePresignedDownloadUrl(
     // TODO: Implement S3/R2 presigned download URL
     throw new Error("Presigned download URL not yet implemented");
   } catch (error) {
-    console.error("Presigned download URL generation failed:", error);
+    logger.error("Presigned download URL generation failed:", error);
     throw new Error("Failed to generate presigned download URL");
   }
 }
@@ -159,7 +161,7 @@ export async function deleteFile(key: string): Promise<void> {
     // TODO: Implement S3/R2 delete
     throw new Error("File deletion not yet implemented");
   } catch (error) {
-    console.error("File deletion failed:", error);
+    logger.error("File deletion failed:", error);
     throw new Error("Failed to delete file");
   }
 }
@@ -187,7 +189,7 @@ export async function listFiles(
     // TODO: Implement S3/R2 list
     throw new Error("File listing not yet implemented");
   } catch (error) {
-    console.error("File listing failed:", error);
+    logger.error("File listing failed:", error);
     return { files: [] };
   }
 }
@@ -207,7 +209,7 @@ export async function copyFile(sourceKey: string, destinationKey: string): Promi
     // TODO: Implement S3/R2 copy
     throw new Error("File copy not yet implemented");
   } catch (error) {
-    console.error("File copy failed:", error);
+    logger.error("File copy failed:", error);
     throw new Error("Failed to copy file");
   }
 }
@@ -260,7 +262,7 @@ async function uploadToLocal(
 
 async function deleteFromLocal(key: string): Promise<void> {
   // Placeholder for local deletion
-  console.log(`Would delete: ${key}`);
+  logger.debug(`Would delete: ${key}`);
 }
 
 async function listFromLocal(
@@ -275,7 +277,7 @@ async function listFromLocal(
 
 async function copyInLocal(sourceKey: string, destinationKey: string): Promise<void> {
   // Placeholder for local copy
-  console.log(`Would copy: ${sourceKey} -> ${destinationKey}`);
+  logger.debug(`Would copy: ${sourceKey} -> ${destinationKey}`);
 }
 
 async function getLocalMetadata(key: string): Promise<any> {

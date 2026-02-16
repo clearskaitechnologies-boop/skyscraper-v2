@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getStripeCustomerIdForUser } from "@/lib/stripe/customer";
@@ -26,7 +27,7 @@ export async function POST() {
 
     return NextResponse.json({ stripe_customer_id: stripeCustomerId });
   } catch (error: any) {
-    console.error("Failed to ensure Stripe customer:", error);
+    logger.error("Failed to ensure Stripe customer:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to ensure Stripe customer" },
       { status: 500 }

@@ -6,6 +6,7 @@
  */
 
 import { getOpenAI } from "@/lib/ai/client";
+import { logger } from "@/lib/logger";
 
 const openai = getOpenAI();
 
@@ -86,7 +87,7 @@ export async function embedTextBatch(texts: string[]): Promise<number[][]> {
 
     return response.data.map((item) => item.embedding);
   } catch (error) {
-    console.error("[embedTextBatch] OpenAI embedding error:", error);
+    logger.error("[embedTextBatch] OpenAI embedding error:", error);
     throw new Error(
       `Failed to generate embeddings: ${error instanceof Error ? error.message : "Unknown error"}`
     );

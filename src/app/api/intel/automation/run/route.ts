@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { runDominusAutomations } from "@/lib/intel/automation/engine";
@@ -20,7 +21,7 @@ export async function POST(req: Request) {
     const result = await runDominusAutomations(claimId, orgId);
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error("[Automation Run Error]", error);
+    logger.error("[Automation Run Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to run automation" },
       { status: 500 }

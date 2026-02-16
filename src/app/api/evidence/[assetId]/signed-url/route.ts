@@ -5,6 +5,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest, { params }: { params: { assetId:
       },
     });
   } catch (error) {
-    console.error("Signed URL generation error:", error);
+    logger.error("Signed URL generation error:", error);
     return NextResponse.json(
       {
         error: "Failed to generate signed URL",

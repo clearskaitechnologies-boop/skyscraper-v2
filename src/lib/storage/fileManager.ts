@@ -5,6 +5,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -302,7 +303,7 @@ async function deleteFromProvider(
   bucket?: string | null
 ): Promise<void> {
   // TODO: Implement provider-specific delete
-  console.log(`Deleting file: ${path}`);
+  logger.debug(`Deleting file: ${path}`);
 }
 
 async function generateSignedUrl(
@@ -325,7 +326,7 @@ async function uploadToS3(
   const region = process.env.AWS_REGION || "us-east-1";
   const url = `https://${bucket}.s3.${region}.amazonaws.com/${path}`;
 
-  console.log("Uploaded to S3:", url);
+  logger.debug("Uploaded to S3:", url);
   return { url, bucket };
 }
 
@@ -338,7 +339,7 @@ async function uploadToGCS(
   const bucket = process.env.GCS_BUCKET || "uploads";
   const url = `https://storage.googleapis.com/${bucket}/${path}`;
 
-  console.log("Uploaded to GCS:", url);
+  logger.debug("Uploaded to GCS:", url);
   return { url, bucket };
 }
 
@@ -352,7 +353,7 @@ async function uploadToAzure(
   const account = process.env.AZURE_STORAGE_ACCOUNT || "account";
   const url = `https://${account}.blob.core.windows.net/${container}/${path}`;
 
-  console.log("Uploaded to Azure:", url);
+  logger.debug("Uploaded to Azure:", url);
   return { url, bucket: container };
 }
 
@@ -366,14 +367,14 @@ async function uploadToR2(
   const accountId = process.env.R2_ACCOUNT_ID || "account";
   const url = `https://${accountId}.r2.cloudflarestorage.com/${bucket}/${path}`;
 
-  console.log("Uploaded to R2:", url);
+  logger.debug("Uploaded to R2:", url);
   return { url, bucket };
 }
 
 async function uploadToLocal(path: string, data: Buffer, options: any): Promise<{ url: string }> {
   // TODO: Implement local filesystem upload
   const url = `/uploads/${path}`;
-  console.log("Uploaded locally:", url);
+  logger.debug("Uploaded locally:", url);
   return { url };
 }
 

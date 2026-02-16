@@ -1,5 +1,6 @@
 // MODULE 4: Approvals - List approvals for claim
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ approvals });
   } catch (error) {
-    console.error("[APPROVALS_LIST]", error);
+    logger.error("[APPROVALS_LIST]", error);
     return NextResponse.json({ error: "Failed to fetch approvals" }, { status: 500 });
   }
 }

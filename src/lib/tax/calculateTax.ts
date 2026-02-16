@@ -3,6 +3,7 @@
 // Supports org-level tax rates with state-specific overrides
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface TaxConfig {
   rate: number; // Percentage (e.g., 8.5 = 8.5%)
@@ -57,7 +58,7 @@ export async function getOrgTaxRate(orgId: string): Promise<TaxConfig> {
       isEnabled: false,
     };
   } catch (error) {
-    console.error("[Tax] Error fetching org tax rate:", error);
+    logger.error("[Tax] Error fetching org tax rate:", error);
     return { rate: 0, isEnabled: false };
   }
 }

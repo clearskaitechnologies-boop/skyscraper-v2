@@ -14,6 +14,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -34,13 +35,13 @@ export async function POST(): Promise<NextResponse> {
       : "User";
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || `${userId}@skaiscrape.com`;
 
-    console.log("[NUCLEAR RESET] Starting for user:", userId);
+    logger.debug("[NUCLEAR RESET] Starting for user:", userId);
 
     // STEP 1: Delete ALL existing memberships for this user
     const deletedMemberships = await prisma.user_organizations.deleteMany({
       where: { userId },
     });
-    console.log("[NUCLEAR RESET] Deleted", deletedMemberships.count, "memberships");
+    logger.debug("[NUCLEAR RESET] Deleted", deletedMemberships.count, "memberships");
 
     // STEP 2: Create fresh org
     const newOrgId = crypto.randomUUID();
@@ -55,7 +56,7 @@ export async function POST(): Promise<NextResponse> {
         updatedAt: new Date(),
       },
     });
-    console.log("[NUCLEAR RESET] Created org:", org.id);
+    logger.debug("[NUCLEAR RESET] Created org:", org.id);
 
     // STEP 3: Create membership
     await prisma.user_organizations.create({
@@ -65,7 +66,7 @@ export async function POST(): Promise<NextResponse> {
         role: "ADMIN",
       },
     });
-    console.log("[NUCLEAR RESET] Created membership");
+    logger.debug("[NUCLEAR RESET] Created membership");
 
     // STEP 4: Ensure user record exists and is linked
     await prisma.users.upsert({
@@ -79,7 +80,7 @@ export async function POST(): Promise<NextResponse> {
       },
       update: { orgId: org.id },
     });
-    console.log("[NUCLEAR RESET] Linked user");
+    logger.debug("[NUCLEAR RESET] Linked user");
 
     // STEP 5: Create BillingSettings
     await prisma.billingSettings.create({
@@ -89,7 +90,7 @@ export async function POST(): Promise<NextResponse> {
         updatedAt: new Date(),
       },
     });
-    console.log("[NUCLEAR RESET] Created BillingSettings");
+    logger.debug("[NUCLEAR RESET] Created BillingSettings");
 
     // STEP 6: Create org_branding
     try {
@@ -98,17 +99,17 @@ export async function POST(): Promise<NextResponse> {
         VALUES (${crypto.randomUUID()}, ${org.id}, NOW(), NOW())
         ON CONFLICT ("orgId") DO NOTHING
       `;
-      console.log("[NUCLEAR RESET] Created org_branding");
+      logger.debug("[NUCLEAR RESET] Created org_branding");
     } catch (e: any) {
-      console.warn("[NUCLEAR RESET] Branding skipped:", e.message);
+      logger.warn("[NUCLEAR RESET] Branding skipped:", e.message);
     }
 
     // STEP 7: Seed demo data
     try {
       await seedDemoData(org.id);
-      console.log("[NUCLEAR RESET] Seeded demo data");
+      logger.debug("[NUCLEAR RESET] Seeded demo data");
     } catch (e: any) {
-      console.warn("[NUCLEAR RESET] Demo seed failed:", e.message);
+      logger.warn("[NUCLEAR RESET] Demo seed failed:", e.message);
     }
 
     // STEP 8: Update org to mark demo as seeded
@@ -117,7 +118,7 @@ export async function POST(): Promise<NextResponse> {
       data: { demoSeededAt: new Date() },
     });
 
-    console.log("[NUCLEAR RESET] ✅ Complete. New orgId:", org.id);
+    logger.debug("[NUCLEAR RESET] ✅ Complete. New orgId:", org.id);
 
     return NextResponse.json({
       ok: true,
@@ -126,7 +127,7 @@ export async function POST(): Promise<NextResponse> {
       message: "Account completely reset. Please refresh the page.",
     });
   } catch (error: any) {
-    console.error("[NUCLEAR RESET] Error:", error);
+    logger.error("[NUCLEAR RESET] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Reset failed" },
       { status: 500 }
@@ -206,7 +207,7 @@ async function seedDemoData(orgId: string) {
     },
   });
 
-  console.log("[seedDemoData] Created demo claim:", ids.claimJohn);
+  logger.debug("[seedDemoData] Created demo claim:", ids.claimJohn);
 }
 
 // Also add GET to check status

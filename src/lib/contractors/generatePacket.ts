@@ -4,6 +4,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 interface ContractorPacketOptions {
   orgId: string;
@@ -19,7 +20,7 @@ export async function generateContractorPacket({
   primaryColor = "#0ea5e9",
 }: ContractorPacketOptions) {
   try {
-    console.log(`[CONTRACTOR_PACKET] Generating packet for org: ${orgName}`);
+    logger.debug(`[CONTRACTOR_PACKET] Generating packet for org: ${orgName}`);
 
     // Define contractor packet templates
     const packetTemplates = [
@@ -65,7 +66,7 @@ export async function generateContractorPacket({
       });
 
       if (existing) {
-        console.log(`[CONTRACTOR_PACKET] Artifact already exists: ${template.slug}`);
+        logger.debug(`[CONTRACTOR_PACKET] Artifact already exists: ${template.slug}`);
         continue;
       }
 
@@ -88,7 +89,7 @@ export async function generateContractorPacket({
       });
 
       createdArtifacts.push(artifact);
-      console.log(`[CONTRACTOR_PACKET] Created artifact: ${template.title}`);
+      logger.debug(`[CONTRACTOR_PACKET] Created artifact: ${template.title}`);
     }
 
     console.log(
@@ -101,7 +102,7 @@ export async function generateContractorPacket({
       message: `Contractor packet created with ${createdArtifacts.length} documents`,
     };
   } catch (error: any) {
-    console.error("[CONTRACTOR_PACKET] Generation failed:", error);
+    logger.error("[CONTRACTOR_PACKET] Generation failed:", error);
     return {
       ok: false,
       error: error.message,

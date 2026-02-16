@@ -14,6 +14,7 @@
  */
 
 import {
+import { logger } from "@/lib/logger";
   AlignmentType,
   BorderStyle,
   convertInchesToTwip,
@@ -43,7 +44,7 @@ async function fetchImageBuffer(url: string): Promise<Buffer> {
     const arrayBuffer = await response.arrayBuffer();
     return Buffer.from(arrayBuffer);
   } catch (error) {
-    console.error(`Failed to fetch image ${url}:`, error);
+    logger.error(`Failed to fetch image ${url}:`, error);
     throw error;
   }
 }

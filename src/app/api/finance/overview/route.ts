@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -149,7 +150,7 @@ export async function GET() {
       },
     });
   } catch (err: any) {
-    console.error("[API] finance/overview error:", err);
+    logger.error("[API] finance/overview error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

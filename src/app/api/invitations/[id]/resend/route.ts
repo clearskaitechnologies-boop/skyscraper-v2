@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       },
     });
   } catch (error) {
-    console.error("[POST /api/invitations/:id/resend] Error:", error);
+    logger.error("[POST /api/invitations/:id/resend] Error:", error);
     return NextResponse.json({ error: "Failed to resend invitation" }, { status: 500 });
   }
 }

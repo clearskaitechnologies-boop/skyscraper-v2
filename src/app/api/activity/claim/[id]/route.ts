@@ -1,5 +1,6 @@
 // MODULE 3: Activity Feed - Get claim activity
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getClaimActivity } from "@/lib/activity";
@@ -45,7 +46,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ activities });
   } catch (error) {
-    console.error("[ACTIVITY_GET]", error);
+    logger.error("[ACTIVITY_GET]", error);
     return NextResponse.json({ error: "Failed to fetch activity" }, { status: 500 });
   }
 }

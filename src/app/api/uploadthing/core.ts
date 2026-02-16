@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
 
@@ -58,7 +59,7 @@ export const ourFileRouter = {
       return await getUploadContext();
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("[UploadThing] Claim photo uploaded:", file.url);
+      logger.debug("[UploadThing] Claim photo uploaded:", file.url);
 
       // Store in database using FileAsset model
       await prisma.file_assets.create({
@@ -92,7 +93,7 @@ export const ourFileRouter = {
       return await getUploadContext();
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("[UploadThing] Document uploaded:", file.url);
+      logger.debug("[UploadThing] Document uploaded:", file.url);
 
       await prisma.file_assets.create({
         data: {
@@ -124,7 +125,7 @@ export const ourFileRouter = {
       return await getUploadContext();
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("[UploadThing] Branding asset uploaded:", file.url);
+      logger.debug("[UploadThing] Branding asset uploaded:", file.url);
 
       await prisma.file_assets.create({
         data: {
@@ -157,7 +158,7 @@ export const ourFileRouter = {
       return await getUploadContext();
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("[UploadThing] Client upload:", file.url);
+      logger.debug("[UploadThing] Client upload:", file.url);
 
       await prisma.file_assets.create({
         data: {

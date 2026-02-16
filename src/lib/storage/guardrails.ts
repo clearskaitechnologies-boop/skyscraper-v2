@@ -10,6 +10,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Default storage limits by plan
 export const STORAGE_LIMITS = {
@@ -133,7 +134,7 @@ export async function getStorageUsage(orgId: string): Promise<StorageQuota> {
       plan,
     };
   } catch (error) {
-    console.error("[Storage] Error getting usage:", error);
+    logger.error("[Storage] Error getting usage:", error);
     return {
       usedBytes: 0,
       maxBytes: STORAGE_LIMITS.free.maxStorageBytes,
@@ -165,7 +166,7 @@ export async function checkStorageCapacity(
 
   // Check if approaching limit (90%)
   if (usage.percentUsed >= 90) {
-    console.warn(`[Storage] Org ${orgId} at ${usage.percentUsed}% capacity`);
+    logger.warn(`[Storage] Org ${orgId} at ${usage.percentUsed}% capacity`);
   }
 
   return { valid: true };
@@ -320,7 +321,7 @@ export async function logStorageEvent(event: {
   try {
     // Only log if we have a claimId and userId
     if (!event.claimId || !event.userId) {
-      console.log("[Storage] Skipping log - missing claimId or userId");
+      logger.debug("[Storage] Skipping log - missing claimId or userId");
       return;
     }
 
@@ -344,7 +345,7 @@ export async function logStorageEvent(event: {
       },
     });
   } catch (e) {
-    console.error("[Storage] Failed to log event:", e);
+    logger.error("[Storage] Failed to log event:", e);
   }
 }
 

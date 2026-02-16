@@ -6,6 +6,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   Bell,
@@ -76,7 +77,7 @@ export default function NotificationList({ notifications, userId }: Notification
         );
       }
     } catch (error) {
-      console.error("Error marking notification as read:", error);
+      logger.error("Error marking notification as read:", error);
     }
   };
 
@@ -93,7 +94,7 @@ export default function NotificationList({ notifications, userId }: Notification
         setLocalNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       }
     } catch (error) {
-      console.error("Error marking all as read:", error);
+      logger.error("Error marking all as read:", error);
     } finally {
       setMarkingAllRead(false);
     }

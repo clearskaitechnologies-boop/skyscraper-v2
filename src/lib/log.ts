@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * Structured Logging Utilities
  * Provides consistent logging with metadata for production observability
@@ -78,7 +80,7 @@ function emitLog(entry: LogEntry): void {
   // Also log human-readable format in development
   if (process.env.NODE_ENV === "development") {
     const emoji = level === "error" ? "❌" : level === "warn" ? "⚠️" : "ℹ️";
-    console.log(`${emoji} [${entry.event}]`, entry.context, entry.error || "");
+    logger.debug(`${emoji} [${entry.event}]`, entry.context, entry.error || "");
   }
 }
 

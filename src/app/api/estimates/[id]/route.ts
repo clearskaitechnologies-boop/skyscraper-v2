@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -75,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       },
     });
   } catch (error: any) {
-    console.error("[API] Get estimates error:", error);
+    logger.error("[API] Get estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch estimates" },
       { status: 500 }
@@ -141,7 +142,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       estimates,
     });
   } catch (error: any) {
-    console.error("[API] Update estimates error:", error);
+    logger.error("[API] Update estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update estimates" },
       { status: 500 }
@@ -181,7 +182,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       description: "Estimate deleted",
     });
   } catch (error: any) {
-    console.error("[API] Delete estimates error:", error);
+    logger.error("[API] Delete estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to delete estimates" },
       { status: 500 }

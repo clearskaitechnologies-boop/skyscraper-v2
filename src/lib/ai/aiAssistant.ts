@@ -1,3 +1,5 @@
+import { logger } from "@/lib/logger";
+
 /**
  * AI Assistant Integration
  *
@@ -88,7 +90,7 @@ Format as JSON.`;
       usage: response.usage,
     };
   } catch (error) {
-    console.error("AI analysis failed:", error);
+    logger.error("AI analysis failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "AI analysis failed",
@@ -156,7 +158,7 @@ Format as JSON with structure:
       usage: response.usage,
     };
   } catch (error) {
-    console.error("Estimate generation failed:", error);
+    logger.error("Estimate generation failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Estimate generation failed",
@@ -228,7 +230,7 @@ Return as JSON with extracted values. If a field is not found, return null for t
       usage: response.usage,
     };
   } catch (error) {
-    console.error("Document parsing failed:", error);
+    logger.error("Document parsing failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Document parsing failed",
@@ -280,7 +282,7 @@ Format as JSON array: [{"action": "Do X", "priority": "high", "reason": "Why"}]`
       usage: response.usage,
     };
   } catch (error) {
-    console.error("Action suggestion failed:", error);
+    logger.error("Action suggestion failed:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Action suggestion failed",
@@ -345,7 +347,7 @@ async function callOpenAI(
       usage: data.usage,
     };
   } catch (error) {
-    console.error("OpenAI call failed:", error);
+    logger.error("OpenAI call failed:", error);
     throw error;
   }
 }
@@ -388,7 +390,7 @@ async function callClaude(
       usage: data.usage,
     };
   } catch (error) {
-    console.error("Claude call failed:", error);
+    logger.error("Claude call failed:", error);
     throw error;
   }
 }

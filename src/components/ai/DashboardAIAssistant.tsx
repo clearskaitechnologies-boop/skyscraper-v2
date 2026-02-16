@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   Calculator,
   Download,
@@ -86,7 +87,7 @@ export function DashboardAIAssistant({ claims, orgId }: DashboardAIAssistantProp
       const data = await response.json();
       setOutput(data.output || "No output generated");
     } catch (error) {
-      console.error("[DashboardAIAssistant] Error:", error);
+      logger.error("[DashboardAIAssistant] Error:", error);
       setOutput("Error: Failed to generate AI response. Please try again.");
     } finally {
       setIsLoading(false);
@@ -111,7 +112,7 @@ export function DashboardAIAssistant({ claims, orgId }: DashboardAIAssistantProp
       // Show success feedback
       alert("Document saved to claim!");
     } catch (error) {
-      console.error("[DashboardAIAssistant] Save error:", error);
+      logger.error("[DashboardAIAssistant] Save error:", error);
       alert("Failed to save document");
     }
   };
@@ -132,7 +133,7 @@ export function DashboardAIAssistant({ claims, orgId }: DashboardAIAssistantProp
 
       alert("Document sent to client portal!");
     } catch (error) {
-      console.error("[DashboardAIAssistant] Send error:", error);
+      logger.error("[DashboardAIAssistant] Send error:", error);
       alert("Failed to send to portal");
     }
   };

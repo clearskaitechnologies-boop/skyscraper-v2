@@ -1,5 +1,6 @@
 "use client";
 import { useMemo,useState } from "react";
+import { logger } from "@/lib/logger";
 
 import { money,sumCents } from "@/lib/money";
 
@@ -85,7 +86,7 @@ export default function SupplementWorkspace() {
   async function handleGenerate() {
     // Call PDF API
     const payload = rows.filter((r) => r.accepted && r.ai);
-    console.log("Generate PDF with:", payload);
+    logger.debug("Generate PDF with:", payload);
     // await fetch('/api/supplement/generate', { method: 'POST', body: JSON.stringify(payload) })
   }
 

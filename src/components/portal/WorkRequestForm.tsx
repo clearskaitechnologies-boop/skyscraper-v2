@@ -1,6 +1,7 @@
 "use client";
 
 import { Briefcase, Users } from "lucide-react";
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -81,7 +82,7 @@ export default function WorkRequestForm({
           }
         }
       } catch (err) {
-        console.error("Failed to load my pros:", err);
+        logger.error("Failed to load my pros:", err);
       }
     }
     loadMyPros();
@@ -171,7 +172,7 @@ export default function WorkRequestForm({
         setError(data.error || "Failed to submit work request. Please try again.");
       }
     } catch (err) {
-      console.error("Failed to submit work request:", err);
+      logger.error("Failed to submit work request:", err);
       setError("An unexpected error occurred. Please try again or contact support.");
     } finally {
       setLoading(false);

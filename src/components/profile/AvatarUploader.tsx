@@ -1,6 +1,7 @@
 "use client";
 
 import { Upload, User } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useState } from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -86,7 +87,7 @@ export function AvatarUploader({ currentPhotoUrl, onUploadComplete, userId }: Av
         description: "Profile photo updated successfully",
       });
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       toast({
         title: "Upload failed",
         description: "Failed to upload photo. Please try again.",

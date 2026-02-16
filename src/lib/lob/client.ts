@@ -4,9 +4,10 @@
  */
 
 import Lob from 'lob';
+import { logger } from "@/lib/logger";
 
 if (!process.env.LOB_API_KEY) {
-  console.warn('[Lob] API key not configured - mailer fulfillment disabled');
+  logger.warn('[Lob] API key not configured - mailer fulfillment disabled');
 }
 
 export const lob = process.env.LOB_API_KEY

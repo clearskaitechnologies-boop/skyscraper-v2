@@ -1,4 +1,5 @@
 import fs from "fs";
+import { logger } from "@/lib/logger";
 import { marked } from "marked";
 import { NextResponse } from "next/server";
 import path from "path";
@@ -29,7 +30,7 @@ export async function GET(request: Request, { params }: Params) {
 
     // Check if file exists
     if (!fs.existsSync(docPath)) {
-      console.error(`[Legal Document] File not found: ${docPath}`);
+      logger.error(`[Legal Document] File not found: ${docPath}`);
       return NextResponse.json({ error: "Document file not found" }, { status: 404 });
     }
 
@@ -46,7 +47,7 @@ export async function GET(request: Request, { params }: Params) {
       audience: docConfig.audience,
     });
   } catch (error: any) {
-    console.error("[Legal Document] Error:", error);
+    logger.error("[Legal Document] Error:", error);
     return NextResponse.json({ error: "Failed to fetch document" }, { status: 500 });
   }
 }

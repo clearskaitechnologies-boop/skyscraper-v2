@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
@@ -33,7 +34,7 @@ export async function GET(req: NextRequest) {
       count: artifacts.length,
     });
   } catch (error) {
-    console.error("Error fetching artifacts:", error);
+    logger.error("Error fetching artifacts:", error);
     return NextResponse.json({ error: "Failed to fetch artifacts" }, { status: 500 });
   }
 }
@@ -72,7 +73,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, artifact });
   } catch (error) {
-    console.error("Error creating artifact:", error);
+    logger.error("Error creating artifact:", error);
     return NextResponse.json({ error: "Failed to create artifact" }, { status: 500 });
   }
 }

@@ -5,6 +5,7 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 export type Role = "OWNER" | "ADMIN" | "PM" | "FIELD_TECH" | "OFFICE_STAFF" | "CLIENT";
@@ -107,7 +108,7 @@ export function useRBAC(): RBACContext {
           setRole(null);
         }
       } catch (error) {
-        console.error("[useRBAC] Error fetching role:", error);
+        logger.error("[useRBAC] Error fetching role:", error);
         setRole(null);
       } finally {
         setLoading(false);

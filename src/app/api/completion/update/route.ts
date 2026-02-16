@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -96,7 +97,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(updated);
   } catch (error: any) {
-    console.error("[Completion Update Error]", error);
+    logger.error("[Completion Update Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to update completion status" },
       { status: 500 }
@@ -129,7 +130,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(completion_status);
   } catch (error: any) {
-    console.error("[Completion Get Error]", error);
+    logger.error("[Completion Get Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to get completion status" },
       { status: 500 }

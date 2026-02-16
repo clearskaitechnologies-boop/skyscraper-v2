@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { sendNotificationEmail } from "@/lib/mailer";
@@ -49,7 +50,7 @@ export async function POST(req: NextRequest) {
       emailId: emailResult?.data?.id ?? null,
     });
   } catch (error) {
-    console.error("Email notification error:", error);
+    logger.error("Email notification error:", error);
     return NextResponse.json({ error: "Failed to send notification" }, { status: 500 });
   }
 }

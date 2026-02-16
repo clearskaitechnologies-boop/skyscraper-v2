@@ -1,6 +1,7 @@
 "use client";
 
 import { Loader2, User } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -72,7 +73,7 @@ export default function NewClientMessageModal({
         }
       }
     } catch (error) {
-      console.error("Failed to load pros:", error);
+      logger.error("Failed to load pros:", error);
       toast.error("Failed to load your connected professionals");
     } finally {
       setLoading(false);
@@ -115,7 +116,7 @@ export default function NewClientMessageModal({
       onClose();
       onSuccess?.();
     } catch (error: any) {
-      console.error("Failed to send message:", error);
+      logger.error("Failed to send message:", error);
       toast.error(error.message || "Failed to send message");
     } finally {
       setSubmitting(false);

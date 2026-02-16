@@ -6,6 +6,7 @@
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export type CommentableType = "CLAIM" | "JOB" | "TASK" | "INSPECTION";
@@ -98,7 +99,7 @@ export async function createComment(orgId: string, data: CreateCommentData): Pro
       edited: false,
     };
   } catch (error) {
-    console.error("Failed to create comment:", error);
+    logger.error("Failed to create comment:", error);
     throw new Error("Failed to create comment");
   }
 }
@@ -190,7 +191,7 @@ export async function updateComment(
 
     return true;
   } catch (error) {
-    console.error("Failed to update comment:", error);
+    logger.error("Failed to update comment:", error);
     return false;
   }
 }
@@ -224,7 +225,7 @@ export async function deleteComment(commentId: string, userId: string): Promise<
 
     return true;
   } catch (error) {
-    console.error("Failed to delete comment:", error);
+    logger.error("Failed to delete comment:", error);
     return false;
   }
 }
@@ -275,7 +276,7 @@ async function notifyMentionedUsers(
         ["EMAIL", "PUSH", "IN_APP"]
       );
     } catch (error) {
-      console.error("Failed to notify mentioned user:", error);
+      logger.error("Failed to notify mentioned user:", error);
     }
   }
 }
@@ -353,7 +354,7 @@ export async function addReaction(
 ): Promise<boolean> {
   try {
     // TODO: Implement reactions table
-    console.log(`User ${userId} reacted ${emoji} to comment ${commentId}`);
+    logger.debug(`User ${userId} reacted ${emoji} to comment ${commentId}`);
     return true;
   } catch {
     return false;

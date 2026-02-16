@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { isAuthError, requireAdmin, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
@@ -162,7 +163,7 @@ export async function GET(request: NextRequest, { params }: { params: { vendorId
 
     return NextResponse.json({ success: true, vendor: transformed });
   } catch (error) {
-    console.error("[VIN] Error fetching vendor detail:", error);
+    logger.error("[VIN] Error fetching vendor detail:", error);
     return NextResponse.json({ error: "Failed to fetch vendor" }, { status: 500 });
   }
 }
@@ -200,7 +201,7 @@ export async function PUT(request: NextRequest, { params }: { params: { vendorId
 
     return NextResponse.json({ success: true, vendor });
   } catch (error) {
-    console.error("[VIN] Error updating vendor:", error);
+    logger.error("[VIN] Error updating vendor:", error);
     return NextResponse.json({ error: "Failed to update vendor" }, { status: 500 });
   }
 }

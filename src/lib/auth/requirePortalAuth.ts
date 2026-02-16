@@ -27,6 +27,7 @@
  */
 
 import "server-only";
+import { logger } from "@/lib/logger";
 
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -109,7 +110,7 @@ export async function requirePortalAuth(
     // Step 3: Verify claim access
     return verifyClaimAccess(userId, user.email, options.claimId);
   } catch (err) {
-    console.error("[requirePortalAuth] Unexpected error:", err);
+    logger.error("[requirePortalAuth] Unexpected error:", err);
     return NextResponse.json(
       { error: "INTERNAL_ERROR", message: "Portal authentication check failed" },
       { status: 500 }

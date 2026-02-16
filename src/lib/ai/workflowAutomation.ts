@@ -6,6 +6,7 @@
  */
 
 import { callAI } from "@/lib/ai/aiAssistant";
+import { logger } from "@/lib/logger";
 import { createTask } from "@/lib/tasks/assignment";
 
 export interface WorkflowContext {
@@ -72,7 +73,7 @@ export async function getWorkflowRecommendations(
       return b.confidence - a.confidence;
     });
   } catch (error) {
-    console.error("Workflow recommendation failed:", error);
+    logger.error("Workflow recommendation failed:", error);
     return [];
   }
 }
@@ -160,7 +161,7 @@ Consider:
       dueDate: undefined,
     }));
   } catch (error) {
-    console.error("AI recommendation generation failed:", error);
+    logger.error("AI recommendation generation failed:", error);
     return getFallbackRecommendations(context, analysis);
   }
 }
@@ -310,7 +311,7 @@ export async function executeWorkflowRecommendations(
         }
       }
     } catch (error) {
-      console.error("Action execution failed:", error);
+      logger.error("Action execution failed:", error);
       errors++;
     }
   }
@@ -327,7 +328,7 @@ async function executeAutomatableAction(
   recommendation: WorkflowRecommendation
 ): Promise<void> {
   // TODO: Implement automation based on action type
-  console.log(`🤖 Auto-executing: ${recommendation.action}`);
+  logger.debug(`🤖 Auto-executing: ${recommendation.action}`);
 }
 
 /**
@@ -339,7 +340,7 @@ export async function detectBottlenecks(
   timeWindow: { start: Date; end: Date }
 ): Promise<BottleneckAnalysis[]> {
   // activity_log model doesn't exist in schema
-  console.log(`[workflowAutomation] Would detect bottlenecks for org ${orgId}`);
+  logger.debug(`[workflowAutomation] Would detect bottlenecks for org ${orgId}`);
   return [];
 }
 
@@ -370,7 +371,7 @@ export async function optimizeWorkflowRouting(orgId: string): Promise<{
       projectedImprovement,
     };
   } catch (error) {
-    console.error("Workflow optimization failed:", error);
+    logger.error("Workflow optimization failed:", error);
     return {
       currentEfficiency: 0,
       optimizationSuggestions: [],

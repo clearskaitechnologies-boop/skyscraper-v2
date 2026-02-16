@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -64,7 +65,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to revoke invitation:", error);
+    logger.error("Failed to revoke invitation:", error);
     return NextResponse.json({ error: "Failed to revoke invitation" }, { status: 500 });
   }
 }

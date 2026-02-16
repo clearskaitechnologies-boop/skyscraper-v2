@@ -7,6 +7,7 @@ export const revalidate = 0;
 // ============================================================================
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDelegate } from '@/lib/db/modelAliases';
@@ -29,7 +30,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(jobs);
   } catch (error: any) {
-    console.error("[Export Queue GET]", error);
+    logger.error("[Export Queue GET]", error);
     return NextResponse.json(
       { error: error.message || "Failed to get queue" },
       { status: 500 }

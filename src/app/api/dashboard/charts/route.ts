@@ -2,6 +2,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -76,7 +77,7 @@ export async function GET() {
 
     return NextResponse.json(payload);
   } catch (error: any) {
-    console.error("[GET /api/dashboard/charts] error:", error);
+    logger.error("[GET /api/dashboard/charts] error:", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -40,7 +41,7 @@ export async function logActivity(payload: ActivityPayload) {
       } as any,
     });
   } catch (error) {
-    console.error("Failed to log activity:", error);
+    logger.error("Failed to log activity:", error);
     // Don't throw - activity logging shouldn't break the main flow
   }
 }

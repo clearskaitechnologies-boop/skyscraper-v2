@@ -1,5 +1,6 @@
 // app/api/partners/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -38,7 +39,7 @@ export async function GET(req: Request) {
 
     return NextResponse.json(partners);
   } catch (error: any) {
-    console.error("Failed to fetch partners:", error);
+    logger.error("Failed to fetch partners:", error);
     return NextResponse.json({ error: "Failed to fetch partners" }, { status: 500 });
   }
 }
@@ -81,7 +82,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newPartner, { status: 201 });
   } catch (error: any) {
-    console.error("Failed to create Partner:", error);
+    logger.error("Failed to create Partner:", error);
     return NextResponse.json({ error: "Failed to create Partner" }, { status: 500 });
   }
 }

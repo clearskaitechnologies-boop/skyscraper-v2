@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { correlateDamageWithWeather } from "@/lib/intel/correlation/damage-weather";
@@ -102,7 +103,7 @@ export async function POST(req: Request) {
       description: "Forensic correlation analysis complete",
     });
   } catch (err: any) {
-    console.error("CORRELATION ERROR:", err);
+    logger.error("CORRELATION ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Correlation analysis failed" },
       { status: 500 }

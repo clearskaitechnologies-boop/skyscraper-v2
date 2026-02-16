@@ -8,6 +8,7 @@
  */
 
 import { createId } from "@paralleldrive/cuid2";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -152,7 +153,7 @@ export async function getClientBySlug(slug: string) {
         select: { id: true, name: true, brandLogoUrl: true },
       });
     } catch (error) {
-      console.log("[getClientBySlug] Org fetch failed (non-critical):", error);
+      logger.debug("[getClientBySlug] Org fetch failed (non-critical):", error);
     }
   }
 

@@ -21,6 +21,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import type { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing claimId" }, { status: 400 });
     }
 
-    console.log(`[SUPER PACKET] Starting ${mode} mode for claim ${claimId}`);
+    logger.debug(`[SUPER PACKET] Starting ${mode} mode for claim ${claimId}`);
 
     // Step 1: Build master payload (everything about the claim)
     const corePayload = await buildMasterReportPayload({
@@ -77,7 +78,7 @@ export async function POST(req: Request) {
     const property = corePayload.property;
 
     // Step 2: Run Financial Engine
-    console.log("[SUPER PACKET] Running Financial Engine...");
+    logger.debug("[SUPER PACKET] Running Financial Engine...");
 
     const carrierEstimate =
       corePayload.estimates.find((e) => e.source === "carrier" || e.mode === "insurance") ||
@@ -123,7 +124,7 @@ export async function POST(req: Request) {
     // Step 3: Generate Claims Packet (STANDARD and NUCLEAR modes)
     let claimsPacket: ClaimsPacketResult | null = null;
     if (mode === "STANDARD" || mode === "NUCLEAR") {
-      console.log("[SUPER PACKET] Generating Claims Packet...");
+      logger.debug("[SUPER PACKET] Generating Claims Packet...");
 
       claimsPacket = await generateClaimsPacket({
         claimId,
@@ -193,7 +194,7 @@ export async function POST(req: Request) {
     // Step 4: Generate Forensic Weather (NUCLEAR mode only)
     let forensicWeather: ForensicWeatherResult | null = null;
     if (mode === "NUCLEAR") {
-      console.log("[SUPER PACKET] Generating Forensic Weather Report...");
+      logger.debug("[SUPER PACKET] Generating Forensic Weather Report...");
 
       const weatherReport = corePayload.weatherReports[0];
       const damageAssessment = corePayload.damageAssessments[0];
@@ -264,7 +265,7 @@ export async function POST(req: Request) {
     }
 
     // Step 5: Build Mega-PDF
-    console.log("[SUPER PACKET] Building Mega-PDF...");
+    logger.debug("[SUPER PACKET] Building Mega-PDF...");
 
     const pdfBytes = await buildFullClaimPacketPDF({
       mode,
@@ -299,7 +300,7 @@ export async function POST(req: Request) {
     });
 
     // Step 6: Save to database
-    console.log("[SUPER PACKET] Saving to database...");
+    logger.debug("[SUPER PACKET] Saving to database...");
 
     const savedReport = await prisma.ai_reports.create({
       data: {
@@ -341,7 +342,7 @@ export async function POST(req: Request) {
       },
     });
   } catch (error) {
-    console.error("[SUPER PACKET] Error:", error);
+    logger.error("[SUPER PACKET] Error:", error);
     return NextResponse.json(
       { error: "Super packet generation failed", details: String(error) },
       { status: 500 }
@@ -391,7 +392,7 @@ export async function GET(req: Request) {
       generatedAt: report.createdAt,
     });
   } catch (error) {
-    console.error("[SUPER PACKET] Retrieval error:", error);
+    logger.error("[SUPER PACKET] Retrieval error:", error);
     return NextResponse.json(
       { error: "Super packet retrieval failed", details: String(error) },
       { status: 500 }

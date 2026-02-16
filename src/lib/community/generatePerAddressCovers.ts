@@ -5,6 +5,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { buildClaimContext, TemplateContext } from "@/lib/templates/templateContext";
 
 interface AddressData {
@@ -39,7 +40,7 @@ export async function generatePerAddressCovers({
   const results = [];
   const errors = [];
 
-  console.log(`[BATCH_COVERS] Starting generation for ${addresses.length} addresses`);
+  logger.debug(`[BATCH_COVERS] Starting generation for ${addresses.length} addresses`);
 
   for (let i = 0; i < addresses.length; i++) {
     const addressData = addresses[i];
@@ -151,7 +152,7 @@ export async function generatePerAddressCovers({
         `[BATCH_COVERS] Generated cover ${i + 1}/${addresses.length}: ${addressData.address}`
       );
     } catch (error: any) {
-      console.error(`[BATCH_COVERS] Failed for ${addressData.address}:`, error);
+      logger.error(`[BATCH_COVERS] Failed for ${addressData.address}:`, error);
       errors.push({
         address: addressData.address,
         error: error.message,
@@ -159,7 +160,7 @@ export async function generatePerAddressCovers({
     }
   }
 
-  console.log(`[BATCH_COVERS] Complete. Success: ${results.length}, Errors: ${errors.length}`);
+  logger.debug(`[BATCH_COVERS] Complete. Success: ${results.length}, Errors: ${errors.length}`);
 
   return {
     success: results,

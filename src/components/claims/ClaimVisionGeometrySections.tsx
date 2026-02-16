@@ -1,6 +1,7 @@
 "use client";
 
 import { GeometryAnalyzerPanel } from "@/components/geometry/GeometryAnalyzerPanel";
+import { logger } from "@/lib/logger";
 import { VisionAnalyzerPanel } from "@/components/vision/VisionAnalyzerPanel";
 
 export function ClaimVisionSection({ claim }: { claim: any }) {
@@ -18,7 +19,7 @@ export function ClaimVisionSection({ claim }: { claim: any }) {
       <VisionAnalyzerPanel 
         claimId={claim.id}
         onAnalysisComplete={(analysis) => {
-          console.log("Vision analysis complete:", analysis);
+          logger.debug("Vision analysis complete:", analysis);
         }}
       />
     </div>
@@ -46,7 +47,7 @@ export function ClaimGeometrySection({ claim }: { claim: any }) {
         claimId={claim.id}
         existingDamages={existingDamages}
         onAnalysisComplete={(slopeAnalysis, scorecards) => {
-          console.log("Geometry analysis complete:", { slopeAnalysis, scorecards });
+          logger.debug("Geometry analysis complete:", { slopeAnalysis, scorecards });
         }}
       />
     </div>

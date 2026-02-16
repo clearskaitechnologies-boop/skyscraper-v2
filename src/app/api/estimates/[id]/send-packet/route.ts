@@ -1,5 +1,6 @@
 // src/app/api/estimates/[id]/send-packet/route.ts
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -100,7 +101,7 @@ export async function POST(req: NextRequest, { params }: RouteParams) {
       emailResult,
     });
   } catch (err) {
-    console.error("Error sending estimates email:", err);
+    logger.error("Error sending estimates email:", err);
     return NextResponse.json({ error: "Failed to send email" }, { status: 500 });
   }
 }

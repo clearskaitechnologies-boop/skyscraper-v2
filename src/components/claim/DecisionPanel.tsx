@@ -15,6 +15,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   AlertTriangle,
   Brain,
@@ -98,7 +99,7 @@ export function DecisionPanel({ claimId }: DecisionPanelProps) {
         setDecisionPlan(data.plan);
       }
     } catch (error) {
-      console.error("Failed to fetch decision plan:", error);
+      logger.error("Failed to fetch decision plan:", error);
     } finally {
       setLoading(false);
     }
@@ -112,7 +113,7 @@ export function DecisionPanel({ claimId }: DecisionPanelProps) {
         setDisputePackages(data.packages || []);
       }
     } catch (error) {
-      console.error("Failed to fetch dispute packages:", error);
+      logger.error("Failed to fetch dispute packages:", error);
     }
   };
 
@@ -136,7 +137,7 @@ export function DecisionPanel({ claimId }: DecisionPanelProps) {
       setDecisionPlan(data.plan);
       alert("✅ Decision plan generated successfully! (30 tokens charged)");
     } catch (error) {
-      console.error("Error generating decision:", error);
+      logger.error("Error generating decision:", error);
       alert("❌ Failed to generate decision plan");
     } finally {
       setGenerating(false);
@@ -171,7 +172,7 @@ export function DecisionPanel({ claimId }: DecisionPanelProps) {
       setShowDisputeModal(false);
       alert("✅ Dispute package generated successfully! (25 tokens charged)");
     } catch (error) {
-      console.error("Error generating dispute:", error);
+      logger.error("Error generating dispute:", error);
       alert("❌ Failed to generate dispute package");
     } finally {
       setGeneratingDispute(false);

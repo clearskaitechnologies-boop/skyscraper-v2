@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -240,7 +241,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
         }
       );
     } catch (usageError) {
-      console.warn("[CreateClaim] Usage tracking failed:", usageError);
+      logger.warn("[CreateClaim] Usage tracking failed:", usageError);
       // Don't block claim creation if usage tracking fails
     }
 
@@ -249,7 +250,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
       const { WebhookService } = await import("@/lib/webhook-service");
       await WebhookService.sendClaimCreated(claim.id, orgId);
     } catch (webhookError) {
-      console.warn("[CreateClaim] Webhook delivery failed:", webhookError);
+      logger.warn("[CreateClaim] Webhook delivery failed:", webhookError);
       // Don't block claim creation if webhook fails
     }
 
@@ -257,16 +258,16 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     try {
       const { onClaimCreated } = await import("@/lib/claims/aiHooks");
       // Run async without blocking response
-      onClaimCreated(claim.id).catch((err) => console.warn("[CreateClaim] AI triage failed:", err));
+      onClaimCreated(claim.id).catch((err) => logger.warn("[CreateClaim] AI triage failed:", err));
     } catch (aiError) {
-      console.warn("[CreateClaim] AI hook initialization failed:", aiError);
+      logger.warn("[CreateClaim] AI hook initialization failed:", aiError);
     }
 
     // Generate AI embedding for claim
     try {
       await createOrUpdateClaimEmbedding(claim.id);
     } catch (embeddingError) {
-      console.warn("[CreateClaim] Embedding generation failed:", embeddingError);
+      logger.warn("[CreateClaim] Embedding generation failed:", embeddingError);
       // Don't block claim creation if embedding fails
     }
 
@@ -279,7 +280,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
       return apiError(400, "VALIDATION_ERROR", "Validation failed", error.errors);
     }
 
-    console.error("[POST /api/claims] Error:", error);
+    logger.error("[POST /api/claims] Error:", error);
     return apiError(500, "INTERNAL_ERROR", error.message || "Failed to create claim");
   }
 });
@@ -327,7 +328,7 @@ export const GET = withOrgScope(async (req, { orgId }) => {
       { headers: { "Cache-Control": "no-store" } }
     );
   } catch (error: any) {
-    console.error("[GET /api/claims] Error:", error);
+    logger.error("[GET /api/claims] Error:", error);
     return apiError(500, "INTERNAL_ERROR", error.message || "Failed to fetch claims");
   }
 });

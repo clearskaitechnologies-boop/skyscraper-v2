@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -59,7 +60,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result);
   } catch (error: any) {
-    console.error("Template list error:", error);
+    logger.error("Template list error:", error);
     // Return empty array instead of error for graceful degradation
     return NextResponse.json([]);
   }

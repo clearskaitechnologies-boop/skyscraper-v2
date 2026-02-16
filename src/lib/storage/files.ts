@@ -1,5 +1,6 @@
 // High-level helper functions for uploads & retrieval using centralized storageConfig
 import { storageConfig, storagePaths } from './config';
+import { logger } from "@/lib/logger";
 
 // NOTE: Actual upload implementations delegate to existing Firebase or Supabase utilities.
 // We only construct paths + delegate to existing lower-level functions to avoid duplication.
@@ -24,7 +25,7 @@ export async function uploadClaimPdf(claimId: string, buffer: Buffer): Promise<U
       const url = await uploadPDF(path, buffer);
       return { url, path, bucket: storageConfig.pdfs.bucket, provider: 'firebase' };
     } catch (e) {
-      console.warn('[uploadClaimPdf] Firebase failed, falling back to Supabase', e);
+      logger.warn('[uploadClaimPdf] Firebase failed, falling back to Supabase', e);
     }
   }
   const uploadReport = await getSupabaseUtils();
@@ -41,7 +42,7 @@ export async function uploadClaimPdfAI(claimId: string, buffer: Buffer): Promise
       const url = await uploadPDF(path, buffer);
       return { url, path, bucket: storageConfig.pdfs.bucket, provider: 'firebase' };
     } catch (e) {
-      console.warn('[uploadClaimPdfAI] Firebase failed, falling back to Supabase', e);
+      logger.warn('[uploadClaimPdfAI] Firebase failed, falling back to Supabase', e);
     }
   }
   const uploadReport = await getSupabaseUtils();

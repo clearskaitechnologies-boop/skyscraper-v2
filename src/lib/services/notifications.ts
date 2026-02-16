@@ -5,6 +5,7 @@
  */
 
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 import { shouldSendEmail, shouldSendSMS } from "@/lib/demoMode";
 
@@ -50,12 +51,12 @@ interface InspectionAlertData {
 export async function sendEmail(notification: EmailNotification): Promise<boolean> {
   // Block emails in demo mode
   if (!shouldSendEmail()) {
-    console.log("📧 [DEMO MODE] Email blocked:", notification.subject);
+    logger.debug("📧 [DEMO MODE] Email blocked:", notification.subject);
     return true; // Return success to avoid breaking flows
   }
 
   if (!resend) {
-    console.warn("Resend API key not configured, skipping email");
+    logger.warn("Resend API key not configured, skipping email");
     return false;
   }
 
@@ -69,7 +70,7 @@ export async function sendEmail(notification: EmailNotification): Promise<boolea
 
     return true;
   } catch (error) {
-    console.error("Email send error:", error);
+    logger.error("Email send error:", error);
     return false;
   }
 }
@@ -80,12 +81,12 @@ export async function sendEmail(notification: EmailNotification): Promise<boolea
 export async function sendSMS(notification: SMSNotification): Promise<boolean> {
   // Block SMS in demo mode
   if (!shouldSendSMS()) {
-    console.log("📱 [DEMO MODE] SMS blocked:", notification.to);
+    logger.debug("📱 [DEMO MODE] SMS blocked:", notification.to);
     return true; // Return success to avoid breaking flows
   }
 
   if (!twilioAccountSid || !twilioAuthToken || !twilioPhoneNumber) {
-    console.warn("Twilio not configured, skipping SMS");
+    logger.warn("Twilio not configured, skipping SMS");
     return false;
   }
 
@@ -112,7 +113,7 @@ export async function sendSMS(notification: SMSNotification): Promise<boolean> {
 
     return true;
   } catch (error) {
-    console.error("SMS send error:", error);
+    logger.error("SMS send error:", error);
     return false;
   }
 }
@@ -458,7 +459,7 @@ export async function sendBulkNotifications(
         else failed++;
       }
     } catch (error) {
-      console.error("Bulk notification error:", error);
+      logger.error("Bulk notification error:", error);
       failed++;
     }
   }

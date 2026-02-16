@@ -1,4 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
     console.log(
       `[Mockup Generate] User: ${user.id}, Project: ${projectType}, Size: ${beforeImage.size} bytes`
     );
-    console.log(`[Mockup Generate] AI Prompt: ${aiPrompt}`);
+    logger.debug(`[Mockup Generate] AI Prompt: ${aiPrompt}`);
 
     // Try OpenAI DALL-E 3 with image editing if available
     try {
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       const afterImageUrl = imageResponse.data![0]?.url;
 
       if (afterImageUrl) {
-        console.log(`[Mockup Generate] SUCCESS via OpenAI DALL-E 3`);
+        logger.debug(`[Mockup Generate] SUCCESS via OpenAI DALL-E 3`);
         return NextResponse.json({
           success: true,
           afterImageUrl,
@@ -90,12 +91,12 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (error) {
-      console.error("[Mockup Generate] OpenAI error:", error);
+      logger.error("[Mockup Generate] OpenAI error:", error);
       // Fall through to fallback method
     }
 
     // Fallback: Return before image with overlay message
-    console.log(`[Mockup Generate] Using fallback (no AI service configured)`);
+    logger.debug(`[Mockup Generate] Using fallback (no AI service configured)`);
     return NextResponse.json({
       success: true,
       afterImageUrl: beforeImageDataUrl,
@@ -106,7 +107,7 @@ export async function POST(request: NextRequest) {
       message: "Configure OPENAI_API_KEY or REPLICATE_API_TOKEN for real AI generation",
     });
   } catch (error) {
-    console.error("[Mockup Generate] Error:", error);
+    logger.error("[Mockup Generate] Error:", error);
     return NextResponse.json(
       {
         error: "Failed to generate mockup",

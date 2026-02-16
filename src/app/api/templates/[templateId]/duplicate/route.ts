@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import type { Prisma } from "@prisma/client";
 import crypto from "crypto";
 import { NextResponse } from "next/server";
@@ -50,7 +51,7 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
     return NextResponse.json(duplicate);
   } catch (error) {
-    console.error("Failed to duplicate template:", error);
+    logger.error("Failed to duplicate template:", error);
     return NextResponse.json({ error: "Failed to duplicate template" }, { status: 500 });
   }
 }

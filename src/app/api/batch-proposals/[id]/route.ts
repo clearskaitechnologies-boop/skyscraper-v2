@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -28,7 +29,7 @@ export async function GET(req: Request, context: { params: Promise<{ id: string 
 
     return NextResponse.json({ job });
   } catch (error) {
-    console.error("[BatchProposal Get Error]", error);
+    logger.error("[BatchProposal Get Error]", error);
     return NextResponse.json({ error: "Failed to fetch batch job" }, { status: 500 });
   }
 }

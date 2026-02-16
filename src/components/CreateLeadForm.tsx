@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, DollarSign, Zap } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -138,7 +139,7 @@ export default function CreateLeadForm({ onSuccess }: CreateLeadFormProps) {
         router.push(`/leads/${leadId}`);
       }
     } catch (error) {
-      console.error("Error creating lead:", error);
+      logger.error("Error creating lead:", error);
       toast.error(error instanceof Error ? error.message : "Failed to create lead");
     } finally {
       setIsLoading(false);

@@ -5,6 +5,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 
@@ -370,7 +371,7 @@ async function transformPayload(payload: unknown, transformCode: string): Promis
     const transform = new Function("payload", transformCode);
     return transform(payload);
   } catch (error) {
-    console.error("Payload transformation error:", error);
+    logger.error("Payload transformation error:", error);
     return payload;
   }
 }

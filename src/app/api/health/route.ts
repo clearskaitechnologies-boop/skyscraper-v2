@@ -8,6 +8,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { createRedisClientSafely } from "@/lib/upstash";
@@ -22,7 +23,7 @@ export async function GET() {
       await prisma.$queryRaw`SELECT 1`;
       databaseOk = true;
     } catch (error) {
-      console.error("[health] Database check failed:", error);
+      logger.error("[health] Database check failed:", error);
     }
 
     // Redis check (real ping when configured)
@@ -40,7 +41,7 @@ export async function GET() {
         redisOk = true;
       }
     } catch (error) {
-      console.error("[health] Redis ping failed:", error);
+      logger.error("[health] Redis ping failed:", error);
       redisOk = false;
     }
 
@@ -118,7 +119,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[health] Critical failure:", error);
+    logger.error("[health] Critical failure:", error);
 
     return NextResponse.json(
       {

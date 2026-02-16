@@ -1,4 +1,5 @@
 import { randomUUID } from "crypto";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
       token,
     });
   } catch (err: any) {
-    console.error("WEATHER SHARE ERROR:", err);
+    logger.error("WEATHER SHARE ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to create share link" },
       { status: 500 }

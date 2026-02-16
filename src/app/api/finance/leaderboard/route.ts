@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -256,7 +257,7 @@ export async function GET(req: Request) {
       },
     });
   } catch (err: any) {
-    console.error("[API] leaderboard error:", err);
+    logger.error("[API] leaderboard error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }

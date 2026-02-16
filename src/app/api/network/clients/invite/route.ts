@@ -7,6 +7,7 @@
  */
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -157,7 +158,7 @@ export async function POST(req: NextRequest) {
       message: `Invite sent to ${email}`,
     });
   } catch (error: any) {
-    console.error("[Client Invite Error]", error);
+    logger.error("[Client Invite Error]", error);
     return NextResponse.json(
       { error: "Failed to send invite", details: error.message },
       { status: 500 }

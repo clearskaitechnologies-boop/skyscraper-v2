@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ClientDashboardData {
   client: {
@@ -127,7 +128,7 @@ export async function getClientDashboard(clientId: string): Promise<ClientDashbo
       summary,
     };
   } catch (error) {
-    console.error("Failed to load client dashboard:", error);
+    logger.error("Failed to load client dashboard:", error);
     return null;
   }
 }
@@ -164,7 +165,7 @@ export async function getClientClaim(
       timeline,
     };
   } catch (error) {
-    console.error("Failed to load claim:", error);
+    logger.error("Failed to load claim:", error);
     return null;
   }
 }
@@ -200,7 +201,7 @@ export async function getClientJob(jobId: string, clientId: string): Promise<Cli
       photos: formatClientPhotos(job.photos),
     };
   } catch (error) {
-    console.error("Failed to load job:", error);
+    logger.error("Failed to load job:", error);
     return null;
   }
 }
@@ -374,7 +375,7 @@ export async function submitClientMessage(
 ): Promise<boolean> {
   try {
     // TODO: Store in messages table
-    console.log("Client message:", { clientId, message, claimId });
+    logger.debug("Client message:", { clientId, message, claimId });
     return true;
   } catch {
     return false;

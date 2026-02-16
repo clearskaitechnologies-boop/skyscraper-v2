@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { logger } from "@/lib/logger";
 
 let _stripe: Stripe | null = null;
 
@@ -6,7 +7,7 @@ export function getStripeClient(): Stripe | null {
   if (_stripe) return _stripe;
   const key = process.env.STRIPE_SECRET_KEY;
   if (!key) {
-    console.warn("[stripe] STRIPE_SECRET_KEY missing – returning null client");
+    logger.warn("[stripe] STRIPE_SECRET_KEY missing – returning null client");
     return null;
   }
   _stripe = new Stripe(key, { apiVersion: "2022-11-15" });

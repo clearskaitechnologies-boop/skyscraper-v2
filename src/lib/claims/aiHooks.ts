@@ -12,6 +12,7 @@
  */
 
 import { AICoreRouter } from "@/lib/ai/router";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 interface AIResult {
@@ -114,12 +115,12 @@ export async function onClaimCreated(claimId: string) {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`[AI Hook] Claim triage completed for ${claimId} in ${executionTime}ms`);
+      logger.debug(`[AI Hook] Claim triage completed for ${claimId} in ${executionTime}ms`);
     }
 
     return result;
   } catch (error) {
-    console.error(`[AI Hook] Claim triage failed for ${claimId}:`, error);
+    logger.error(`[AI Hook] Claim triage failed for ${claimId}:`, error);
     return null;
   }
 }
@@ -167,7 +168,7 @@ export async function onPhotosChanged(claimId: string, photoUrls: string[]) {
 
     return result;
   } catch (error) {
-    console.error(`[AI Hook] Damage assessment failed for ${claimId}:`, error);
+    logger.error(`[AI Hook] Damage assessment failed for ${claimId}:`, error);
     return null;
   }
 }
@@ -207,7 +208,7 @@ export async function onVideoUploaded(claimId: string, videoUrl: string) {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`[AI Hook] Video analysis completed for ${claimId} in ${executionTime}ms`);
+      logger.debug(`[AI Hook] Video analysis completed for ${claimId} in ${executionTime}ms`);
 
       // If keyframes were extracted, run damage assessment on them
       if (result.data?.keyframes?.length > 0) {
@@ -217,7 +218,7 @@ export async function onVideoUploaded(claimId: string, videoUrl: string) {
 
     return result;
   } catch (error) {
-    console.error(`[AI Hook] Video analysis failed for ${claimId}:`, error);
+    logger.error(`[AI Hook] Video analysis failed for ${claimId}:`, error);
     return null;
   }
 }
@@ -256,12 +257,12 @@ export async function onBlueprintAdded(claimId: string, blueprintUrl: string) {
         timestamp: new Date().toISOString(),
       });
 
-      console.log(`[AI Hook] Blueprint analysis completed for ${claimId} in ${executionTime}ms`);
+      logger.debug(`[AI Hook] Blueprint analysis completed for ${claimId} in ${executionTime}ms`);
     }
 
     return result;
   } catch (error) {
-    console.error(`[AI Hook] Blueprint analysis failed for ${claimId}:`, error);
+    logger.error(`[AI Hook] Blueprint analysis failed for ${claimId}:`, error);
     return null;
   }
 }
@@ -319,7 +320,7 @@ export async function onStatusChanged(claimId: string, oldStatus: string, newSta
 
     return result;
   } catch (error) {
-    console.error(`[AI Hook] Policy optimization failed for ${claimId}:`, error);
+    logger.error(`[AI Hook] Policy optimization failed for ${claimId}:`, error);
     return null;
   }
 }
@@ -345,7 +346,7 @@ export async function getClaimAIAnalysis(claimId: string): Promise<ClaimAIMetada
     }
     return null;
   } catch (error) {
-    console.error(`[AI Hook] Failed to get AI analysis for ${claimId}:`, error);
+    logger.error(`[AI Hook] Failed to get AI analysis for ${claimId}:`, error);
     return null;
   }
 }

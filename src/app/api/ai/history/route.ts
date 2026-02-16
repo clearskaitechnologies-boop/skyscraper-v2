@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { apiError, apiSuccess, apiUnauthorized } from "@/lib/api/safeResponse";
 import prisma from "@/lib/prisma";
@@ -50,7 +51,7 @@ export async function GET(req: NextRequest) {
       });
     } catch (err) {
       // If ai_reports table doesn't exist, return empty array
-      console.log("[AI History] ai_reports table not found, returning empty history");
+      logger.debug("[AI History] ai_reports table not found, returning empty history");
       history = [];
     }
 
@@ -65,7 +66,7 @@ export async function GET(req: NextRequest) {
 
     return apiSuccess({ history: formattedHistory, total: formattedHistory.length });
   } catch (error) {
-    console.error("[AI History Error]", error);
+    logger.error("[AI History Error]", error);
     return apiError(
       "Failed to fetch AI history",
       error instanceof Error ? error.message : undefined

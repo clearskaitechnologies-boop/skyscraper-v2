@@ -3,6 +3,7 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 import { auth, currentUser } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
@@ -75,7 +76,7 @@ export async function POST(request: Request) {
         if (process.env.FREE_BETA === "true") {
           try {
             await startTrial(dbOrg.id, "solo");
-            console.log(`[ORG_CREATION] Started 72h trial for personal Org ${dbOrg.id}`);
+            logger.debug(`[ORG_CREATION] Started 72h trial for personal Org ${dbOrg.id}`);
           } catch (trialError) {
             console.error("[ORG_CREATION] Failed to start trial:", trialError);
           }
@@ -116,7 +117,7 @@ export async function POST(request: Request) {
         if (process.env.FREE_BETA === "true") {
           try {
             await startTrial(dbOrg.id, "business");
-            console.log(`[ORG_CREATION] Started 72h trial for team Org ${dbOrg.id}`);
+            logger.debug(`[ORG_CREATION] Started 72h trial for team Org ${dbOrg.id}`);
           } catch (trialError) {
             console.error("[ORG_CREATION] Failed to start trial:", trialError);
           }
@@ -158,7 +159,7 @@ export async function POST(request: Request) {
       createdUser,
     });
   } catch (error) {
-    console.error("User/Org init error:", error);
+    logger.error("User/Org init error:", error);
     return NextResponse.json(
       { ok: false, error: "Failed to initialize user and Org" },
       { status: 500 }

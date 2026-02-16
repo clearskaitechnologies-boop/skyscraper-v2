@@ -1,6 +1,7 @@
 "use client";
 
 import { AlertCircle, CheckCircle2, Clock, Zap } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
@@ -55,7 +56,7 @@ export function NextBestActionPanel({ claimId, onActionClick }: NextBestActionPa
         setIntelligence(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
-        console.error("Failed to fetch AI intelligence:", err);
+        logger.error("Failed to fetch AI intelligence:", err);
       } finally {
         setLoading(false);
       }

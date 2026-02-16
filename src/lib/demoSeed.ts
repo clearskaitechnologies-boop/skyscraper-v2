@@ -9,6 +9,7 @@
  */
 
 import crypto from "crypto";
+import { logger } from "@/lib/logger";
 
 import { EnsuredOrg } from "@/lib/org/ensureOrgForUser";
 import prisma from "@/lib/prisma";
@@ -74,7 +75,7 @@ export async function ensureDemoDataForOrg(
     userId = input.userId;
   }
 
-  console.log(`[DEMO_SEED] Ensuring demo data for org: ${orgId}`);
+  logger.debug(`[DEMO_SEED] Ensuring demo data for org: ${orgId}`);
 
   const demoIds = buildDemoIds(orgId);
 
@@ -87,7 +88,7 @@ export async function ensureDemoDataForOrg(
     });
 
     if (!orgExists) {
-      console.log(`[DEMO_SEED] Org ${orgId} does not exist - creating it first`);
+      logger.debug(`[DEMO_SEED] Org ${orgId} does not exist - creating it first`);
       await prisma.org.create({
         data: {
           id: orgId,
@@ -98,7 +99,7 @@ export async function ensureDemoDataForOrg(
           updatedAt: new Date(),
         },
       });
-      console.log(`[DEMO_SEED] ✅ Created org ${orgId}`);
+      logger.debug(`[DEMO_SEED] ✅ Created org ${orgId}`);
     }
 
     // 🛑 DEMO SEEDING COMPLETELY DISABLED
@@ -136,7 +137,7 @@ export async function ensureDemoDataForOrg(
 
     // If we get here, org has 0 leads AND 0 claims - this is a brand new org
     // For now, return without seeding - manual setup required
-    console.log(`[DEMO_SEED] ⚠️ Org ${orgId} is empty but demo seeding is DISABLED`);
+    logger.debug(`[DEMO_SEED] ⚠️ Org ${orgId} is empty but demo seeding is DISABLED`);
     return {
       seeded: false,
       reason: "Demo seeding disabled - manual data setup required",
@@ -467,14 +468,14 @@ async function createDemoClaims(
         });
       }
       status.contactCreated = true;
-      console.log(`[DEMO_SEED] ✅ Contact created/updated: ${contact.id}`);
+      logger.debug(`[DEMO_SEED] ✅ Contact created/updated: ${contact.id}`);
     } catch (error: any) {
       status.errors.push({
         stage: "contact",
         error: error.message,
         constraint: error.code === "23502" ? "NOT NULL violation" : error.code,
       });
-      console.error("[DEMO_SEED] ❌ Contact creation failed:", error);
+      logger.error("[DEMO_SEED] ❌ Contact creation failed:", error);
       throw error; // Cannot continue without contact
     }
 
@@ -511,7 +512,7 @@ async function createDemoClaims(
         });
       }
       status.propertyCreated = true;
-      console.log(`[DEMO_SEED] ✅ Property created/updated: ${property.id}`);
+      logger.debug(`[DEMO_SEED] ✅ Property created/updated: ${property.id}`);
     } catch (error: any) {
       status.errors.push({
         stage: "property",
@@ -523,7 +524,7 @@ async function createDemoClaims(
               ? "FK violation"
               : error.code,
       });
-      console.error("[DEMO_SEED] ❌ Property creation failed:", error);
+      logger.error("[DEMO_SEED] ❌ Property creation failed:", error);
       throw error; // Cannot continue without property
     }
 
@@ -559,7 +560,7 @@ async function createDemoClaims(
       }
       claims.push(claim);
       status.claimCreated = true;
-      console.log(`[DEMO_SEED] ✅ Claim created/updated: ${claim.claimNumber} - John Smith`);
+      logger.debug(`[DEMO_SEED] ✅ Claim created/updated: ${claim.claimNumber} - John Smith`);
     } catch (error: any) {
       status.errors.push({
         stage: "claim",
@@ -571,11 +572,11 @@ async function createDemoClaims(
               ? "FK violation"
               : error.code,
       });
-      console.error("[DEMO_SEED] ❌ Claim creation failed:", error);
+      logger.error("[DEMO_SEED] ❌ Claim creation failed:", error);
       throw error;
     }
   } catch (error: any) {
-    console.error("[DEMO_SEED] ❌ Fatal error in createDemoClaims:", error);
+    logger.error("[DEMO_SEED] ❌ Fatal error in createDemoClaims:", error);
     console.error("[DEMO_SEED] Seed status:", JSON.stringify(status, null, 2));
   }
 

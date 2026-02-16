@@ -11,6 +11,7 @@
  */
 
 import { callGPT4 } from "@/lib/ai/callGPT4";
+import { logger } from "@/lib/logger";
 import { getDelegate } from "@/lib/db/modelAliases";
 import prisma from "@/lib/prisma";
 
@@ -70,7 +71,7 @@ export async function buildContractorStatement(
   orgId: string,
   signedBy: string
 ): Promise<ContractorStatement> {
-  console.log(`[Contractor Statement Builder] Building for claim ${claimId}`);
+  logger.debug(`[Contractor Statement Builder] Building for claim ${claimId}`);
 
   // Fetch claim data
   const claim = await prisma.claims.findFirst({
@@ -127,7 +128,7 @@ Use professional, carrier-friendly language. Be specific about materials and met
       { temperature: 0.7, maxTokens: 500 }
     );
   } catch (error) {
-    console.error("[Contractor Statement] AI generation failed, using template");
+    logger.error("[Contractor Statement] AI generation failed, using template");
     buildSummary = `Upon arrival, our certified roofing crew began a complete tear-off of the existing roofing system. During tear-off, we identified storm damage consistent with the loss date, including compromised shingles and damaged underlayment.
 
 All work was completed per manufacturer specifications and local building code requirements. Materials installed include dimensional shingles, synthetic underlayment, ice & water shield at eaves and valleys, and proper ventilation systems.
@@ -238,7 +239,7 @@ Final walkthrough confirmed all work meets or exceeds industry standards. Cleanu
     generatedDate: new Date().toISOString().split("T")[0],
   };
 
-  console.log(`[Contractor Statement Builder] Statement generated for ${claim.claimNumber}`);
+  logger.debug(`[Contractor Statement Builder] Statement generated for ${claim.claimNumber}`);
 
   return statement;
 }

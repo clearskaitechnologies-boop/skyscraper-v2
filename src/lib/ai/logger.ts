@@ -9,6 +9,7 @@
  */
 
 import fs from "fs";
+import { logger } from "@/lib/logger";
 import path from "path";
 
 const LOG_DIR = path.join(process.cwd(), "logs", "ai");
@@ -51,7 +52,7 @@ export function logAIOperation(entry: AILogEntry): void {
 
     fs.appendFileSync(logFile, logLine, "utf8");
   } catch (error) {
-    console.error("[AILogger] Failed to write log:", error);
+    logger.error("[AILogger] Failed to write log:", error);
   }
 }
 
@@ -117,7 +118,7 @@ export function readLogs(date: string): AILogEntry[] {
 
     return lines.map((line) => JSON.parse(line));
   } catch (error) {
-    console.error("[AILogger] Failed to read logs:", error);
+    logger.error("[AILogger] Failed to read logs:", error);
     return [];
   }
 }
@@ -221,7 +222,7 @@ export function cleanOldLogs(keepDays: number = 30): number {
 
     return deleted;
   } catch (error) {
-    console.error("[AILogger] Failed to clean old logs:", error);
+    logger.error("[AILogger] Failed to clean old logs:", error);
     return 0;
   }
 }

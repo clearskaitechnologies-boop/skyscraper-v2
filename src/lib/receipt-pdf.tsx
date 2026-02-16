@@ -6,6 +6,7 @@
 // =====================================================
 
 import { Document, Page, pdf, StyleSheet,Text, View } from "@react-pdf/renderer";
+import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
 import React from "react";
 
@@ -197,7 +198,7 @@ export async function buildAcceptanceReceiptPDF(input: AcceptanceReceiptInput): 
     const buffer = Buffer.from(arrayBuffer);
     return buffer;
   } catch (error) {
-    console.error("PDF generation error:", error);
+    logger.error("PDF generation error:", error);
     Sentry.captureException(error, {
       tags: { component: "pdf-generation" },
       extra: { reportId, orgName },

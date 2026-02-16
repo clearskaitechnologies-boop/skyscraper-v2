@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -85,7 +86,7 @@ export async function GET(request: Request) {
       total: trendingPros.length,
     });
   } catch (error: any) {
-    console.error("[Trending Pros] Error:", error);
+    logger.error("[Trending Pros] Error:", error);
     return NextResponse.json({ error: "Failed to fetch trending pros" }, { status: 500 });
   }
 }

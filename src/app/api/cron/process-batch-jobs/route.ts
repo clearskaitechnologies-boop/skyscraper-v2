@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { logger } from "@/lib/logger";
 
 import { processBatchJob } from "@/lib/batch-processing/processor";
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
   if (authError) return authError;
 
   try {
-    console.log("[Cron] Starting batch job processor");
+    logger.debug("[Cron] Starting batch job processor");
 
     // Find approved jobs that aren't being processed
     const approvedJobs = await prisma.batchJob.findMany({
@@ -30,7 +31,7 @@ export async function GET(request: Request) {
       },
     });
 
-    console.log(`[Cron] Found ${approvedJobs.length} approved jobs`);
+    logger.debug(`[Cron] Found ${approvedJobs.length} approved jobs`);
 
     if (approvedJobs.length === 0) {
       return NextResponse.json({
@@ -47,7 +48,7 @@ export async function GET(request: Request) {
     const succeeded = results.filter((r) => r.status === "fulfilled").length;
     const failed = results.filter((r) => r.status === "rejected").length;
 
-    console.log(`[Cron] Processed ${succeeded} jobs, ${failed} failed`);
+    logger.debug(`[Cron] Processed ${succeeded} jobs, ${failed} failed`);
 
     return NextResponse.json({
       success: true,
@@ -57,7 +58,7 @@ export async function GET(request: Request) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("[Cron] Error processing batch jobs:", error);
+    logger.error("[Cron] Error processing batch jobs:", error);
 
     return NextResponse.json(
       {

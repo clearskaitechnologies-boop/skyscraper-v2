@@ -6,6 +6,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface AuditLog {
   id: string;
@@ -102,7 +103,7 @@ export async function logAuditEvent(params: {
 
     return log as unknown as AuditLog;
   } catch (error) {
-    console.error("Failed to log audit event:", error);
+    logger.error("Failed to log audit event:", error);
     throw error;
   }
 }
@@ -201,7 +202,7 @@ export async function searchAuditLogs(params: {
       totalPages: Math.ceil(total / limit),
     };
   } catch (error) {
-    console.error("Failed to search audit logs:", error);
+    logger.error("Failed to search audit logs:", error);
     return {
       logs: [],
       total: 0,
@@ -391,7 +392,7 @@ export async function generateComplianceReport(
       highRiskActions: highRiskActions.slice(0, 50),
     };
   } catch (error) {
-    console.error("Failed to generate compliance report:", error);
+    logger.error("Failed to generate compliance report:", error);
     throw error;
   }
 }
@@ -494,7 +495,7 @@ export async function detectSuspiciousActivity(
 
     return { suspiciousEvents };
   } catch (error) {
-    console.error("Failed to detect suspicious activity:", error);
+    logger.error("Failed to detect suspicious activity:", error);
     return { suspiciousEvents: [] };
   }
 }
@@ -557,7 +558,7 @@ export async function exportAuditLogs(
 
     return [headers.join(","), ...rows.map((row) => row.join(","))].join("\n");
   } catch (error) {
-    console.error("Failed to export audit logs:", error);
+    logger.error("Failed to export audit logs:", error);
     throw error;
   }
 }

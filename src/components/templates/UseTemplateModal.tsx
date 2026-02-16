@@ -1,6 +1,7 @@
 "use client";
 
 import { CheckCircle2, FileText, Loader2 } from "lucide-react";
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -83,10 +84,10 @@ export function UseTemplateModal({
         if (!addResponse.ok) {
           // Log but do not block generation; My Templates enrichment is a
           // stabilization enhancement, not a hard requirement for report creation.
-          console.warn("[UseTemplateModal] add-from-marketplace failed", addResponse.status);
+          logger.warn("[UseTemplateModal] add-from-marketplace failed", addResponse.status);
         }
       } catch (addError) {
-        console.warn("[UseTemplateModal] add-from-marketplace error", addError);
+        logger.warn("[UseTemplateModal] add-from-marketplace error", addError);
       }
 
       const response = await clientFetch("/api/templates/generate", {

@@ -19,6 +19,7 @@
  */
 
 import { Ratelimit } from "@upstash/ratelimit";
+import { logger } from "@/lib/logger";
 import { Redis } from "@upstash/redis";
 
 // ============================================================================
@@ -154,7 +155,7 @@ export async function checkRateLimit(
         reset: result.reset,
       };
     } catch (error) {
-      console.error(`[RateLimit] Upstash error for ${preset}:`, error);
+      logger.error(`[RateLimit] Upstash error for ${preset}:`, error);
       // Fall through to manual check
     }
   }
@@ -219,7 +220,7 @@ async function checkRedisLimit(
       reset: now + windowMs,
     };
   } catch (error) {
-    console.error("[RateLimit] Redis error:", error);
+    logger.error("[RateLimit] Redis error:", error);
     // Fail open for availability
     return { success: true, limit, remaining: limit, reset: Date.now() + windowMs };
   }

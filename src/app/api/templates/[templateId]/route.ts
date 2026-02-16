@@ -1,4 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
+import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { prismaMaybeModel } from "@/lib/db/prismaModel";
@@ -49,7 +50,7 @@ export async function PATCH(request: Request, { params }: { params: { templateId
 
     return NextResponse.json(updated);
   } catch (error) {
-    console.error("Failed to update template:", error);
+    logger.error("Failed to update template:", error);
     return NextResponse.json({ error: "Failed to update template" }, { status: 500 });
   }
 }
@@ -110,7 +111,7 @@ export async function DELETE(request: Request, { params }: { params: { templateI
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Failed to delete template:", error);
+    logger.error("Failed to delete template:", error);
     return NextResponse.json({ error: "Failed to delete template" }, { status: 500 });
   }
 }
