@@ -109,6 +109,7 @@
 - [x] Refactored reports `[reportId]/actions` to thin dispatcher pattern
 </details>
 
+<<<<<<< HEAD
 <details>
 <summary>Infrastructure Hardening Sprint (Session 2026-02-16)</summary>
 
@@ -157,6 +158,8 @@
 - [x] Webhook infrastructure exists (advanced.ts with retry, transformation)
 </details>
 
+=======
+>>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
 ---
 
 ## IMMEDIATE PRIORITY — Service Layer Completion
@@ -243,6 +246,7 @@
 
 ---
 
+<<<<<<< HEAD
 ## PHASE 1 — Critical Infrastructure (Week 1-2) ✅ COMPLETED
 
 _Blocks 10K-user readiness. Do first._
@@ -290,6 +294,14 @@ _Blocks 10K-user readiness. Do first._
 
 ### 1.1 — Fix OpenAI Singleton (20+ files)
 
+=======
+## PHASE 1 — Critical Infrastructure (Week 1-2)
+
+_Blocks 10K-user readiness. Do first._
+
+### 1.1 — Fix OpenAI Singleton (20+ files)
+
+>>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
 **Status**: `src/lib/ai/client.ts` has proper `getClient()` singleton BUT 20+ API routes still create their own `new OpenAI()` — cold-start penalty, memory waste.
 
 **Files to migrate:**
@@ -346,6 +358,7 @@ src/app/api/weather/*/route.ts (multiple)
 
 ## PHASE 2 — CRM Migration Engines (Week 2-3)
 
+<<<<<<< HEAD
 ### 2.1 — Harden AccuLynx Engine ✅ EXISTS
 
 **Existing infrastructure verified:**
@@ -379,6 +392,41 @@ src/app/api/weather/*/route.ts (multiple)
 - [x] **2.3.1** Created `base-engine.ts` abstract class
 - [ ] **2.3.2** CSV import support — future enhancement
 - [ ] **2.3.3** Migration wizard UI — future enhancement
+=======
+### 2.1 — Harden AccuLynx Engine
+
+**Existing infrastructure:**
+
+- `src/lib/migrations/acculynx-client.ts` — API client
+- `src/lib/migrations/acculynx-mapper.ts` — Field mapping
+- `src/lib/migrations/migration-engine.ts` — Orchestrator
+- `src/app/api/migrations/acculynx/route.ts` — POST trigger
+
+**Gaps to close:**
+
+- [ ] **2.1.1** Add claims import (AccuLynx jobs → SkaiScraper claims)
+- [ ] **2.1.2** Add document/photo import (attachments → Supabase Storage)
+- [ ] **2.1.3** Add SSE progress streaming (replace polling)
+- [ ] **2.1.4** Encrypt API keys at rest
+- [ ] **2.1.5** Add rollback capability
+- [ ] **2.1.6** Move to background job (queue/worker)
+
+### 2.2 — Build JobNimbus Engine
+
+**Status**: No code exists.
+
+- [ ] **2.2.1** Create `src/lib/migrations/jobnimbus-client.ts`
+- [ ] **2.2.2** Create `src/lib/migrations/jobnimbus-mapper.ts`
+- [ ] **2.2.3** Add `runJobNimbusMigration()` to migration engine
+- [ ] **2.2.4** Create API route and UI component
+- [ ] **2.2.5** Test with sandbox API keys
+
+### 2.3 — Generic Migration Framework
+
+- [ ] **2.3.1** Create `base-client.ts` abstract class
+- [ ] **2.3.2** CSV import support
+- [ ] **2.3.3** Migration wizard UI at `/settings/integrations/migrate`
+>>>>>>> 76fe8d649fa350a9d40704795767d2177890b059
 
 ---
 
