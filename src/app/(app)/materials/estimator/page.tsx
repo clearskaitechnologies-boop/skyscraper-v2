@@ -65,10 +65,6 @@ export default function MaterialEstimatorPage() {
 
     setIsLoading(true);
     setError("");
-"use client";
-
-import { PageContainer } from "@/components/layout/PageContainer";
-import { PageHero } from "@/components/layout/PageHero";
     try {
       const res = await fetch("/api/materials/estimate", {
         method: "POST",
