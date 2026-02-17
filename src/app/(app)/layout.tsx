@@ -8,7 +8,6 @@ import DebugStrip from "@/components/DebugStrip";
 import { DemoModeBanner } from "@/components/demo/DemoModeBanner";
 import EmojiScrubber from "@/components/EmojiScrubber";
 import { FeatureHelp } from "@/components/FeatureHelp";
-import { ReportIssueButton } from "@/components/feedback/ReportIssueButton";
 import { CRMFooter } from "@/components/nav/CRMFooter";
 import CRMTopbar from "@/components/nav/CRMTopbar";
 import { ErrorBoundary } from "@/components/system/ErrorBoundary";
@@ -172,7 +171,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </div>
           </Suspense>
           <FeatureHelp />
-          <ReportIssueButton />
         </div>
       </AppProviders>
     );

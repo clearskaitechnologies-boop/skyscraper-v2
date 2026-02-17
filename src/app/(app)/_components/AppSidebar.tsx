@@ -78,8 +78,6 @@ const navSections: NavSection[] = [
       { label: "Material Estimator", href: "/materials/estimator" },
       { label: "Material Orders", href: "/vendors/orders" },
       { label: "Vendor Intelligence", href: "/vendor-network" },
-      { label: "Trades Network Hub", href: "/trades" },
-      { label: "Job Board", href: "/trades/jobs" },
       { label: "Contractor Packet", href: "/reports/contractor-packet" },
     ],
   },
@@ -111,6 +109,8 @@ const navSections: NavSection[] = [
     items: [
       { label: "My Profile & Company", href: "/trades/profile" },
       { label: "Company Contacts", href: "/contacts" },
+      { label: "Trades Network Hub", href: "/trades" },
+      { label: "Job Board", href: "/trades/jobs" },
     ],
   },
   {

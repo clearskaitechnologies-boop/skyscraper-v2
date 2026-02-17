@@ -174,7 +174,7 @@ export default function FinancialOverviewPage() {
       {/* Top KPI Cards */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {/* Revenue */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-gradient-to-br from-green-50 to-emerald-50 p-6 dark:from-green-950/20 dark:to-emerald-950/20">
+        <div className="rounded-2xl bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-md dark:from-green-950/20 dark:to-emerald-950/20">
           <div className="mb-2 flex items-center gap-3">
             <div className="rounded-lg bg-green-500 p-2">
               <DollarSign className="h-5 w-5 text-white" />
@@ -192,7 +192,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Gross Profit */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-gradient-to-br from-blue-50 to-indigo-50 p-6 dark:from-blue-950/20 dark:to-indigo-950/20">
+        <div className="rounded-2xl bg-gradient-to-br from-blue-50 to-indigo-50 p-6 shadow-md dark:from-blue-950/20 dark:to-indigo-950/20">
           <div className="mb-2 flex items-center gap-3">
             <div className="rounded-lg bg-blue-500 p-2">
               <TrendingUp className="h-5 w-5 text-white" />
@@ -215,7 +215,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Commissions */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-gradient-to-br from-purple-50 to-violet-50 p-6 dark:from-purple-950/20 dark:to-violet-950/20">
+        <div className="rounded-2xl bg-gradient-to-br from-purple-50 to-violet-50 p-6 shadow-md dark:from-purple-950/20 dark:to-violet-950/20">
           <div className="mb-2 flex items-center gap-3">
             <div className="rounded-lg bg-purple-500 p-2">
               <BadgeDollarSign className="h-5 w-5 text-white" />
@@ -236,7 +236,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Outstanding AR */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-gradient-to-br from-orange-50 to-amber-50 p-6 dark:from-orange-950/20 dark:to-amber-950/20">
+        <div className="rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50 p-6 shadow-md dark:from-orange-950/20 dark:to-amber-950/20">
           <div className="mb-2 flex items-center gap-3">
             <div className="rounded-lg bg-orange-500 p-2">
               <Receipt className="h-5 w-5 text-white" />
@@ -257,7 +257,7 @@ export default function FinancialOverviewPage() {
       {/* Detail Sections */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {/* Revenue Breakdown */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl bg-[var(--surface-glass)] p-6 shadow-sm backdrop-blur-xl">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
             <DollarSign className="h-5 w-5 text-green-500" /> Revenue Breakdown
           </h3>
@@ -288,7 +288,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Cost Breakdown */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl bg-[var(--surface-glass)] p-6 shadow-sm backdrop-blur-xl">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
             <Wallet className="h-5 w-5 text-red-500" /> Cost Breakdown
           </h3>
@@ -329,7 +329,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Commission Status */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl bg-[var(--surface-glass)] p-6 shadow-sm backdrop-blur-xl">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
             <BadgeDollarSign className="h-5 w-5 text-purple-500" /> Commission Pipeline
           </h3>
@@ -373,7 +373,7 @@ export default function FinancialOverviewPage() {
         </div>
 
         {/* Invoice Summary */}
-        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
+        <div className="rounded-2xl bg-[var(--surface-glass)] p-6 shadow-sm backdrop-blur-xl">
           <h3 className="mb-4 flex items-center gap-2 text-lg font-semibold text-[color:var(--text)]">
             <FileText className="h-5 w-5 text-blue-500" /> Invoice Summary
           </h3>
@@ -454,10 +454,10 @@ export default function FinancialOverviewPage() {
       </div>
 
       {/* Quick Links */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <Link
           href="/commissions"
-          className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-4 transition-all hover:border-purple-300 hover:bg-purple-50/50 dark:hover:bg-purple-950/20"
+          className="flex items-center gap-3 rounded-xl bg-[var(--surface-glass)] p-4 shadow-sm transition-all hover:bg-purple-50/50 dark:hover:bg-purple-950/20"
         >
           <BadgeDollarSign className="h-6 w-6 text-purple-500" />
           <div>
@@ -467,7 +467,7 @@ export default function FinancialOverviewPage() {
         </Link>
         <Link
           href="/invoices"
-          className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-4 transition-all hover:border-blue-300 hover:bg-blue-50/50 dark:hover:bg-blue-950/20"
+          className="flex items-center gap-3 rounded-xl bg-[var(--surface-glass)] p-4 shadow-sm transition-all hover:bg-blue-50/50 dark:hover:bg-blue-950/20"
         >
           <FileText className="h-6 w-6 text-blue-500" />
           <div>
@@ -477,7 +477,7 @@ export default function FinancialOverviewPage() {
         </Link>
         <Link
           href="/settings/commission-plans"
-          className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-4 transition-all hover:border-green-300 hover:bg-green-50/50 dark:hover:bg-green-950/20"
+          className="flex items-center gap-3 rounded-xl bg-[var(--surface-glass)] p-4 shadow-sm transition-all hover:bg-green-50/50 dark:hover:bg-green-950/20"
         >
           <TrendingUp className="h-6 w-6 text-green-500" />
           <div>

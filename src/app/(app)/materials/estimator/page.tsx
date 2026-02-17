@@ -43,6 +43,9 @@ const SHINGLE_TYPES = [
   { label: "Tile", value: "tile" },
 ];
 
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
+
 export default function MaterialEstimatorPage() {
   const [totalSqFt, setTotalSqFt] = useState("");
   const [pitch, setPitch] = useState("standard");
@@ -131,22 +134,13 @@ export default function MaterialEstimatorPage() {
   };
 
   return (
-    <div className="container mx-auto max-w-5xl space-y-8 px-4 py-8">
-      {/* Header */}
-      <div className="flex items-center gap-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 text-white shadow-lg">
-          <Calculator className="h-7 w-7" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white">
-            Material Estimator
-          </h1>
-          <p className="text-slate-600 dark:text-slate-400">
-            Calculate materials from roof measurements. Route orders to ABC Supply with one click.
-          </p>
-        </div>
-      </div>
-
+    <PageContainer maxWidth="5xl">
+      <PageHero
+        section="materials"
+        title="Material Estimator"
+        subtitle="Calculate materials from roof measurements. Route orders to ABC Supply with one click."
+        icon={<Calculator className="h-7 w-7" />}
+      />
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Input Form */}
         <Card>

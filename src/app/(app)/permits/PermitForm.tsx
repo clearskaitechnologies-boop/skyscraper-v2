@@ -43,7 +43,7 @@ export default function PermitForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-5 py-3 font-semibold text-white shadow-[var(--glow)] transition hover:scale-[1.02]"
+        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 font-semibold text-white shadow transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
       >
         <Plus className="h-4 w-4" /> Add Permit
       </button>
