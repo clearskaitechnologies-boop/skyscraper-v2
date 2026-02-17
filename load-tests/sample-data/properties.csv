@@ -1,0 +1,11 @@
+address,city,state,zip,property_type,year_built,sqft,roof_material,roof_age,contact_email,external_id
+4521 E Camelback Rd,Phoenix,AZ,85018,residential,1998,2400,asphalt_shingle,12,john.martinez@example.com,PROP-001
+1200 N Scottsdale Rd,Scottsdale,AZ,85257,residential,2005,3200,tile,8,sarah.chen@example.com,PROP-002
+8900 E Broadway Blvd,Tucson,AZ,85710,residential,1992,1800,asphalt_shingle,18,michael.j@example.com,PROP-003
+15420 N 7th St,Phoenix,AZ,85022,residential,2010,2800,metal,5,lisa.r@example.com,PROP-004
+2100 Woodlands Village Blvd,Flagstaff,AZ,86001,residential,1985,1600,asphalt_shingle,22,david.t@example.com,PROP-005
+3300 W Camelback Rd,Phoenix,AZ,85017,commercial,2001,5500,flat_tpo,10,amanda.w@example.com,PROP-006
+7500 E Doubletree Ranch Rd,Scottsdale,AZ,85258,residential,2015,4100,tile,3,robert.d@example.com,PROP-007
+6200 E Speedway Blvd,Tucson,AZ,85712,residential,1995,2100,asphalt_shingle,15,jen.wilson@example.com,PROP-008
+18200 N 19th Ave,Phoenix,AZ,85023,residential,2008,2600,asphalt_shingle,9,chris.b@example.com,PROP-009
+1400 E Butler Ave,Flagstaff,AZ,86004,commercial,2012,3800,metal,6,emily.t@example.com,PROP-010

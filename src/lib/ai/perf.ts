@@ -10,10 +10,10 @@
  * - Route/org/lead context
  */
 
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
-export type AIModel = "gpt-4o" | "gpt-4o-mini" | "gpt-4-turbo" | "gpt-3.5-turbo";
+export type AIModel = "gpt-4o" | "gpt-4o-mini";
 
 export interface AIPerformanceMetrics {
   routeName: string;
@@ -32,8 +32,6 @@ export interface AIPerformanceMetrics {
 const MODEL_COSTS: Record<AIModel, { input: number; output: number }> = {
   "gpt-4o": { input: 0.005, output: 0.015 },
   "gpt-4o-mini": { input: 0.00015, output: 0.0006 },
-  "gpt-4-turbo": { input: 0.01, output: 0.03 },
-  "gpt-3.5-turbo": { input: 0.0005, output: 0.0015 },
 };
 
 /**

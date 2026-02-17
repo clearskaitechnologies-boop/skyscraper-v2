@@ -1,5 +1,5 @@
-import "server-only";
 import { logger } from "@/lib/logger";
+import "server-only";
 
 import type { NormalizedLocation, StormSnapshot } from "./storm-types";
 
@@ -12,6 +12,8 @@ if (!VISUALCROSSING_API_KEY) {
 /**
  * Fetch storm data from Visual Crossing Timeline API
  * Detects hail and high wind events over the last 12 months
+ *
+ * ✅ Redis-cached (1h TTL) via weatherCache module — saves $35/mo API records
  */
 export async function fetchVisualCrossingStormData(
   location: NormalizedLocation
@@ -21,7 +23,15 @@ export async function fetchVisualCrossingStormData(
     return null;
   }
 
+  // ── Redis cache check ──────────────────────────────────────
   const today = new Date();
+  const cacheDate = today.toISOString().split("T")[0];
+  const cached = await getCachedWeather(location.latitude, location.longitude, `vc:${cacheDate}`);
+  if (cached) {
+    logger.debug("[VISUALCROSSING] Cache HIT", { address: location.address });
+    return cached.raw as unknown as StormSnapshot;
+  }
+
   const oneYearAgo = new Date(today);
   oneYearAgo.setFullYear(today.getFullYear() - 1);
 

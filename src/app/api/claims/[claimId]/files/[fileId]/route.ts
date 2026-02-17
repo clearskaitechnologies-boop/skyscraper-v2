@@ -1,25 +1,23 @@
 // Pro-side API to toggle file visibility in portal
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
 /**
  * PATCH /api/claims/[claimId]/files/[fileId]
  * Allows pros to toggle visibleToClient flag on claim documents
+ * 🔒 withAuth: org-scoped, prevents cross-org file access
  */
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: { claimId: string; fileId: string } }
-) {
+export const PATCH = withAuth(async (req: NextRequest, { orgId }) => {
   try {
-    const { claimId, fileId } = params;
-    const { userId } = await auth();
-
-    if (!userId) {
-      return new NextResponse("Unauthorized", { status: 401 });
-    }
+    // Extract route params from URL
+    const segments = new URL(req.url).pathname.split("/").filter(Boolean);
+    const claimIdx = segments.indexOf("claims");
+    const fileIdx = segments.indexOf("files");
+    const claimId = segments[claimIdx + 1];
+    const fileId = segments[fileIdx + 1];
 
     const body = await req.json();
     const { visibleToClient } = body as { visibleToClient?: boolean };
@@ -30,12 +28,12 @@ export async function PATCH(
       });
     }
 
-    // Note: documents model doesn't have claimId, using FileAsset instead
-    // FileAsset also doesn't have visibleToClient field - stub response
+    // FileAsset lookup — scoped by claimId AND orgId to prevent cross-org access
     const file = await prisma.file_assets.findFirst({
       where: {
         id: fileId,
         claimId,
+        orgId,
       },
       select: {
         id: true,
@@ -62,4 +60,4 @@ export async function PATCH(
     logger.error("[CLAIM_FILE_PATCH_ERROR]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
-}
+});

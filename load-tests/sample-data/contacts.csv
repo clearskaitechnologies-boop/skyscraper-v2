@@ -1,0 +1,11 @@
+first_name,last_name,email,phone,company,street,city,state,zip,external_id
+John,Martinez,john.martinez@example.com,(602) 555-0101,Martinez Roofing,4521 E Camelback Rd,Phoenix,AZ,85018,ALX-001
+Sarah,Chen,sarah.chen@example.com,(480) 555-0202,Chen Properties,1200 N Scottsdale Rd,Scottsdale,AZ,85257,ALX-002
+Michael,Johnson,michael.j@example.com,(520) 555-0303,,8900 E Broadway Blvd,Tucson,AZ,85710,ALX-003
+Lisa,Rodriguez,lisa.r@example.com,(623) 555-0404,Rodriguez & Sons,15420 N 7th St,Phoenix,AZ,85022,ALX-004
+David,Thompson,david.t@example.com,(928) 555-0505,,2100 Woodlands Village Blvd,Flagstaff,AZ,86001,ALX-005
+Amanda,Williams,amanda.w@example.com,(602) 555-0606,Williams Restoration,3300 W Camelback Rd,Phoenix,AZ,85017,ALX-006
+Robert,Davis,robert.d@example.com,(480) 555-0707,,7500 E Doubletree Ranch Rd,Scottsdale,AZ,85258,ALX-007
+Jennifer,Wilson,jen.wilson@example.com,(520) 555-0808,Wilson Home Services,6200 E Speedway Blvd,Tucson,AZ,85712,ALX-008
+Christopher,Brown,chris.b@example.com,(623) 555-0909,,18200 N 19th Ave,Phoenix,AZ,85023,ALX-009
+Emily,Taylor,emily.t@example.com,(928) 555-1010,Taylor Construction,1400 E Butler Ave,Flagstaff,AZ,86004,ALX-010

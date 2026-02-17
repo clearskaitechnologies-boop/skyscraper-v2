@@ -6,8 +6,9 @@
  * to update the order status and attach the report.
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { verifyGAFWebhookSignature } from "@/lib/integrations/gaf";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
@@ -16,7 +17,17 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    // Verify webhook signature (HMAC-SHA256)
+    const rawBody = await req.text();
+    const signature = req.headers.get("x-gaf-signature");
+
+    const isValid = await verifyGAFWebhookSignature(rawBody, signature);
+    if (!isValid) {
+      logger.warn("[MEASUREMENTS_WEBHOOK] Invalid signature — rejecting");
+      return NextResponse.json({ ok: false, message: "Invalid signature" }, { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody);
 
     // Validate webhook (provider-specific — GAF QuickMeasure format)
     const { orderId, externalId, status, reportUrl, measurements, provider } = body;
@@ -67,7 +78,7 @@ export async function POST(req: NextRequest) {
       data: updateData,
     });
 
-    console.log(
+    logger.info(
       `[MEASUREMENTS_WEBHOOK] Order ${order.id} updated to ${updateData.status ?? "unchanged"}`
     );
 

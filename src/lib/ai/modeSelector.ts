@@ -12,8 +12,8 @@
  * - AUTO: Dynamic based on token balance threshold
  */
 
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 import type { AIModel } from "./perf";
 
@@ -83,11 +83,9 @@ export async function selectModelForOrg(orgId: string): Promise<AIModel> {
  * Get estimated cost per 1K tokens for a model
  */
 export function getModelCost(model: AIModel): { input: number; output: number } {
-  const costs = {
+  const costs: Record<string, { input: number; output: number }> = {
     "gpt-4o": { input: 0.005, output: 0.015 },
     "gpt-4o-mini": { input: 0.00015, output: 0.0006 },
-    "gpt-4-turbo": { input: 0.01, output: 0.03 },
-    "gpt-3.5-turbo": { input: 0.0005, output: 0.0015 },
   };
 
   return costs[model] || costs["gpt-4o-mini"];

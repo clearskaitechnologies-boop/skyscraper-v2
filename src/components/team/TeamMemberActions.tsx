@@ -24,6 +24,25 @@ interface TeamMemberActionsProps {
   isCurrentUser: boolean;
 }
 
+interface RoleOption {
+  key: string;
+  label: string;
+  description: string;
+}
+
+// Enterprise roles — kept in sync with src/lib/auth/role-presets.ts
+const ROLE_OPTIONS: RoleOption[] = [
+  { key: "owner", label: "Owner", description: "Full platform access" },
+  { key: "admin", label: "Admin", description: "Full access except ownership" },
+  { key: "manager", label: "Manager", description: "Manages projects & workflows" },
+  { key: "project_manager", label: "Project Manager", description: "Oversees assigned projects" },
+  { key: "sales_rep", label: "Sales Rep", description: "Creates leads & claims" },
+  { key: "field_tech", label: "Field Technician", description: "Field updates & photos" },
+  { key: "finance", label: "Finance", description: "Financial reports & billing" },
+  { key: "member", label: "Member", description: "Standard team access" },
+  { key: "viewer", label: "Viewer", description: "Read-only access" },
+];
+
 export function TeamMemberActions({
   memberId,
   memberName,
@@ -116,13 +135,11 @@ export function TeamMemberActions({
             className="rounded-lg border border-[color:var(--border)] bg-[var(--surface-1)] px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label={`Change role for ${memberName}`}
           >
-            <option value="user">Member</option>
-            <option value="admin">Admin</option>
-            <option value="manager">Manager</option>
-            <option value="pm">Project Manager</option>
-            <option value="inspector">Inspector</option>
-            <option value="billing">Billing</option>
-            <option value="vendor">Vendor</option>
+            {ROLE_OPTIONS.map((role) => (
+              <option key={role.key} value={role.key}>
+                {role.label}
+              </option>
+            ))}
           </select>
           {isChangingRole && (
             <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white/50 dark:bg-slate-900/50">

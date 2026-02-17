@@ -3,6 +3,7 @@ import { Crown, Mail, Shield, Trash2, UserPlus, Users } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { PageHero } from "@/components/layout/PageHero";
+import { CSVUploadDialog } from "@/components/team/CSVUploadDialog";
 import TeamInviteForm from "@/components/team/TeamInviteForm";
 import { TeamMemberActions } from "@/components/team/TeamMemberActions";
 import { Button } from "@/components/ui/button";
@@ -88,12 +89,17 @@ export default async function TeamSettingsPage() {
 
       {/* Invite Section - Using TeamInviteForm */}
       <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-6 dark:border-blue-800 dark:from-blue-900/30 dark:to-indigo-900/30">
-        <div className="mb-4 flex items-center gap-3">
-          <UserPlus className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-          <h2 className="text-xl font-bold text-blue-900 dark:text-blue-100">Invite Team Member</h2>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <UserPlus className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <h2 className="text-xl font-bold text-blue-900 dark:text-blue-100">
+              Invite Team Members
+            </h2>
+          </div>
+          <CSVUploadDialog />
         </div>
         <p className="mb-4 text-blue-700 dark:text-blue-300">
-          Send an invitation to add a new member to your team
+          Send an invitation to add a new member, or bulk import from a CSV file
         </p>
         <TeamInviteFormWrapper />
       </div>
@@ -192,28 +198,73 @@ export default async function TeamSettingsPage() {
           <Shield className="h-6 w-6 text-blue-600" />
           Roles & Permissions
         </h2>
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div className="flex gap-4">
             <div className="flex-shrink-0">
-              <Crown className="h-6 w-6 text-amber-500" />
+              <Crown className="h-5 w-5 text-purple-500" />
             </div>
             <div>
-              <h3 className="mb-1 font-semibold text-[color:var(--text)]">Admin</h3>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">Owner</h3>
               <p className="text-sm text-slate-700 dark:text-slate-300">
-                Full access to all features, team management, billing, and settings. Can
-                invite/remove members and manage permissions.
+                Full platform access. Manages billing, team, and all settings.
               </p>
             </div>
           </div>
           <div className="flex gap-4">
             <div className="flex-shrink-0">
-              <Users className="h-6 w-6 text-blue-500" />
+              <Crown className="h-5 w-5 text-amber-500" />
             </div>
             <div>
-              <h3 className="mb-1 font-semibold text-[color:var(--text)]">Member</h3>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">Admin</h3>
               <p className="text-sm text-slate-700 dark:text-slate-300">
-                Access to create and manage claims, generate reports, and view directories. Cannot
-                manage team members or billing.
+                Full access except ownership transfer. Manages team and settings.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <Users className="h-5 w-5 text-blue-500" />
+            </div>
+            <div>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">Manager</h3>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                Manages projects, claims, and team workflows. Cannot modify billing.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <Users className="h-5 w-5 text-cyan-500" />
+            </div>
+            <div>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">
+                Project Manager / Sales / Field Tech / Finance
+              </h3>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                Specialized roles scoped to specific workflows — assigned projects, leads, field
+                updates, or financial reports.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <Users className="h-5 w-5 text-gray-500" />
+            </div>
+            <div>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">Member</h3>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                Standard team member. Can view and interact with assigned work.
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <Shield className="h-5 w-5 text-slate-400" />
+            </div>
+            <div>
+              <h3 className="mb-0.5 font-semibold text-[color:var(--text)]">Viewer</h3>
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                Read-only access. Can view dashboards and reports but cannot modify anything.
               </p>
             </div>
           </div>

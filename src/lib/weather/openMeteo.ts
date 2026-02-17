@@ -4,6 +4,8 @@ import { logger } from "@/lib/logger";
  * Open-Meteo Weather Integration
  * Free, stable, no API key required
  * Docs: https://open-meteo.com/en/docs/historical-weather-api
+ *
+ * ✅ Redis-cached (1h TTL) via weatherCache module
  */
 
 export interface WeatherQuery {
@@ -25,9 +27,27 @@ export interface NormalizedWeatherFacts {
 
 /**
  * Fetch historical weather from Open-Meteo
+ * Results are Redis-cached with 1h TTL
  */
 export async function fetchOpenMeteoWeather(query: WeatherQuery): Promise<NormalizedWeatherFacts> {
   const { lat, lng, startDate, endDate } = query;
+
+  // ── Redis cache check ──────────────────────────────────────
+  const cached = await getCachedWeather(lat, lng, startDate);
+  if (cached) {
+    logger.debug("[OpenMeteo] Cache HIT", { lat, lng, startDate });
+    return {
+      maxWindGustMph: cached.maxWindGustMph,
+      maxSustainedWindMph: cached.maxSustainedWindMph,
+      maxHailInches: cached.maxHailInches,
+      precipitationIn: cached.precipitationIn,
+      snowfallIn: cached.snowfallIn,
+      sourceLabel: cached.sourceLabel,
+      raw: cached.raw,
+    };
+  }
+
+  // ── API fetch ──────────────────────────────────────────────
 
   // Open-Meteo Historical Weather API
   const url = new URL("https://archive-api.open-meteo.com/v1/archive");
@@ -53,7 +73,16 @@ export async function fetchOpenMeteoWeather(query: WeatherQuery): Promise<Normal
   const data = await response.json();
 
   // Normalize to our schema
-  return normalizeOpenMeteoResponse(data, startDate, endDate);
+  const result = normalizeOpenMeteoResponse(data, startDate, endDate);
+
+  // ── Write to Redis cache (fire-and-forget) ─────────────────
+  setCachedWeather(lat, lng, startDate, {
+    ...result,
+    provider: "open-meteo",
+    fetchedAt: new Date().toISOString(),
+  }).catch(() => {}); // non-blocking
+
+  return result;
 }
 
 /**

@@ -1,4 +1,13 @@
-import { Cloud, CloudLightning, FileText, Sparkles, Users, Zap } from "lucide-react";
+import {
+  Cloud,
+  CloudLightning,
+  DollarSign,
+  FileText,
+  Package,
+  Sparkles,
+  Users,
+  Zap,
+} from "lucide-react";
 import Link from "next/link";
 
 import { ComparisonTable } from "./ComparisonTable";

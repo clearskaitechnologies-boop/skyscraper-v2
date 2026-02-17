@@ -1,6 +1,11 @@
 // ============================================================================
-// H-13: Structured Logger Utility
+// H-13: Structured Logger Utility — Sentry-Integrated
 // ============================================================================
+//
+// Every warn/error call auto-creates a Sentry breadcrumb so production issues
+// carry the full context trail. Debug-level logs are console-only (dev mode).
+
+import * as Sentry from "@sentry/nextjs";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
 
@@ -43,13 +48,41 @@ class Logger {
       meta ? JSON.stringify(meta, null, 2) : ""
     );
 
-    // TODO H-13: Send to external logging service
-    // - Sentry for errors
-    // - LogRocket for session replay
-    // - Datadog/NewRelic for metrics
-    // if (level === "error") {
-    //   Sentry.captureException(new Error(message), { extra: logEntry });
-    // }
+    // ── Sentry breadcrumbs for warn + error ──────────────────────────
+    if (level === "warn" || level === "error" || level === "info") {
+      try {
+        Sentry.addBreadcrumb({
+          category: "logger",
+          message,
+          level: level === "error" ? "error" : level === "warn" ? "warning" : "info",
+          data: {
+            ...this.context,
+            ...(meta && typeof meta === "object" ? meta : { detail: meta }),
+          },
+          timestamp: Date.now() / 1000,
+        });
+      } catch {
+        // Sentry may not be initialized in all contexts — silently skip
+      }
+    }
+
+    // ── Sentry captureException for errors ───────────────────────────
+    if (level === "error" && meta) {
+      try {
+        const err = meta instanceof Error ? meta : meta?.error instanceof Error ? meta.error : null;
+        if (err) {
+          Sentry.captureException(err, {
+            extra: logEntry,
+            tags: {
+              logSource: "logger",
+              ...(this.context.orgId && { orgId: this.context.orgId }),
+            },
+          });
+        }
+      } catch {
+        // Sentry not available — no-op
+      }
+    }
   }
 
   debug(message: string, meta?: any) {

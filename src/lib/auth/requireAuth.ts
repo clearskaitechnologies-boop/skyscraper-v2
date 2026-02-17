@@ -31,8 +31,8 @@
  * ============================================================================
  */
 
-import "server-only";
 import { logger } from "@/lib/logger";
+import "server-only";
 
 import { NextResponse } from "next/server";
 
@@ -121,22 +121,24 @@ export function isAuthError(result: AuthResult): result is NextResponse {
 }
 
 /**
- * Convenience: requireAdmin
+ * Convenience: requireAdmin (ADMIN or OWNER)
  */
 export async function requireAdmin(): Promise<AuthResult> {
-  return requireAuth({ roles: ["ADMIN"] });
+  return requireAuth({ roles: ["ADMIN", "OWNER"] });
 }
 
 /**
- * Convenience: requireManager (ADMIN or MANAGER)
+ * Convenience: requireManager (OWNER, ADMIN, or MANAGER)
  */
 export async function requireManager(): Promise<AuthResult> {
-  return requireAuth({ roles: ["ADMIN", "MANAGER"] });
+  return requireAuth({ roles: ["OWNER", "ADMIN", "MANAGER"] });
 }
 
 /**
- * Convenience: requireStaff (ADMIN, MANAGER, PM, INSPECTOR)
+ * Convenience: requireStaff (OWNER, ADMIN, MANAGER, PROJECT_MANAGER, SALES_REP, FIELD_TECH, FINANCE)
  */
 export async function requireStaff(): Promise<AuthResult> {
-  return requireAuth({ roles: ["ADMIN", "MANAGER", "PM", "INSPECTOR"] });
+  return requireAuth({
+    roles: ["OWNER", "ADMIN", "MANAGER", "PROJECT_MANAGER", "SALES_REP", "FIELD_TECH", "FINANCE"],
+  });
 }

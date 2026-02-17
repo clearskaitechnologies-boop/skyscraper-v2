@@ -10,8 +10,8 @@
  * - Reconnection: Exponential backoff with 3 retries
  */
 
-import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { logger } from "@/lib/logger";
+import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 import { getOpenAI } from "@/lib/ai/client";
 
@@ -152,7 +152,7 @@ export function estimateStreamDuration(tokens: number): number {
  * Utility: Check if streaming is supported for a model
  */
 export function supportsStreaming(model: string): boolean {
-  const streamingModels = ["gpt-4o", "gpt-4o-mini", "gpt-4-turbo", "gpt-4", "gpt-3.5-turbo"];
+  const streamingModels = ["gpt-4o", "gpt-4o-mini"];
 
   return streamingModels.some((m) => model.includes(m));
 }

@@ -47,8 +47,8 @@ Sentry.init({
       ? 0.1
       : 1.0,
 
-  // Profiling (disabled by default)
-  profilesSampleRate: 0.0,
+  // Profiling — enabled for enterprise performance visibility
+  profilesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 0.0,
 
   // Debug only in development with explicit flag
   debug: process.env.SENTRY_DEBUG === "true" && process.env.NODE_ENV !== "production",

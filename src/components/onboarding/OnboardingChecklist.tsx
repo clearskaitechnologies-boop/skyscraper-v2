@@ -258,36 +258,73 @@ export function OnboardingChecklist({
 }
 
 /**
- * Hook to manage onboarding state
+ * Hook to manage onboarding state — persisted via API, not localStorage.
+ * Falls back to localStorage if the API is unreachable.
  */
 export function useOnboardingProgress(orgId: string) {
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Load from API, fall back to localStorage
   useEffect(() => {
-    // Load from localStorage for now
-    const stored = localStorage.getItem(`onboarding_${orgId}`);
-    if (stored) {
+    let cancelled = false;
+    async function load() {
       try {
-        setCompletedSteps(JSON.parse(stored));
+        const res = await fetch("/api/onboarding/progress");
+        if (res.ok) {
+          const data = await res.json();
+          // The API returns boolean flags — convert to step IDs for the checklist
+          const steps: string[] = [];
+          if (data.hasBranding) steps.push("company_profile");
+          if (data.hasClient || data.hasClaim) steps.push("invite_team");
+          if (data.hasClaim) steps.push("first_claim");
+          if (data.hasPhotos) steps.push("upload_photos");
+          if (data.hasAiArtifact) steps.push("generate_report");
+          if (data.hasVendorReference || data.hasTradesMember) steps.push("configure_settings");
+          if (data.hasPdfExport) steps.push("provide_feedback");
+          if (!cancelled) setCompletedSteps(steps);
+          return;
+        }
+      } catch (e) {
+        logger.error(
+          "Failed to fetch onboarding progress from API, falling back to localStorage:",
+          e
+        );
+      }
+      // Fallback: localStorage
+      try {
+        const stored = localStorage.getItem(`onboarding_${orgId}`);
+        if (stored && !cancelled) {
+          setCompletedSteps(JSON.parse(stored));
+        }
       } catch (e) {
         logger.error("Failed to parse onboarding progress:", e);
       }
     }
-    setIsLoading(false);
+    load().finally(() => {
+      if (!cancelled) setIsLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
   }, [orgId]);
 
   const markStepComplete = (stepId: string) => {
     setCompletedSteps((prev) => {
       const next = prev.includes(stepId) ? prev.filter((s) => s !== stepId) : [...prev, stepId];
-      localStorage.setItem(`onboarding_${orgId}`, JSON.stringify(next));
+      // Keep localStorage as a fast cache
+      try {
+        localStorage.setItem(`onboarding_${orgId}`, JSON.stringify(next));
+      } catch {}
       return next;
     });
   };
 
   const resetProgress = () => {
     setCompletedSteps([]);
-    localStorage.removeItem(`onboarding_${orgId}`);
+    try {
+      localStorage.removeItem(`onboarding_${orgId}`);
+    } catch {}
   };
 
   return {

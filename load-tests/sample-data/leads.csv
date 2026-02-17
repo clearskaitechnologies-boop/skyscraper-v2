@@ -1,0 +1,11 @@
+title,source,status,temperature,value,description,contact_email,external_id
+Martinez Roof Replacement,door_knock,qualified,hot,12500,Homeowner interested after hail storm - needs full inspection,john.martinez@example.com,LEAD-001
+Chen Property Tile Repair,referral,contacted,warm,18000,Referred by neighbor - tile roof damaged in January storm,sarah.chen@example.com,LEAD-002
+Johnson Wind Damage Assessment,storm_canvass,new,warm,8500,Found during post-storm canvass - multiple shingles missing,michael.j@example.com,LEAD-003
+Rodriguez Full Reroof,website,qualified,hot,22000,Submitted contact form - wants full reroof quote,lisa.r@example.com,LEAD-004
+Thompson Emergency Repair,phone,contacted,warm,6000,Called about emergency tarp needed - wind damage,david.t@example.com,LEAD-005
+Williams Commercial TPO,trade_show,qualified,hot,45000,Met at AZ Roofing Expo - commercial building owner,amanda.w@example.com,LEAD-006
+Davis Premium Tile Install,referral,new,cold,15000,Referral from real estate agent - just purchased home,robert.d@example.com,LEAD-007
+Wilson Storm Restoration,insurance_referral,contacted,warm,9500,Insurance adjuster referral - monsoon damage,jen.wilson@example.com,LEAD-008
+Brown Shingle Replacement,door_knock,new,warm,11000,Found during neighborhood canvass after hail event,chris.b@example.com,LEAD-009
+Taylor Commercial Metal Roof,website,qualified,hot,28000,Submitted RFQ for commercial metal roof repair,emily.t@example.com,LEAD-010

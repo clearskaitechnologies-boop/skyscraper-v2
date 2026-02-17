@@ -33,7 +33,7 @@ export function getAIConfig(): AIConfig {
   return {
     provider: (process.env.AI_PROVIDER as "openai" | "claude") || "openai",
     apiKey: process.env.OPENAI_API_KEY || process.env.ANTHROPIC_API_KEY || "",
-    model: process.env.AI_MODEL || "gpt-4",
+    model: process.env.AI_MODEL || "gpt-4o",
     maxTokens: parseInt(process.env.AI_MAX_TOKENS || "2000"),
     temperature: parseFloat(process.env.AI_TEMPERATURE || "0.7"),
   };

@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -103,7 +103,7 @@ Return a JSON object with section IDs as keys and generated content as values.
 `;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o",
       messages: [
         { role: "system", content: REPORT_WRITER_SYSTEM_PROMPT },
         { role: "user", content: userPrompt },

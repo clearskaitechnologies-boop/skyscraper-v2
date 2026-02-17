@@ -2,22 +2,20 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { generateClaimPacket } from "@/lib/claims/generator";
 import { ClaimPacketData, PacketVersion } from "@/lib/claims/templates";
 
-export async function POST(req: Request) {
+/**
+ * POST /api/claims/generate-packet
+ * 🔒 withAuth: org-scoped — generates claim packets for authenticated users only
+ */
+export const POST = withAuth(async (req: NextRequest, { orgId, userId }) => {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
     const { data, version, format, includeWeatherPage } = body as {
       data: ClaimPacketData;
@@ -59,11 +57,11 @@ export async function POST(req: Request) {
   } catch (error: any) {
     logger.error("[API:CLAIM_PACKET] Generation failed:", error);
     Sentry.captureException(error, {
-      tags: { component: "claim-packet-api" },
+      tags: { component: "claim-packet-api", orgId },
     });
     return NextResponse.json(
       { error: error.message || "Failed to generate claim packet" },
       { status: 500 }
     );
   }
-}
+});

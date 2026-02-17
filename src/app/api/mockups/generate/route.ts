@@ -72,7 +72,7 @@ Damage type: ${context.claim.lossType || "Unknown"}
 Describe what repairs would be needed to restore this to its original condition. Be specific about materials, methods, and scope of work.`;
 
     const visionResponse = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",

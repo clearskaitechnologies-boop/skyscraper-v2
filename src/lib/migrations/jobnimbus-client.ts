@@ -10,8 +10,8 @@
  * IMPORTANT: Never import this file on the client side.
  */
 
-import "server-only";
 import { logger } from "@/lib/logger";
+import "server-only";
 
 // ============================================================================
 // Types
@@ -193,6 +193,33 @@ export class JobNimbusClient {
     } catch (err: any) {
       return { ok: false, error: err.message };
     }
+  }
+
+  /**
+   * Alias used by preflight route — returns { data, totalCount } format.
+   */
+  async getContacts(
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE
+  ): Promise<{ data: JobNimbusContact[]; totalCount: number }> {
+    const offset = (page - 1) * pageSize;
+    const res = await this.request<PaginatedResponse<JobNimbusContact>>("/contacts", {
+      count: pageSize,
+      offset,
+    });
+    return { data: res.results, totalCount: res.count };
+  }
+
+  async getJobs(
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE
+  ): Promise<{ data: JobNimbusJob[]; totalCount: number }> {
+    const offset = (page - 1) * pageSize;
+    const res = await this.request<PaginatedResponse<JobNimbusJob>>("/jobs", {
+      count: pageSize,
+      offset,
+    });
+    return { data: res.results, totalCount: res.count };
   }
 
   /**

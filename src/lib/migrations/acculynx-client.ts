@@ -170,6 +170,39 @@ export class AccuLynxClient {
     });
   }
 
+  /**
+   * Alias used by preflight route — returns { data, totalCount } format.
+   */
+  async getContacts(
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE
+  ): Promise<{ data: AccuLynxContact[]; totalCount: number }> {
+    const res = await this.fetchContacts(page, pageSize);
+    return { data: res.data, totalCount: res.totalCount };
+  }
+
+  async getJobs(
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE
+  ): Promise<{ data: AccuLynxJob[]; totalCount: number }> {
+    const res = await this.fetchJobs(page, pageSize);
+    return { data: res.data, totalCount: res.totalCount };
+  }
+
+  /**
+   * Fetch estimates for a job (documents with type "estimate").
+   */
+  async fetchEstimates(
+    jobId: string,
+    page = 1,
+    pageSize = DEFAULT_PAGE_SIZE
+  ): Promise<PaginatedResponse<AccuLynxDocument>> {
+    return this.request<PaginatedResponse<AccuLynxDocument>>(`/jobs/${jobId}/estimates`, {
+      page,
+      pageSize,
+    });
+  }
+
   /** Test connection — returns true if the API key is valid */
   async testConnection(): Promise<{ ok: boolean; error?: string }> {
     try {

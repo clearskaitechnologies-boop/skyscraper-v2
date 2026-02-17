@@ -16,7 +16,7 @@ export interface CallOpenAIOptions {
 export async function callOpenAI({
   system,
   user,
-  model = "gpt-4-turbo-preview",
+  model = "gpt-4o",
   temperature = 0.7,
   maxTokens = 2000,
 }: CallOpenAIOptions): Promise<string> {
@@ -64,7 +64,7 @@ export interface CallOpenAIJSONOptions extends CallOpenAIOptions {
 export async function callOpenAIJSON<T = any>({
   system,
   user,
-  model = "gpt-4-turbo-preview",
+  model = "gpt-4o",
   temperature = 0.7,
   maxTokens = 2000,
 }: CallOpenAIJSONOptions): Promise<T> {

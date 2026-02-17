@@ -78,15 +78,15 @@ Phase 4: MARKET ATTACK  (Weeks 7-10)  ← Content, partnerships, sales
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# PHASE 1: REPOSITION (Weeks 1-2)
+## PHASE 1: REPOSITION (Weeks 1-2)
 
-# "Make the product look like what it already is."
+> "Make the product look like what it already is."
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## 1.1 — Homepage & Marketing Messaging Overhaul
+### 1.1 — Homepage & Marketing Messaging Overhaul
 
 ### TODO-1.1.1: Rewrite Hero Section
 
@@ -302,15 +302,15 @@ After onboarding, show guided tour highlighting:
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# PHASE 2: FLAGSHIP — Storm Command Center (Weeks 3-4)
+## PHASE 2: FLAGSHIP — Storm Command Center (Weeks 3-4)
 
-# "The one screen that makes contractors say: I need this."
+> "The one screen that makes contractors say: I need this."
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## 2.1 — Storm Command Center Dashboard
+### 2.1 — Storm Command Center Dashboard
 
 ### TODO-2.1.1: Build Storm Command Center Page
 
@@ -454,15 +454,15 @@ This is THE feature that sells to storm contractors. Make it prominent.
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# PHASE 3: BETA LAUNCH (Weeks 5-6)
+## PHASE 3: BETA LAUNCH (Weeks 5-6)
 
-# "Put it in real hands. Collect real data."
+> "Put it in real hands. Collect real data."
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## 3.1 — Beta Contractor Recruitment
+### 3.1 — Beta Contractor Recruitment
 
 ### TODO-3.1.1: Identify & Recruit Beta Contractors
 
@@ -579,15 +579,15 @@ Pre-build templates for top carriers:
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# PHASE 4: MARKET ATTACK (Weeks 7-10)
+## PHASE 4: MARKET ATTACK (Weeks 7-10)
 
-# "Own the conversation in the restoration vertical."
+> "Own the conversation in the restoration vertical."
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## 4.1 — Content Marketing Strategy
+### 4.1 — Content Marketing Strategy
 
 ### TODO-4.1.1: Create SEO Content Hub
 
@@ -706,13 +706,13 @@ Over time, build anonymized intelligence:
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# EXPANSION ROADMAP (Post-Dominance)
+## EXPANSION ROADMAP (Post-Dominance)
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## After winning the storm/roofing vertical:
+### After winning the storm/roofing vertical:
 
 | Phase   | Vertical                                   | Timeline |
 | ------- | ------------------------------------------ | -------- |
@@ -725,15 +725,15 @@ Over time, build anonymized intelligence:
 
 ---
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-# IMMEDIATE EXECUTION CHECKLIST
+## IMMEDIATE EXECUTION CHECKLIST
 
-# "What to do THIS WEEK"
+> "What to do THIS WEEK"
 
-# ═══════════════════════════════════════════════════════════════
+---
 
-## Week 1 — Messaging & Identity
+### Week 1 — Messaging & Identity
 
 - [ ] Rewrite homepage hero (TODO-1.1.1)
 - [ ] Restructure feature cards (TODO-1.1.2)
@@ -775,7 +775,7 @@ Over time, build anonymized intelligence:
 
 ---
 
-# 📐 SUCCESS METRICS
+## 📐 SUCCESS METRICS
 
 | Metric                     | 30 Days  | 60 Days | 90 Days |
 | -------------------------- | -------- | ------- | ------- |
@@ -790,7 +790,7 @@ Over time, build anonymized intelligence:
 
 ---
 
-# 🛑 ANTI-PATTERNS TO AVOID
+## 🛑 ANTI-PATTERNS TO AVOID
 
 1. **Do NOT build more backend abstractions.** The infrastructure layer is complete.
 2. **Do NOT optimize performance yet.** Ship features, measure, then optimize.
@@ -802,7 +802,7 @@ Over time, build anonymized intelligence:
 
 ---
 
-# 🏁 THE BOTTOM LINE
+## 🏁 THE BOTTOM LINE
 
 **You have built a 327-page, AI-powered, fully-integrated platform
 with weather verification, claims management, material routing,

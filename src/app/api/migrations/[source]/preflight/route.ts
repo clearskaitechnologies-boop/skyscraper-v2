@@ -15,7 +15,7 @@ import { AccuLynxClient } from "@/lib/migrations/acculynx-client";
 import type { MigrationSource } from "@/lib/migrations/base-engine";
 import { JobNimbusClient } from "@/lib/migrations/jobnimbus-client";
 import prisma from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { withAuth } from "@/lib/auth/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -44,22 +44,15 @@ interface PreflightResult {
   warnings: string[];
 }
 
-export async function POST(
-  request: NextRequest,
-  { params }: { params: Promise<{ source: string }> }
-) {
-  const { source } = await params;
+export const POST = withAuth(async (request: NextRequest, { orgId }) => {
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split("/");
+  const source = pathParts[pathParts.indexOf("migrations") + 1];
   const upperSource = source.toUpperCase() as MigrationSource;
 
   // Validate source
   if (!SUPPORTED_SOURCES.includes(upperSource)) {
     return NextResponse.json({ error: `Unsupported migration source: ${source}` }, { status: 400 });
-  }
-
-  // Auth check
-  const { userId, orgId } = await auth();
-  if (!userId || !orgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   // Parse body
@@ -81,7 +74,7 @@ export async function POST(
     logger.error(`[Migration Preflight] ${upperSource} error:`, error);
     return NextResponse.json({ error: error.message || "Preflight check failed" }, { status: 500 });
   }
-}
+});
 
 async function runPreflight(
   source: MigrationSource,
@@ -112,7 +105,7 @@ async function runPreflight(
       preview.contacts.sample = contactsResult.data.slice(0, 3).map((c) => ({
         name: `${c.first_name || ""} ${c.last_name || ""}`.trim() || "Unknown",
         email: c.email,
-        phone: c.phone,
+        phone: c.mobile_phone || c.home_phone || c.work_phone,
       }));
 
       // Fetch jobs count
@@ -120,7 +113,7 @@ async function runPreflight(
       preview.jobs.total = jobsResult.totalCount;
       preview.jobs.sample = jobsResult.data.slice(0, 3).map((j) => ({
         name: j.name,
-        status: j.status,
+        status: j.status_name,
         createdDate: j.date_created,
       }));
 

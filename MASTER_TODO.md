@@ -97,6 +97,7 @@
 - [x] Fixed 18 broken multi-line imports
 - [x] Fixed duplicate logger imports (observability collision)
 - [x] Committed as isolated change
+
 </details>
 
 <details>
@@ -106,6 +107,7 @@
 - [x] Archived 52 agent infrastructure files → `archive/unused-agents/`
 - [x] Archived 8 AI schema files → `archive/unused-ai-schemas/`
 - [x] Merged to main, tagged v2.0-architecture-stable
+
 </details>
 
 <details>
@@ -117,6 +119,7 @@
 - [x] `src/lib/domain/reports/index.ts` — Report workflow (11,819 bytes)
 - [x] `src/lib/domain/trades/index.ts` — Trades network (14,462 bytes)
 - [x] Added missing functions: `finishReport`, `startReport`, `regenerateReport`, `shareClaimWithClient`
+
 </details>
 
 <details>
@@ -128,6 +131,7 @@
 - [x] Migration engines: AccuLynx + JobNimbus frameworks
 - [x] API route governance: `src/lib/api/route-registry.ts`
 - [x] Integrations: QuickBooks + ABC Supply + Weather clients
+
 </details>
 
 <details>
@@ -139,6 +143,7 @@
 - API Rationalization Phase 1 — Claims Tree Collapse
 - API Rationalization Phase 2 — Portal/Trades/Reports
 - Service Layer Extraction Phase 2.5
+
 </details>
 
 ---

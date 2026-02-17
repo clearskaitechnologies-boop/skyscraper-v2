@@ -1,18 +1,33 @@
 /**
  * Database Helper using Node-Postgres (pg)
  *
- * Provides connection pooling and query helpers for PostgreSQL.
- * Used by worker processes and server-side code.
+ * ⚠️  DEPRECATED — Prefer `prisma` from `@/lib/prisma` for all new code.
  *
- * IMPORTANT: This uses a singleton pattern to prevent "Called end on pool more than once"
+ * This raw pg Pool is retained ONLY for:
+ *  1. LISTEN/NOTIFY (Prisma doesn't support Postgres pub/sub)
+ *  2. Standalone workers/scripts outside Next.js
+ *  3. Legacy consumers being migrated (see TODO below)
+ *
+ * For raw SQL in API routes, use:
+ *   import prisma from "@/lib/prisma";
+ *   const rows = await prisma.$queryRaw`SELECT * FROM ...`;
+ *   await prisma.$executeRaw`UPDATE ... SET ...`;
+ *
+ * Pool reduced from max=10 → max=3 to free Supabase pooler connections
+ * for Prisma. Target: migrate remaining 37 consumers, then delete this file.
+ *
+ * IMPORTANT: Singleton pattern prevents "Called end on pool more than once"
  * errors in serverless environments (Vercel). Never call pool.end() in API routes!
  */
 
-import { Pool, PoolClient, QueryResultRow } from "pg";
 import { logger } from "@/lib/logger";
+import { Pool, PoolClient, QueryResultRow } from "pg";
+
+// Re-export Prisma for easy migration — consumers can switch imports gradually
+export { default as prisma } from "@/lib/prisma";
 
 // =============================================================================
-// SINGLETON POOL (Vercel/Serverless Safe)
+// SINGLETON POOL (Vercel/Serverless Safe) — DEPRECATED, max=3
 // =============================================================================
 
 declare global {
@@ -58,11 +73,12 @@ function makePool(): Pool {
       connectionString.includes("sslmode=require") || isProd
         ? { rejectUnauthorized: false }
         : undefined,
-    // Tune pool size for serverless (lower is better)
-    max: parseInt(process.env.PGPOOL_MAX || "10", 10),
-    idleTimeoutMillis: 30_000,
+    // ⚠️  REDUCED from 10 → 3 to free pooler slots for Prisma
+    // Only LISTEN/NOTIFY and legacy consumers should use this pool
+    max: parseInt(process.env.PGPOOL_MAX || "3", 10),
+    idleTimeoutMillis: 15_000, // Reduced from 30s to release connections faster
     connectionTimeoutMillis: 10_000,
-    application_name: "skai-app", // Helps with Postgres monitoring
+    application_name: "skai-legacy-pg", // Distinct from Prisma for monitoring
   });
 }
 
@@ -74,10 +90,13 @@ if (!global.__pgPool) {
 }
 
 // Primary export (recommended)
+/** @deprecated Use `prisma` from `@/lib/prisma` instead. This pool is retained only for LISTEN/NOTIFY. */
 export const pgPool: Pool = _pgPool;
 
 // Legacy exports for backward compatibility
+/** @deprecated Use `prisma` from `@/lib/prisma` instead */
 export const pool: Pool = _pgPool;
+/** @deprecated Use `prisma` from `@/lib/prisma` instead */
 export const db: Pool = _pgPool; // Alias for pool (used in some API routes)
 
 // Log pool errors
@@ -94,6 +113,7 @@ export type Row = QueryResultRow;
 
 /**
  * Execute parameterized query and return rows
+ * @deprecated Use `prisma.$queryRaw` instead
  *
  * @param text - SQL query with $1, $2, etc. placeholders
  * @param params - Parameter values

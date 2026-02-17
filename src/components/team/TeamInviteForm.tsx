@@ -10,7 +10,7 @@ interface TeamInviteFormProps {
 
 export default function TeamInviteForm({ onSuccess }: TeamInviteFormProps) {
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"admin" | "member">("member");
+  const [role, setRole] = useState("member");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -79,11 +79,17 @@ export default function TeamInviteForm({ onSuccess }: TeamInviteFormProps) {
             <select
               title="Select role"
               value={role}
-              onChange={(e) => setRole(e.target.value as "admin" | "member")}
+              onChange={(e) => setRole(e.target.value)}
               className="w-full rounded-xl border border-[color:var(--border)] bg-[var(--surface-2)] px-4 py-3 text-[color:var(--text)] focus:outline-none focus:ring-2 focus:ring-[color:var(--primary)]"
             >
-              <option value="member">Member - Can view and edit claims</option>
+              <option value="member">Member - Standard team access</option>
               <option value="admin">Admin - Full access including team management</option>
+              <option value="manager">Manager - Manages projects & workflows</option>
+              <option value="project_manager">Project Manager - Oversees assigned projects</option>
+              <option value="sales_rep">Sales Rep - Creates leads & claims</option>
+              <option value="field_tech">Field Technician - Field updates & photos</option>
+              <option value="finance">Finance - Financial reports & billing</option>
+              <option value="viewer">Viewer - Read-only access</option>
             </select>
           </div>
 

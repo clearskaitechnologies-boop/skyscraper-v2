@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -40,7 +40,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
     logger.debug("[claim-assistant] Making OpenAI request for user:", userId || "demo");
 
     const completion = await openai.chat.completions.create({
-      model: "gpt-4",
+      model: "gpt-4o",
       messages: [
         { role: "system", content: systemPrompt },
         ...contextMessages,

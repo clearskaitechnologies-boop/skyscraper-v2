@@ -82,12 +82,12 @@ export function withAuth(handler: AuthenticatedHandler, options?: RequireAuthOpt
  * });
  */
 export function withAdmin(handler: AuthenticatedHandler) {
-  return withAuth(handler, { roles: ["ADMIN"] });
+  return withAuth(handler, { roles: ["ADMIN", "OWNER"] });
 }
 
 /**
  * Manager-or-above convenience wrapper.
  */
 export function withManager(handler: AuthenticatedHandler) {
-  return withAuth(handler, { roles: ["ADMIN", "MANAGER"] });
+  return withAuth(handler, { roles: ["OWNER", "ADMIN", "MANAGER"] });
 }

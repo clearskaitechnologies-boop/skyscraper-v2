@@ -190,7 +190,7 @@ Respond in JSON format:
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",
@@ -267,7 +267,7 @@ If no supplements detected, return: { "supplements": [] }`;
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o",
       messages: [
         {
           role: "user",
@@ -322,7 +322,7 @@ Example formats:
 
   try {
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o",
       messages: [{ role: "user", content: prompt }],
       max_tokens: 200,
       temperature: 0.7,
@@ -521,7 +521,7 @@ export async function saveTimelineToDatabase(
       supplements: buildTimeline.supplements as any,
       narrativeText: buildTimeline.narrativeText,
       narrativeVersion: "carrier",
-      aiModelVersion: "gpt-4-vision-preview + gpt-4-turbo",
+      aiModelVersion: "gpt-4o",
       aiConfidenceScore: buildTimeline.aiConfidenceScore,
       totalPhotosAnalyzed: buildTimeline.totalPhotosAnalyzed,
       totalSupplementsDetected: buildTimeline.supplements.length,
