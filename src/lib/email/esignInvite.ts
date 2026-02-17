@@ -4,8 +4,8 @@
  * Send signature request emails via Resend
  */
 
-import { Resend } from "resend";
 import { logger } from "@/lib/observability/logger";
+import { Resend } from "resend";
 
 let _resend: Resend | null = null;
 

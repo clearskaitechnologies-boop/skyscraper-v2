@@ -5,8 +5,10 @@
  * POST /api/export/complete-packet
  */
 
+export const dynamic = "force-dynamic";
+
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 import { createClient } from "@supabase/supabase-js";
 import JSZip from "jszip";
 import { NextRequest, NextResponse } from "next/server";
