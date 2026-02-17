@@ -164,14 +164,16 @@ export default function ClaimWeatherPage({ params }: Props) {
             <div>
               <Label htmlFor="loss-type">Loss Type (optional)</Label>
               <Select
-                value={lossType}
-                onValueChange={(value) => setLossType(value as typeof lossType)}
+                value={lossType || "NONE"}
+                onValueChange={(value) =>
+                  setLossType(value === "NONE" ? "none" : (value as typeof lossType))
+                }
               >
                 <SelectTrigger id="loss-type">
                   <SelectValue placeholder="Not specified" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Not specified</SelectItem>
+                  <SelectItem value="NONE">Not specified</SelectItem>
                   <SelectItem value="hail">Hail</SelectItem>
                   <SelectItem value="wind">Wind</SelectItem>
                   <SelectItem value="water">Water</SelectItem>
