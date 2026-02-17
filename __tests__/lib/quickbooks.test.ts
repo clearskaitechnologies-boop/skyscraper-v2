@@ -2,14 +2,14 @@
  * Tests for QuickBooks integration + token encryption
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
-  encryptToken,
   decryptToken,
+  encryptToken,
+  ensureEncrypted,
   isEncrypted,
   safeDecrypt,
-  ensureEncrypted,
 } from "@/lib/crypto/token-encryption";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Token Encryption", () => {
   const originalEnv = process.env.TOKEN_ENCRYPTION_KEY;
@@ -82,8 +82,7 @@ describe("Token Encryption", () => {
   });
 
   it("handles special characters in tokens", () => {
-    const tokenWithSpecials =
-      'token/with+special=chars&more!@#$%^&*(){}[]|\\:";\'<>?,./';
+    const tokenWithSpecials = "token/with+special=chars&more!@#$%^&*(){}[]|\\:\";'<>?,./";
     const encrypted = encryptToken(tokenWithSpecials);
     const decrypted = decryptToken(encrypted);
 
@@ -105,9 +104,7 @@ describe("QuickBooks OAuth Flow", () => {
     vi.stubEnv("QUICKBOOKS_CLIENT_ID", "test-client-id");
     vi.stubEnv("QUICKBOOKS_REDIRECT_URI", "https://example.com/callback");
 
-    const { getAuthorizationUrl } = await import(
-      "@/lib/integrations/quickbooks"
-    );
+    const { getAuthorizationUrl } = await import("@/lib/integrations/quickbooks");
     const url = getAuthorizationUrl("org-123");
 
     expect(url).toContain("appcenter.intuit.com");

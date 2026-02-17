@@ -6,11 +6,11 @@
  * The callback route handles the OAuth response.
  */
 
-import { NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
 import { getAuthorizationUrl } from "@/lib/integrations/quickbooks";
-import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
+import { safeOrgContext } from "@/lib/safeOrgContext";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -51,9 +51,6 @@ export async function POST() {
     });
   } catch (err: any) {
     logger.error("[QB] Connect error:", err);
-    return NextResponse.json(
-      { error: "Failed to start QuickBooks connection" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to start QuickBooks connection" }, { status: 500 });
   }
 }
