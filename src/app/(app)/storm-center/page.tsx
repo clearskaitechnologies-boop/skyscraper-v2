@@ -266,18 +266,17 @@ export default async function StormCenterPage() {
             <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">Quick Actions</h2>
             <div className="grid gap-2">
               {[
-                { label: "New Claim", href: "/claims", icon: "📋" },
-                { label: "Generate Supplement", href: "/ai/tools/supplement", icon: "⚡" },
-                { label: "Verify Weather", href: "/quick-dol", icon: "🌩️" },
-                { label: "Estimate Materials", href: "/materials/estimator", icon: "📦" },
-                { label: "View Reports", href: "/reports/hub", icon: "📊" },
+                { label: "New Claim", href: "/claims" },
+                { label: "Generate Supplement", href: "/ai/tools/supplement" },
+                { label: "Verify Weather", href: "/quick-dol" },
+                { label: "Estimate Materials", href: "/materials/estimator" },
+                { label: "View Reports", href: "/reports/hub" },
               ].map((action) => (
                 <Link
                   key={action.href}
                   href={action.href}
                   className="flex items-center gap-3 rounded-lg border border-slate-100 p-3 text-sm font-medium text-slate-700 transition-all hover:border-blue-200 hover:bg-blue-50 dark:border-slate-800 dark:text-slate-300 dark:hover:border-blue-800 dark:hover:bg-blue-900/20"
                 >
-                  <span className="text-lg">{action.icon}</span>
                   {action.label}
                 </Link>
               ))}

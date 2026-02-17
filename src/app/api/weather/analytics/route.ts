@@ -25,27 +25,47 @@ export async function GET(req: NextRequest) {
     const orgId = ctx.orgId;
 
     // ── Weather Reports Summary ──
-    const reports = await prisma.weather_reports.findMany({
-      where: { createdById: userId },
-      orderBy: { createdAt: "desc" },
-      take: 200,
-      select: {
-        id: true,
-        address: true,
-        mode: true,
-        primaryPeril: true,
-        overallAssessment: true,
-        confidence: true,
-        dol: true,
-        periodFrom: true,
-        periodTo: true,
-        createdAt: true,
-        claimId: true,
-        leadId: true,
-        candidateDates: true,
-        events: true,
-      },
-    });
+    let reports: Array<{
+      id: string;
+      address: string;
+      mode: string;
+      primaryPeril: string | null;
+      overallAssessment: string | null;
+      confidence: number | null;
+      dol: Date | null;
+      periodFrom: Date | null;
+      periodTo: Date | null;
+      createdAt: Date;
+      claimId: string | null;
+      leadId: string | null;
+      candidateDates: any;
+      events: any;
+    }> = [];
+    try {
+      reports = await prisma.weather_reports.findMany({
+        where: { createdById: userId },
+        orderBy: { createdAt: "desc" },
+        take: 200,
+        select: {
+          id: true,
+          address: true,
+          mode: true,
+          primaryPeril: true,
+          overallAssessment: true,
+          confidence: true,
+          dol: true,
+          periodFrom: true,
+          periodTo: true,
+          createdAt: true,
+          claimId: true,
+          leadId: true,
+          candidateDates: true,
+          events: true,
+        },
+      });
+    } catch (e) {
+      console.warn("[Weather Analytics] weather_reports query failed (non-fatal):", e);
+    }
 
     // ── Weather Events Summary ──
     let totalEvents = 0;
@@ -168,7 +188,17 @@ export async function GET(req: NextRequest) {
       topRegions,
       recentReports,
     });
-  } catch {
-    return NextResponse.json({ error: "Failed to load analytics" }, { status: 500 });
+  } catch (err: any) {
+    console.error("[Weather Analytics] Fatal error:", err?.message || err);
+    // Return empty-state data instead of 500 so the page still renders
+    return NextResponse.json({
+      summary: { totalReports: 0, claimsWithWeather: 0, avgConfidence: null, totalEvents: 0 },
+      events: { total: 0, hail: 0, wind: 0, tornado: 0, flood: 0 },
+      perils: {},
+      assessments: {},
+      monthlyTrend: [],
+      topRegions: [],
+      recentReports: [],
+    });
   }
 }
