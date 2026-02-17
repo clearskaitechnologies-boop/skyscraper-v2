@@ -11,7 +11,14 @@ import { Resend } from "resend";
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
 import prisma from "@/lib/prisma";
 
-const resend = new Resend(process.env.RESEND_API_KEY || "");
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export async function GET(req: Request) {
   const authError = verifyCronSecret(req);
@@ -40,7 +47,7 @@ export async function GET(req: Request) {
       try {
         if (!item.toEmail) throw new Error("No recipient");
 
-        await resend.emails.send({
+        await getResend()?.emails?.send({
           from: process.env.EMAIL_FROM || "ClearSkai <noreply@clearskai.com>",
           to: [item.toEmail],
           subject: item.subject,

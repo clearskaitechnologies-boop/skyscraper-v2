@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/observability/logger";
+import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";

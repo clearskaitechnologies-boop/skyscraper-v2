@@ -1,11 +1,18 @@
 export const dynamic = "force-dynamic";
+import { logger } from "@/lib/observability/logger";
 import { NextResponse } from "next/server";
-import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import prisma from "@/lib/prisma";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export async function POST(req: Request) {
   try {
@@ -48,7 +55,15 @@ export async function POST(req: Request) {
     )}`;
 
     // Send magic link email
-    await resend.emails.send({
+    const resendClient = getResend();
+    if (!resendClient) {
+      return NextResponse.json(
+        { ok: false, error: "Email service not configured" },
+        { status: 503 }
+      );
+    }
+
+    await resendClient.emails.send({
       from: "PreLossVision <noreply@prelossvision.com>",
       to: email,
       subject: `Your Secure Claim Portal Link - ${claim.claimNumber}`,

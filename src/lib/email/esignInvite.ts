@@ -5,9 +5,16 @@
  */
 
 import { Resend } from "resend";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export interface EsignInviteData {
   to: string; // recipient email
@@ -28,7 +35,7 @@ export async function sendEsignInvite(
   try {
     const fromEmail = process.env.RESEND_FROM_EMAIL || "sign@skaiscrape.com";
 
-    const result = await resend.emails.send({
+    const result = await getResend()?.emails?.send({
       from: `${data.companyName} <${fromEmail}>`,
       to: data.to,
       subject: `Please review and sign: ${data.documentTitle}`,
@@ -144,7 +151,7 @@ export async function sendEsignReminder(
   try {
     const fromEmail = process.env.RESEND_FROM_EMAIL || "sign@skaiscrape.com";
 
-    const result = await resend.emails.send({
+    const result = await getResend()?.emails?.send({
       from: `${data.companyName} <${fromEmail}>`,
       to: data.to,
       subject: `Reminder: Signature needed for ${data.documentTitle}`,

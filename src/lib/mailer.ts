@@ -4,15 +4,23 @@
 // Wrapper for Resend with React Email templates
 // =====================================================
 
+import { logger } from "@/lib/observability/logger";
 import * as Sentry from "@sentry/nextjs";
-import { logger } from "@/lib/logger";
 import { Resend } from "resend";
 
 import AcceptanceReceiptEmail from "@/email-templates/acceptance-receipt";
 import ReportReadyEmail from "@/email-templates/report-ready";
 import TeamInviteEmail from "@/email-templates/team-invite";
 
-const resend = new Resend(process.env.RESEND_API_KEY!);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+
 const FROM = process.env.EMAIL_FROM || "ClearSkai <no-reply@skaiscrape.com>";
 
 /**
@@ -27,7 +35,7 @@ export async function sendReportReadyEmail(opts: {
 }) {
   const { to, shareUrl, pdfUrl, recipientName, company } = opts;
 
-  return await resend.emails.send({
+  return await getResend()?.emails?.send({
     from: FROM,
     to,
     subject: "Your damage assessment report is ready",
@@ -57,7 +65,7 @@ export async function sendAcceptanceReceiptEmail(opts: {
     opts;
 
   try {
-    return await resend.emails.send({
+    return await getResend()?.emails?.send({
       from: FROM,
       to,
       subject: `Acceptance Receipt – Report ${reportId}`,
@@ -97,7 +105,7 @@ export async function sendTeamInviteEmail(opts: {
   const inviteUrl = `${baseUrl}/trades/join?token=${inviteToken}`;
 
   try {
-    return await resend.emails.send({
+    return await getResend()?.emails?.send({
       from: FROM,
       to,
       subject: `${inviterName} invited you to join ${companyName} on ClearSkai`,
@@ -135,7 +143,7 @@ export async function sendNotificationEmail(opts: {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://skaiscrape.com";
 
   try {
-    return await resend.emails.send({
+    return await getResend()?.emails?.send({
       from: FROM,
       to,
       subject,

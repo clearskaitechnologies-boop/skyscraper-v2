@@ -3,10 +3,17 @@
  * Sends emails when storm intakes are completed
  */
 
+import { logger } from "@/lib/observability/logger";
 import { Resend } from "resend";
-import { logger } from "@/lib/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "no-reply@skaiscrape.com";
 
 interface StormIntakeEmailData {
@@ -35,7 +42,7 @@ export async function sendOrgIntakeNotification(data: StormIntakeEmailData): Pro
     const severityLabel =
       severity >= 70 ? "High Risk" : severity >= 40 ? "Moderate Risk" : "Low Risk";
 
-    await resend.emails.send({
+    await getResend()?.emails?.send({
       from: FROM_EMAIL,
       to: data.orgEmail,
       subject: `🚨 New Storm Damage Intake - ${data.address || "Property"}`,
@@ -99,7 +106,7 @@ export async function sendHomeownerReport(data: StormIntakeEmailData): Promise<b
     const severityLabel =
       severity >= 70 ? "High Risk" : severity >= 40 ? "Moderate Risk" : "Low Risk";
 
-    await resend.emails.send({
+    await getResend()?.emails?.send({
       from: FROM_EMAIL,
       to: data.homeownerEmail,
       subject: `Your Storm Damage Assessment Report - ${data.address || "Property"}`,
