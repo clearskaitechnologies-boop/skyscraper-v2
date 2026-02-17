@@ -282,11 +282,11 @@ export function JobsCategoryBoard({ initialJobs }: JobsCategoryBoardProps) {
     try {
       // Claims use their own update endpoint, leads use /api/leads
       const isClaim = job.jobCategory === "claim";
-      const url = isClaim ? `/api/pipeline/move` : `/api/leads/${job.id}`;
-      const body = isClaim ? { claimId: job.id, stage: to } : { stage: to };
+      const url = isClaim ? `/api/claims/${job.id}` : `/api/leads/${job.id}`;
+      const body = { stage: to };
 
       const r = await fetch(url, {
-        method: isClaim ? "POST" : "PATCH",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });

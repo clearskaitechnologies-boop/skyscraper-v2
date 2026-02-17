@@ -100,10 +100,11 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
 
     setInviting(true);
     try {
-      const res = await fetch(`/api/claims/${claimId}/invite-client`, {
+      const res = await fetch(`/api/claims/${claimId}/mutate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          action: "invite_client",
           clientEmail: inviteEmail.trim(),
           clientName: inviteName.trim() || undefined,
         }),

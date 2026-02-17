@@ -7,7 +7,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
-import { getServerSession } from "@/lib/auth/session";
+import { getAuthContext } from "@/lib/auth/getAuthContext";
 import {
   calculateMaterials,
   createOrderDraft,
@@ -28,8 +28,8 @@ export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await getServerSession();
-    if (!session?.user) {
+    const session = await getAuthContext();
+    if (!session?.userId) {
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
     }
 
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      const orgId = session.user.organizationId;
+      const orgId = session.orgId;
       if (!orgId) {
         return NextResponse.json(
           { ok: false, error: "No organization linked to account" },
@@ -130,7 +130,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: false, error: "Missing order draft" }, { status: 400 });
       }
 
-      const orgId = session.user.organizationId;
+      const orgId = session.orgId;
       if (!orgId) {
         return NextResponse.json(
           { ok: false, error: "No organization linked to account" },
@@ -158,8 +158,8 @@ export async function POST(req: NextRequest) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
-  const session = await getServerSession();
-  if (!session?.user) {
+  const session = await getAuthContext();
+  if (!session?.userId) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
