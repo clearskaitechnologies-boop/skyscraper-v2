@@ -1,8 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 import { isPlatformAdmin } from "@/lib/security/roles";
 
@@ -28,13 +27,8 @@ const COMPANY_PAGE_PLANS = [
   "unlimited",
 ];
 
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     // Find the user's company membership
     const membership = await prisma.tradesCompanyMember.findUnique({
       where: { userId },
@@ -75,15 +69,15 @@ export async function GET(req: NextRequest) {
       unlockReason = "platform_admin";
     }
 
+    // Use orgId from withAuth — already DB-backed and server-resolved
     try {
-      const { orgId } = await ensureUserOrgContext(userId);
       const org = await prisma.org.findUnique({
         where: { id: orgId },
         select: { planKey: true },
       });
       planKey = org?.planKey || "solo";
     } catch (e) {
-      // Org context may not exist, use default
+      // Org lookup may fail for edge cases, use default
     }
 
     const memberCount = membership?.company?.members?.length || 1;
@@ -259,15 +253,10 @@ export async function GET(req: NextRequest) {
     logger.error("[trades/company] GET Error:", error);
     return NextResponse.json({ error: "Failed to fetch company" }, { status: 500 });
   }
-}
+});
 
-export async function PATCH(req: NextRequest) {
+export const PATCH = withAuth(async (req: NextRequest, { orgId, userId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
     const {
       name,
@@ -389,4 +378,4 @@ export async function PATCH(req: NextRequest) {
     logger.error("[trades/company] PATCH Error:", error);
     return NextResponse.json({ error: "Failed to update company" }, { status: 500 });
   }
-}
+});

@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { generateFullReport } from "@/lib/ai/reportGenerator";
 import { ReportGenerationContext } from "@/lib/ai/reportPrompts";
+import { withAuth } from "@/lib/auth/withAuth";
 import { createGeneratedDocument, updateDocumentStatus } from "@/lib/documents/manager";
 import prisma from "@/lib/prisma";
 
@@ -17,13 +17,8 @@ const CreateProposalSchema = z.object({
   notes: z.string().max(5000).nullish(),
 });
 
-export async function POST(request: Request) {
+export const POST = withAuth(async (request: NextRequest, { orgId, userId }) => {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
     const parsed = CreateProposalSchema.safeParse(body);
     if (!parsed.success) {
@@ -144,7 +139,7 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * Async function to generate proposal content
@@ -197,13 +192,8 @@ async function generateProposalAsync(
   }
 }
 
-export async function GET(request: Request) {
+export const GET = withAuth(async (_request: NextRequest, { orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     // Fetch proposals for organization
     const proposals = await prisma.$queryRaw<any[]>`SELECT 
         id, project_name, property_address, loss_type, 
@@ -218,4 +208,4 @@ export async function GET(request: Request) {
     logger.error("[Proposals] Failed to fetch proposals:", error);
     return NextResponse.json({ error: "Failed to fetch proposals" }, { status: 500 });
   }
-}
+});

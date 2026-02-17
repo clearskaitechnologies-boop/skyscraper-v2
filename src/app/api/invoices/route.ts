@@ -1,13 +1,13 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
-import { safeOrgContext } from "@/lib/safeOrgContext";
 
 // ---------------------------------------------------------------------------
 // GET  /api/invoices — List invoices for the org
@@ -33,13 +33,8 @@ const CreateInvoiceSchema = z.object({
   customerEmail: z.string().email().optional(),
 });
 
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async (req: NextRequest, { orgId }) => {
   try {
-    const ctx = await safeOrgContext();
-    if (ctx.status !== "ok" || !ctx.orgId) {
-      return apiError(401, "UNAUTHORIZED", "Authentication required");
-    }
-
     const url = new URL(req.url);
     const jobId = url.searchParams.get("jobId");
     const kind = url.searchParams.get("kind");
@@ -52,7 +47,7 @@ export async function GET(req: NextRequest) {
 
     // First get job IDs belonging to this org
     const orgJobs = await prisma.crm_jobs.findMany({
-      where: { org_id: ctx.orgId },
+      where: { org_id: orgId },
       select: { id: true },
     });
     const orgJobIds = new Set(orgJobs.map((j) => j.id));
@@ -78,7 +73,7 @@ export async function GET(req: NextRequest) {
     });
 
     // Filter to ensure org scoping
-    const filtered = invoices.filter((inv) => inv.crm_jobs?.org_id === ctx.orgId);
+    const filtered = invoices.filter((inv) => inv.crm_jobs?.org_id === orgId);
 
     const enriched = filtered.map((inv) => ({
       id: inv.id,
@@ -97,15 +92,10 @@ export async function GET(req: NextRequest) {
     logger.error("[invoices-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
-}
+});
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { orgId }) => {
   try {
-    const ctx = await safeOrgContext();
-    if (ctx.status !== "ok" || !ctx.orgId) {
-      return apiError(401, "UNAUTHORIZED", "Authentication required");
-    }
-
     const body = await req.json().catch(() => null);
     if (!body) return apiError(400, "INVALID_BODY", "Invalid JSON");
 
@@ -117,7 +107,7 @@ export async function POST(req: NextRequest) {
 
     // Verify job belongs to this org
     const job = await prisma.crm_jobs.findFirst({
-      where: { id: data.jobId, org_id: ctx.orgId },
+      where: { id: data.jobId, org_id: orgId },
     });
     if (!job) {
       return apiError(404, "JOB_NOT_FOUND", "Job not found in your organization");
@@ -164,4 +154,4 @@ export async function POST(req: NextRequest) {
     logger.error("[invoices-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
-}
+});

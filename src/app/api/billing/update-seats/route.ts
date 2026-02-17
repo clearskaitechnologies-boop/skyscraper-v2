@@ -1,5 +1,6 @@
 /**
- * POST /api/billing/update-seats
+ * POST /api/billing/update-seats — Update seat count (ADMIN/OWNER/MANAGER only)
+ * GET  /api/billing/update-seats — View current seat info (any authenticated user)
  *
  * Updates the seat count on an existing Stripe subscription.
  * Stripe handles proration automatically.
@@ -8,125 +9,99 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { PRICE_PER_SEAT_CENTS, validateSeatCount } from "@/lib/billing/seat-pricing";
 import prisma from "@/lib/prisma";
 import { getStripeClient } from "@/lib/stripe";
 
-export async function POST(req: NextRequest) {
-  try {
-    // ── Auth ────────────────────────────────────────────────────────
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+export const POST = withAuth(
+  async (req: NextRequest, { orgId, userId }) => {
+    try {
+      // ── Body ────────────────────────────────────────────────────────
+      const body = await req.json();
+      const newSeatCount = Number(body.seatCount);
+      const v = validateSeatCount(newSeatCount);
+      if (!v.valid) {
+        return NextResponse.json({ error: v.error }, { status: 400 });
+      }
 
-    // ── Body ────────────────────────────────────────────────────────
-    const body = await req.json();
-    const newSeatCount = Number(body.seatCount);
-    const v = validateSeatCount(newSeatCount);
-    if (!v.valid) {
-      return NextResponse.json({ error: v.error }, { status: 400 });
-    }
+      // ── Get subscription ────────────────────────────────────────────
+      const sub = await prisma.subscription.findUnique({
+        where: { orgId },
+      });
+      if (!sub || !sub.stripeSubId || !sub.stripeSubscriptionItemId) {
+        return NextResponse.json(
+          { error: "No active subscription found. Create one first." },
+          { status: 404 }
+        );
+      }
+      if (sub.status !== "active" && sub.status !== "trialing") {
+        return NextResponse.json(
+          { error: `Subscription is ${sub.status}. Cannot update seats.` },
+          { status: 400 }
+        );
+      }
 
-    // ── Resolve org ─────────────────────────────────────────────────
-    const membership = await prisma.user_organizations.findFirst({
-      where: { userId },
-      select: { organizationId: true },
-    });
-    if (!membership) {
-      return NextResponse.json({ error: "No organization found" }, { status: 404 });
-    }
-    const orgId = membership.organizationId;
+      // ── Stripe client ───────────────────────────────────────────────
+      const stripe = getStripeClient();
+      if (!stripe) {
+        return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
+      }
 
-    // ── Get subscription ────────────────────────────────────────────
-    const sub = await prisma.subscription.findUnique({
-      where: { orgId },
-    });
-    if (!sub || !sub.stripeSubId || !sub.stripeSubscriptionItemId) {
+      // ── Update quantity on Stripe ───────────────────────────────────
+      // Stripe automatically prorates when changing quantity mid-cycle
+      await stripe.subscriptionItems.update(sub.stripeSubscriptionItemId, {
+        quantity: newSeatCount,
+        proration_behavior: "always_invoice",
+      });
+
+      // ── Update local record ─────────────────────────────────────────
+      const oldSeatCount = sub.seatCount;
+      await prisma.subscription.update({
+        where: { orgId },
+        data: {
+          seatCount: newSeatCount,
+          updatedAt: new Date(),
+        },
+      });
+
+      logger.debug(`[update-seats] org=${orgId} seats: ${oldSeatCount} → ${newSeatCount}`);
+
+      return NextResponse.json({
+        success: true,
+        previousSeatCount: oldSeatCount,
+        newSeatCount,
+        monthlyTotal: (newSeatCount * PRICE_PER_SEAT_CENTS) / 100,
+        prorated: true,
+      });
+    } catch (error: any) {
+      logger.error("[update-seats] Error:", error);
       return NextResponse.json(
-        { error: "No active subscription found. Create one first." },
-        { status: 404 }
+        { error: error?.message || "Failed to update seats" },
+        { status: 500 }
       );
     }
-    if (sub.status !== "active" && sub.status !== "trialing") {
-      return NextResponse.json(
-        { error: `Subscription is ${sub.status}. Cannot update seats.` },
-        { status: 400 }
-      );
-    }
-
-    // ── Stripe client ───────────────────────────────────────────────
-    const stripe = getStripeClient();
-    if (!stripe) {
-      return NextResponse.json({ error: "Stripe not configured" }, { status: 503 });
-    }
-
-    // ── Update quantity on Stripe ───────────────────────────────────
-    // Stripe automatically prorates when changing quantity mid-cycle
-    await stripe.subscriptionItems.update(sub.stripeSubscriptionItemId, {
-      quantity: newSeatCount,
-      proration_behavior: "always_invoice",
-    });
-
-    // ── Update local record ─────────────────────────────────────────
-    const oldSeatCount = sub.seatCount;
-    await prisma.subscription.update({
-      where: { orgId },
-      data: {
-        seatCount: newSeatCount,
-        updatedAt: new Date(),
-      },
-    });
-
-    logger.debug(`[update-seats] org=${orgId} seats: ${oldSeatCount} → ${newSeatCount}`);
-
-    return NextResponse.json({
-      success: true,
-      previousSeatCount: oldSeatCount,
-      newSeatCount,
-      monthlyTotal: (newSeatCount * PRICE_PER_SEAT_CENTS) / 100,
-      prorated: true,
-    });
-  } catch (error: any) {
-    logger.error("[update-seats] Error:", error);
-    return NextResponse.json(
-      { error: error?.message || "Failed to update seats" },
-      { status: 500 }
-    );
-  }
-}
+  },
+  { roles: ["ADMIN", "OWNER", "MANAGER"] }
+);
 
 /**
  * GET /api/billing/update-seats
  *
- * Returns current seat information
+ * Returns current seat information (any authenticated user can view)
  */
-export async function GET() {
+export const GET = withAuth(async (_req: NextRequest, { orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const membership = await prisma.user_organizations.findFirst({
-      where: { userId },
-      select: { organizationId: true },
-    });
-    if (!membership) {
-      return NextResponse.json({ error: "No organization found" }, { status: 404 });
-    }
-
     const sub = await prisma.subscription.findUnique({
-      where: { orgId: membership.organizationId },
+      where: { orgId },
     });
 
     // Count active users in org
     const activeUsers = await prisma.user_organizations.count({
-      where: { organizationId: membership.organizationId },
+      where: { organizationId: orgId },
     });
 
     return NextResponse.json({
@@ -143,4 +118,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
+});
