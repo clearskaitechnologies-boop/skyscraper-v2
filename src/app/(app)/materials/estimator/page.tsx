@@ -14,6 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
 
 interface EstimateResult {
   materials: Array<{
@@ -43,8 +45,6 @@ const SHINGLE_TYPES = [
   { label: "Tile", value: "tile" },
 ];
 
-import { PageContainer } from "@/components/layout/PageContainer";
-import { PageHero } from "@/components/layout/PageHero";
 
 export default function MaterialEstimatorPage() {
   const [totalSqFt, setTotalSqFt] = useState("");
