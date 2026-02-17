@@ -4,31 +4,34 @@
     "src/app/**/page.tsx",
     "src/app/**/route.ts",
     "src/app/**/layout.tsx",
+    "src/app/**/loading.tsx",
+    "src/app/**/error.tsx",
+    "src/app/**/not-found.tsx",
+    "src/app/**/global-error.tsx",
+    "src/app/**/template.tsx",
+    "src/app/**/default.tsx",
     "middleware.ts",
-    "src/worker/**/*.ts"
+    "instrumentation.ts",
+    "instrumentation-client.ts",
+    "instrumentation-edge.ts",
+    "src/workers/**/*.ts",
+    "scripts/**/*.{ts,js,cjs,mjs}",
+    "cli/**/*.ts"
   ],
   "project": ["src/**/*.{ts,tsx}", "lib/**/*.ts"],
   "ignore": [
     "**/*.test.ts",
     "**/*.spec.ts",
+    "**/*.stories.tsx",
     "__tests__/**",
     "tests/**",
     "playwright/**",
     "archive/**",
-    "src/app/api/_disabled/**"
+    "src/app/api/_disabled/**",
+    ".storybook/**"
   ],
-  "ignoreDependencies": [
-    "@types/*",
-    "typescript",
-    "eslint-*",
-    "prettier*",
-    "@playwright/*",
-    "vitest",
-    "postcss",
-    "tailwindcss",
-    "autoprefixer"
-  ],
+  "ignoreDependencies": ["@types/*", "eslint-*"],
   "next": {
-    "entry": ["src/app/**/page.tsx", "src/app/**/route.ts"]
+    "entry": ["src/app/**/page.tsx", "src/app/**/route.ts", "src/app/**/layout.tsx"]
   }
 }

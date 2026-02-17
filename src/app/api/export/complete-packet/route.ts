@@ -7,8 +7,8 @@
 
 export const dynamic = "force-dynamic";
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/observability/logger";
+import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import JSZip from "jszip";
 import { NextRequest, NextResponse } from "next/server";
@@ -18,10 +18,22 @@ import prisma from "@/lib/prisma";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
 import { track } from "@/lib/track";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+let _supabase: ReturnType<typeof createClient> | null = null;
+
+function getSupabase() {
+  if (!_supabase) {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!url || !key) {
+      // During build, return null placeholder
+      return null as any;
+    }
+
+    _supabase = createClient(url, key);
+  }
+  return _supabase;
+}
 
 // Input validation schema
 const CompletePacketSchema = z.object({
@@ -168,6 +180,11 @@ https://skaiscrape.com`
     const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
 
     // Upload to Supabase Storage
+    const supabase = getSupabase();
+    if (!supabase) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
+    }
+
     const fileName = `complete-packets/${leadId}-${Date.now()}.zip`;
     const { data, error } = await supabase.storage.from("exports").upload(fileName, zipBuffer, {
       contentType: "application/zip",
