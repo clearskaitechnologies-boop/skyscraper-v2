@@ -49,57 +49,56 @@ interface PortalPageHeroProps {
 }
 
 const gradients: Record<string, { bg: string; accent: string; textMuted: string }> = {
-  // Aligned with SECTION_THEMES from src/config/sectionThemes.ts
+  // UNIFIED TEAL/TURQUOISE — all portal pages use the same brand color
   blue: {
-    bg: "from-blue-600 via-blue-700 to-indigo-700", // command
-    accent: "bg-blue-400/20",
-    textMuted: "text-blue-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   teal: {
-    bg: "from-teal-500 via-teal-600 to-cyan-600", // jobs
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
     accent: "bg-teal-400/20",
     textMuted: "text-teal-100",
   },
   cyan: {
-    bg: "from-cyan-500 via-teal-500 to-sky-600", // claims
-    accent: "bg-cyan-400/20",
-    textMuted: "text-cyan-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   orange: {
-    bg: "from-orange-500 via-orange-600 to-amber-600", // trades
-    accent: "bg-orange-400/20",
-    textMuted: "text-orange-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   violet: {
-    bg: "from-violet-600 via-purple-600 to-purple-700", // reports
-    accent: "bg-violet-400/20",
-    textMuted: "text-violet-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   indigo: {
-    bg: "from-indigo-500 via-indigo-600 to-blue-600", // network
-    accent: "bg-indigo-400/20",
-    textMuted: "text-indigo-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   emerald: {
-    bg: "from-emerald-500 via-emerald-600 to-green-700", // finance
-    accent: "bg-emerald-400/20",
-    textMuted: "text-emerald-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
-  // Legacy aliases (kept for backward compat)
   amber: {
-    bg: "from-orange-500 via-orange-600 to-amber-600",
-    accent: "bg-amber-400/20",
-    textMuted: "text-amber-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   purple: {
-    bg: "from-violet-600 via-purple-600 to-purple-700",
-    accent: "bg-purple-400/20",
-    textMuted: "text-purple-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
   rose: {
-    bg: "from-rose-600 via-pink-600 to-fuchsia-700",
-    accent: "bg-rose-400/20",
-    textMuted: "text-rose-100",
+    bg: "from-teal-600 via-teal-600 to-cyan-600",
+    accent: "bg-teal-400/20",
+    textMuted: "text-teal-100",
   },
 };
 

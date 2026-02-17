@@ -55,7 +55,7 @@ export default function MortgageCheckForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-5 py-3 font-semibold text-white shadow-[var(--glow)] transition hover:scale-[1.02]"
+        className="flex items-center gap-2 rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
       >
         <Plus className="h-4 w-4" /> Track Mortgage Check
       </button>
@@ -115,7 +115,7 @@ export default function MortgageCheckForm() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-xl bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] px-6 py-3 font-semibold text-white shadow-[var(--glow)] disabled:opacity-50"
+          className="rounded-xl bg-gradient-to-r from-teal-600 to-cyan-600 px-6 py-3 font-semibold text-white shadow-lg disabled:opacity-50"
         >
           {loading ? "Saving..." : "Track Check"}
         </button>

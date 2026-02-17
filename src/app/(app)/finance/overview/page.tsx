@@ -68,9 +68,51 @@ export default function FinancialOverviewPage() {
       try {
         const res = await fetch("/api/finance/overview");
         const json = await res.json();
-        if (json.success) setData(json.data);
+        if (json.success) {
+          setData(json.data);
+        } else if (!res.ok) {
+          // API returned an error — provide zeroed-out data so the page still renders
+          console.warn("Finance API returned", res.status, json.error || "Unknown error");
+          setData({
+            revenue: { total: 0, contract: 0, supplement: 0 },
+            costs: { total: 0, material: 0, labor: 0, overhead: 0, other: 0 },
+            profit: { gross: 0, margin: 0 },
+            commissions: {},
+            invoices: { count: 0, totalBilled: 0, totalCollected: 0, outstanding: 0 },
+            ar: { invoiced: 0, collected: 0, outstanding: 0 },
+            teamPerformance: {
+              totalRevenue: 0,
+              commissionOwed: 0,
+              commissionPaid: 0,
+              commissionPending: 0,
+              claimsSigned: 0,
+              claimsApproved: 0,
+              repCount: 0,
+            },
+            jobCount: 0,
+          });
+        }
       } catch (e) {
         console.error("Finance overview fetch failed:", e);
+        // On network error, still render with zeroed data
+        setData({
+          revenue: { total: 0, contract: 0, supplement: 0 },
+          costs: { total: 0, material: 0, labor: 0, overhead: 0, other: 0 },
+          profit: { gross: 0, margin: 0 },
+          commissions: {},
+          invoices: { count: 0, totalBilled: 0, totalCollected: 0, outstanding: 0 },
+          ar: { invoiced: 0, collected: 0, outstanding: 0 },
+          teamPerformance: {
+            totalRevenue: 0,
+            commissionOwed: 0,
+            commissionPaid: 0,
+            commissionPending: 0,
+            claimsSigned: 0,
+            claimsApproved: 0,
+            repCount: 0,
+          },
+          jobCount: 0,
+        });
       } finally {
         setLoading(false);
       }

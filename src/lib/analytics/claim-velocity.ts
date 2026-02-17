@@ -72,7 +72,7 @@ export interface TrendComparison {
 
 // ── Constants ──
 
-const CLAIM_STAGES = [
+const _CLAIM_STAGES = [
   "INTAKE",
   "INSPECTION",
   "ESTIMATE",

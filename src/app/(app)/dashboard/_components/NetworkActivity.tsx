@@ -37,7 +37,7 @@ const profileFetcher = async (u: string) => {
 export default function NetworkActivity() {
   const { data, isLoading } = useSWR("/api/me/network-metrics", fetcher);
   const { data: profileData, isLoading: profileLoading } = useSWR(
-    "/api/trades/profile/me",
+    "/api/trades/profile",
     profileFetcher
   );
 

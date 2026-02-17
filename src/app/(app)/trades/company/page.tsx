@@ -166,6 +166,18 @@ export default function CompanyPage() {
           companyData.members = [];
         }
         setData(companyData);
+      } else {
+        // If API returned a non-ok response, still try to parse it for error info
+        const errBody = await companyRes.json().catch(() => ({}));
+        // Provide a fallback data shape so the page renders the "No Company" state cleanly
+        setData({
+          company: null,
+          members: [],
+          isAdmin: false,
+          companyPageUnlocked: errBody.companyPageUnlocked ?? true,
+          unlockReason: errBody.unlockReason,
+          requirementsToUnlock: errBody.requirementsToUnlock,
+        });
       }
 
       if (seatsRes.ok) {

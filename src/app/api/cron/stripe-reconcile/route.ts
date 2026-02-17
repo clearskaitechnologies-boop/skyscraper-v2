@@ -33,6 +33,10 @@ export async function GET(req: Request) {
   const authError = verifyCronSecret(req);
   if (authError) return authError;
 
+  let checked = 0;
+  let fixed = 0;
+  const errors: string[] = [];
+
   try {
     // Find orgs with active/grace status
     const orgs = await prisma.org.findMany({
@@ -54,10 +58,6 @@ export async function GET(req: Request) {
         },
       },
     });
-
-    let checked = 0;
-    let fixed = 0;
-    const errors: string[] = [];
 
     for (const Org of orgs) {
       try {
@@ -133,6 +133,11 @@ export async function GET(req: Request) {
         error: error instanceof Error ? error.message : "Reconciliation failed",
       },
       { status: 500 }
+    );
+  } finally {
+    // Log partial progress if interrupted mid-loop (5-minute timeout)
+    logger.info(
+      `[stripe-reconcile] final progress: checked=${checked}, fixed=${fixed}, errors=${errors.length}`
     );
   }
 }

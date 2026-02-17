@@ -122,8 +122,8 @@ export function ComparisonTable() {
             SkaiScraper vs. The Rest
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-            Other tools do project management. SkaiScraper does claim intelligence. Here's what
-            you're missing.
+            Other tools do project management. SkaiScraper does claim intelligence. Here&apos;s what
+            you&apos;re missing.
           </p>
         </div>
 

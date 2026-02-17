@@ -87,6 +87,9 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviting, setInviting] = useState(false);
   const inviteInputRef = useRef<HTMLInputElement>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
+  const MEMBERS_PER_PAGE = 25;
 
   /* ── Derived billing values ───────────────────────────────────── */
   const hasSubscription = seatData?.subscription?.hasSubscription;
@@ -226,8 +229,26 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
         } else {
           toast.success(`Invitation sent to ${inviteEmail}`);
         }
+        // Show placeholder animation before reload
+        setShowPlaceholder(true);
+        const placeholderMember: Member = {
+          id: `placeholder-${Date.now()}`,
+          name: inviteEmail.split("@")[0],
+          email: inviteEmail,
+          role: "member",
+          status: "pending",
+          createdAt: new Date().toISOString(),
+        };
+        setMemberList((prev) => [...prev, placeholderMember]);
+        // Jump to the last page to show the new placeholder
+        const newTotal = memberList.length + 1;
+        setCurrentPage(Math.ceil(newTotal / MEMBERS_PER_PAGE));
         setInviteEmail("");
-        window.location.reload();
+        // Reload after a brief delay so user sees the placeholder
+        setTimeout(() => {
+          setShowPlaceholder(false);
+          window.location.reload();
+        }, 2000);
       } else {
         toast.error(data.error || "Failed to send invitation");
       }
@@ -310,6 +331,15 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
 
   const totalPaidSeats = hasSubscription ? currentSeats : 0;
   const emptySlots = Math.max(0, totalPaidSeats - memberList.length);
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(memberList.length / MEMBERS_PER_PAGE));
+  const paginatedMembers = memberList.slice(
+    (currentPage - 1) * MEMBERS_PER_PAGE,
+    currentPage * MEMBERS_PER_PAGE
+  );
+  // Only show empty slots on the last page
+  const showEmptySlots = currentPage === totalPages;
 
   /* ── Render ───────────────────────────────────────────────────── */
 
@@ -614,12 +644,19 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
           <h3 className="text-lg font-bold text-[color:var(--text)]">
             Team Members ({memberList.length})
           </h3>
-          {memberList.length > 0 && (
-            <Button size="sm" variant="outline" onClick={focusInvite}>
-              <UserPlus className="mr-2 h-4 w-4" />
-              Invite
-            </Button>
-          )}
+          <div className="flex items-center gap-3">
+            {totalPages > 1 && (
+              <span className="text-sm text-slate-500">
+                Page {currentPage} of {totalPages}
+              </span>
+            )}
+            {memberList.length > 0 && (
+              <Button size="sm" variant="outline" onClick={focusInvite}>
+                <UserPlus className="mr-2 h-4 w-4" />
+                Invite
+              </Button>
+            )}
+          </div>
         </div>
 
         {memberList.length === 0 ? (
@@ -634,17 +671,20 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
           </div>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {memberList.map((member, idx) => {
-              const isOwner = idx === 0;
+            {paginatedMembers.map((member, idx) => {
+              const isOwner = (currentPage - 1) * MEMBERS_PER_PAGE + idx === 0;
+              const isNewPlaceholder = showPlaceholder && member.id.startsWith("placeholder-");
               return (
                 <div
                   key={member.id}
                   className={`rounded-2xl border p-4 transition-all ${
-                    isOwner
-                      ? "border-green-200 bg-green-50/60 dark:border-green-800 dark:bg-green-900/20"
-                      : member.status === "active"
-                        ? "border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl"
-                        : "border-amber-200 bg-amber-50/60 dark:border-amber-800 dark:bg-amber-900/20"
+                    isNewPlaceholder
+                      ? "animate-pulse border-teal-300 bg-teal-50/60 ring-2 ring-teal-400/50 dark:border-teal-700 dark:bg-teal-900/20"
+                      : isOwner
+                        ? "border-green-200 bg-green-50/60 dark:border-green-800 dark:bg-green-900/20"
+                        : member.status === "active"
+                          ? "border-[color:var(--border)] bg-[var(--surface-glass)] backdrop-blur-xl"
+                          : "border-amber-200 bg-amber-50/60 dark:border-amber-800 dark:bg-amber-900/20"
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -738,26 +778,60 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
               );
             })}
 
-            {/* Empty seat placeholders */}
-            {Array.from({ length: emptySlots }).map((_, i) => (
-              <div
-                key={`empty-${i}`}
-                className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-4 dark:border-slate-700 dark:bg-slate-800/30"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-dashed border-slate-300 dark:border-slate-600">
-                    <UserPlus className="h-5 w-5 text-slate-400" />
+            {/* Empty seat placeholders — only on last page */}
+            {showEmptySlots &&
+              Array.from({ length: emptySlots }).map((_, i) => (
+                <div
+                  key={`empty-${i}`}
+                  className="rounded-2xl border border-dashed border-slate-300 bg-slate-50/50 p-4 dark:border-slate-700 dark:bg-slate-800/30"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border-2 border-dashed border-slate-300 dark:border-slate-600">
+                      <UserPlus className="h-5 w-5 text-slate-400" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-slate-500">Open Seat</p>
+                      <p className="text-xs text-slate-400">Ready for a team member</p>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={focusInvite}>
+                      Invite
+                    </Button>
                   </div>
-                  <div className="flex-1">
-                    <p className="text-sm font-semibold text-slate-500">Open Seat</p>
-                    <p className="text-xs text-slate-400">Ready for a team member</p>
-                  </div>
-                  <Button size="sm" variant="outline" onClick={focusInvite}>
-                    Invite
-                  </Button>
                 </div>
-              </div>
+              ))}
+          </div>
+        )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage <= 1}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            >
+              Previous
+            </Button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Button
+                key={page}
+                variant={page === currentPage ? "default" : "outline"}
+                size="sm"
+                className={page === currentPage ? "bg-teal-600 text-white hover:bg-teal-700" : ""}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </Button>
             ))}
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={currentPage >= totalPages}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>

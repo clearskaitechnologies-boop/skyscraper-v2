@@ -1,10 +1,10 @@
 /**
  * ============================================================================
- * MASTER SECTION COLOR SYSTEM
+ * MASTER SECTION COLOR SYSTEM — UNIFIED TEAL/TURQUOISE
  * ============================================================================
  *
- * Intentional color psychology + hierarchy clarity.
- * Users *feel* where they are without thinking.
+ * ALL sections use the same teal/turquoise gradient.
+ * Clean, unified brand identity across every page.
  *
  * Only the header gradient changes. Everything else stays:
  * - Same glass cards
@@ -32,36 +32,36 @@ export interface ThemeConfig {
 
 export const SECTION_THEMES: Record<SectionTheme, ThemeConfig> = {
   command: {
-    gradient: "bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700",
-    subtitleColor: "text-blue-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   jobs: {
     gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
     subtitleColor: "text-teal-200/80",
   },
   claims: {
-    gradient: "bg-gradient-to-r from-sky-600 via-teal-600 to-cyan-600",
-    subtitleColor: "text-sky-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   trades: {
-    gradient: "bg-gradient-to-r from-amber-600 via-orange-600 to-orange-700",
-    subtitleColor: "text-amber-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   reports: {
-    gradient: "bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-700",
-    subtitleColor: "text-violet-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   network: {
-    gradient: "bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-600",
-    subtitleColor: "text-indigo-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   finance: {
-    gradient: "bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-700",
-    subtitleColor: "text-emerald-200/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
   settings: {
-    gradient: "bg-gradient-to-r from-slate-600 via-slate-700 to-slate-800",
-    subtitleColor: "text-slate-300/80",
+    gradient: "bg-gradient-to-r from-teal-600 via-teal-600 to-cyan-600",
+    subtitleColor: "text-teal-200/80",
   },
 };
 

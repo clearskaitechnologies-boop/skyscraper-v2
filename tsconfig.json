@@ -60,6 +60,8 @@
     "src/env/**/*.tsx",
     "src/config/**/*.ts",
     "src/config/**/*.tsx",
+    "src/lib/**/*.ts",
+    "src/lib/**/*.tsx",
     ".next/types/**/*.ts"
   ],
   "exclude": [

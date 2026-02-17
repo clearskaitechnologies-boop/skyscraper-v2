@@ -2,10 +2,10 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
+import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import prisma from "@/lib/prisma";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -25,10 +25,9 @@ interface SearchResult {
  */
 export async function GET(request: NextRequest) {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAuth();
+    if (isAuthError(auth)) return auth;
+    const { orgId, userId } = auth;
 
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q");
@@ -191,7 +190,5 @@ export async function GET(request: NextRequest) {
       { error: "Search failed", details: error instanceof Error ? error.message : "Unknown error" },
       { status: 500 }
     );
-  } finally {
-    await prisma.$disconnect();
   }
 }

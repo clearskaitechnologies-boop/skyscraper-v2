@@ -31,9 +31,9 @@ export async function enqueue<T = any>(
   const { delayMs, jobName } = options;
 
   if (delayMs && delayMs > 0) {
-    setTimeout(() => {
+    setTimeout(async () => {
       try {
-        void handler(...args);
+        await handler(...args);
       } catch (err) {
         console.error("[queue] job failed", jobName, err);
       }
