@@ -7,7 +7,7 @@
 
 import "server-only";
 
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { BaseMigrationEngine, MigrationConfig } from "./base-engine";
 import { JobNimbusClient } from "./jobnimbus-client";
 import { mapActivity, mapContact, mapFile, mapJob, mapTask } from "./jobnimbus-mapper";

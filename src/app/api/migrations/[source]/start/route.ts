@@ -8,7 +8,7 @@
 
 import type { MigrationProgress, MigrationSource } from "@/lib/migrations/base-engine";
 import { JobNimbusMigrationEngine } from "@/lib/migrations/jobnimbus-engine";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
 import { RATE_LIMIT_PRESETS, checkRateLimit } from "@/lib/rate-limit";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";

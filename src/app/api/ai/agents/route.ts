@@ -11,7 +11,7 @@
  */
 
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";
