@@ -30,6 +30,21 @@
 
 ## 📋 PHASE A — Immediate Production Fixes (Sprint 1)
 
+## ✅ Enterprise Credibility Sprint (Focused Block)
+
+Replace current plan with:
+
+1. **/api/integrations/status** endpoint
+2. **Integration Status Dashboard UI** (`/settings/integrations`)
+3. **Visual polish + empty states**
+4. **Sales screenshot export**
+
+Everything else moves below the fold.
+
+---
+
+## 🧾 Backlog (Below the Fold)
+
 ### A1. Trades Account Persistence
 
 - [ ] **FIX-01** Investigate why Damien's trades account (buildwithdamienray@gmail.com) keeps vanishing
@@ -127,7 +142,6 @@
 
 ### C4. Error Handling
 
-- [ ] **ERR-01** Add Sentry breadcrumbs to all API routes
 - [ ] **ERR-02** Create standard API error response format (`{ error, code, details }`)
 - [ ] **ERR-03** Add rate limiting to public-facing API routes
 - [ ] **ERR-04** Add request ID tracking for debugging
@@ -279,14 +293,7 @@
 - [ ] **OPS-05** Automated preview deployments for PRs
 - [ ] **OPS-06** Staging environment with seed data
 
-### G2. Monitoring & Observability
-
-- [ ] **OPS-07** Sentry error tracking (already configured, verify coverage)
-- [ ] **OPS-08** Uptime monitoring (Pingdom/BetterUptime)
-- [ ] **OPS-09** Database query performance monitoring
-- [ ] **OPS-10** API response time alerts (>2s = warning, >5s = critical)
-
-### G3. Documentation
+### G2. Documentation
 
 - [ ] **DOC-01** API documentation (Swagger/OpenAPI spec)
 - [ ] **DOC-02** Developer onboarding guide
