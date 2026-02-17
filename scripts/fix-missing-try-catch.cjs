@@ -32,14 +32,14 @@ function wrapHandlerInTryCatch(code, method) {
     `export\\s+async\\s+function\\s+${method}\\s*\\([^)]*\\)\\s*{`,
     "s"
   );
-  
+
   // Check if already has try-catch at the start
   const match = code.match(methodPattern);
   if (!match) return code;
 
   const handlerStart = match.index + match[0].length;
   const handlerBody = code.slice(handlerStart);
-  
+
   // Check if first non-whitespace after { is "try"
   const afterBrace = handlerBody.trimStart();
   if (afterBrace.startsWith("try {")) {
@@ -65,7 +65,7 @@ function wrapHandlerInTryCatch(code, method) {
   }
 
   const bodyToWrap = handlerBody.slice(0, endIndex);
-  
+
   // Build new handler with try-catch
   const newBody = `
   try {${bodyToWrap}
@@ -78,7 +78,7 @@ function wrapHandlerInTryCatch(code, method) {
   }`;
 
   const newCode = code.slice(0, handlerStart) + newBody + handlerBody.slice(endIndex);
-  
+
   console.log(`  ✨ Added try-catch to ${method}`);
   return newCode;
 }
@@ -87,21 +87,21 @@ function ensureLoggerImport(code) {
   if (code.includes('from "@/lib/logger"')) {
     return code;
   }
-  
+
   // Find first import statement
   const firstImport = code.indexOf("import ");
   if (firstImport === -1) return code;
-  
+
   // Insert logger import at the beginning of imports
   const insertion = 'import { logger } from "@/lib/logger";\n';
   return code.slice(0, firstImport) + insertion + code.slice(firstImport);
 }
 
 function ensureNextResponseImport(code) {
-  if (code.includes('NextResponse')) {
+  if (code.includes("NextResponse")) {
     return code;
   }
-  
+
   // Check if there's a Next import we can add to
   const nextImportMatch = code.match(/import\s+{([^}]+)}\s+from\s+["']next\/server["']/);
   if (nextImportMatch) {
@@ -109,7 +109,7 @@ function ensureNextResponseImport(code) {
     const newImports = existingImports + ", NextResponse";
     return code.replace(nextImportMatch[0], `import { ${newImports} } from "next/server"`);
   }
-  
+
   // Otherwise add new import
   const firstImport = code.indexOf("import ");
   if (firstImport === -1) return code;
@@ -119,15 +119,15 @@ function ensureNextResponseImport(code) {
 
 function fixRoute(filePath) {
   console.log(`\n📝 Processing: ${filePath}`);
-  
+
   if (SKIP_ROUTES.some((skip) => filePath.includes(skip))) {
     console.log(`  ⏭️  Skipping (already fixed)`);
     return { fixed: false, reason: "skipped" };
   }
-  
+
   let code = fs.readFileSync(filePath, "utf8");
   let modified = false;
-  
+
   const methods = ["GET", "POST", "PUT", "DELETE", "PATCH"];
   for (const method of methods) {
     const pattern = new RegExp(`export\\s+async\\s+function\\s+${method}\\s*\\(`, "s");
@@ -139,7 +139,7 @@ function fixRoute(filePath) {
       }
     }
   }
-  
+
   if (modified) {
     code = ensureLoggerImport(code);
     code = ensureNextResponseImport(code);
@@ -147,15 +147,15 @@ function fixRoute(filePath) {
     console.log(`  ✅ Fixed!`);
     return { fixed: true };
   }
-  
+
   console.log(`  ℹ️  No changes needed`);
   return { fixed: false, reason: "no-changes" };
 }
 
 function main() {
   console.log("🚀 Starting try-catch fix automation\n");
-  console.log("=" .repeat(60));
-  
+  console.log("=".repeat(60));
+
   const stats = {
     total: 0,
     fixed: 0,
@@ -163,7 +163,7 @@ function main() {
     noChanges: 0,
     errors: 0,
   };
-  
+
   // Fix priority routes first
   console.log("\n📌 PRIORITY ROUTES\n");
   for (const route of PRIORITY_ROUTES) {
@@ -183,7 +183,7 @@ function main() {
       stats.errors++;
     }
   }
-  
+
   console.log("\n" + "=".repeat(60));
   console.log("📊 SUMMARY");
   console.log("=".repeat(60));
