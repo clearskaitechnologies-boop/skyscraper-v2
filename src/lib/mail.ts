@@ -4,9 +4,16 @@
  */
 
 import { Resend } from "resend";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 // Brand colors
 const BRAND = {
@@ -34,7 +41,7 @@ async function sendEmail({ to, subject, html }: EmailProps) {
   }
 
   try {
-    const result = await resend.emails.send({
+    const result = await getResend().emails.send({
       from: "SkaiScraper <noreply@skaiscrape.com>",
       to,
       subject,

@@ -10,8 +10,8 @@
  * - Action planning
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/observability/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";

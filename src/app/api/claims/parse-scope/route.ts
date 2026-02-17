@@ -9,17 +9,11 @@
 import { logger } from "@/lib/observability/logger";
 import { NextResponse } from "next/server";
 import type OpenAI from "openai";
-import * as pdfParse from "pdf-parse";
 
-import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
-
-const pdf = pdfParse.default || pdfParse;
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-
-const openai = getOpenAI();
 
 const SYSTEM_PROMPT = `You are a construction insurance scope-of-work parser for a claims management platform.
 Given a Scope of Work document (photo or text), extract ALL available information into structured JSON.
@@ -101,7 +95,9 @@ export async function POST(req: Request) {
       // Extract text from PDF — GPT-4o vision rejects application/pdf MIME type
       let pdfText = "";
       try {
-        const pdfData = await pdf(buffer);
+        // Lazy load pdf-parse at runtime only
+        const pdfParse = (await import("pdf-parse")).default;
+        const pdfData = await pdfParse(buffer);
         pdfText = pdfData.text;
       } catch (pdfErr) {
         console.error("[parse-scope] PDF text extraction failed:", pdfErr);
@@ -145,6 +141,8 @@ export async function POST(req: Request) {
       ];
     }
 
+    // Lazy load OpenAI client at runtime only
+    const openai = getOpenAI();
     const response = await openai.chat.completions.create({
       model: "gpt-4o",
       messages: [
