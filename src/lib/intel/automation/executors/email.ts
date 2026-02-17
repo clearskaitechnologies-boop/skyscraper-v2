@@ -4,8 +4,8 @@
  * Auto-sends emails to adjusters/homeowners
  */
 
-import { randomUUID } from "node:crypto";
 import { logger } from "@/lib/observability/logger";
+import { randomUUID } from "node:crypto";
 
 import { Resend } from "resend";
 

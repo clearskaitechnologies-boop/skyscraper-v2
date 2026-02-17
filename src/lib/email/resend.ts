@@ -5,10 +5,26 @@ let client: Resend | null = null;
 
 export function getResend() {
   if (!client) {
-    if (!process.env.RESEND_API_KEY) {
+    const apiKey = process.env.RESEND_API_KEY;
+
+    // During build time, return null if API key is missing
+    if (!apiKey) {
+      if (
+        process.env.NEXT_PHASE === "phase-production-build" ||
+        process.env.NODE_ENV === "production"
+      ) {
+        // Return a null placeholder during build
+        return null as any;
+      }
       throw new Error("RESEND_API_KEY is not set");
     }
-    client = new Resend(process.env.RESEND_API_KEY);
+
+    try {
+      client = new Resend(apiKey);
+    } catch (error) {
+      console.warn("[Resend] Failed to initialize:", error);
+      return null as any;
+    }
   }
   return client;
 }

@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 /**
  * Email Subscription API
  * Handles email newsletter subscriptions with double opt-in verification
