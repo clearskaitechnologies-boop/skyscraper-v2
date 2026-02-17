@@ -3,8 +3,8 @@
  * Handles transactional emails: welcome, trial, low-token, receipts
  */
 
-import { Resend } from "resend";
 import { logger } from "@/lib/observability/logger";
+import { Resend } from "resend";
 
 let _resend: Resend | null = null;
 

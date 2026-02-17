@@ -1,9 +1,16 @@
+import { logger } from "@/lib/observability/logger";
 import { Resend } from "resend";
-import { logger } from "@/lib/logger";
 
 import { APP_URL } from "@/lib/env";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || "noreply@preloss.com";
 const APP_NAME = "PreLoss Vision";
@@ -52,7 +59,7 @@ export async function sendInvitationEmail({
   });
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to,
       subject: `${inviterName} invited you to join ${orgName} on ${APP_NAME}`,
@@ -263,7 +270,7 @@ Visit our website: ${APP_URL}
   `.trim();
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: FROM_EMAIL,
       to,
       subject: `Welcome to ${orgName} - Let's Get Started!`,

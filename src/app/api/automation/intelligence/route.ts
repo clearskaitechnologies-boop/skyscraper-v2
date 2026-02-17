@@ -1,14 +1,15 @@
 // app/api/automation/intelligence/route.ts
 /**
  * GET /api/automation/intelligence
- * 
+ *
  * Gets automation intelligence for a claim (tasks, alerts, recommendations)
  */
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
 import { getClaimAutomationIntelligence } from "@/lib/intel/automation/engine";

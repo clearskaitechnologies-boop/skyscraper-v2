@@ -5,13 +5,20 @@
  */
 
 import { randomUUID } from "node:crypto";
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 
 import { Resend } from "resend";
 
 import prisma from "@/lib/prisma";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend() {
+  if (!_resend && process.env.RESEND_API_KEY) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 export async function executeSendEmail(
   claimId: string,
@@ -49,7 +56,13 @@ export async function executeSendEmail(
 
   // Send email
   try {
-    const result = await resend.emails.send({
+    const resendClient = getResend();
+    if (!resendClient) {
+      logger.warn(`[DOMINUS] Resend not configured, skipping email to ${recipientEmail}`);
+      return;
+    }
+
+    const result = await resendClient.emails.send({
       from: "SkaiScraper <noreply@skaiscrape.com>",
       to: recipientEmail,
       subject,
