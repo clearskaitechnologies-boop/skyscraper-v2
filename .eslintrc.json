@@ -49,6 +49,14 @@
       {
         "selector": "NewExpression[callee.name='Pool']",
         "message": "❌ Do not create new Pool() instances! Import and use the shared pgPool from '@/lib/db' to prevent connection leaks."
+      },
+      {
+        "selector": "NewExpression[callee.name='Stripe']",
+        "message": "❌ Do not create new Stripe() instances! Import and use getStripeClient() from '@/lib/stripe' to ensure singleton pattern, consistent API version, and centralized error handling."
+      },
+      {
+        "selector": "MemberExpression[object.object.name='process'][object.property.name='env']",
+        "message": "❌ Do not access process.env directly! Import from '@/lib/config' to ensure validation and type safety. Direct env access bypasses validation and breaks at runtime with missing vars."
       }
     ]
   },

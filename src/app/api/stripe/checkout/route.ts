@@ -1,15 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
 
 import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
+import { getStripeClient } from "@/lib/stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
-});
+const stripe = getStripeClient();
 
 // Prisma singleton imported from @/lib/db/prisma
 

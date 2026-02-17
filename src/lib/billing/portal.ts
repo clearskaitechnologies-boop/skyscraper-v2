@@ -3,11 +3,9 @@
  * Allows customers to manage payment methods, view invoices, and update subscriptions
  */
 
-import Stripe from "stripe";
+import { getStripeClient } from "@/lib/stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
-});
+const stripe = getStripeClient();
 
 /**
  * Create a Stripe Billing Portal session

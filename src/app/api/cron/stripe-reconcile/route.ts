@@ -11,19 +11,17 @@ export const revalidate = 0;
 // Schedule: Daily via Vercel Cron
 // =====================================================
 // (Removed duplicate dynamic export)
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
 
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
 import prisma from "@/lib/prisma";
+import { getStripeClient } from "@/lib/stripe";
 
 export const maxDuration = 300; // 5 minutes — iterates up to 1000 orgs + Stripe API
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2024-11-20.acacia" as any,
-});
+const stripe = getStripeClient();
 
 const PLAN_TOKENS: Record<string, number> = {
   solo: 200,

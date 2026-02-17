@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -11,14 +11,13 @@ import {
 } from "@/lib/mail";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
+import { getStripeClient } from "@/lib/stripe";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
-});
+const stripe = getStripeClient();
 
 // Prisma singleton imported from @/lib/db/prisma
 

@@ -1,8 +1,8 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
 import { getUiTheme } from "@/config/uiTheme";
@@ -36,29 +36,22 @@ interface NavSection {
 // 8 sections organized by user intent, not feature taxonomy
 const navSections: NavSection[] = [
   {
-    label: "Command Center",
+    label: "Storm Command Center",
     items: [
       { label: "Dashboard", href: "/dashboard" },
-      { label: "Analytics Dashboard", href: "/analytics/dashboard" },
+      { label: "Storm Center", href: "/storm-center" },
       { label: "Job Pipeline", href: "/pipeline" },
+      { label: "Analytics Dashboard", href: "/analytics/dashboard" },
       { label: "Smart Actions", href: "/ai/smart-actions" },
     ],
   },
   {
-    label: "Jobs & Claims",
+    label: "Claims Workspace",
     items: [
-      { label: "Claims Workspace", href: "/claims" },
-      { label: "Retail Workspace", href: "/jobs/retail" },
-      { label: "Lead Routing", href: "/leads" },
-      { label: "Appointments & Scheduling", href: "/appointments" },
-      { label: "Crew Manager", href: "/crews" },
-    ],
-  },
-  {
-    label: "Claims Toolkit",
-    items: [
+      { label: "Active Claims", href: "/claims" },
       { label: "Claims-Ready Folder", href: "/claims-ready-folder" },
       { label: "Supplement Builder", href: "/ai/tools/supplement" },
+      { label: "Supplement Tracker", href: "/supplements" },
       { label: "Depreciation Builder", href: "/ai/tools/depreciation" },
       { label: "Rebuttal Builder", href: "/ai/tools/rebuttal" },
       { label: "Bad Faith Analysis", href: "/ai/bad-faith" },
@@ -67,12 +60,26 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Trades Toolkit",
+    label: "Operations",
     items: [
+      { label: "Retail Workspace", href: "/jobs/retail" },
+      { label: "Lead Routing", href: "/leads" },
+      { label: "Appointments & Scheduling", href: "/appointments" },
+      { label: "Crew Manager", href: "/crews" },
       { label: "Damage Report Builder", href: "/ai/damage-builder" },
       { label: "Project Plan Builder", href: "/ai/roofplan-builder" },
       { label: "Mockup Generator", href: "/ai/mockup", featureFlag: "FEATURE_MOCKUP_GENERATOR" },
       { label: "Vision Labs", href: "/vision-lab", featureFlag: "FEATURE_VISION_AI" },
+    ],
+  },
+  {
+    label: "Materials & Vendors",
+    items: [
+      { label: "Material Estimator", href: "/materials/estimator" },
+      { label: "Material Orders", href: "/vendors/orders" },
+      { label: "Vendor Intelligence", href: "/vendor-network" },
+      { label: "Trades Network Hub", href: "/trades" },
+      { label: "Job Board", href: "/trades/jobs" },
       { label: "Contractor Packet", href: "/reports/contractor-packet" },
     ],
   },
@@ -88,17 +95,6 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Network",
-    items: [
-      { label: "Trades Network Hub", href: "/trades" },
-      { label: "My Profile & Company", href: "/trades/profile" },
-      { label: "Job Board", href: "/trades/jobs" },
-      { label: "Vendor Intelligence", href: "/vendor-network" },
-      { label: "Company Contacts", href: "/contacts" },
-      { label: "Material Orders", href: "/vendors/orders" },
-    ],
-  },
-  {
     label: "Finance & Comms",
     items: [
       { label: "Financial Overview", href: "/finance/overview" },
@@ -111,11 +107,19 @@ const navSections: NavSection[] = [
     ],
   },
   {
+    label: "Network",
+    items: [
+      { label: "My Profile & Company", href: "/trades/profile" },
+      { label: "Company Contacts", href: "/contacts" },
+    ],
+  },
+  {
     label: "Settings",
     items: [
       { label: "Company Settings", href: "/settings" },
       { label: "Billing", href: "/settings/billing" },
       { label: "Company Branding", href: "/settings/branding" },
+      { label: "Migrations", href: "/settings/migrations" },
       { label: "Company Seats", href: "/teams" },
       { label: "Permits", href: "/permits" },
       { label: "Archive", href: "/archive" },

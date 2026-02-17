@@ -1,14 +1,7 @@
-import {
-  Building2,
-  CheckCircle2,
-  Cloud,
-  FileText,
-  Sparkles,
-  TrendingUp,
-  Users,
-  Zap,
-} from "lucide-react";
+import { Cloud, CloudLightning, FileText, Sparkles, Users, Zap } from "lucide-react";
 import Link from "next/link";
+
+import { ComparisonTable } from "./ComparisonTable";
 
 export function MarketingLanding() {
   return (
@@ -18,19 +11,19 @@ export function MarketingLanding() {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#117CFF]/5 via-transparent to-[#FFC838]/5" />
         <div className="relative mx-auto max-w-6xl text-center">
           <div className="mb-6 inline-block rounded-full border border-[#117CFF]/20 bg-[#117CFF]/5 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-[#117CFF]">
-            Live in Production • Built for Trades Professionals
+            ⚡ Built for Roofing & Insurance Restoration Contractors
           </div>
           <h1 className="mb-6 text-5xl font-extrabold leading-[1.1] tracking-tight md:text-7xl lg:text-8xl">
             <span className="bg-gradient-to-r from-[#117CFF] via-[#1E88FF] to-[#FFC838] bg-clip-text text-transparent">
-              Your Trades Operation
+              The Operating System
             </span>
             <br />
-            <span className="text-slate-900 dark:text-white">Runs on AI</span>
+            <span className="text-slate-900 dark:text-white">for Storm Restoration</span>
           </h1>
           <p className="mx-auto mt-8 max-w-3xl text-lg leading-relaxed text-slate-600 dark:text-slate-400 md:text-xl md:leading-relaxed">
-            SkaiScraper is the command center for the modern tradesman. From insurance claims to
-            retail jobs, financing to out-of-pocket repairs — manage every project, track every
-            dollar, and keep clients in the loop with AI-powered tools built for speed.
+            SkaiScraper is the all-in-one platform storm restoration contractors use to manage
+            claims, generate supplements, verify weather, estimate materials, and get paid faster.
+            From first notice of loss to final invoice — every step, one system.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link
@@ -50,7 +43,7 @@ export function MarketingLanding() {
             </Link>
           </div>
           <p className="mt-6 text-sm text-slate-500 dark:text-slate-500">
-            No credit card required • Full feature access • Cancel anytime
+            No credit card required • 14-day free trial • Built by roofers, for roofers
           </p>
         </div>
       </section>
@@ -60,51 +53,51 @@ export function MarketingLanding() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#117CFF]/10 px-4 py-2">
-              <Building2 className="h-4 w-4 text-[#117CFF]" />
+              <CloudLightning className="h-4 w-4 text-[#117CFF]" />
               <span className="text-sm font-bold uppercase tracking-wider text-[#117CFF]">
-                For Trades Professionals
+                Purpose-Built for Restoration
               </span>
             </div>
             <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white md:text-5xl">
-              Built for Scale, Designed for Speed
+              Every Tool a Storm Contractor Needs
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-              Everything you need to run a modern trades operation — roofing, restoration, HVAC,
-              solar, and beyond
+              From first notice of loss to final supplement payment — SkaiScraper replaces your
+              spreadsheets, sticky notes, and six different apps
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[
               {
-                icon: <Zap className="h-6 w-6" />,
-                title: "AI Project Intelligence",
-                desc: "Upload photos, get instant AI-generated assessments with measurements, material estimates, and scope recommendations — for claims or retail jobs.",
+                icon: <CloudLightning className="h-6 w-6" />,
+                title: "Storm Command Center",
+                desc: "Real-time dashboard showing active claims, pending supplements, revenue pipeline, weather alerts, and material orders — all in one view. Your war room for storm season.",
+              },
+              {
+                icon: <FileText className="h-6 w-6" />,
+                title: "AI Supplement Engine",
+                desc: "Generate carrier-ready supplements, rebuttals, and depreciation recovery letters in minutes. Our AI writes Xactimate-fluent documents that get approved.",
               },
               {
                 icon: <Cloud className="h-6 w-6" />,
                 title: "Weather Verification",
-                desc: "High-fidelity storm data using Iowa Mesonet integration. Prove date of loss for claims or document conditions for any project.",
+                desc: "Prove date of loss with certified NOAA + Iowa Mesonet storm data. Hail size, wind speed, and radar imagery — the evidence carriers can't argue with.",
               },
               {
-                icon: <FileText className="h-6 w-6" />,
-                title: "Smart Documentation",
-                desc: "AI-generated proposals, supplements, and rebuttals. Professional documents that write themselves — saving hours on every file.",
+                icon: <Package className="h-6 w-6" />,
+                title: "Material Estimation & Ordering",
+                desc: "Calculate shingles, underlayment, and accessories from roof measurements. Route orders directly to ABC Supply with one click. Waste factors built in.",
               },
               {
-                icon: <Users className="h-6 w-6" />,
-                title: "Trades Network",
-                desc: "Connect with verified trades, manage sub work orders, and build your professional network all in one place.",
+                icon: <DollarSign className="h-6 w-6" />,
+                title: "QuickBooks Integration",
+                desc: "Invoices, payments, and job costs sync automatically to QuickBooks. No double entry. See profit per claim in real-time without spreadsheets.",
               },
               {
-                icon: <CheckCircle2 className="h-6 w-6" />,
-                title: "Client Portal",
-                desc: "Branded portal for clients to view progress, upload photos, approve estimates, and stay connected 24/7. Total transparency builds trust.",
-              },
-              {
-                icon: <TrendingUp className="h-6 w-6" />,
-                title: "Complete Job Tracking",
-                desc: "From lead intake to final payment — claims, retail, financing, out-of-pocket. Track every job and every dollar in real-time.",
+                icon: <Zap className="h-6 w-6" />,
+                title: "One-Click Migration",
+                desc: "Import your entire operation from AccuLynx or JobNimbus in minutes. Contacts, claims, photos, notes — everything transfers with zero data loss.",
               },
             ].map((feature) => (
               <div
@@ -136,11 +129,11 @@ export function MarketingLanding() {
                 </span>
               </div>
               <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white md:text-5xl">
-                Clients Stay Connected, Stay Informed
+                Homeowners Stay Informed, Adjusters Stay Honest
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-700 dark:text-slate-300">
-                Give your clients the experience they deserve — complete visibility into their
-                project from start to finish
+                Give homeowners complete visibility into their claim — from inspection to supplement
+                approval to final repair
               </p>
             </div>
 
@@ -185,10 +178,10 @@ export function MarketingLanding() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-16 text-center">
             <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white md:text-5xl">
-              How It Works
+              From Storm Damage to Supplement Check
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
-              From first contact to final payment — in three simple steps
+              Three steps to close claims faster and recover more revenue
             </p>
           </div>
 
@@ -196,20 +189,20 @@ export function MarketingLanding() {
             {[
               {
                 step: "1",
-                title: "Capture & Document",
-                desc: "Take photos from your phone or upload from desktop. Our AI immediately analyzes the scope — whether it's storm damage, a renovation, or routine repair.",
+                title: "Document & File",
+                desc: "Capture roof damage from the field, upload photos, and let AI generate a scope assessment. Weather verification attaches automatically to prove date of loss.",
                 icon: "📸",
               },
               {
                 step: "2",
-                title: "AI Does the Heavy Lifting",
-                desc: "SkaiScraper AI generates professional assessments, verifies weather data, and produces ready-to-send proposals. Hours of work done in minutes.",
-                icon: "🤖",
+                title: "Supplement & Negotiate",
+                desc: "SkaiScraper AI identifies missed line items, generates Xactimate-ready supplements, and builds carrier rebuttals. Recover 30-60% more per claim.",
+                icon: "⚡",
               },
               {
                 step: "3",
-                title: "Close & Get Paid",
-                desc: "Send proposals, get approvals, track progress. Your client sees everything. You get paid faster. Everyone wins.",
+                title: "Order & Get Paid",
+                desc: "Route materials to ABC Supply, sync invoices to QuickBooks, and track your supplement check through completion. Cash flow clarity, finally.",
                 icon: "💰",
               },
             ].map((step) => (
@@ -230,6 +223,9 @@ export function MarketingLanding() {
           </div>
         </div>
       </section>
+
+      {/* Competitor Comparison Table */}
+      <ComparisonTable />
 
       {/* Try It Live — Demo Teaser */}
       <section className="px-4">
@@ -262,9 +258,9 @@ export function MarketingLanding() {
         <div className="mx-auto max-w-6xl rounded-3xl border border-slate-200 bg-white p-12 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="grid gap-8 md:grid-cols-3">
             {[
-              { label: "AI-generated project documents", value: "1,200+" },
-              { label: "Hours saved per job (avg.)", value: "14+" },
-              { label: "Trades professionals powered", value: "600+" },
+              { label: "Supplements generated", value: "2,400+" },
+              { label: "Avg. additional recovery per claim", value: "$4,200" },
+              { label: "Restoration contractors powered", value: "600+" },
             ].map((stat) => (
               <div key={stat.label} className="text-center">
                 <div className="text-4xl font-extrabold text-slate-900 dark:text-white">
@@ -281,12 +277,11 @@ export function MarketingLanding() {
       <section className="px-4">
         <div className="mx-auto max-w-6xl rounded-3xl bg-gradient-to-br from-[#117CFF] via-[#1E88FF] to-[#FFC838] p-12 text-center text-white shadow-2xl">
           <h2 className="text-4xl font-extrabold leading-tight md:text-5xl">
-            Ready to work smarter?
+            Stop leaving money on the table.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/90">
-            Join trades professionals who are cutting hours off every job. Upload photos, generate
-            proposals, and close deals faster — whether it's insurance work, retail, or
-            out-of-pocket.
+            Join 600+ restoration contractors who recover more per claim, close supplements faster,
+            and run their entire operation from one platform. Storm season waits for nobody.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link

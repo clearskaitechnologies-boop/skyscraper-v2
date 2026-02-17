@@ -1,13 +1,14 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest } from "next/server";
 import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { getStripeClient } from "@/lib/stripe";
 
 // ---------------------------------------------------------------------------
 // POST /api/payments/create-link — Create a Stripe Payment Link for a job/invoice
@@ -78,8 +79,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create Stripe Checkout Session
-    const stripe = (await import("stripe")).default;
-    const stripeClient = new stripe(stripeKey, { apiVersion: "2023-10-16" as any });
+    const stripeClient = getStripeClient();
 
     const session = await stripeClient.checkout.sessions.create({
       mode: "payment",

@@ -32,12 +32,12 @@ async function getUserEmail(userId: string): Promise<string | null> {
 }
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const userEmail = await getUserEmail(userId);
     if (!userEmail) {
       return NextResponse.json({ error: "Could not verify user email" }, { status: 401 });
@@ -88,12 +88,12 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET() {
-  const { userId } = await auth();
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   try {
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const userEmail = await getUserEmail(userId);
     if (!userEmail) {
       return NextResponse.json({ error: "Could not verify user email" }, { status: 401 });
