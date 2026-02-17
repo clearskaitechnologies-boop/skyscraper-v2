@@ -1,10 +1,6 @@
 // Storage helper for claim document/photo uploads
-import { createClient } from "@supabase/supabase-js";
-import { logger } from "@/lib/logger";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 
 export interface UploadClaimFileOptions {
   claimId: string;
@@ -32,7 +28,10 @@ export async function uploadClaimFileToStorage(
 ): Promise<UploadClaimFileResult> {
   const { claimId, file, fileName, contentType, folder = "photos" } = options;
 
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  const supabase = getStorageClient();
+  if (!supabase) {
+    throw new Error("Storage not configured");
+  }
 
   // Construct storage path: claims/{claimId}/{folder}/{timestamp}-{fileName}
   const timestamp = Date.now();

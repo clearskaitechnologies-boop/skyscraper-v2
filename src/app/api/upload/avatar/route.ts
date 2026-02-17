@@ -1,14 +1,8 @@
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-// Use service role key for reliable server-side uploads (bypasses RLS)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey =
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-const supabase = supabaseUrl && supabaseKey ? createClient(supabaseUrl, supabaseKey) : null;
+export const dynamic = "force-dynamic";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -48,6 +42,7 @@ export async function POST(req: NextRequest) {
     const filename = `avatars/${userId}/${timestamp}-${randomStr}.${ext}`;
 
     // Try Supabase first if configured
+    const supabase = getStorageClient();
     if (supabase) {
       // First, try to ensure the bucket exists
       const { data: buckets } = await supabase.storage.listBuckets();
@@ -112,9 +107,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         error: "Failed to upload file - storage not configured",
-        hasSupabase: !!supabase,
-        hasSupabaseUrl: !!supabaseUrl,
-        hasSupabaseKey: !!supabaseKey,
+        hasSupabase: !!getStorageClient(),
       },
       { status: 500 }
     );

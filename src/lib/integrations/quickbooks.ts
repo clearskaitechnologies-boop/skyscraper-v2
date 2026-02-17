@@ -3,8 +3,8 @@
  *
  * Handles:
  * - OAuth 2.0 authorization flow
- * - Token refresh
- * - Customer/Invoice/Payment CRUD stubs
+ * - Token refresh (with encryption at rest)
+ * - Customer/Invoice/Payment CRUD
  * - Job-to-Invoice sync
  *
  * Environment vars required:
@@ -12,10 +12,12 @@
  * - QUICKBOOKS_CLIENT_SECRET
  * - QUICKBOOKS_REDIRECT_URI
  * - QUICKBOOKS_ENVIRONMENT (sandbox | production)
+ * - TOKEN_ENCRYPTION_KEY (32-byte hex for token encryption)
  */
 
-import prisma from "@/lib/prisma";
+import { encryptToken, safeDecrypt } from "@/lib/crypto/token-encryption";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 // ── Config ──────────────────────────────────────────────────────────────────
 
@@ -118,6 +120,7 @@ export async function refreshAccessToken(refreshToken: string) {
 
 /**
  * Save or update QuickBooks connection for an org.
+ * Tokens are encrypted at rest for security compliance.
  */
 export async function saveConnection(
   orgId: string,
@@ -129,30 +132,37 @@ export async function saveConnection(
 ) {
   const tokenExpires = new Date(Date.now() + expiresIn * 1000);
 
+  // Encrypt tokens before storing
+  const encryptedAccessToken = encryptToken(accessToken);
+  const encryptedRefreshToken = encryptToken(refreshToken);
+
   await prisma.quickbooks_connections.upsert({
     where: { org_id: orgId },
     create: {
       org_id: orgId,
       realm_id: realmId,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      access_token: encryptedAccessToken,
+      refresh_token: encryptedRefreshToken,
       token_expires: tokenExpires,
       company_name: companyName || null,
       is_active: true,
     },
     update: {
       realm_id: realmId,
-      access_token: accessToken,
-      refresh_token: refreshToken,
+      access_token: encryptedAccessToken,
+      refresh_token: encryptedRefreshToken,
       token_expires: tokenExpires,
       company_name: companyName || null,
       is_active: true,
     },
   });
+
+  logger.info(`[QB] Connection saved for org ${orgId} (tokens encrypted)`);
 }
 
 /**
  * Get a valid access token for an org, refreshing if needed.
+ * Handles decryption of stored tokens automatically.
  */
 export async function getValidToken(orgId: string): Promise<{
   accessToken: string;
@@ -164,10 +174,14 @@ export async function getValidToken(orgId: string): Promise<{
 
   if (!conn || !conn.is_active) return null;
 
+  // Decrypt tokens (handles both encrypted and legacy plaintext)
+  const decryptedAccessToken = safeDecrypt(conn.access_token);
+  const decryptedRefreshToken = safeDecrypt(conn.refresh_token);
+
   // Check if token is expired (with 5 min buffer)
   if (new Date() >= new Date(conn.token_expires.getTime() - 5 * 60 * 1000)) {
     try {
-      const refreshed = await refreshAccessToken(conn.refresh_token);
+      const refreshed = await refreshAccessToken(decryptedRefreshToken);
       await saveConnection(
         orgId,
         conn.realm_id,
@@ -194,7 +208,7 @@ export async function getValidToken(orgId: string): Promise<{
     }
   }
 
-  return { accessToken: conn.access_token, realmId: conn.realm_id };
+  return { accessToken: decryptedAccessToken, realmId: conn.realm_id };
 }
 
 // ── API Helpers ─────────────────────────────────────────────────────────────

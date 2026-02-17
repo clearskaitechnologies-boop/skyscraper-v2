@@ -7,19 +7,14 @@
  * - Sorted by updated_at DESC
  */
 
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET() {
   try {
@@ -27,6 +22,11 @@ export async function GET() {
 
     if (!userId) {
       return NextResponse.json({ ok: false, error: "UNAUTHENTICATED" }, { status: 401 });
+    }
+
+    const supabase = getStorageClient();
+    if (!supabase) {
+      return NextResponse.json({ ok: false, error: "STORAGE_NOT_CONFIGURED" }, { status: 503 });
     }
 
     // Check if table exists

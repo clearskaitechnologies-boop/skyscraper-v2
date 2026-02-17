@@ -14,20 +14,14 @@
  * - Soft-fails if table doesn't exist
  */
 
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
-// Supabase client (server-side)
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 interface SaveRequestBody {
   packetId: string;
@@ -41,6 +35,14 @@ export async function POST(request: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized", code: "AUTH_REQUIRED" }, { status: 401 });
+    }
+
+    const supabase = getStorageClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Storage not configured", code: "SERVICE_UNAVAILABLE" },
+        { status: 503 }
+      );
     }
 
     // 2) Parse body

@@ -3,13 +3,8 @@
  * Centralized utility for secure document URL generation
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { logger } from "@/lib/logger";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 
 export interface GetSignedUrlOptions {
   path: string;
@@ -28,6 +23,10 @@ export async function getSignedUrl({
   expiresIn = 86400,
   download = false,
 }: GetSignedUrlOptions): Promise<string> {
+  const supabase = getStorageClient();
+  if (!supabase) {
+    throw new Error("Storage not configured");
+  }
   const { data, error } = await supabase.storage
     .from("documents")
     .createSignedUrl(path, expiresIn, {

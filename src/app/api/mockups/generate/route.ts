@@ -1,25 +1,19 @@
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import { createExportRecord } from "@/lib/exportRegistry";
+import { getStorageClient } from "@/lib/storage/client";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
+export const dynamic = "force-dynamic";
 
 const EXPORT_URL_TTL_SECONDS = parseInt(process.env.EXPORT_URL_TTL_SECONDS || "3600");
 const STORAGE_BUCKET_EXPORTS = process.env.SUPABASE_STORAGE_BUCKET_EXPORTS || "exports";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
-const openai = getOpenAI();
 
 /**
  * POST /api/mockups/generate
@@ -31,6 +25,13 @@ export async function POST(request: NextRequest) {
 
     if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const openai = getOpenAI();
+    const supabase = getStorageClient();
+
+    if (!supabase) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
     }
 
     if (!process.env.OPENAI_API_KEY) {

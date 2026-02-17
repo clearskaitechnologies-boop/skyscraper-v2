@@ -3,13 +3,8 @@
  * Handles secure PDF storage with signed URLs
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { logger } from "@/lib/logger";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 
 export interface UploadPdfOptions {
   buffer: Buffer;
@@ -19,6 +14,11 @@ export interface UploadPdfOptions {
 
 export async function uploadPdf({ buffer, path, orgId }: UploadPdfOptions) {
   try {
+    const supabase = getStorageClient();
+    if (!supabase) {
+      throw new Error("Storage not configured");
+    }
+
     // Upload to Supabase Storage
     const { data, error } = await supabase.storage.from("documents").upload(path, buffer, {
       contentType: "application/pdf",
@@ -28,6 +28,7 @@ export async function uploadPdf({ buffer, path, orgId }: UploadPdfOptions) {
 
     if (error) {
       throw new Error(`PDF upload failed: ${error.message}`);
+    }
     }
 
     // Generate signed URL (24 hour expiration)

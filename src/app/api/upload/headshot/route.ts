@@ -3,15 +3,11 @@
  * Used by team member profile edit pages
  */
 
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = "force-dynamic";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -21,6 +17,11 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const storage = getStorageClient();
+    if (!storage) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
     }
 
     const formData = await req.formData();
@@ -51,7 +52,7 @@ export async function POST(req: NextRequest) {
     const filename = `headshots/${userId}/${timestamp}-${randomStr}.${ext}`;
 
     // Upload to Supabase Storage
-    const { data, error } = await supabase.storage.from("profile-photos").upload(filename, buffer, {
+    const { data, error } = await storage.storage.from("profile-photos").upload(filename, buffer, {
       contentType: file.type,
       upsert: true,
     });
@@ -94,7 +95,7 @@ export async function POST(req: NextRequest) {
     // Get public URL from Supabase
     const {
       data: { publicUrl },
-    } = supabase.storage.from("profile-photos").getPublicUrl(data.path);
+    } = storage.storage.from("profile-photos").getPublicUrl(data.path);
 
     return NextResponse.json({ url: publicUrl, storage: "supabase" });
   } catch (error) {

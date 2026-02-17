@@ -4,11 +4,10 @@
  * Avoids re-rendering PDFs on every download
  */
 
+import { logger } from "@/lib/observability/logger";
 import crypto from "crypto";
-import { logger } from "@/lib/logger";
 import { Readable } from "stream";
 
-import { createClient } from "@/integrations/supabase/client";
 import prisma from "@/lib/prisma";
 
 export interface CachePDFOptions {
@@ -79,7 +78,14 @@ export async function cacheRenderedPdf(options: CachePDFOptions): Promise<CacheP
     const pdfBuffer = Buffer.concat(chunks);
 
     // Upload to Supabase Storage
-    const supabase = createClient();
+    const supabase = getStorageClient();
+    if (!supabase) {
+      return {
+        success: false,
+        error: "Storage not configured",
+      };
+    }
+
     const { data, error } = await supabase.storage
       .from("documents")
       .upload(storagePath, pdfBuffer, {
@@ -132,7 +138,11 @@ export async function getCachedPdfUrl(
   expiresIn: number = 60 * 60 * 24 // 24 hours default
 ): Promise<string | null> {
   try {
-    const supabase = createClient();
+    const supabase = getStorageClient();
+    if (!supabase) {
+      logger.error("Storage not configured");
+      return null;
+    }
 
     const { data, error } = await supabase.storage
       .from("documents")
@@ -173,7 +183,12 @@ export async function isPdfCached(documentId: string): Promise<boolean> {
  */
 export async function deleteCachedPdf(storagePath: string): Promise<boolean> {
   try {
-    const supabase = createClient();
+    const supabase = getStorageClient();
+    if (!supabase) {
+      logger.error("Storage not configured");
+      return false;
+    }
+
     const { error } = await supabase.storage.from("documents").remove([storagePath]);
 
     if (error) {

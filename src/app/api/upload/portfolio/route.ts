@@ -1,13 +1,8 @@
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
-import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
-// Initialize Supabase client for storage
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+export const dynamic = "force-dynamic";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -17,6 +12,11 @@ export async function POST(req: NextRequest) {
     const { userId } = await auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const storage = getStorageClient();
+    if (!storage) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
     }
 
     const formData = await req.formData();
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       const filename = `${userId}/${timestamp}-${randomStr}.${ext}`;
 
       // Upload to Supabase Storage
-      const { data, error } = await supabase.storage
+      const { data, error } = await storage.storage
         .from("portfolio-photos")
         .upload(filename, buffer, {
           contentType: file.type,
@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
       // Get public URL
       const {
         data: { publicUrl },
-      } = supabase.storage.from("portfolio-photos").getPublicUrl(data.path);
+      } = storage.storage.from("portfolio-photos").getPublicUrl(data.path);
 
       uploadedUrls.push(publicUrl);
     }

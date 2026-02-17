@@ -1,28 +1,24 @@
 /**
  * Worker Storage Helpers
- * 
+ *
  * Utilities for worker processes to access Supabase storage.
  * Uses service role key for privileged access.
  */
 
-import { createClient } from "@supabase/supabase-js";
+import { getStorageClient } from "@/lib/storage/client";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// =============================================================================
+// LAZY CLIENT ACCESS
+// =============================================================================
 
-if (!supabaseUrl || !supabaseServiceKey) {
-  throw new Error(
-    "Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY"
-  );
+function getClient(): SupabaseClient {
+  const client = getStorageClient();
+  if (!client) {
+    throw new Error("Storage not configured");
+  }
+  return client;
 }
-
-// Create Supabase client with service role key
-const supabase = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false,
-  },
-});
 
 // =============================================================================
 // SIGNED URL GENERATION
@@ -30,7 +26,7 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 
 /**
  * Generate signed read URL for a storage path
- * 
+ *
  * @param path - Full storage path (e.g., "orgs/xxx/proposals/yyy/photos/zzz.jpg")
  * @param expiresInSeconds - URL expiration time (default: 60)
  * @returns Signed URL string
@@ -39,6 +35,7 @@ export async function getSignedReadUrl(
   path: string,
   expiresInSeconds: number = 60
 ): Promise<string> {
+  const supabase = getClient();
   const { data, error } = await supabase.storage
     .from("proposals")
     .createSignedUrl(path, expiresInSeconds);
@@ -56,7 +53,7 @@ export async function getSignedReadUrl(
 
 /**
  * Generate multiple signed read URLs in batch
- * 
+ *
  * @param paths - Array of storage paths
  * @param expiresInSeconds - URL expiration time (default: 60)
  * @returns Array of signed URLs in same order as input
@@ -65,16 +62,14 @@ export async function getSignedReadUrls(
   paths: string[],
   expiresInSeconds: number = 60
 ): Promise<string[]> {
-  const results = await Promise.all(
-    paths.map((path) => getSignedReadUrl(path, expiresInSeconds))
-  );
-  
+  const results = await Promise.all(paths.map((path) => getSignedReadUrl(path, expiresInSeconds)));
+
   return results;
 }
 
 /**
  * Extract storage path from full image URL
- * 
+ *
  * @param imageUrl - Full Supabase URL (https://xxx.supabase.co/storage/v1/object/public/proposals/path/to/file.jpg)
  * @returns Storage path (path/to/file.jpg)
  */
@@ -82,11 +77,11 @@ export function extractStoragePath(imageUrl: string): string {
   try {
     const url = new URL(imageUrl);
     const pathParts = url.pathname.split("/proposals/");
-    
+
     if (pathParts.length < 2) {
       throw new Error("Invalid Supabase storage URL format");
     }
-    
+
     return pathParts[1];
   } catch (error: any) {
     throw new Error(`Failed to extract storage path: ${error.message}`);
