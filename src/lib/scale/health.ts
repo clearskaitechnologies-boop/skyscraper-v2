@@ -3,12 +3,26 @@
  *
  * Runtime health checks for 10K-user scale monitoring.
  * Used by /api/health endpoints and observability dashboards.
+ *
+ * Enhanced with:
+ * - Integration status checks
+ * - Trace ID correlation
+ * - Structured observability metrics
  */
 
+import { generateTraceId, recordMetric, withSpan } from "@/lib/observability/tracing";
 import prisma from "@/lib/prisma";
+
+interface IntegrationStatus {
+  name: string;
+  configured: boolean;
+  environment?: string;
+}
 
 interface HealthCheck {
   status: "healthy" | "degraded" | "unhealthy";
+  traceId: string;
+  version: string;
   database: {
     connected: boolean;
     latencyMs: number;
@@ -18,6 +32,11 @@ interface HealthCheck {
     available: boolean;
     latencyMs: number;
   };
+  storage: {
+    available: boolean;
+    latencyMs: number;
+  };
+  integrations: IntegrationStatus[];
   memory: {
     heapUsedMB: number;
     heapTotalMB: number;
@@ -32,20 +51,31 @@ interface HealthCheck {
  * Full system health check — call from /api/health/deep
  */
 export async function deepHealthCheck(): Promise<HealthCheck> {
+  const traceId = generateTraceId();
   const start = Date.now();
   let dbConnected = false;
   let dbLatency = 0;
   let cacheAvailable = false;
   let cacheLatency = 0;
+  let storageAvailable = false;
+  let storageLatency = 0;
 
   // ── Database check ──────────────────────────────────────────────
   try {
-    const dbStart = Date.now();
-    await prisma.$queryRaw`SELECT 1`;
-    dbLatency = Date.now() - dbStart;
+    const { durationMs } = await withSpan(
+      { op: "health.db", description: "Database ping" },
+      async () => {
+        await prisma.$queryRaw`SELECT 1`;
+        return true;
+      },
+      { traceId }
+    );
+    dbLatency = durationMs;
     dbConnected = true;
+    recordMetric("health.db.latency", dbLatency, "ms");
   } catch {
     dbLatency = Date.now() - start;
+    recordMetric("health.db.error", 1, "count");
   }
 
   // ── Cache check (Upstash Redis) ─────────────────────────────────
@@ -59,30 +89,100 @@ export async function deepHealthCheck(): Promise<HealthCheck> {
       cacheAvailable = res.ok;
     }
     cacheLatency = Date.now() - cacheStart;
+    recordMetric("health.cache.latency", cacheLatency, "ms");
   } catch {
     cacheLatency = Date.now() - start;
+    recordMetric("health.cache.error", 1, "count");
   }
+
+  // ── Storage check (Supabase) ────────────────────────────────────
+  try {
+    const storageStart = Date.now();
+    if (process.env.SUPABASE_URL) {
+      const res = await fetch(`${process.env.SUPABASE_URL}/storage/v1/bucket`, {
+        headers: {
+          Authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY || ""}`,
+          apikey: process.env.SUPABASE_ANON_KEY || "",
+        },
+        signal: AbortSignal.timeout(3000),
+      });
+      storageAvailable = res.ok;
+    }
+    storageLatency = Date.now() - storageStart;
+    recordMetric("health.storage.latency", storageLatency, "ms");
+  } catch {
+    storageLatency = Date.now() - start;
+  }
+
+  // ── Integration status ──────────────────────────────────────────
+  const integrations: IntegrationStatus[] = [
+    {
+      name: "quickbooks",
+      configured: !!(process.env.QUICKBOOKS_CLIENT_ID && process.env.QUICKBOOKS_CLIENT_SECRET),
+      environment: process.env.QUICKBOOKS_ENVIRONMENT || "sandbox",
+    },
+    {
+      name: "abc_supply",
+      configured: !!(process.env.ABC_SUPPLY_API_KEY && process.env.ABC_SUPPLY_API_SECRET),
+      environment: process.env.ABC_SUPPLY_ENVIRONMENT || "sandbox",
+    },
+    {
+      name: "openai",
+      configured: !!process.env.OPENAI_API_KEY,
+    },
+    {
+      name: "sentry",
+      configured: !!(process.env.NEXT_PUBLIC_SENTRY_DSN || process.env.SENTRY_DSN),
+    },
+    {
+      name: "stripe",
+      configured: !!process.env.STRIPE_SECRET_KEY,
+    },
+  ];
 
   // ── Memory ──────────────────────────────────────────────────────
   const mem = process.memoryUsage();
   const heapUsedMB = Math.round(mem.heapUsed / 1_048_576);
   const heapTotalMB = Math.round(mem.heapTotal / 1_048_576);
   const rssMB = Math.round(mem.rss / 1_048_576);
+  const percentUsed = Math.round((heapUsedMB / heapTotalMB) * 100);
+
+  recordMetric("health.memory.heap_used", heapUsedMB, "bytes");
+  recordMetric("health.memory.percent", percentUsed, "percent");
+
+  // ── Version ─────────────────────────────────────────────────────
+  let version = "1.0.0";
+  try {
+    const fs = await import("fs/promises");
+    version = (await fs.readFile("VERSION", "utf-8")).trim();
+  } catch {
+    version = process.env.npm_package_version || "1.0.0";
+  }
 
   // ── Overall status ──────────────────────────────────────────────
   let status: HealthCheck["status"] = "healthy";
   if (!dbConnected) status = "unhealthy";
-  else if (dbLatency > 500 || !cacheAvailable) status = "degraded";
+  else if (dbLatency > 500 || !cacheAvailable || !storageAvailable) status = "degraded";
+
+  recordMetric(
+    "health.status",
+    status === "healthy" ? 1 : status === "degraded" ? 0.5 : 0,
+    "count"
+  );
 
   return {
     status,
+    traceId,
+    version,
     database: { connected: dbConnected, latencyMs: dbLatency },
     cache: { available: cacheAvailable, latencyMs: cacheLatency },
+    storage: { available: storageAvailable, latencyMs: storageLatency },
+    integrations,
     memory: {
       heapUsedMB,
       heapTotalMB,
       rssMB,
-      percentUsed: Math.round((heapUsedMB / heapTotalMB) * 100),
+      percentUsed,
     },
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
