@@ -85,10 +85,10 @@ export const options = {
 
   thresholds: {
     ...THRESHOLDS,
-    errors: ["rate<0.005"],                    // < 0.5% error rate
-    db_dependent_latency: ["p(95)<3000"],      // DB routes < 3s
-    deep_health_latency: ["p(95)<1000"],       // Deep health < 1s (longer test = more tolerance)
-    health_live_latency: ["p(95)<500"],        // Live health < 500ms
+    errors: ["rate<0.005"], // < 0.5% error rate
+    db_dependent_latency: ["p(95)<3000"], // DB routes < 3s
+    deep_health_latency: ["p(95)<1000"], // Deep health < 1s (longer test = more tolerance)
+    health_live_latency: ["p(95)<500"], // Live health < 500ms
     http_req_duration: ["p(95)<2000", "p(99)<5000"],
   },
 };
@@ -242,7 +242,7 @@ export default function () {
 
   const rand = Math.random();
 
-  if (rand < 0.30) {
+  if (rand < 0.3) {
     publicBrowsing();
   } else if (rand < 0.55) {
     apiAuthGateStress();

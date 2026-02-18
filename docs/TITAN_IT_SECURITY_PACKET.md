@@ -31,17 +31,17 @@ SkaiScraper is an AI-powered operations platform for storm restoration and trade
 
 **Key Security Facts:**
 
-| Attribute | Detail |
-|---|---|
-| **Hosting** | Vercel (SOC 2 Type II) — US East edge network |
-| **Database** | Supabase PostgreSQL (SOC 2 Type II) — AES-256 at rest |
-| **Authentication** | Clerk (SOC 2 Type II) — MFA-capable, SSO-ready |
-| **Payments** | Stripe (PCI DSS Level 1) |
-| **AI Processing** | OpenAI Enterprise API — zero data retention policy |
-| **Error Monitoring** | Sentry (SOC 2 Type II) — PII scrubbed before transmission |
-| **Data Isolation** | Organization-scoped at ORM layer — zero cross-tenant access |
-| **Load Tested** | 500 concurrent users, 30-min sustained at 200 VU, zero failures |
-| **Uptime Monitoring** | BetterStack → `/api/health/live` + `/api/health/deep` |
+| Attribute             | Detail                                                          |
+| --------------------- | --------------------------------------------------------------- |
+| **Hosting**           | Vercel (SOC 2 Type II) — US East edge network                   |
+| **Database**          | Supabase PostgreSQL (SOC 2 Type II) — AES-256 at rest           |
+| **Authentication**    | Clerk (SOC 2 Type II) — MFA-capable, SSO-ready                  |
+| **Payments**          | Stripe (PCI DSS Level 1)                                        |
+| **AI Processing**     | OpenAI Enterprise API — zero data retention policy              |
+| **Error Monitoring**  | Sentry (SOC 2 Type II) — PII scrubbed before transmission       |
+| **Data Isolation**    | Organization-scoped at ORM layer — zero cross-tenant access     |
+| **Load Tested**       | 500 concurrent users, 30-min sustained at 200 VU, zero failures |
+| **Uptime Monitoring** | BetterStack → `/api/health/live` + `/api/health/deep`           |
 
 ---
 
@@ -81,13 +81,13 @@ SkaiScraper is an AI-powered operations platform for storm restoration and trade
 
 ### 2.2 Deployment Pipeline
 
-| Stage | Technology | Security Control |
-|---|---|---|
-| **Source Control** | GitHub (private repo) | Branch protection, required reviews |
-| **CI/CD** | Vercel auto-deploy | Preview deployments on PR, prod on merge to `main` |
-| **Build** | Next.js + TypeScript | Type checking, ESLint, build-time validation |
-| **Runtime** | Vercel Serverless + Edge | Isolated function execution, no shared state |
-| **Monitoring** | Sentry + BetterStack | Real-time error tracking + uptime alerts |
+| Stage              | Technology               | Security Control                                   |
+| ------------------ | ------------------------ | -------------------------------------------------- |
+| **Source Control** | GitHub (private repo)    | Branch protection, required reviews                |
+| **CI/CD**          | Vercel auto-deploy       | Preview deployments on PR, prod on merge to `main` |
+| **Build**          | Next.js + TypeScript     | Type checking, ESLint, build-time validation       |
+| **Runtime**        | Vercel Serverless + Edge | Isolated function execution, no shared state       |
+| **Monitoring**     | Sentry + BetterStack     | Real-time error tracking + uptime alerts           |
 
 ### 2.3 Network Security
 
@@ -102,12 +102,12 @@ SkaiScraper is an AI-powered operations platform for storm restoration and trade
 
 ### 3.1 Encryption
 
-| Layer | Method | Standard |
-|---|---|---|
-| **In Transit** | TLS 1.3 (Vercel Edge) | HTTPS enforced, no HTTP fallback |
-| **At Rest (DB)** | AES-256 (Supabase) | Transparent disk encryption |
-| **At Rest (Storage)** | AES-256 (Supabase Storage) | Per-bucket encryption |
-| **Secrets** | Vercel Environment Variables | Encrypted at rest, injected at runtime |
+| Layer                 | Method                       | Standard                               |
+| --------------------- | ---------------------------- | -------------------------------------- |
+| **In Transit**        | TLS 1.3 (Vercel Edge)        | HTTPS enforced, no HTTP fallback       |
+| **At Rest (DB)**      | AES-256 (Supabase)           | Transparent disk encryption            |
+| **At Rest (Storage)** | AES-256 (Supabase Storage)   | Per-bucket encryption                  |
+| **Secrets**           | Vercel Environment Variables | Encrypted at rest, injected at runtime |
 
 ### 3.2 Secret Management
 
@@ -130,23 +130,23 @@ SkaiScraper is an AI-powered operations platform for storm restoration and trade
 
 ### 3.4 Data Retention
 
-| Data Type | Retention | Deletion Method |
-|---|---|---|
-| **Claim records** | Lifetime of account | Soft delete with 90-day hard delete |
-| **Photos/documents** | Lifetime of account | Supabase Storage bucket policy |
-| **AI outputs** | Stored with claim | Deleted with parent claim |
-| **Audit logs** | 1 year | Automated cleanup |
-| **Error telemetry** | 90 days (Sentry default) | Auto-purged by Sentry |
-| **Session data** | 7 days (Clerk default) | Managed by Clerk |
+| Data Type            | Retention                | Deletion Method                     |
+| -------------------- | ------------------------ | ----------------------------------- |
+| **Claim records**    | Lifetime of account      | Soft delete with 90-day hard delete |
+| **Photos/documents** | Lifetime of account      | Supabase Storage bucket policy      |
+| **AI outputs**       | Stored with claim        | Deleted with parent claim           |
+| **Audit logs**       | 1 year                   | Automated cleanup                   |
+| **Error telemetry**  | 90 days (Sentry default) | Auto-purged by Sentry               |
+| **Session data**     | 7 days (Clerk default)   | Managed by Clerk                    |
 
 ### 3.5 Backup & Recovery
 
-| Component | Backup Cadence | Recovery Method |
-|---|---|---|
-| **Database** | Daily automated (Supabase) | Point-in-time recovery (PITR) up to 7 days |
-| **File Storage** | Replicated (Supabase) | Multi-AZ replication |
-| **Source Code** | Git history | Full rollback via `git revert` + Vercel instant redeploy |
-| **Environment Config** | Version-controlled template | `.env.example` + Vercel project settings |
+| Component              | Backup Cadence              | Recovery Method                                          |
+| ---------------------- | --------------------------- | -------------------------------------------------------- |
+| **Database**           | Daily automated (Supabase)  | Point-in-time recovery (PITR) up to 7 days               |
+| **File Storage**       | Replicated (Supabase)       | Multi-AZ replication                                     |
+| **Source Code**        | Git history                 | Full rollback via `git revert` + Vercel instant redeploy |
+| **Environment Config** | Version-controlled template | `.env.example` + Vercel project settings                 |
 
 ---
 
@@ -156,15 +156,15 @@ SkaiScraper is an AI-powered operations platform for storm restoration and trade
 
 **Clerk** (SOC 2 Type II certified)
 
-| Feature | Status |
-|---|---|
-| Email + password authentication | ✅ Active |
-| Multi-factor authentication (MFA) | ✅ Available (TOTP, SMS) |
-| SSO / SAML | ✅ Enterprise plan ready |
-| Session management | ✅ JWT with automatic refresh |
-| Brute force protection | ✅ Clerk-managed lockout |
-| Password policy | ✅ Minimum 8 chars, complexity required |
-| Session expiration | ✅ Configurable (default: 7 days) |
+| Feature                           | Status                                  |
+| --------------------------------- | --------------------------------------- |
+| Email + password authentication   | ✅ Active                               |
+| Multi-factor authentication (MFA) | ✅ Available (TOTP, SMS)                |
+| SSO / SAML                        | ✅ Enterprise plan ready                |
+| Session management                | ✅ JWT with automatic refresh           |
+| Brute force protection            | ✅ Clerk-managed lockout                |
+| Password policy                   | ✅ Minimum 8 chars, complexity required |
+| Session expiration                | ✅ Configurable (default: 7 days)       |
 
 ### 4.2 Authorization Model
 
@@ -179,14 +179,14 @@ Request → Clerk Middleware → Route Handler → Prisma (org-scoped query)
 
 ### 4.3 Route Protection
 
-| Surface | Auth Required | Enforcement |
-|---|---|---|
-| **Pro Dashboard** (`/dashboard`, `/claims`, `/leads`) | ✅ Required | Clerk middleware + API auth check |
-| **Client Portal** (`/portal/*`) | ✅ Required | Clerk middleware + portal role check |
-| **Admin Routes** (`/admin/*`) | ✅ Admin only | Clerk middleware + admin role verification |
-| **Marketing Pages** (`/`, `/pricing`, `/features`) | Public | No auth required |
-| **API Routes** (`/api/*`) | ✅ Required (except health) | `auth()` check, returns JSON 401 |
-| **Health Endpoints** (`/api/health/*`) | Public | No auth (monitoring access) |
+| Surface                                               | Auth Required               | Enforcement                                |
+| ----------------------------------------------------- | --------------------------- | ------------------------------------------ |
+| **Pro Dashboard** (`/dashboard`, `/claims`, `/leads`) | ✅ Required                 | Clerk middleware + API auth check          |
+| **Client Portal** (`/portal/*`)                       | ✅ Required                 | Clerk middleware + portal role check       |
+| **Admin Routes** (`/admin/*`)                         | ✅ Admin only               | Clerk middleware + admin role verification |
+| **Marketing Pages** (`/`, `/pricing`, `/features`)    | Public                      | No auth required                           |
+| **API Routes** (`/api/*`)                             | ✅ Required (except health) | `auth()` check, returns JSON 401           |
+| **Health Endpoints** (`/api/health/*`)                | Public                      | No auth (monitoring access)                |
 
 ### 4.4 API Authentication
 
@@ -234,20 +234,20 @@ Organization A (Titan Roofing)          Organization B (Pro West)
 
 ### 5.3 Automated Testing
 
-| Test Suite | Lines | What It Validates |
-|---|---|---|
-| `cross-org-isolation.test.ts` | 605 | Org A cannot access Org B claims, leads, jobs, documents |
-| `auth-hardening.test.ts` | 396 | Unauthenticated requests return 401, no data leakage |
-| `middleware.comprehensive.test.ts` | Full middleware coverage | Route protection, redirect behavior, session validation |
+| Test Suite                         | Lines                    | What It Validates                                        |
+| ---------------------------------- | ------------------------ | -------------------------------------------------------- |
+| `cross-org-isolation.test.ts`      | 605                      | Org A cannot access Org B claims, leads, jobs, documents |
+| `auth-hardening.test.ts`           | 396                      | Unauthenticated requests return 401, no data leakage     |
+| `middleware.comprehensive.test.ts` | Full middleware coverage | Route protection, redirect behavior, session validation  |
 
 ### 5.4 Cross-Tenant Access Attempt → Expected Result
 
-| Scenario | Expected Behavior |
-|---|---|
+| Scenario                                         | Expected Behavior                                             |
+| ------------------------------------------------ | ------------------------------------------------------------- |
 | User in Org A requests `/api/claims?orgId=org_B` | Returns **only Org A data** (orgId from JWT, not query param) |
-| Direct URL `/claims/[org_B_claim_id]` | Returns **404** (claim not found in Org A scope) |
-| API request without auth token | Returns **401 Unauthorized** |
-| Expired session token | Returns **401 Unauthorized** |
+| Direct URL `/claims/[org_B_claim_id]`            | Returns **404** (claim not found in Org A scope)              |
+| API request without auth token                   | Returns **401 Unauthorized**                                  |
+| Expired session token                            | Returns **401 Unauthorized**                                  |
 
 ---
 
@@ -275,13 +275,14 @@ Organization A (Titan Roofing)          Organization B (Pro West)
 
 ### 6.2 Health Endpoints
 
-| Endpoint | Purpose | Checks | Status Codes |
-|---|---|---|---|
-| `/api/health/live` | BetterStack uptime target | Env vars, DB ping, memory | 200 OK, 207 Degraded, 503 Unhealthy |
-| `/api/health/deep` | Deep system validation | DB + Redis + Supabase Storage + memory + integrations | 200 OK, 207 Degraded, 503 Unhealthy |
-| `/api/health/ready` | Readiness probe | DB connectivity, Prisma client status | 200 OK, 503 Not Ready |
+| Endpoint            | Purpose                   | Checks                                                | Status Codes                        |
+| ------------------- | ------------------------- | ----------------------------------------------------- | ----------------------------------- |
+| `/api/health/live`  | BetterStack uptime target | Env vars, DB ping, memory                             | 200 OK, 207 Degraded, 503 Unhealthy |
+| `/api/health/deep`  | Deep system validation    | DB + Redis + Supabase Storage + memory + integrations | 200 OK, 207 Degraded, 503 Unhealthy |
+| `/api/health/ready` | Readiness probe           | DB connectivity, Prisma client status                 | 200 OK, 503 Not Ready               |
 
 **Live health response includes:**
+
 - Database connectivity + latency (ms)
 - Memory usage (heap %, RSS)
 - Integration status (Clerk, Sentry, Stripe, OpenAI, Supabase, Redis)
@@ -291,27 +292,28 @@ Organization A (Titan Roofing)          Organization B (Pro West)
 
 ### 6.3 Sentry Configuration
 
-| Runtime | Trace Sample Rate | Profile Sample Rate | PII Scrubbing |
-|---|---|---|---|
-| **Server (Node.js)** | 10% | 10% | ✅ Full (headers, cookies, body, breadcrumbs) |
-| **Edge** | 5% | N/A (edge limitation) | ✅ Full |
-| **Client (Browser)** | 10% | 10% | ✅ Full |
+| Runtime              | Trace Sample Rate | Profile Sample Rate   | PII Scrubbing                                 |
+| -------------------- | ----------------- | --------------------- | --------------------------------------------- |
+| **Server (Node.js)** | 10%               | 10%                   | ✅ Full (headers, cookies, body, breadcrumbs) |
+| **Edge**             | 5%                | N/A (edge limitation) | ✅ Full                                       |
+| **Client (Browser)** | 10%               | 10%                   | ✅ Full                                       |
 
 **Sentry Integrations:**
+
 - Browser tracing (Web Vitals, LCP, FID, CLS)
 - Session Replay (1% normal, 50% on error — all text masked, media blocked)
 - Release tracking via Vercel Git commit SHA
 
 ### 6.4 Alerting Thresholds
 
-| Metric | Threshold | Action |
-|---|---|---|
+| Metric                   | Threshold              | Action                          |
+| ------------------------ | ---------------------- | ------------------------------- |
 | **Uptime check failure** | 2 consecutive failures | BetterStack alert → Slack/email |
-| **Error spike** | > 0.5% error rate | Sentry alert |
-| **Slow transaction** | p95 > 1s | Sentry performance alert |
-| **DB latency** | > 500ms | Health endpoint → 207 Degraded |
-| **Memory usage** | > 90% heap | Health endpoint → 207 Degraded |
-| **API 5xx rate** | > 1% of requests | Sentry + Vercel logs alert |
+| **Error spike**          | > 0.5% error rate      | Sentry alert                    |
+| **Slow transaction**     | p95 > 1s               | Sentry performance alert        |
+| **DB latency**           | > 500ms                | Health endpoint → 207 Degraded  |
+| **Memory usage**         | > 90% heap             | Health endpoint → 207 Degraded  |
+| **API 5xx rate**         | > 1% of requests       | Sentry + Vercel logs alert      |
 
 ---
 
@@ -331,13 +333,13 @@ Request → Rate Limit Check (Redis) → Allow/Deny (429)
 
 ### 7.2 Rate Limit Tiers
 
-| Endpoint Category | Limit | Window | Backend |
-|---|---|---|---|
-| **AI Operations** (GPT-4o calls) | Per-plan token budget | Rolling 24h | Upstash Redis |
-| **API Routes** (general) | Configurable per-route | Sliding window | Upstash Redis |
-| **Authentication** | Clerk-managed | Per-IP | Clerk infrastructure |
-| **File Upload** | 10MB max per file | Per-request | Server-side validation |
-| **Webhook Endpoints** | Stripe signature verification | Per-request | Cryptographic validation |
+| Endpoint Category                | Limit                         | Window         | Backend                  |
+| -------------------------------- | ----------------------------- | -------------- | ------------------------ |
+| **AI Operations** (GPT-4o calls) | Per-plan token budget         | Rolling 24h    | Upstash Redis            |
+| **API Routes** (general)         | Configurable per-route        | Sliding window | Upstash Redis            |
+| **Authentication**               | Clerk-managed                 | Per-IP         | Clerk infrastructure     |
+| **File Upload**                  | 10MB max per file             | Per-request    | Server-side validation   |
+| **Webhook Endpoints**            | Stripe signature verification | Per-request    | Cryptographic validation |
 
 ### 7.3 Fallback
 
@@ -358,12 +360,12 @@ Request → Rate Limit Check (Redis) → Allow/Deny (429)
 
 ### 8.2 Results Summary
 
-| Test | VUs | Duration | p95 Latency | Pass Rate | Verdict |
-|---|---|---|---|---|---|
-| **Smoke** | 5 | 2 min | **278ms** | 100% | ✅ PASS |
-| **Soak** | 200 | 30 min | **615ms** | 99.96% | ✅ PASS |
-| **Spike** | 0→500 | 8 min | **266ms** | 100% | ✅ PASS |
-| **Stress** | 100→500 | 18 min | **855ms** | 99.56% | ✅ PASS |
+| Test       | VUs     | Duration | p95 Latency | Pass Rate | Verdict |
+| ---------- | ------- | -------- | ----------- | --------- | ------- |
+| **Smoke**  | 5       | 2 min    | **278ms**   | 100%      | ✅ PASS |
+| **Soak**   | 200     | 30 min   | **615ms**   | 99.96%    | ✅ PASS |
+| **Spike**  | 0→500   | 8 min    | **266ms**   | 100%      | ✅ PASS |
+| **Stress** | 100→500 | 18 min   | **855ms**   | 99.56%    | ✅ PASS |
 
 ### 8.3 Enterprise Relevance
 
@@ -378,6 +380,7 @@ For a 180-person organization (projected peak ~90 concurrent users):
 ### 8.4 60-Minute Endurance Test
 
 Available for execution. Validates:
+
 - Memory leak detection over extended runtime
 - Connection pool stability beyond cold-start window
 - Latency creep under sustained business-hour simulation
@@ -389,16 +392,16 @@ Available for execution. Validates:
 
 Every external service used by SkaiScraper maintains enterprise-grade security certification:
 
-| Service | Purpose | Certification | Data Handling |
-|---|---|---|---|
-| **Clerk** | Authentication + Identity | SOC 2 Type II | Session data only, MFA capable |
-| **Supabase** | Database + File Storage | SOC 2 Type II | AES-256 at rest, TLS in transit |
-| **Stripe** | Payments + Billing | PCI DSS Level 1 | No card data touches our servers |
-| **OpenAI** | AI Processing (GPT-4o) | Enterprise API | Zero data retention, no model training |
-| **Vercel** | Hosting + CDN + Edge | SOC 2 Type II | Isolated serverless execution |
-| **Sentry** | Error Monitoring | SOC 2 Type II | PII scrubbed before transmission |
-| **Resend** | Transactional Email | SOC 2 | Email content only, no storage |
-| **Upstash** | Redis (Rate Limiting) | SOC 2 | Ephemeral rate limit counters only |
+| Service      | Purpose                   | Certification   | Data Handling                          |
+| ------------ | ------------------------- | --------------- | -------------------------------------- |
+| **Clerk**    | Authentication + Identity | SOC 2 Type II   | Session data only, MFA capable         |
+| **Supabase** | Database + File Storage   | SOC 2 Type II   | AES-256 at rest, TLS in transit        |
+| **Stripe**   | Payments + Billing        | PCI DSS Level 1 | No card data touches our servers       |
+| **OpenAI**   | AI Processing (GPT-4o)    | Enterprise API  | Zero data retention, no model training |
+| **Vercel**   | Hosting + CDN + Edge      | SOC 2 Type II   | Isolated serverless execution          |
+| **Sentry**   | Error Monitoring          | SOC 2 Type II   | PII scrubbed before transmission       |
+| **Resend**   | Transactional Email       | SOC 2           | Email content only, no storage         |
+| **Upstash**  | Redis (Rate Limiting)     | SOC 2           | Ephemeral rate limit counters only     |
 
 ### 9.1 AI Data Handling (OpenAI)
 
@@ -421,12 +424,12 @@ Every external service used by SkaiScraper maintains enterprise-grade security c
 
 ### 10.1 Incident Classification
 
-| Severity | Definition | Response Time | Example |
-|---|---|---|---|
-| **P0 — Critical** | Service outage, data breach | < 1 hour | Database down, auth bypass |
-| **P1 — High** | Major feature broken, data integrity | < 4 hours | AI service failure, payment errors |
-| **P2 — Medium** | Degraded performance, non-critical bug | < 24 hours | Slow queries, UI glitch |
-| **P3 — Low** | Cosmetic issue, feature request | Next sprint | Styling fix, minor UX improvement |
+| Severity          | Definition                             | Response Time | Example                            |
+| ----------------- | -------------------------------------- | ------------- | ---------------------------------- |
+| **P0 — Critical** | Service outage, data breach            | < 1 hour      | Database down, auth bypass         |
+| **P1 — High**     | Major feature broken, data integrity   | < 4 hours     | AI service failure, payment errors |
+| **P2 — Medium**   | Degraded performance, non-critical bug | < 24 hours    | Slow queries, UI glitch            |
+| **P3 — Low**      | Cosmetic issue, feature request        | Next sprint   | Styling fix, minor UX improvement  |
 
 ### 10.2 Response Procedure
 
@@ -438,12 +441,12 @@ Every external service used by SkaiScraper maintains enterprise-grade security c
 
 ### 10.3 Deployment & Rollback
 
-| Capability | Method | Time to Execute |
-|---|---|---|
-| **Deploy hotfix** | Merge to `main` → Vercel auto-deploy | < 5 minutes |
-| **Rollback deployment** | Vercel instant rollback to previous build | < 30 seconds |
-| **Database rollback** | Supabase point-in-time recovery | < 15 minutes |
-| **Secret rotation** | Vercel env var update + redeploy | < 5 minutes |
+| Capability              | Method                                    | Time to Execute |
+| ----------------------- | ----------------------------------------- | --------------- |
+| **Deploy hotfix**       | Merge to `main` → Vercel auto-deploy      | < 5 minutes     |
+| **Rollback deployment** | Vercel instant rollback to previous build | < 30 seconds    |
+| **Database rollback**   | Supabase point-in-time recovery           | < 15 minutes    |
+| **Secret rotation**     | Vercel env var update + redeploy          | < 5 minutes     |
 
 ---
 
@@ -451,26 +454,27 @@ Every external service used by SkaiScraper maintains enterprise-grade security c
 
 ### 11.1 Current Status
 
-| Requirement | Status | Evidence |
-|---|---|---|
-| **Data encryption at rest** | ✅ Complete | AES-256 via Supabase |
-| **Data encryption in transit** | ✅ Complete | TLS 1.3 via Vercel |
-| **Authentication with MFA** | ✅ Complete | Clerk with TOTP/SMS |
-| **Organization-scoped isolation** | ✅ Complete | Prisma ORM + automated tests |
-| **Secret management** | ✅ Complete | Vercel env vars, no hardcoded secrets |
-| **Audit logging** | ✅ Complete | Claim edits, AI outputs, timestamps + user IDs |
-| **Security headers** | ✅ Complete | CSP, HSTS, X-Frame-Options, X-Content-Type-Options |
-| **Error monitoring** | ✅ Complete | Sentry (server + edge + client) with PII scrubbing |
-| **Rate limiting** | ✅ Complete | Upstash Redis distributed rate limiting |
-| **Load testing** | ✅ Complete | k6 stress test at 500 VU — no failure ceiling found |
-| **Uptime monitoring** | ✅ Complete | BetterStack → `/api/health/live` |
-| **SOC 2 Type II audit** | 🔜 Planned | All vendors are SOC 2 certified |
-| **External penetration test** | 🔜 Planned Q2 2026 | Internal security audit complete |
-| **GDPR data export/delete** | 🔜 Planned | Architecture supports; workflows pending |
+| Requirement                       | Status             | Evidence                                            |
+| --------------------------------- | ------------------ | --------------------------------------------------- |
+| **Data encryption at rest**       | ✅ Complete        | AES-256 via Supabase                                |
+| **Data encryption in transit**    | ✅ Complete        | TLS 1.3 via Vercel                                  |
+| **Authentication with MFA**       | ✅ Complete        | Clerk with TOTP/SMS                                 |
+| **Organization-scoped isolation** | ✅ Complete        | Prisma ORM + automated tests                        |
+| **Secret management**             | ✅ Complete        | Vercel env vars, no hardcoded secrets               |
+| **Audit logging**                 | ✅ Complete        | Claim edits, AI outputs, timestamps + user IDs      |
+| **Security headers**              | ✅ Complete        | CSP, HSTS, X-Frame-Options, X-Content-Type-Options  |
+| **Error monitoring**              | ✅ Complete        | Sentry (server + edge + client) with PII scrubbing  |
+| **Rate limiting**                 | ✅ Complete        | Upstash Redis distributed rate limiting             |
+| **Load testing**                  | ✅ Complete        | k6 stress test at 500 VU — no failure ceiling found |
+| **Uptime monitoring**             | ✅ Complete        | BetterStack → `/api/health/live`                    |
+| **SOC 2 Type II audit**           | 🔜 Planned         | All vendors are SOC 2 certified                     |
+| **External penetration test**     | 🔜 Planned Q2 2026 | Internal security audit complete                    |
+| **GDPR data export/delete**       | 🔜 Planned         | Architecture supports; workflows pending            |
 
 ### 11.2 SSO Readiness
 
 SkaiScraper supports Single Sign-On via Clerk's Enterprise plan:
+
 - **SAML 2.0** support
 - **Active Directory** integration
 - **Custom domain** for auth portal
@@ -528,16 +532,16 @@ SkaiScraper supports Single Sign-On via Clerk's Enterprise plan:
 
 At a projected 180-person peak (estimated ~90 concurrent users):
 
-| Metric | Your Load | Our Tested Capacity | Safety Margin |
-|---|---|---|---|
-| **Concurrent users** | ~90 peak | 500 tested | **5.5x** |
-| **Sustained load** | ~90 for hours | 200 for 30 min | **2.2x** |
-| **Spike scenario** | All 180 login at once | 500 VU instant spike | **2.7x** |
-| **p95 latency** | Need < 1s | 615ms at 200 VU | ✅ Under target |
+| Metric               | Your Load             | Our Tested Capacity  | Safety Margin   |
+| -------------------- | --------------------- | -------------------- | --------------- |
+| **Concurrent users** | ~90 peak              | 500 tested           | **5.5x**        |
+| **Sustained load**   | ~90 for hours         | 200 for 30 min       | **2.2x**        |
+| **Spike scenario**   | All 180 login at once | 500 VU instant spike | **2.7x**        |
+| **p95 latency**      | Need < 1s             | 615ms at 200 VU      | ✅ Under target |
 
 ---
 
-*This document is provided for IT security review purposes. Raw k6 test output and Sentry dashboards are available upon request.*
+_This document is provided for IT security review purposes. Raw k6 test output and Sentry dashboards are available upon request._
 
 **Contact:** security@clearskaitechnologies.com  
 **Document Version:** 1.0  
