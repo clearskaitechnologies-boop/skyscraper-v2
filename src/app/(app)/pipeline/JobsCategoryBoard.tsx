@@ -23,9 +23,7 @@ import {
   FileCheck,
   GripVertical,
   MapPin,
-  Plus,
   Search,
-  TrendingUp,
   User,
   Wrench,
 } from "lucide-react";
@@ -301,39 +299,29 @@ export function JobsCategoryBoard({ initialJobs }: JobsCategoryBoardProps) {
     }
   };
 
-  if (jobs.length === 0) {
-    return (
-      <div className="rounded-2xl border-2 border-dashed border-slate-200 p-12 text-center dark:border-slate-700">
-        <TrendingUp className="mx-auto mb-4 h-12 w-12 text-slate-300 dark:text-slate-600" />
-        <h3 className="text-lg font-semibold text-slate-700 dark:text-white">
-          Your Pipeline is Empty
-        </h3>
-        <p className="mx-auto mt-2 max-w-md text-sm text-slate-500">
-          Create your first lead or claim to start tracking jobs through your pipeline. Drag cards
-          between stages to update progress.
-        </p>
-        <div className="mt-6 flex justify-center gap-3">
-          <Link
-            href="/claims/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-          >
-            <Plus className="h-4 w-4" />
-            Create Claim
-          </Link>
-          <Link
-            href="/leads/new"
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-800 dark:text-white dark:hover:bg-slate-700"
-          >
-            <Plus className="h-4 w-4" />
-            Add Lead
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
+      {jobs.length === 0 && (
+        <div className="mb-4 rounded-xl border border-dashed border-slate-300 bg-slate-50/50 px-4 py-3 text-center dark:border-slate-700 dark:bg-slate-800/30">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            No active jobs yet — create a{" "}
+            <Link
+              href="/claims/new"
+              className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+            >
+              claim
+            </Link>{" "}
+            or{" "}
+            <Link
+              href="/leads/new"
+              className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+            >
+              lead
+            </Link>{" "}
+            to get started. Drag cards between stages to update progress.
+          </p>
+        </div>
+      )}
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-1 rounded-lg bg-slate-100 p-1 dark:bg-slate-800">
           {FILTERS.map((f) => (

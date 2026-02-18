@@ -26,6 +26,7 @@ const PRO_ROUTES = [
   "/proposals",
   "/analytics",
   "/vendors",
+  "/vendor-network",
   "/report-builder",
   "/trades",
   "/jobs",
