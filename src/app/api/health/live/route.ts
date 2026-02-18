@@ -85,10 +85,14 @@ export async function GET() {
     const mem = process.memoryUsage();
     const heapUsedMB = Math.round(mem.heapUsed / 1_048_576);
     const heapTotalMB = Math.round(mem.heapTotal / 1_048_576);
-    const memPercent = Math.round((heapUsedMB / heapTotalMB) * 100);
+    const rssMB = Math.round(mem.rss / 1_048_576);
+    // Use RSS vs container limit (1024 MB on Vercel) — heap ratio is
+    // misleading on serverless because V8 auto-sizes a small heap.
+    const CONTAINER_LIMIT_MB = 1024;
+    const memPercent = Math.round((rssMB / CONTAINER_LIMIT_MB) * 100);
 
     // ── 4. Determine overall status ───────────────────────────────
-    const isDegraded = dbLatency > 500 || memPercent > 90;
+    const isDegraded = dbLatency > 500 || memPercent > 85;
 
     // ── 5. Integration availability (non-blocking) ────────────────
     const integrations = {
@@ -113,7 +117,8 @@ export async function GET() {
         memory: {
           heapUsedMB,
           heapTotalMB,
-          rssMB: Math.round(mem.rss / 1_048_576),
+          rssMB,
+          containerLimitMB: CONTAINER_LIMIT_MB,
           percentUsed: memPercent,
         },
       },
