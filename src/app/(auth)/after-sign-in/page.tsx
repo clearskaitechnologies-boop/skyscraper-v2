@@ -2,21 +2,17 @@ import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-import { getUserIdentity } from "@/lib/identity";
-
 /**
- * After-sign-in routing page
+ * After-sign-in routing — HARDENED v3
  *
- * This page runs after Clerk sign-in/sign-up completes. It:
- * 1. Checks the user's identity (pro vs client)
- * 2. Falls back to Clerk org membership check if DB lookup fails
- * 3. Honors the ?mode= param from the sign-up page (pro or client)
- * 4. Sets the x-user-type cookie for middleware routing
- * 5. Redirects to the appropriate dashboard
+ * Layer order: Clerk-first (no DB dependency for auth routing)
+ *   L1: Clerk publicMetadata from currentUser()
+ *   L2: Direct Clerk REST API fetch (bypasses SDK caching)
+ *   L3: Clerk org membership (any org = pro)
+ *   L4: Direct SQL with schema-qualified table name
+ *   L5: Prisma ORM (last resort — known broken with PgBouncer)
  *
- * CRITICAL: This page must NEVER silently default to "client" when the
- * DB is flaky. If Prisma errors out, we check Clerk org membership
- * and publicMetadata as fallbacks before defaulting.
+ * CRITICAL: Auth routing must work even when the database is down.
  */
 
 async function setUserTypeCookie(type: "pro" | "client") {
@@ -53,10 +49,30 @@ async function syncClerkMetadata(clerkUserId: string, userType: "pro" | "client"
   }
 }
 
-/**
- * Direct SQL fallback — bypasses Prisma schema mismatches entirely.
- * Used when Prisma client throws (e.g. column mismatch after migration).
- */
+/** Direct Clerk REST API — bypasses SDK entirely */
+async function getClerkUserTypeDirect(clerkUserId: string): Promise<"pro" | "client" | null> {
+  try {
+    const sk = process.env.CLERK_SECRET_KEY;
+    if (!sk) return null;
+    const r = await fetch(`https://api.clerk.com/v1/users/${clerkUserId}`, {
+      headers: { Authorization: `Bearer ${sk}` },
+      cache: "no-store",
+    });
+    if (!r.ok) {
+      console.error("[AFTER-SIGN-IN] Clerk API HTTP", r.status);
+      return null;
+    }
+    const d = await r.json();
+    const ut = d?.public_metadata?.userType;
+    if (ut === "pro" || ut === "client") return ut;
+    return null;
+  } catch (e) {
+    console.error("[AFTER-SIGN-IN] Clerk API fetch error:", e);
+    return null;
+  }
+}
+
+/** Schema-qualified direct SQL — bypasses Prisma ORM */
 async function getUserTypeDirectSQL(clerkUserId: string): Promise<"pro" | "client" | null> {
   try {
     const { default: prisma } = await import("@/lib/prisma");
@@ -95,137 +111,90 @@ export default async function AfterSignInPage({
     redirect("/sign-in");
   }
 
-  // ─── 1. Check existing identity in database ───
-  let existingType: string | undefined;
+  console.log("[AFTER-SIGN-IN] START userId:", user.id, "mode:", mode);
 
-  console.log("[AFTER-SIGN-IN] ═══ IDENTITY RESOLUTION START ═══");
-  console.log("[AFTER-SIGN-IN] ClerkUserId:", user.id);
-  console.log("[AFTER-SIGN-IN] Clerk publicMetadata:", JSON.stringify(user.publicMetadata));
-  console.log("[AFTER-SIGN-IN] Clerk orgMemberships:", user.organizationMemberships?.length ?? 0);
+  let resolvedType: "pro" | "client" | null = null;
 
-  // Primary: Prisma ORM lookup
+  // -- L1: Clerk publicMetadata (fastest, no network call) --
   try {
-    const identity = await getUserIdentity(user.id);
-    existingType = identity?.userType;
-    console.log(
-      "[AFTER-SIGN-IN] Layer 1 (Prisma ORM):",
-      existingType ?? "null — user not found or Prisma error"
-    );
-  } catch (error) {
-    console.error("[AFTER-SIGN-IN] Layer 1 (Prisma ORM) THREW:", error);
+    const mt = (user.publicMetadata as Record<string, unknown>)?.userType;
+    console.log("[AFTER-SIGN-IN] L1 Clerk meta:", JSON.stringify(mt));
+    if (mt === "pro" || mt === "client") resolvedType = mt;
+  } catch (e) {
+    console.error("[AFTER-SIGN-IN] L1 err:", e);
   }
 
-  // Fallback 1: Direct SQL (bypasses Prisma schema issues)
-  if (!existingType) {
-    const sqlType = await getUserTypeDirectSQL(user.id);
-    if (sqlType) {
-      existingType = sqlType;
-      console.log("[AFTER-SIGN-IN] Layer 2 (Direct SQL) RECOVERED:", sqlType);
-    } else {
-      console.log("[AFTER-SIGN-IN] Layer 2 (Direct SQL): null — query failed or user not found");
-    }
+  // -- L2: Direct Clerk REST API (bypasses SDK) --
+  if (!resolvedType) {
+    console.log("[AFTER-SIGN-IN] L1 miss -> L2 Clerk API");
+    const t2 = await getClerkUserTypeDirect(user.id);
+    console.log("[AFTER-SIGN-IN] L2:", t2);
+    if (t2) resolvedType = t2;
   }
 
-  // Fallback 2: Clerk publicMetadata (set by onboarding or admin)
-  if (!existingType) {
-    const clerkUserType = user.publicMetadata?.userType as string | undefined;
-    console.log(
-      "[AFTER-SIGN-IN] Layer 3 (Clerk metadata) raw value:",
-      JSON.stringify(clerkUserType)
-    );
-    if (clerkUserType === "pro" || clerkUserType === "client") {
-      existingType = clerkUserType;
-      console.log("[AFTER-SIGN-IN] Layer 3 (Clerk metadata) RECOVERED:", clerkUserType);
-    } else {
-      console.log("[AFTER-SIGN-IN] Layer 3 (Clerk metadata): not pro/client, got:", clerkUserType);
-    }
+  // -- L3: Clerk org membership --
+  if (!resolvedType) {
+    const oc = user.organizationMemberships?.length ?? 0;
+    console.log("[AFTER-SIGN-IN] L3 orgs:", oc);
+    if (oc > 0) resolvedType = "pro";
   }
 
-  // Fallback 3: Clerk org membership (any org membership = pro user)
-  if (!existingType) {
+  // -- L4: Direct SQL (schema-qualified) --
+  if (!resolvedType) {
+    console.log("[AFTER-SIGN-IN] L3 miss -> L4 SQL");
+    const t4 = await getUserTypeDirectSQL(user.id);
+    console.log("[AFTER-SIGN-IN] L4:", t4);
+    if (t4) resolvedType = t4;
+  }
+
+  // -- L5: Prisma ORM (last resort) --
+  if (!resolvedType) {
+    console.log("[AFTER-SIGN-IN] L4 miss -> L5 Prisma ORM");
     try {
-      const orgs = user.organizationMemberships;
-      console.log("[AFTER-SIGN-IN] Layer 4 (Org membership) count:", orgs?.length ?? 0);
-      if (orgs && orgs.length > 0) {
-        existingType = "pro";
-        console.log("[AFTER-SIGN-IN] Layer 4 (Org membership) RECOVERED: pro");
-      }
-    } catch {
-      console.error("[AFTER-SIGN-IN] Layer 4 (Org membership) failed");
+      const { getUserIdentity } = await import("@/lib/identity");
+      const id5 = await getUserIdentity(user.id);
+      const t5 = id5?.userType;
+      console.log("[AFTER-SIGN-IN] L5:", t5);
+      if (t5 === "pro" || t5 === "client") resolvedType = t5;
+    } catch (e) {
+      console.error("[AFTER-SIGN-IN] L5 err:", e);
     }
   }
 
-  console.log(
-    "[AFTER-SIGN-IN] ═══ FINAL RESULT ═══ User:",
-    user.id,
-    "ExistingType:",
-    existingType,
-    "Mode:",
-    mode
-  );
+  console.log("[AFTER-SIGN-IN] RESOLVED:", resolvedType, "for", user.id);
 
-  // ─── 2. If user already has a known type, honor it ───
-  if (existingType === "pro" || existingType === "client") {
-    console.log("[AFTER-SIGN-IN] ✅ Known user — setting cookie + syncing metadata:", existingType);
-    await setUserTypeCookie(existingType as "pro" | "client");
-    await syncClerkMetadata(user.id, existingType as "pro" | "client");
-
-    // Honor pending redirect first (invite links, deep links)
-    if (pendingRedirect && pendingRedirect.startsWith("/")) {
-      console.log("[AFTER-SIGN-IN] → Redirecting to pending URL:", pendingRedirect);
-      redirect(pendingRedirect);
-    }
-
-    if (existingType === "client") {
-      console.log("[AFTER-SIGN-IN] → Redirecting CLIENT to /portal");
-      redirect("/portal");
-    }
-    // Pro user
-    console.log("[AFTER-SIGN-IN] → Redirecting PRO to /dashboard");
+  // -- Known user: route by type --
+  if (resolvedType) {
+    await setUserTypeCookie(resolvedType);
+    syncClerkMetadata(user.id, resolvedType).catch(() => {});
+    if (pendingRedirect?.startsWith("/")) redirect(pendingRedirect);
+    if (resolvedType === "client") redirect("/portal");
     redirect("/dashboard");
   }
 
-  // ─── 3. NEW USER — determine type from mode param ───
-  // mode=pro comes from /sign-up page ("Create Your Pro Account")
-  // mode=client comes from /client/sign-in page
-  // No mode = default to client (homeowners arriving via Google)
-  const resolvedType: "pro" | "client" = mode === "pro" ? "pro" : "client";
+  // -- New user: determine from mode param --
+  const newType: "pro" | "client" = mode === "pro" ? "pro" : "client";
+  console.log("[AFTER-SIGN-IN] NEW USER mode:", mode, "->", newType);
 
-  console.log(
-    "[AFTER-SIGN-IN] ⚠️ NEW USER REGISTRATION — mode:",
-    mode,
-    "resolvedType:",
-    resolvedType
-  );
-
-  // Try to register in user_registry (best-effort, don't block redirect)
   try {
     const { default: prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(
       `INSERT INTO app.user_registry ("clerkUserId", "userType", "isActive", "onboardingComplete", "displayName", email, "avatarUrl", "createdAt", "updatedAt")
        VALUES ($1, $2, true, false, $3, $4, $5, NOW(), NOW())
-       ON CONFLICT ("clerkUserId") DO UPDATE SET "userType" = $2, "lastSeenAt" = NOW(), "updatedAt" = NOW()`,
+       ON CONFLICT ("clerkUserId") DO NOTHING`,
       user.id,
-      resolvedType,
+      newType,
       `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
       user.emailAddresses?.[0]?.emailAddress || null,
       user.imageUrl || null
     );
   } catch (regError) {
-    console.error("[AFTER-SIGN-IN] Error registering user:", regError);
+    console.error("[AFTER-SIGN-IN] DB reg err:", regError);
   }
 
-  await setUserTypeCookie(resolvedType);
-  await syncClerkMetadata(user.id, resolvedType);
-
-  // Honor pending redirect first
-  if (pendingRedirect && pendingRedirect.startsWith("/")) {
-    redirect(pendingRedirect);
-  }
-
-  if (resolvedType === "pro") {
-    redirect("/dashboard");
-  }
-
+  await setUserTypeCookie(newType);
+  await syncClerkMetadata(user.id, newType);
+  if (pendingRedirect?.startsWith("/")) redirect(pendingRedirect);
+  if (newType === "pro") redirect("/dashboard");
   redirect("/portal");
 }
