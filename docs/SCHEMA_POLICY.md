@@ -29,6 +29,7 @@ search_path = public, app, extensions
 ```
 
 Applied via:
+
 - `ALTER ROLE postgres SET search_path TO public, app, extensions;`
 - `ALTER DATABASE postgres SET search_path TO public, app, extensions;`
 - `options=-csearch_path%3Dpublic%2Capp%2Cextensions` in `DATABASE_URL` and `DIRECT_DATABASE_URL`
@@ -74,6 +75,7 @@ ORDER BY table_schema, ordinal_position;
 ### Rule 5: Migration Files Go in `db/migrations/`
 
 Document every schema change in a dated SQL file:
+
 ```
 db/migrations/YYYYMMDD_description.sql
 ```
@@ -84,12 +86,12 @@ These are applied manually and serve as audit trail.
 
 ## Schema Inventory (As of 2026-02-18)
 
-| Location | Count | Description |
-|----------|-------|-------------|
-| `public` only | 28 tables | Prisma-managed, no `app` equivalent |
-| `app` only | 185 tables | Accessible via search_path fallback |
-| Both schemas | 81 tables | `public` takes priority, columns reconciled |
-| **Total Prisma models** | **260** | All resolvable via search_path |
+| Location                | Count      | Description                                 |
+| ----------------------- | ---------- | ------------------------------------------- |
+| `public` only           | 28 tables  | Prisma-managed, no `app` equivalent         |
+| `app` only              | 185 tables | Accessible via search_path fallback         |
+| Both schemas            | 81 tables  | `public` takes priority, columns reconciled |
+| **Total Prisma models** | **260**    | All resolvable via search_path              |
 
 ## Connection Strings
 

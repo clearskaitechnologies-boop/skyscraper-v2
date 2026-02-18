@@ -39,7 +39,8 @@ export function PageHero({
   const resolvedSection: SectionTheme = section ?? getSectionTheme(pathname);
 
   // Priority: resolvedSection (explicit or auto-detected) ALWAYS wins.
-  const theme = SECTION_THEMES[resolvedSection];
+  // Fallback to "command" theme if section is somehow invalid.
+  const theme = SECTION_THEMES[resolvedSection] ?? SECTION_THEMES["command"];
   const gradientClass = theme.gradient;
   const subtitleColor = theme.subtitleColor;
 

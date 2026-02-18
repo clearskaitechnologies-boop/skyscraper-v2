@@ -30,16 +30,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function VendorDetailPage({ params }: Props) {
-  const vendor = await prisma.vendor.findFirst({
-    where: { slug: params.vendorSlug },
-    include: {
-      VendorLocation: { orderBy: { city: "asc" } },
-      VendorContact: { orderBy: { isPrimary: "desc" } },
-      vendor_products_v2: { where: { isActive: true }, take: 50 },
-      vendor_assets: { where: { isActive: true }, take: 50 },
-      vendor_programs: { where: { isActive: true }, take: 50 },
-    },
-  });
+  let vendor;
+  try {
+    vendor = await prisma.vendor.findFirst({
+      where: { slug: params.vendorSlug },
+      include: {
+        VendorLocation: { orderBy: { city: "asc" } },
+        VendorContact: { orderBy: { isPrimary: "desc" } },
+        vendor_products_v2: { where: { isActive: true }, take: 50 },
+        vendor_assets: { where: { isActive: true }, take: 50 },
+        vendor_programs: { where: { isActive: true }, take: 50 },
+      },
+    });
+  } catch (err) {
+    console.error("[vendor-detail] Prisma query error:", err);
+    return notFound();
+  }
 
   if (!vendor) return notFound();
 
@@ -110,12 +116,12 @@ export default async function VendorDetailPage({ params }: Props) {
 
             {/* Trade & Type badges */}
             <div className="mt-4 flex flex-wrap gap-2">
-              {(vendor.tradeTypes as string[]).map((t: string) => (
+              {((vendor.tradeTypes as string[]) ?? []).map((t: string) => (
                 <Badge key={t} variant="outline">
                   {TRADE_TYPE_LABELS[t as keyof typeof TRADE_TYPE_LABELS] || t}
                 </Badge>
               ))}
-              {(vendor.vendorTypes as string[]).map((vt: string) => (
+              {((vendor.vendorTypes as string[]) ?? []).map((vt: string) => (
                 <span
                   key={vt}
                   className="rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary"
@@ -167,8 +173,8 @@ export default async function VendorDetailPage({ params }: Props) {
           emergencyPhone: vendor.emergencyPhone,
           financingAvail: vendor.financingAvail ?? false,
           rebatesAvail: vendor.rebatesAvail ?? false,
-          certifications: vendor.certifications as string[],
-          serviceRegions: vendor.serviceRegions as string[],
+          certifications: (vendor.certifications as string[]) ?? [],
+          serviceRegions: (vendor.serviceRegions as string[]) ?? [],
         }}
         locations={vendor.VendorLocation.map((l) => ({
           id: l.id,

@@ -134,7 +134,7 @@ export default function MaterialEstimatorPage() {
   return (
     <PageContainer maxWidth="5xl">
       <PageHero
-        section="materials"
+        section="trades"
         title="Material Estimator"
         subtitle="Calculate materials from roof measurements. Route orders to ABC Supply with one click."
         icon={<Calculator className="h-7 w-7" />}
