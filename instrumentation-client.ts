@@ -42,8 +42,8 @@ Sentry.init({
     ? 1.0
     : parseFloat(process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE || "0.1"),
 
-  // Profiling (disabled for now)
-  profilesSampleRate: 0.0,
+  // Profiling — enabled for enterprise performance visibility
+  profilesSampleRate: IS_DEV ? 0.0 : 0.1,
 
   // Debug mode (only in dev)
   debug: IS_DEV && process.env.NEXT_PUBLIC_SENTRY_DEBUG === "true",
