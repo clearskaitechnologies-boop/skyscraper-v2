@@ -1,8 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+
+export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
   const ctx = await safeOrgContext();

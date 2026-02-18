@@ -90,25 +90,9 @@ export default async function DashboardPage() {
           <div className="max-w-md space-y-4 rounded-lg border border-red-500 bg-red-50 p-6">
             <h2 className="text-xl font-bold text-red-900">⚠️ Dashboard Unavailable</h2>
             <p className="text-sm text-red-800">
-              Critical error: Organization context could not be initialized or created.
+              We&apos;re having trouble loading your workspace. This is usually temporary.
             </p>
-            <div className="space-y-2 rounded bg-red-100 p-3 font-mono text-xs">
-              <div>
-                <strong>Status:</strong> {orgCtx.status}
-              </div>
-              <div>
-                <strong>Error:</strong> {orgCtx.error || "No additional info"}
-              </div>
-              <div>
-                <strong>Time:</strong> {new Date().toISOString()}
-              </div>
-            </div>
             <div className="flex gap-2">
-              <Link href="/api/_debug/session" target="_blank">
-                <Button variant="outline" size="sm">
-                  Open Diagnostics
-                </Button>
-              </Link>
               <Link href="/dashboard">
                 <Button variant="default" size="sm">
                   Retry

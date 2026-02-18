@@ -18,22 +18,26 @@ export async function POST() {
 
   const now = new Date();
 
-  // Try pro member first, then client — update whichever exists
+  // Try pro member first, then client — updateMany avoids RecordNotFound errors
   const [member, client] = await Promise.allSettled([
-    prisma.tradesCompanyMember.update({
+    prisma.tradesCompanyMember.updateMany({
       where: { userId },
       data: { lastSeenAt: now },
-      select: { id: true, lastSeenAt: true, customStatus: true, statusEmoji: true },
     }),
-    prisma.client.update({
+    prisma.client.updateMany({
       where: { userId },
       data: { lastActiveAt: now },
-      select: { id: true, lastActiveAt: true, customStatus: true, statusEmoji: true },
     }),
   ]);
 
-  const memberData = member.status === "fulfilled" ? member.value : null;
-  const clientData = client.status === "fulfilled" ? client.value : null;
+  const memberData =
+    member.status === "fulfilled" && member.value.count > 0
+      ? { updated: true, lastSeenAt: now }
+      : null;
+  const clientData =
+    client.status === "fulfilled" && client.value.count > 0
+      ? { updated: true, lastActiveAt: now }
+      : null;
 
   return NextResponse.json({
     ok: true,

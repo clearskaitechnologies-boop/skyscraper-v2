@@ -205,7 +205,9 @@ export default async function Settings() {
             <SettingsForm
               initialDisplayName={userFullName}
               initialOrgName={orgName}
-              initialTimezone="US/Mountain"
+              initialTimezone={
+                Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Phoenix"
+              }
               initialNotifications={{
                 emailNotifications: true,
                 leadAlerts: true,

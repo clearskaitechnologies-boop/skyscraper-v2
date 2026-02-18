@@ -153,7 +153,13 @@ export async function POST(req: NextRequest) {
   const user = await currentUser();
   if (!user) return new Response("Unauthorized", { status: 401 });
 
-  const { notificationId } = await req.json();
+  let notificationId: string | undefined;
+  try {
+    const body = await req.json();
+    notificationId = body?.notificationId;
+  } catch {
+    return Response.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
   // Handle TradeNotification marks (prefixed with tn-)
   if (notificationId?.startsWith("tn-")) {
