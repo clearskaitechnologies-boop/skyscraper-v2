@@ -18,8 +18,8 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
 import { useAIStream } from "@/hooks/useAIStream";
+import { toast } from "sonner";
 
 import { SmartActionModal } from "./SmartActionModal";
 
@@ -125,28 +125,18 @@ export function SmartActionsPanel({ leadId }: SmartActionsPanelProps) {
           action: streamingAction,
         });
         setStreamingAction(null);
-        toast({
-          title: "Ready!",
-          description: `Your ${actionObj?.label.toLowerCase()} has been generated`,
-        });
+        toast.success(`Your ${actionObj?.label.toLowerCase()} has been generated`);
       }
     },
     onError: (err) => {
-      toast({
-        title: "Generation Failed",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast.error(err.message);
       setStreamingAction(null);
     },
   });
 
   async function handleAction(action: SmartAction) {
     setStreamingAction(action.id);
-    toast({
-      title: "Generating...",
-      description: `Creating your ${action.label.toLowerCase()}`,
-    });
+    toast(`Creating your ${action.label.toLowerCase()}...`);
 
     try {
       await startStream("/api/ai/stream/analyze", {

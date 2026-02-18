@@ -6,13 +6,13 @@
 
 ## WHERE YOU ACTUALLY STAND RIGHT NOW (HONEST AUDIT)
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| **Handles 720 concurrent users** | ✅ **PROVEN — Feb 17** | k6 stress ran 500 VU × 18 min against prod. NO crash. p95 = 855ms at 500 VU. 720 target = safe margin confirmed. |
-| **Sub-300ms latency** | ✅ **MEASURED — Feb 17** | Smoke p95 = **278ms**. Spike p95 = **266ms** at 500 VU. Soak p95 = **615ms** at 200 VU × 30 min. |
-| **Zero cross-tenant leakage** | ✅ TESTED | `cross-org-isolation.test.ts` (605 lines) + `auth-hardening.test.ts` (396 lines). org-scoped queries enforced server-side. |
-| **Survives 30 days of live AZ roofers** | 🔴 NOT STARTED | No external beta users. No field test. No chaos conditions validated. |
-| **Passes a pen test** | 🔴 NOT DONE | Security docs exist. Internal audit done. External pen test = 0/10 in own readiness score. |
+| Criterion                               | Status                   | Evidence                                                                                                                   |
+| --------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| **Handles 720 concurrent users**        | ✅ **PROVEN — Feb 17**   | k6 stress ran 500 VU × 18 min against prod. NO crash. p95 = 855ms at 500 VU. 720 target = safe margin confirmed.           |
+| **Sub-300ms latency**                   | ✅ **MEASURED — Feb 17** | Smoke p95 = **278ms**. Spike p95 = **266ms** at 500 VU. Soak p95 = **615ms** at 200 VU × 30 min.                           |
+| **Zero cross-tenant leakage**           | ✅ TESTED                | `cross-org-isolation.test.ts` (605 lines) + `auth-hardening.test.ts` (396 lines). org-scoped queries enforced server-side. |
+| **Survives 30 days of live AZ roofers** | 🔴 NOT STARTED           | No external beta users. No field test. No chaos conditions validated.                                                      |
+| **Passes a pen test**                   | 🔴 NOT DONE              | Security docs exist. Internal audit done. External pen test = 0/10 in own readiness score.                                 |
 
 **Composite: ~72% ready. Load capacity PROVEN. Field proof and pen test are the remaining two gaps.**
 
@@ -20,20 +20,21 @@
 
 ## 📊 K6 LOAD TEST RESULTS — Feb 17, 2026 (LIVE: skaiscrape.com)
 
-| Test | VUs | Duration | p95 Latency | Check Pass Rate | Verdict |
-|---|---|---|---|---|---|
-| **Smoke** | 5 | 2 min | **278ms** | 100% (1,530/1,530) | ✅ PASS |
-| **Soak** | 200 | 30 min | **615ms** | 99.96% (302,795/302,926) | ✅ PASS — Prisma pool held full 30 min |
-| **Spike** | 0→500 in 30s | 8 min | **266ms** | 100% (260,995/260,995) | ✅ PASS — surge actually faster (CDN warm) |
-| **Stress** | 100→500 | 18 min | **855ms** | 99.56% (421,296/423,135) | ✅ NO CRASH — graceful degradation only |
+| Test       | VUs          | Duration | p95 Latency | Check Pass Rate          | Verdict                                    |
+| ---------- | ------------ | -------- | ----------- | ------------------------ | ------------------------------------------ |
+| **Smoke**  | 5            | 2 min    | **278ms**   | 100% (1,530/1,530)       | ✅ PASS                                    |
+| **Soak**   | 200          | 30 min   | **615ms**   | 99.96% (302,795/302,926) | ✅ PASS — Prisma pool held full 30 min     |
+| **Spike**  | 0→500 in 30s | 8 min    | **266ms**   | 100% (260,995/260,995)   | ✅ PASS — surge actually faster (CDN warm) |
+| **Stress** | 100→500      | 18 min   | **855ms**   | 99.56% (421,296/423,135) | ✅ NO CRASH — graceful degradation only    |
 
 **What the numbers mean:**
+
 - Hard ceiling was never hit at 500 VU — system degraded gracefully, didn't crash
 - 401s on auth-gated endpoints account for ~25% of `http_req_failed` — expected, not real failures
 - Soak 30 min × 200 VU = **zero Prisma pool exhaustion, zero cold-start cascade**
 - Stress 2.17% health check degradation at 500 VU — API routes stayed completely clean
 
-**What to say at Titan:** *"500 concurrent users against production for 18 minutes. p95 at your 180-person peak load is 615ms sustained. Zero crashes. Zero pool failures. We have the raw k6 output if your IT team wants it."*
+**What to say at Titan:** _"500 concurrent users against production for 18 minutes. p95 at your 180-person peak load is 615ms sustained. Zero crashes. Zero pool failures. We have the raw k6 output if your IT team wants it."_
 
 ---
 
@@ -288,13 +289,13 @@ Each phase needs a signed-off checkpoint before proceeding. Do not skip.
 
 ## 🔢 THE FIVE NUMBERS FOR THE TITAN CALL
 
-| # | Metric | Value | Status |
-|---|---|---|---|
-| 1 | k6 soak p95 at 200 VU × 30 min | **615ms** | ✅ MEASURED Feb 17 |
-| 2 | Stress breaking point | **Not found at 500 VU** | ✅ MEASURED Feb 17 |
-| 3 | Real uptime (BetterStack) | Pending wire-up | 🔴 C-2 required |
-| 4 | Cross-tenant HTTP result (Org B → Org A) | Pending live demo | 🟡 H-2 required |
-| 5 | Field test (3 reps, mobile, bad signal) | Pending beta | 🔴 H-1 required |
+| #   | Metric                                   | Value                   | Status             |
+| --- | ---------------------------------------- | ----------------------- | ------------------ |
+| 1   | k6 soak p95 at 200 VU × 30 min           | **615ms**               | ✅ MEASURED Feb 17 |
+| 2   | Stress breaking point                    | **Not found at 500 VU** | ✅ MEASURED Feb 17 |
+| 3   | Real uptime (BetterStack)                | Pending wire-up         | 🔴 C-2 required    |
+| 4   | Cross-tenant HTTP result (Org B → Org A) | Pending live demo       | 🟡 H-2 required    |
+| 5   | Field test (3 reps, mobile, bad signal)  | Pending beta            | 🔴 H-1 required    |
 
 **3/5 numbers are in. Wire BetterStack (30 min) and do the cross-tenant live demo (20 min) → 4/5.**
 

@@ -29,8 +29,8 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { toast } from "sonner";
 import { getVendorResources } from "@/lib/vendors/vendorResources";
+import { toast } from "sonner";
 
 import VendorLocationMap from "./_components/VendorLocationMap";
 
@@ -209,10 +209,7 @@ export default function VendorDetailPage() {
 
   const copyToClipboard = async (text: string, label: string) => {
     await navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied!",
-      description: `${label} link copied to clipboard`,
-    });
+    toast.success(`${label} link copied to clipboard`);
   };
 
   // Group locations by AZ region

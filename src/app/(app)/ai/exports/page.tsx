@@ -38,6 +38,10 @@ const EXPORT_FORMATS = [
 export default function CarrierExportsPage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useUser();
+  const [loading, setLoading] = useState(false);
+  const [carrier, setCarrier] = useState("");
+  const [format, setFormat] = useState("");
+  const [result, setResult] = useState<any>(null);
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -48,10 +52,6 @@ export default function CarrierExportsPage() {
   if (!isLoaded || !isSignedIn) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
-  const [loading, setLoading] = useState(false);
-  const [carrier, setCarrier] = useState("");
-  const [format, setFormat] = useState("");
-  const [result, setResult] = useState<any>(null);
 
   const handleExport = async () => {
     if (!carrier || !format) {

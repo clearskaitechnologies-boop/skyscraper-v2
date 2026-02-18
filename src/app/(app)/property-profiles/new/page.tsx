@@ -137,18 +137,11 @@ export default function NewPropertyProfilePage() {
         throw new Error(data.error || "Failed to create property profile");
       }
 
-      toast({
-        title: "Success",
-        description: "Property profile created successfully",
-      });
+      toast.success("Property profile created successfully");
 
       router.push(`/property-profiles/${data.property.id}`);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create property",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to create property");
     } finally {
       setLoading(false);
     }

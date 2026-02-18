@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy, RefreshCw,X } from "lucide-react";
+import { Copy, RefreshCw, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -22,13 +22,9 @@ export function SmartActionModal({
   onClose,
   onRegenerate,
 }: SmartActionModalProps) {
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(content);
-    toast({
-      title: "Copied!",
-      description: "Content copied to clipboard",
-    });
+    toast.success("Content copied to clipboard");
   };
 
   return (

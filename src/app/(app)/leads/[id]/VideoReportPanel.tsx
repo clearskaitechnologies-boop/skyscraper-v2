@@ -125,21 +125,13 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
         const data = await response.json().catch(() => ({}));
 
         if (response.status === 402) {
-          toast({
-            title: "Out of AI Tokens",
-            description: "Update your plan to generate video reports.",
-            variant: "destructive",
-          });
+          toast.error("Update your plan to generate video reports.");
           setError("You're out of AI tokens. Update your plan to continue.");
           return;
         }
 
         if (response.status === 401) {
-          toast({
-            title: "Authentication Error",
-            description: "Please sign in again.",
-            variant: "destructive",
-          });
+          toast.error("Please sign in again.");
           setError("Please sign in to generate video reports.");
           return;
         }
@@ -200,28 +192,17 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
       if (!response.ok) {
         const data = await response.json();
-        toast({
-          title: "Generation Failed",
-          description: data.error || "Failed to generate script",
-          variant: "destructive",
-        });
+        toast.error(data.error || "Failed to generate script");
         setIsRunning(false);
         return;
       }
 
-      toast({
-        title: "Script Generated",
-        description: "Video script and storyboard created successfully!",
-      });
+      toast.success("Video script and storyboard created successfully!");
 
       // Reload report to get script/storyboard data
       await loadExistingReport();
     } catch (err: any) {
-      toast({
-        title: "Generation Failed",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast.error(err.message);
     } finally {
       setIsRunning(false);
     }
@@ -243,11 +224,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
       if (!response.ok) {
         const data = await response.json();
-        toast({
-          title: "Share Failed",
-          description: data.error || "Failed to generate share link",
-          variant: "destructive",
-        });
+        toast.error(data.error || "Failed to generate share link");
         setIsSharing(false);
         return;
       }
@@ -256,16 +233,9 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
       setShareUrl(data.shareUrl);
       setIsPublic(true);
 
-      toast({
-        title: "Share Link Created",
-        description: "Anyone with this link can view the video report.",
-      });
+      toast.success("Anyone with this link can view the video report.");
     } catch (err: any) {
-      toast({
-        title: "Share Failed",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast.error(err.message);
     } finally {
       setIsSharing(false);
     }
@@ -276,16 +246,9 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
     try {
       await navigator.clipboard.writeText(shareUrl);
-      toast({
-        title: "Link Copied",
-        description: "Share link copied to clipboard!",
-      });
+      toast.success("Share link copied to clipboard!");
     } catch (err) {
-      toast({
-        title: "Copy Failed",
-        description: "Could not copy to clipboard",
-        variant: "destructive",
-      });
+      toast.error("Could not copy to clipboard");
     }
   };
 
@@ -300,11 +263,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
       if (!response.ok) {
         const data = await response.json();
-        toast({
-          title: "Revoke Failed",
-          description: data.error || "Failed to revoke link",
-          variant: "destructive",
-        });
+        toast.error(data.error || "Failed to revoke link");
         setIsSharing(false);
         return;
       }
@@ -312,16 +271,9 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
       setShareUrl(null);
       setIsPublic(false);
 
-      toast({
-        title: "Link Revoked",
-        description: "Share link has been disabled.",
-      });
+      toast.success("Share link has been disabled.");
     } catch (err: any) {
-      toast({
-        title: "Revoke Failed",
-        description: err.message,
-        variant: "destructive",
-      });
+      toast.error(err.message);
     } finally {
       setIsSharing(false);
     }
@@ -678,16 +630,9 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
                               await navigator.clipboard.writeText(
                                 shareUrl.replace("/watch/", "/packet/")
                               );
-                              toast({
-                                title: "Packet Link Copied",
-                                description: "Adjuster packet link copied to clipboard!",
-                              });
+                              toast.success("Adjuster packet link copied to clipboard!");
                             } catch (err) {
-                              toast({
-                                title: "Copy Failed",
-                                description: "Could not copy to clipboard",
-                                variant: "destructive",
-                              });
+                              toast.error("Could not copy to clipboard");
                             }
                           }}
                           className="h-7 text-xs"

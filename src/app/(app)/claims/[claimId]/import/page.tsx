@@ -52,20 +52,12 @@ export default function ImportPage() {
       const extension = selectedFile.name.split(".").pop()?.toLowerCase();
 
       if (!["csv", "xml", "esx"].includes(extension || "")) {
-        toast({
-          title: "Invalid File Type",
-          description: "Please upload a .csv, .xml, or .esx file.",
-          variant: "destructive",
-        });
+        toast.error("Please upload a .csv, .xml, or .esx file.");
         return;
       }
 
       if (selectedFile.size > 10 * 1024 * 1024) {
-        toast({
-          title: "File Too Large",
-          description: "Please upload a file smaller than 10MB.",
-          variant: "destructive",
-        });
+        toast.error("Please upload a file smaller than 10MB.");
         return;
       }
 
@@ -75,11 +67,7 @@ export default function ImportPage() {
 
   const handleUpload = async () => {
     if (!file) {
-      toast({
-        title: "No File Selected",
-        description: "Please select a file to upload.",
-        variant: "destructive",
-      });
+      toast.error("Please select a file to upload.");
       return;
     }
 
@@ -103,27 +91,19 @@ export default function ImportPage() {
       setMatches(result.matches || []);
       setMatchStats(result.matchStats || null);
 
-      toast({
-        title: "Import Successful",
-        description: `Imported ${result.imported} line items.`,
-      });
+      toast.success(`Imported ${result.imported} line items.`);
 
       // If matches were found, show a secondary toast
       if (result.matches && result.matches.length > 0) {
         setTimeout(() => {
-          toast({
-            title: "Auto-Matching Complete",
-            description: `Found ${result.matchStats?.highConfidence || 0} high-confidence matches.`,
-          });
+          toast.success(
+            `Auto-matching complete — ${result.matchStats?.highConfidence || 0} high-confidence matches.`
+          );
         }, 1500);
       }
     } catch (error) {
       console.error("Import error:", error);
-      toast({
-        title: "Import Failed",
-        description: error instanceof Error ? error.message : "An error occurred during import.",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "An error occurred during import.");
     } finally {
       setUploading(false);
     }

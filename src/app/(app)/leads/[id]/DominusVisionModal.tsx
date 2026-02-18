@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, CheckCircle, Copy, RefreshCw, X } from "lucide-react";
+import { AlertCircle, Copy, RefreshCw, X } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -36,18 +36,12 @@ ${image.notes}
     `.trim();
 
     navigator.clipboard.writeText(text);
-    toast({
-      title: "Copied!",
-      description: "Analysis copied to clipboard",
-    });
+    toast.success("Analysis copied to clipboard");
   };
 
   const handleRegenerate = async () => {
     setRegenerating(true);
-    toast({
-      title: "Regenerating...",
-      description: "Running vision analysis again",
-    });
+    toast("Running vision analysis again...");
 
     try {
       const res = await fetch("/api/ai/dominus/images", {
@@ -57,27 +51,16 @@ ${image.notes}
       });
 
       if (res.ok) {
-        toast({
-          title: "Analysis Complete",
-          description: "Vision analysis regenerated",
-        });
+        toast.success("Vision analysis regenerated");
         // Optionally reload the parent component
         onClose();
       } else {
-        toast({
-          title: "Error",
-          description: "Regeneration failed",
-          variant: "destructive",
-        });
+        toast.error("Regeneration failed");
         setRegenerating(false);
         return;
       }
     } catch (err) {
-      toast({
-        title: "Error",
-        description: "Failed to regenerate analysis",
-        variant: "destructive",
-      });
+      toast.error("Failed to regenerate analysis");
     } finally {
       setRegenerating(false);
     }

@@ -82,20 +82,12 @@ export default function NewInspectionPage() {
 
   const handleAnalyze = async () => {
     if (!componentType) {
-      toast({
-        title: "Missing Information",
-        description: "Please select a component type",
-        variant: "destructive",
-      });
+      toast.error("Please select a component type");
       return;
     }
 
     if (photos.length === 0) {
-      toast({
-        title: "No Photos",
-        description: "Please add at least one photo to analyze",
-        variant: "destructive",
-      });
+      toast.error("Please add at least one photo to analyze");
       return;
     }
 
@@ -133,17 +125,12 @@ export default function NewInspectionPage() {
 
       setResults(data);
 
-      toast({
-        title: "Analysis Complete",
-        description: `Found ${data.aggregatedDetections?.length || 0} detections`,
-      });
+      toast.success(
+        `Analysis complete — ${data.aggregatedDetections?.length || 0} detections found`
+      );
     } catch (error) {
       console.error("Analysis error:", error);
-      toast({
-        title: "Analysis Failed",
-        description: error instanceof Error ? error.message : "Failed to analyze photos",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to analyze photos");
     } finally {
       setAnalyzing(false);
     }
@@ -172,10 +159,7 @@ export default function NewInspectionPage() {
         throw new Error("Failed to save inspection");
       }
 
-      toast({
-        title: "Success",
-        description: "Inspection saved successfully",
-      });
+      toast.success("Inspection saved successfully");
 
       if (propertyId) {
         router.push(`/property-profiles/${propertyId}`);
@@ -183,11 +167,7 @@ export default function NewInspectionPage() {
         router.push("/inspections");
       }
     } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to save inspection",
-        variant: "destructive",
-      });
+      toast.error(error instanceof Error ? error.message : "Failed to save inspection");
     } finally {
       setLoading(false);
     }
