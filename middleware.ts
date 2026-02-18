@@ -22,6 +22,7 @@ import { NextResponse } from "next/server";
 const PRO_ROUTES = [
   "/dashboard",
   "/claims",
+  "/claims-ready-folder",
   "/pipeline",
   "/proposals",
   "/analytics",
@@ -47,6 +48,17 @@ const PRO_ROUTES = [
   "/archive",
   "/feedback",
   "/depreciation",
+  "/storm-center",
+  "/supplements",
+  "/crews",
+  "/permits",
+  "/materials",
+  "/finance",
+  "/invoices",
+  "/commissions",
+  "/mortgage-checks",
+  "/sms",
+  "/notifications",
 ];
 
 const CLIENT_ROUTES = ["/portal"];
