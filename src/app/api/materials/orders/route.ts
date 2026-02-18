@@ -1,5 +1,5 @@
-import { randomUUID } from "crypto";
 import { logger } from "@/lib/logger";
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -12,11 +12,21 @@ export async function POST(req: NextRequest) {
     if (auth instanceof NextResponse) return auth;
     const { orgId, userId } = auth;
 
-    const body = await req.json();
+    const body = await req.json().catch(() => null);
+    if (!body) {
+      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    }
     const { claimId, materialId, quantity, unitPrice, deliveryAddress } = body;
 
-    if (!claimId || !materialId || !quantity) {
-      return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+    const missing: string[] = [];
+    if (!claimId) missing.push("claimId");
+    if (!materialId) missing.push("materialId");
+    if (!quantity || quantity < 1) missing.push("quantity (must be ≥ 1)");
+    if (missing.length > 0) {
+      return NextResponse.json(
+        { error: `Missing required fields: ${missing.join(", ")}` },
+        { status: 400 }
+      );
     }
 
     // Get material details from VendorProduct
@@ -89,16 +99,27 @@ export async function POST(req: NextRequest) {
       });
     } catch (eventError) {
       // Non-blocking - log but don't fail the order
-      console.error("[WORKFLOW EVENT] Failed to create event:", eventError);
+      logger.warn("[WORKFLOW EVENT] Failed to create event:", eventError);
     }
 
     return NextResponse.json({
       success: true,
       order,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Material order error:", error);
-    return NextResponse.json({ error: "Failed to create order" }, { status: 500 });
+    // Return descriptive error instead of generic message
+    const message =
+      error?.code === "P2002"
+        ? "Duplicate order — this order already exists"
+        : error?.code === "P2003"
+          ? "Invalid reference — check that the claim and vendor exist"
+          : error?.code === "P2025"
+            ? "Related record not found — verify claim and material IDs"
+            : error?.message?.includes("VendorProduct")
+              ? "Material product not found in vendor catalog"
+              : "Failed to create order — please check all fields and try again";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 

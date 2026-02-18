@@ -31,9 +31,14 @@ export default function SupplementBuilderPage() {
   const [newQuantity, setNewQuantity] = useState(1);
   const [newUnitPrice, setNewUnitPrice] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>("professional");
 
   const addItem = () => {
+    if (!claimId) {
+      toast.error("Please select a claim before adding items");
+      return;
+    }
     if (!newDescription.trim()) {
       toast.error("Please enter a description");
       return;
@@ -90,10 +95,41 @@ export default function SupplementBuilderPage() {
 
       toast.success("PDF exported successfully!");
     } catch (error) {
-      console.error("Export error:", error);
       toast.error("Failed to export PDF");
     } finally {
       setIsExporting(false);
+    }
+  };
+
+  const handleSaveToClaim = async () => {
+    if (!claimId) {
+      toast.error("Please select a claim first");
+      return;
+    }
+    if (items.length === 0) {
+      toast.error("Please add items before saving");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/ai/supplement/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ claimId, items, total }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to save supplement");
+      }
+
+      toast.success("Supplement saved to claim!");
+    } catch (error) {
+      console.error("Save error:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to save supplement");
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -223,10 +259,20 @@ export default function SupplementBuilderPage() {
                 <Button
                   variant="outline"
                   className="w-full"
-                  disabled={items.length === 0 || !claimId}
+                  disabled={items.length === 0 || !claimId || isSaving}
+                  onClick={handleSaveToClaim}
                 >
-                  <FileCheck className="mr-2 h-4 w-4" />
-                  Save to Claim
+                  {isSaving ? (
+                    <>
+                      <FileCheck className="mr-2 h-4 w-4 animate-spin" />
+                      Saving…
+                    </>
+                  ) : (
+                    <>
+                      <FileCheck className="mr-2 h-4 w-4" />
+                      Save to Claim
+                    </>
+                  )}
                 </Button>
               </div>
             </div>

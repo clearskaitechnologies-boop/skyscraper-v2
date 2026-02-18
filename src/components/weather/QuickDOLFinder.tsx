@@ -1,7 +1,7 @@
 "use client";
 
-import { format, parseISO } from "date-fns";
 import { logger } from "@/lib/logger";
+import { format, parseISO } from "date-fns";
 import { AlertTriangle, Calendar, Loader2, MapPin } from "lucide-react";
 import { useState } from "react";
 
@@ -47,15 +47,29 @@ export function QuickDOLFinder({
   const [loading, setLoading] = useState(false);
   const [candidates, setCandidates] = useState<QuickDOLCandidate[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<{
+    address?: string;
+    startDate?: string;
+    endDate?: string;
+  }>({});
 
   const handleSearch = async () => {
-    if (!address || !startDate || !endDate) {
-      setError("Please fill in all fields");
+    const errors: { address?: string; startDate?: string; endDate?: string } = {};
+    if (!address.trim()) errors.address = "Property address is required";
+    if (!startDate) errors.startDate = "Start date is required";
+    if (!endDate) errors.endDate = "End date is required";
+    if (startDate && endDate && startDate > endDate)
+      errors.endDate = "End date must be after start date";
+
+    setFieldErrors(errors);
+    if (Object.keys(errors).length > 0) {
+      setError(null);
       return;
     }
 
     setLoading(true);
     setError(null);
+    setFieldErrors({});
     setCandidates([]);
 
     try {
@@ -153,11 +167,19 @@ export function QuickDOLFinder({
             </Label>
             <Input
               id="address"
-              placeholder="123 Main St, City, State ZIP"
+              placeholder="Enter property address…"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={(e) => {
+                setAddress(e.target.value);
+                if (fieldErrors.address)
+                  setFieldErrors((prev) => ({ ...prev, address: undefined }));
+              }}
               disabled={loading}
+              className={fieldErrors.address ? "border-red-500" : ""}
             />
+            {fieldErrors.address && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.address}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="startDate">Search From</Label>
@@ -165,9 +187,17 @@ export function QuickDOLFinder({
               id="startDate"
               type="date"
               value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              onChange={(e) => {
+                setStartDate(e.target.value);
+                if (fieldErrors.startDate)
+                  setFieldErrors((prev) => ({ ...prev, startDate: undefined }));
+              }}
               disabled={loading}
+              className={fieldErrors.startDate ? "border-red-500" : ""}
             />
+            {fieldErrors.startDate && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.startDate}</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="endDate">Search To</Label>
@@ -175,12 +205,24 @@ export function QuickDOLFinder({
               id="endDate"
               type="date"
               value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              onChange={(e) => {
+                setEndDate(e.target.value);
+                if (fieldErrors.endDate)
+                  setFieldErrors((prev) => ({ ...prev, endDate: undefined }));
+              }}
               disabled={loading}
+              className={fieldErrors.endDate ? "border-red-500" : ""}
             />
+            {fieldErrors.endDate && (
+              <p className="mt-1 text-xs text-red-600 dark:text-red-400">{fieldErrors.endDate}</p>
+            )}
           </div>
           <div className="flex items-end">
-            <Button onClick={handleSearch} disabled={loading} className="w-full">
+            <Button
+              onClick={handleSearch}
+              disabled={loading || !address.trim() || !startDate || !endDate}
+              className="w-full"
+            >
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Searching..." : "Find DOL Candidates"}
             </Button>

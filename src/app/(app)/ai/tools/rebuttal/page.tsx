@@ -47,7 +47,6 @@ export default function RebuttalBuilderPage() {
       setGeneratedRebuttal(data.letter || data.rebuttal || data.content || "");
       toast.success("Rebuttal generated successfully!");
     } catch (error) {
-      console.error("Rebuttal generation error:", error);
       toast.error("Failed to generate rebuttal. Please try again.");
     } finally {
       setIsGenerating(false);
@@ -82,7 +81,6 @@ export default function RebuttalBuilderPage() {
 
       toast.success("PDF exported successfully!");
     } catch (error) {
-      console.error("Export error:", error);
       toast.error("Failed to export PDF");
     } finally {
       setIsExporting(false);
@@ -167,7 +165,16 @@ export default function RebuttalBuilderPage() {
                     className="min-h-[400px] bg-white font-mono text-sm dark:bg-slate-950"
                   />
                   <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1 rounded-xl">
+                    <Button
+                      variant="outline"
+                      className="flex-1 rounded-xl"
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedRebuttal).then(
+                          () => toast.success("Copied to clipboard!"),
+                          () => toast.error("Failed to copy")
+                        );
+                      }}
+                    >
                       <FileText className="mr-2 h-4 w-4" />
                       Copy to Clipboard
                     </Button>

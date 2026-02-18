@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { logger } from "@/lib/logger";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 interface BrandingBannerProps {
@@ -10,10 +10,24 @@ interface BrandingBannerProps {
 }
 
 export function BrandingBanner({ brandingCompleted, onboardingCompleted }: BrandingBannerProps) {
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("branding-banner-dismissed") === "true";
+    }
+    return false;
+  });
   const [showBanner, setShowBanner] = useState(true);
   const [initializing, setInitializing] = useState(false);
   const [initComplete, setInitComplete] = useState(false);
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    try {
+      localStorage.setItem("branding-banner-dismissed", "true");
+    } catch {
+      // localStorage may be unavailable
+    }
+  };
 
   useEffect(() => {
     // Hide banner if branding-complete class exists on html
@@ -44,7 +58,7 @@ export function BrandingBanner({ brandingCompleted, onboardingCompleted }: Brand
           window.location.reload();
         }, 2000);
       } else {
-        console.error("[BrandingBanner] Initialization failed:", data);
+        logger.warn("[BrandingBanner] Initialization failed:", data);
         // Silently handle error - don't block demo
       }
     } catch (error) {
@@ -59,11 +73,8 @@ export function BrandingBanner({ brandingCompleted, onboardingCompleted }: Brand
   const shouldHideBanner = brandingCompleted && onboardingCompleted;
 
   if (shouldHideBanner || dismissed || !showBanner) {
-    logger.debug("[BrandingBanner] Hidden:", { shouldHideBanner, dismissed, showBanner });
     return null;
   }
-
-  logger.debug("[BrandingBanner] Visible:", { brandingCompleted, onboardingCompleted });
 
   // Determine banner message based on completion state
   const title = !brandingCompleted ? "Finish your company branding" : "Complete account setup";
@@ -99,7 +110,7 @@ export function BrandingBanner({ brandingCompleted, onboardingCompleted }: Brand
             </Link>
           )}
           <button
-            onClick={() => setDismissed(true)}
+            onClick={handleDismiss}
             className="px-3 py-2 text-gray-200 transition-colors hover:text-white"
             aria-label="Dismiss"
           >

@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -11,6 +11,9 @@ import { convertHeicToJpeg, isHeicImage } from "@/modules/photos/utils/heic";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+// Approximate token cost per analysis call
+const TOKEN_COST = 1;
 
 interface DamageFinding {
   type: string;
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
               level: "info",
             });
           } else {
-            console.error(`HEIC conversion failed for ${photo.name}:`, result.error);
+            logger.error(`HEIC conversion failed for ${photo.name}:`, result.error);
             return NextResponse.json(
               aiFail("Photo conversion failed", "CONVERSION_FAILED", {
                 file: photo.name,
@@ -162,15 +165,35 @@ Always respond with valid JSON matching the requested schema.`,
         jsonStr = jsonMatch[1].trim();
       }
       analysisResult = JSON.parse(jsonStr);
+
+      // Validate the parsed structure has the required fields
+      if (!analysisResult || typeof analysisResult !== "object") {
+        throw new Error("Response is not a valid object");
+      }
+      if (!Array.isArray(analysisResult.findings)) {
+        // If findings came back as a single object, wrap it
+        if (analysisResult.findings && typeof analysisResult.findings === "object") {
+          analysisResult.findings = [analysisResult.findings as unknown as DamageFinding];
+        } else {
+          analysisResult.findings = [];
+        }
+      }
+      if (!analysisResult.summary) {
+        analysisResult.summary = "Analysis complete";
+      }
     } catch (parseError) {
-      console.error("Failed to parse AI response:", content);
+      logger.error("Failed to parse AI response:", content);
       Sentry.captureException(parseError, {
         extra: { rawContent: content },
       });
       return NextResponse.json(
-        aiFail("Failed to parse AI analysis", "PARSE_ERROR", {
-          rawContent: content.substring(0, 500),
-        }),
+        aiFail(
+          "Could not interpret the damage analysis. Try uploading a clearer photo of the damage.",
+          "PARSE_ERROR",
+          {
+            hint: "Ensure the photo clearly shows property damage (roof, siding, water intrusion, etc.)",
+          }
+        ),
         { status: 500 }
       );
     }

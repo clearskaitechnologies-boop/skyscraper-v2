@@ -260,9 +260,11 @@ export function AppointmentsClient({ currentUserId, orgId }: AppointmentsClientP
                 ? "Schedule inspections, client meetings, and site visits to keep your projects on track."
                 : `You don't have any ${filter.toLowerCase()} appointments at this time.`}
             </p>
-            <Button size="lg" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Schedule Appointment
+            <Button asChild size="lg" className="gap-2">
+              <Link href="/appointments/new">
+                <Plus className="h-4 w-4" />
+                Schedule Appointment
+              </Link>
             </Button>
           </CardContent>
         </Card>
