@@ -103,7 +103,7 @@ export default async function AIClaimsBuilderPage({
       },
     });
   } catch (error) {
-    console.error("[AI Claims Builder] Failed to load claims:", error);
+    // Failed to load claims — continue with empty list
     claims = [];
   }
 

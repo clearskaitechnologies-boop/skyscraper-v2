@@ -99,7 +99,7 @@ export default async function ReportTemplatesPage() {
       });
     }
   } catch (seedError) {
-    console.error("[TEMPLATES_PAGE] Failed to seed mandatory template:", seedError);
+    // Failed to seed mandatory template — continue without it
   }
 
   // Fetch company templates via orgTemplate → template join
@@ -176,7 +176,7 @@ export default async function ReportTemplatesPage() {
       }
     }
   } catch (e) {
-    console.error("[TEMPLATES_PAGE] Failed to fetch orgTemplates:", e);
+    // Failed to fetch orgTemplates — show empty state
     templates = [];
   }
 

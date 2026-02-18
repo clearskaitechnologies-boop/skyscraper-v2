@@ -36,6 +36,7 @@ export default function MaterialsCartPage() {
     state: "AZ",
     zip: "",
   });
+  const [deliveryErrors, setDeliveryErrors] = useState<Record<string, string>>({});
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -101,7 +102,19 @@ export default function MaterialsCartPage() {
     localStorage.removeItem("skai-material-cart");
   };
 
+  const validateDelivery = (): boolean => {
+    const errors: Record<string, string> = {};
+    if (!deliveryAddress.street.trim()) errors.street = "Street address is required";
+    if (!deliveryAddress.city.trim()) errors.city = "City is required";
+    if (!deliveryAddress.zip.trim()) errors.zip = "ZIP code is required";
+    else if (!/^\d{5}(-\d{4})?$/.test(deliveryAddress.zip.trim()))
+      errors.zip = "Enter a valid ZIP code";
+    setDeliveryErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleCheckout = async () => {
+    if (!validateDelivery()) return;
     setIsCheckingOut(true);
     // Simulate order processing
     await new Promise((resolve) => setTimeout(resolve, 2000));
@@ -358,30 +371,42 @@ export default function MaterialsCartPage() {
                       type="text"
                       placeholder="Street Address"
                       value={deliveryAddress.street}
-                      onChange={(e) =>
-                        setDeliveryAddress((prev) => ({ ...prev, street: e.target.value }))
-                      }
-                      className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                      onChange={(e) => {
+                        setDeliveryAddress((prev) => ({ ...prev, street: e.target.value }));
+                        setDeliveryErrors((prev) => ({ ...prev, street: "" }));
+                      }}
+                      className={`w-full rounded-lg border ${deliveryErrors.street ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white`}
                     />
+                    {deliveryErrors.street && (
+                      <p className="mt-1 text-xs text-red-500">{deliveryErrors.street}</p>
+                    )}
                     <div className="grid grid-cols-2 gap-2">
                       <input
                         type="text"
                         placeholder="City"
                         value={deliveryAddress.city}
-                        onChange={(e) =>
-                          setDeliveryAddress((prev) => ({ ...prev, city: e.target.value }))
-                        }
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                        onChange={(e) => {
+                          setDeliveryAddress((prev) => ({ ...prev, city: e.target.value }));
+                          setDeliveryErrors((prev) => ({ ...prev, city: "" }));
+                        }}
+                        className={`rounded-lg border ${deliveryErrors.city ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white`}
                       />
+                      {deliveryErrors.city && (
+                        <p className="mt-1 text-xs text-red-500">{deliveryErrors.city}</p>
+                      )}
                       <input
                         type="text"
                         placeholder="ZIP"
                         value={deliveryAddress.zip}
-                        onChange={(e) =>
-                          setDeliveryAddress((prev) => ({ ...prev, zip: e.target.value }))
-                        }
-                        className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+                        onChange={(e) => {
+                          setDeliveryAddress((prev) => ({ ...prev, zip: e.target.value }));
+                          setDeliveryErrors((prev) => ({ ...prev, zip: "" }));
+                        }}
+                        className={`rounded-lg border ${deliveryErrors.zip ? "border-red-500" : "border-gray-300"} bg-white px-3 py-2 text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-white`}
                       />
+                      {deliveryErrors.zip && (
+                        <p className="mt-1 text-xs text-red-500">{deliveryErrors.zip}</p>
+                      )}
                     </div>
                   </div>
                 )}

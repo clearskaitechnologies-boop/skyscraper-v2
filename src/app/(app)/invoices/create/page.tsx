@@ -28,9 +28,9 @@ export default function CreateInvoicePage() {
 
   const addItem = () => setItems([...items, { description: "", quantity: 1, unitPrice: 0 }]);
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i));
-  const updateItem = (i: number, field: keyof LineItem, value: any) => {
+  const updateItem = (i: number, field: keyof LineItem, value: string | number) => {
     const updated = [...items];
-    (updated[i] as any)[field] = value;
+    updated[i] = { ...updated[i], [field]: value };
     setItems(updated);
   };
 
@@ -49,6 +49,22 @@ export default function CreateInvoicePage() {
     }
     if (items.some((i) => !i.description.trim())) {
       setError("All line items need a description");
+      return;
+    }
+    if (items.some((i) => i.quantity <= 0)) {
+      setError("All line items must have a quantity greater than 0");
+      return;
+    }
+    if (items.some((i) => i.unitPrice <= 0)) {
+      setError("All line items must have a unit price greater than 0");
+      return;
+    }
+    if (customerEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerEmail)) {
+      setError("Please enter a valid email address");
+      return;
+    }
+    if (total <= 0) {
+      setError("Invoice total must be greater than $0.00");
       return;
     }
 

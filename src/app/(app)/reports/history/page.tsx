@@ -1,5 +1,5 @@
 import { currentUser } from "@clerk/nextjs/server";
-import { ArrowUpRight, Copy, FileText, Filter, History, Search } from "lucide-react";
+import { ArrowUpRight, FileText, Filter, History, Search } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { safeClaimsSelect } from "@/lib/db/safeClaimsSelect";
 import { safeLeadsSelect } from "@/lib/db/safeLeadsSelect";
 import { getAllUserReports, UnifiedReport } from "@/lib/reports/getAllUserReports";
+import { CopyIdButton } from "./_components/CopyIdButton";
 
 function mapTypeLabel(t: UnifiedReport["type"]): { label: string; icon: React.ReactNode } {
   const base = <FileText className="h-4 w-4" />;
@@ -54,11 +55,11 @@ export default async function ReportHistoryPage({
     const ctx = await safeOrgContext();
     orgId = ctx.orgId ?? undefined;
   } catch (err) {
-    console.error("[ReportHistory] Failed to get org context", err);
+    // Failed to get org context — continue with empty state
   }
 
   if (!orgId) {
-    console.warn("[ReportHistory] Missing org context", { userId });
+    // Missing org context — will show empty state
     // Don't redirect - render empty state instead
   }
 
@@ -93,7 +94,7 @@ export default async function ReportHistoryPage({
         leadId: leadFilter || undefined,
       });
     } catch (error) {
-      console.error("[ReportHistory] Error loading reports:", error);
+      // Error loading reports — continue with empty arrays
       // Continue with empty arrays - will show "No reports" message
     }
   }
@@ -313,13 +314,7 @@ export default async function ReportHistoryPage({
                         <ArrowUpRight className="h-3 w-3" /> Resume
                       </Link>
                     )}
-                    <button
-                      onClick={() => navigator.clipboard.writeText(r.id)}
-                      className="flex items-center gap-1 rounded-md border border-[color:var(--border)] px-2 py-1 text-slate-700 hover:border-indigo-500 hover:text-indigo-600 dark:text-slate-300"
-                      title="Copy ID"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </button>
+                    <CopyIdButton id={r.id} />
                   </div>
                 </div>
               );

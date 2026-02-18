@@ -1,28 +1,23 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { safeRetailContext } from "@/lib/db/safeRetailContext";
+import { safeOrgContext } from "@/lib/safeOrgContext";
 
 import RetailProposalClient from "./RetailProposalClient";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-// Removed direct loader; replaced with resilient safeRetailContext.
-
 export default async function RetailProposalPage({
   searchParams,
 }: {
   searchParams: Record<string, string | undefined>;
 }) {
-  const user = await currentUser();
-  if (!user) redirect("/sign-in");
-  const userId = user.id;
-  const orgId = user.publicMetadata?.orgId as string | undefined;
-  if (!orgId) {
-    console.warn("[RetailProposal] Missing org context", { userId });
+  const ctx = await safeOrgContext();
+  if (ctx.status === "unauthenticated" || !ctx.orgId) {
     redirect("/sign-in");
   }
+  const orgId = ctx.orgId;
   const { leads, claims } = await safeRetailContext(orgId);
 
   return <RetailProposalClient leads={leads as any} claims={claims as any} />;

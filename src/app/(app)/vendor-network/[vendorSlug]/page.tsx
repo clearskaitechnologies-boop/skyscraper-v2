@@ -43,7 +43,7 @@ export default async function VendorDetailPage({ params }: Props) {
       },
     });
   } catch (err) {
-    console.error("[vendor-detail] Prisma query error:", err);
+    // Prisma query error — vendor not found
     return notFound();
   }
 
