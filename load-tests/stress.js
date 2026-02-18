@@ -29,8 +29,10 @@ export const options = {
   thresholds: {
     // Intentionally relaxed — we WANT to find the breaking point
     http_req_duration: ["p(95)<10000"], // Allow up to 10s
-    http_req_failed: ["rate<0.20"], // Allow up to 20% failure
-    errors: ["rate<0.20"],
+    // NOTE: ~25% of requests are intentional 401s (auth-gated endpoints without tokens).
+    // Threshold set to 0.35 to catch real 5xx spikes while allowing expected 401s.
+    http_req_failed: ["rate<0.35"],
+    errors: ["rate<0.05"], // < 5% real check failures (not 401s)
   },
 };
 
@@ -39,10 +41,11 @@ export default function () {
     const res = http.get(`${BASE_URL}${ENDPOINTS.healthDeep}`);
     responseTime.add(res.timings.duration);
 
-    check(res, {
+    const passed = check(res, {
       "health → not 500": (r) => r.status < 500,
       "health < 10s": (r) => r.timings.duration < 10000,
-    }) || errorRate.add(1);
+    });
+    errorRate.add(passed ? 0 : 1);
   });
 
   sleep(0.2);
@@ -53,9 +56,10 @@ export default function () {
     const res = http.get(`${BASE_URL}${page}`);
     responseTime.add(res.timings.duration);
 
-    check(res, {
+    const passed = check(res, {
       [`${page} → not 500`]: (r) => r.status < 500,
-    }) || errorRate.add(1);
+    });
+    errorRate.add(passed ? 0 : 1);
   });
 
   sleep(0.2);
@@ -78,9 +82,10 @@ export default function () {
       });
       responseTime.add(res.timings.duration);
 
-      check(res, {
+      const passed = check(res, {
         [`${api} → not 500`]: (r) => r.status < 500,
-      }) || errorRate.add(1);
+      });
+      errorRate.add(passed ? 0 : 1);
     }
   });
 
