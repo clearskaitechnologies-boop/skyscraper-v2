@@ -5572,9 +5572,6 @@ model user_registry {
   lastSeenAt                DateTime? @db.Timestamptz(6)
   onboardingComplete        Boolean   @default(false)
   primaryEmail              String?
-  notificationEmail         Boolean   @default(true)
-  notificationLeadAlerts    Boolean   @default(true)
-  notificationWeeklySummary Boolean   @default(false)
 
   @@index([clerkUserId])
   @@index([clerkUserId, userType, isActive])
