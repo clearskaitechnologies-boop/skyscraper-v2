@@ -1,0 +1,547 @@
+{
+  "root_group": {
+    "name": "",
+    "path": "",
+    "id": "d41d8cd98f00b204e9800998ecf8427e",
+    "groups": [
+      {
+        "checks": [
+          {
+            "fails": 0,
+            "name": "burst /api/health/live → success",
+            "path": "::Burst — Rapid Requests::burst /api/health/live → success",
+            "id": "e33b4366f3c85379d568dffd514ab65c",
+            "passes": 34592
+          },
+          {
+            "name": "burst / → success",
+            "path": "::Burst — Rapid Requests::burst / → success",
+            "id": "5622ba87acef1e1d6e01c0def553ecd4",
+            "passes": 34589,
+            "fails": 0
+          },
+          {
+            "name": "burst /pricing → success",
+            "path": "::Burst — Rapid Requests::burst /pricing → success",
+            "id": "892f80df34117fae38a00edfbf172342",
+            "passes": 34588,
+            "fails": 0
+          },
+          {
+            "name": "burst /api/health/ready → success",
+            "path": "::Burst — Rapid Requests::burst /api/health/ready → success",
+            "id": "6c5ea6e710d637303885fc51245b778a",
+            "passes": 34588,
+            "fails": 0
+          },
+          {
+            "passes": 34588,
+            "fails": 0,
+            "name": "burst /api/health/deep → success",
+            "path": "::Burst — Rapid Requests::burst /api/health/deep → success",
+            "id": "67e5efdabdcbb030b38277b73c6705bb"
+          }
+        ],
+        "name": "Burst — Rapid Requests",
+        "path": "::Burst — Rapid Requests",
+        "id": "a5c5b26b3d9fa7e1fc54d546e9f1f43a",
+        "groups": []
+      },
+      {
+        "path": "::Public Browsing",
+        "id": "4c3269f312b9c4ebfa63ee23541f6916",
+        "groups": [],
+        "checks": [
+            {
+              "name": "landing → 200",
+              "path": "::Public Browsing::landing → 200",
+              "id": "aa34f84be5ca5f50f643e44ccf944190",
+              "passes": 68579,
+              "fails": 124
+            },
+            {
+              "name": "pricing → 200|308",
+              "path": "::Public Browsing::pricing → 200|308",
+              "id": "25651dfc63968a6c6f0ce4a8e078cda1",
+              "passes": 68647,
+              "fails": 51
+            }
+          ],
+        "name": "Public Browsing"
+      },
+      {
+        "name": "Health Live (BetterStack Target)",
+        "path": "::Health Live (BetterStack Target)",
+        "id": "abe72d024892173001134e1c975281a4",
+        "groups": [],
+        "checks": [
+            {
+              "name": "live health → 200|207",
+              "path": "::Health Live (BetterStack Target)::live health → 200|207",
+              "id": "ee93660a4a98b533d06c577fd487b245",
+              "passes": 45590,
+              "fails": 83
+            },
+            {
+              "id": "1b89e53b1252ebd29d6fcdbfd6cc56b7",
+              "passes": 45554,
+              "fails": 119,
+              "name": "live health < 1s",
+              "path": "::Health Live (BetterStack Target)::live health < 1s"
+            },
+            {
+              "name": "has status field",
+              "path": "::Health Live (BetterStack Target)::has status field",
+              "id": "7b44175579c62e6d6bae9416aa21035d",
+              "passes": 45590,
+              "fails": 83
+            },
+            {
+              "id": "705296fa19c63f0b4404e80bb8ca0027",
+              "passes": 0,
+              "fails": 45673,
+              "name": "has db check",
+              "path": "::Health Live (BetterStack Target)::has db check"
+            }
+          ]
+      },
+      {
+        "id": "51fbe13d6cc8f63bbc30fe3c2929ae31",
+        "groups": [],
+        "checks": [
+            {
+              "name": "/api/search/global → 401 or 429",
+              "path": "::Auth Gate Stress::/api/search/global → 401 or 429",
+              "id": "8c83b32bb75ad0c59842176286c8d317",
+              "passes": 35527,
+              "fails": 29
+            },
+            {
+              "name": "/api/search/global < 2s",
+              "path": "::Auth Gate Stress::/api/search/global < 2s",
+              "id": "12dc5e31935e6b031aa96d8837f59e22",
+              "passes": 35521,
+              "fails": 35
+            },
+            {
+              "id": "10f54acf9ad4ad4773006eecf69a03c6",
+              "passes": 44863,
+              "fails": 38,
+              "name": "/api/claims → 401 or 429",
+              "path": "::Auth Gate Stress::/api/claims → 401 or 429"
+            },
+            {
+              "passes": 44853,
+              "fails": 48,
+              "name": "/api/claims < 2s",
+              "path": "::Auth Gate Stress::/api/claims < 2s",
+              "id": "6aeb9a600f623ebfe054d5ad4297122c"
+            },
+            {
+              "fails": 32,
+              "name": "/api/leads → 401 or 429",
+              "path": "::Auth Gate Stress::/api/leads → 401 or 429",
+              "id": "cdc0b27440243ce27d6cc6ad85cdfdbf",
+              "passes": 44792
+            },
+            {
+              "id": "335d95733ede9c0e8a98fb31341c8baf",
+              "passes": 44773,
+              "fails": 51,
+              "name": "/api/leads < 2s",
+              "path": "::Auth Gate Stress::/api/leads < 2s"
+            },
+            {
+              "id": "2062097eaedafa5b267729c7a1d96a7e",
+              "passes": 23014,
+              "fails": 10,
+              "name": "/api/messages/threads → 401 or 429",
+              "path": "::Auth Gate Stress::/api/messages/threads → 401 or 429"
+            },
+            {
+              "passes": 23012,
+              "fails": 12,
+              "name": "/api/messages/threads < 2s",
+              "path": "::Auth Gate Stress::/api/messages/threads < 2s",
+              "id": "1a8e83b436ce69ef98465d4962fb701f"
+            },
+            {
+              "id": "2dcf1157e71fca5df5bf39e10545ca9c",
+              "passes": 12964,
+              "fails": 13,
+              "name": "/api/tokens/balance → 401 or 429",
+              "path": "::Auth Gate Stress::/api/tokens/balance → 401 or 429"
+            },
+            {
+              "path": "::Auth Gate Stress::/api/tokens/balance < 2s",
+              "id": "1d9f68317a3fc172228f713f1eb41e1d",
+              "passes": 12955,
+              "fails": 22,
+              "name": "/api/tokens/balance < 2s"
+            },
+            {
+              "name": "/api/analytics/dashboard → 401 or 429",
+              "path": "::Auth Gate Stress::/api/analytics/dashboard → 401 or 429",
+              "id": "5272a9775cb89a0628e513cb36240263",
+              "passes": 7051,
+              "fails": 3
+            },
+            {
+              "name": "/api/analytics/dashboard < 2s",
+              "path": "::Auth Gate Stress::/api/analytics/dashboard < 2s",
+              "id": "16a3552f467ffaf2a49509bbd8ae9cb5",
+              "passes": 7048,
+              "fails": 6
+            },
+            {
+              "name": "/api/uploads → 401 or 429",
+              "path": "::Auth Gate Stress::/api/uploads → 401 or 429",
+              "id": "5b4623ad5de3d209c0b8c72cf9c296fb",
+              "passes": 3503,
+              "fails": 2
+            },
+            {
+              "name": "/api/uploads < 2s",
+              "path": "::Auth Gate Stress::/api/uploads < 2s",
+              "id": "588ccdbfc573b9fb0056f77467e3d866",
+              "passes": 3501,
+              "fails": 4
+            }
+          ],
+        "name": "Auth Gate Stress",
+        "path": "::Auth Gate Stress"
+      },
+      {
+        "name": "Health Deep (Full System)",
+        "path": "::Health Deep (Full System)",
+        "id": "83f737ce035289541321f1ee00f6e229",
+        "groups": [],
+        "checks": [
+            {
+              "passes": 22873,
+              "fails": 42,
+              "name": "deep health → 200|207",
+              "path": "::Health Deep (Full System)::deep health → 200|207",
+              "id": "0d8f596981cd5abb250b42e7900ded03"
+            },
+            {
+              "id": "e2cf0b0a20a5ac9a30725af3bef8e4a8",
+              "passes": 22873,
+              "fails": 42,
+              "name": "deep health < 5s",
+              "path": "::Health Deep (Full System)::deep health < 5s"
+            },
+            {
+              "name": "db connected",
+              "path": "::Health Deep (Full System)::db connected",
+              "id": "559fd210396d6be255bb98779c4be4ad",
+              "passes": 22873,
+              "fails": 42
+            }
+          ]
+      }
+    ],
+    "checks": []
+  },
+  "options": {
+    "summaryTrendStats": [
+      "avg",
+      "min",
+      "med",
+      "max",
+      "p(90)",
+      "p(95)"
+    ],
+    "summaryTimeUnit": "",
+    "noColor": false
+  },
+  "state": {
+    "isStdErrTTY": true,
+    "testRunDurationMs": 6001734.048,
+    "isStdOutTTY": true
+  },
+  "metrics": {
+    "iteration_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 3870.0050748,
+        "avg": 2721.146271160911,
+        "min": 1102.54575,
+        "med": 2636.708041,
+        "max": 111720.491208,
+        "p(90)": 3644.1721248
+      }
+    },
+    "data_received": {
+      "contains": "data",
+      "values": {
+        "count": 17732268397,
+        "rate": 2954524.1850409964
+      },
+      "type": "counter"
+    },
+    "http_req_sending": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 0.11049620080794921,
+        "min": 0.008,
+        "med": 0.083,
+        "max": 187.119,
+        "p(90)": 0.196,
+        "p(95)": 0.229
+      }
+    },
+    "db_dependent_latency": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 325.6404086684788,
+        "min": 70.466,
+        "med": 102.111,
+        "max": 1958320.997,
+        "p(90)": 190.318,
+        "p(95)": 229.695
+      },
+      "thresholds": {
+        "p(95)<3000": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_duration{expected_response:true}": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 7820.149,
+        "p(90)": 356.91960000000006,
+        "p(95)": 421.93179999999984,
+        "avg": 236.87891293493436,
+        "min": 90.569,
+        "med": 211.609
+      }
+    },
+    "http_req_tls_handshaking": {
+      "contains": "time",
+      "values": {
+        "min": 0,
+        "med": 0,
+        "max": 530.38,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0.22284890563297172
+      },
+      "type": "trend"
+    },
+    "http_req_receiving": {
+      "contains": "time",
+      "values": {
+        "avg": 65.4823263510516,
+        "min": 0,
+        "med": 0.107,
+        "max": 1040564.342,
+        "p(90)": 121.07640000000005,
+        "p(95)": 170.2413
+      },
+      "type": "trend"
+    },
+    "http_req_duration": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 512.7343407997807,
+        "min": 70.466,
+        "med": 182.669,
+        "max": 1958322.842,
+        "p(90)": 328.2056,
+        "p(95)": 390.621
+      },
+      "thresholds": {
+        "p(95)<2000": {
+          "ok": true
+        },
+        "p(99)<5000": {
+          "ok": true
+        }
+      }
+    },
+    "checks": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "passes": 858901,
+        "fails": 46564,
+        "rate": 0.9485744893507756
+      }
+    },
+    "http_req_blocked": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 0.002,
+        "avg": 0.3753500957738213,
+        "min": 0,
+        "med": 0.001,
+        "max": 948.572,
+        "p(90)": 0.001
+      }
+    },
+    "api_errors": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "rate": 0.036989309793555185,
+        "count": 222
+      }
+    },
+    "http_reqs": {
+      "values": {
+        "rate": 91.76931126822232,
+        "count": 550775
+      },
+      "thresholds": {
+        "rate>5": {
+          "ok": true
+        }
+      },
+      "type": "counter",
+      "contains": "default"
+    },
+    "errors": {
+      "contains": "default",
+      "values": {
+        "passes": 46070,
+        "fails": 504705,
+        "rate": 0.0836457718669148
+      },
+      "thresholds": {
+        "rate<0.005": {
+          "ok": false
+        }
+      },
+      "type": "rate"
+    },
+    "burst_cycles": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 34593,
+        "rate": 5.763834205803849
+      }
+    },
+    "vus": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "max": 350,
+        "value": 1,
+        "min": 1
+      }
+    },
+    "health_live_latency": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "avg": 574.1429454601174,
+        "min": 94.046,
+        "med": 148.376,
+        "max": 1040728.653,
+        "p(90)": 234.365,
+        "p(95)": 273.6738
+      },
+      "thresholds": {
+        "p(95)<500": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_connecting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "max": 844.018,
+        "p(90)": 0,
+        "p(95)": 0,
+        "avg": 0.14783844401071225,
+        "min": 0,
+        "med": 0
+      }
+    },
+    "group_duration": {
+      "contains": "time",
+      "values": {
+        "avg": 720.4750955416042,
+        "min": 94.608458,
+        "med": 437.0551465,
+        "max": 110162.067333,
+        "p(90)": 1168.0496669000001,
+        "p(95)": 1298.0022148
+      },
+      "type": "trend"
+    },
+    "data_sent": {
+      "type": "counter",
+      "contains": "data",
+      "values": {
+        "count": 61297148,
+        "rate": 10213.239625375681
+      }
+    },
+    "http_req_waiting": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(95)": 284.5951999999999,
+        "avg": 447.1415182479235,
+        "min": 5.273,
+        "med": 149.306,
+        "max": 1958322.822,
+        "p(90)": 242.262
+      }
+    },
+    "vus_max": {
+      "type": "gauge",
+      "contains": "default",
+      "values": {
+        "max": 350,
+        "value": 350,
+        "min": 350
+      }
+    },
+    "iterations": {
+      "type": "counter",
+      "contains": "default",
+      "values": {
+        "count": 229149,
+        "rate": 38.18046554001521
+      }
+    },
+    "deep_health_latency": {
+      "type": "trend",
+      "contains": "time",
+      "values": {
+        "p(90)": 303.7214,
+        "p(95)": 356.2837,
+        "avg": 672.2516247872584,
+        "min": 132.553,
+        "med": 202.711,
+        "max": 1958321.592
+      },
+      "thresholds": {
+        "p(95)<1000": {
+          "ok": true
+        }
+      }
+    },
+    "http_req_failed": {
+      "type": "rate",
+      "contains": "default",
+      "values": {
+        "rate": 0.3127266125005674,
+        "passes": 172242,
+        "fails": 378533
+      }
+    }
+  }
+}

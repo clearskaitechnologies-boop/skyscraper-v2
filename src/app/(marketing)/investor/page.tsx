@@ -13,23 +13,7 @@ export const revalidate = 0;
  * SECURITY: Requires authentication to view real metrics
  */
 
-export default async function InvestorPage() {
-  // SECURITY: Require auth to view production metrics
-  const { userId } = await auth();
-  if (!userId) {
-    redirect("/sign-in");
-  }
-
-  return (
-    <Suspense
-      fallback={
-        <div className="flex min-h-screen items-center justify-center">Loading metrics...</div>
-      }
-    >
-      <MetricsDisplay />
-    </Suspense>
-  );
-}
+/* InvestorPage merged into InvestorDashboard below (single default export) */
 
 async function getMetrics() {
   try {
@@ -150,7 +134,13 @@ async function MetricsDisplay() {
   );
 }
 
-export default function InvestorDashboard() {
+export default async function InvestorDashboard() {
+  // SECURITY: Require auth to view production metrics
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950">
       <div className="mx-auto max-w-7xl space-y-12 px-8 py-16">
