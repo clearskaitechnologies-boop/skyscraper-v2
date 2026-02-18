@@ -162,5 +162,36 @@ WHERE category IN ('Distributor', 'Building Supply')
 UPDATE public."Vendor"
 SET "vendorTypes" = ARRAY['supplier']::TEXT[]
 WHERE ("vendorTypes" = ARRAY[]::TEXT[] OR "vendorTypes" IS NULL);
+-- ════════════════════════════════════════════════════
+-- 11. depreciation_invoices — entire table missing
+-- ════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS public.depreciation_invoices (
+  id                 TEXT PRIMARY KEY,
+  claim_id           TEXT NOT NULL REFERENCES public.claims(id) ON DELETE CASCADE,
+  subtotal_cents     INTEGER NOT NULL DEFAULT 0,
+  depreciation_cents INTEGER NOT NULL DEFAULT 0,
+  tax_cents          INTEGER NOT NULL DEFAULT 0,
+  total_due_cents    INTEGER NOT NULL DEFAULT 0,
+  line_items         JSONB NOT NULL DEFAULT '[]',
+  generated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  sent_at            TIMESTAMPTZ
+);
+CREATE INDEX IF NOT EXISTS idx_depreciation_invoices_claim ON public.depreciation_invoices(claim_id);
 
+-- ════════════════════════════════════════════════════
+-- 12. Systemic fix: search_path includes app schema
+-- ════════════════════════════════════════════════════
+-- 185 tables exist in the `app` schema but not in `public`.
+-- Rather than duplicating all of them, we set search_path so
+-- PostgreSQL resolves tables in both schemas:
+--   public (priority) → app (fallback) → extensions
+--
+-- Applied at both ROLE and DATABASE level:
+ALTER ROLE postgres SET search_path TO public, app, extensions;
+ALTER DATABASE postgres SET search_path TO public, app, extensions;
+--
+-- Also added `options=-csearch_path%3Dpublic%2Capp%2Cextensions`
+-- to DATABASE_URL and DIRECT_DATABASE_URL in Vercel production env vars.
+-- This ensures every Prisma connection uses the correct search_path
+-- regardless of Supabase proxy/PgBouncer session defaults.
 DO $$ BEGIN RAISE NOTICE '✅ Public schema reconciliation complete'; END $$;
