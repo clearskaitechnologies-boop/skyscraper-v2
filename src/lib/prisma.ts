@@ -45,7 +45,7 @@ const LOG_LEVELS =
     : (["error"] as const);
 
 function createPrismaClient(): PrismaClient {
-  return new PrismaClient({
+  const client = new PrismaClient({
     log: [...LOG_LEVELS],
     // Prisma engine-level timeout for unresponsive queries (ms)
     // This catches runaway queries that hold connections
@@ -54,6 +54,8 @@ function createPrismaClient(): PrismaClient {
       timeout: 30_000, // max time (ms) a transaction can run
     },
   });
+
+  return client;
 }
 
 // ── Singleton: reuse across ALL warm invocations ────────────────────
