@@ -50,7 +50,7 @@ export default function ClientSignInPage() {
             routing="path"
             path="/client/sign-in"
             signUpUrl="/client/sign-up"
-            redirectUrl="/after-sign-in?mode=client"
+            forceRedirectUrl="/after-sign-in?mode=client"
             fallbackRedirectUrl="/after-sign-in?mode=client"
           />
         )}
