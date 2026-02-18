@@ -12,11 +12,11 @@ function SignUpForm() {
 
   // Route through /after-sign-in to set identity cookie, then redirect to final destination
   // This preserves invite tokens: /trades/join?token=xxx survives the sign-up flow
+  // CRITICAL: mode=pro tells after-sign-in this is a Pro signup (not a homeowner)
   const afterSignInParams = new URLSearchParams();
+  afterSignInParams.set("mode", "pro");
   if (pendingRedirect) afterSignInParams.set("redirect_url", pendingRedirect);
-  const redirectUrl = afterSignInParams.toString()
-    ? `/after-sign-in?${afterSignInParams.toString()}`
-    : "/after-sign-in";
+  const redirectUrl = `/after-sign-in?${afterSignInParams.toString()}`;
 
   // Propagate redirect_url to sign-in page so token isn't lost if they switch
   const signInUrl = pendingRedirect
