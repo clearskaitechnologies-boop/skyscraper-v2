@@ -18,9 +18,9 @@
  * ============================================================================
  */
 
-import { describe, expect, it } from "vitest";
 import fs from "fs";
 import path from "path";
+import { describe, expect, it } from "vitest";
 
 const SRC = path.resolve(__dirname, "../src");
 const PRISMA = path.resolve(__dirname, "../prisma");
@@ -35,10 +35,7 @@ function readSrc(relativePath: string): string {
 
 describe("demoMode defaults", () => {
   it("Prisma schema defaults demoMode to false", () => {
-    const schema = fs.readFileSync(
-      path.join(PRISMA, "schema.prisma"),
-      "utf-8"
-    );
+    const schema = fs.readFileSync(path.join(PRISMA, "schema.prisma"), "utf-8");
     // Find the demoMode field and verify its default
     const demoModeLine = schema
       .split("\n")
@@ -200,10 +197,7 @@ describe("org isolation", () => {
     ];
     for (const f of deadFiles) {
       const fullPath = path.join(SRC, f);
-      expect(
-        fs.existsSync(fullPath),
-        `Dead org creator file should not exist: ${f}`
-      ).toBe(false);
+      expect(fs.existsSync(fullPath), `Dead org creator file should not exist: ${f}`).toBe(false);
     }
   });
 
@@ -221,7 +215,9 @@ describe("org isolation", () => {
       for (const deadImport of deadImports) {
         const relativePath = path.relative(SRC, file);
         expect(
-          content.includes(`from`) && content.includes(deadImport) && content.match(new RegExp(`import.*${deadImport}`)),
+          content.includes(`from`) &&
+            content.includes(deadImport) &&
+            content.match(new RegExp(`import.*${deadImport}`)),
           `${relativePath} should not import ${deadImport}`
         ).toBeFalsy();
       }

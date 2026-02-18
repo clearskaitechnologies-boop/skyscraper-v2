@@ -1,8 +1,10 @@
 // src/app/client/[slug]/layout.tsx
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
+
+import prisma from "@/lib/prisma";
 
 interface ClientLayoutProps {
   children: ReactNode;
@@ -14,6 +16,20 @@ export default async function ClientLayout({ children, params }: ClientLayoutPro
   if (!userId) redirect("/portal/sign-in");
 
   const { slug } = params;
+
+  // SECURITY: Verify this slug belongs to the authenticated user
+  const user = await currentUser();
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress;
+  if (userEmail) {
+    const client = await prisma.client.findFirst({
+      where: { slug, email: userEmail },
+      select: { id: true },
+    });
+    if (!client) {
+      redirect("/portal");
+    }
+  }
+
   const basePath = `/client/${slug}`;
 
   return (

@@ -57,7 +57,20 @@ export default function TasksPage() {
 
   // Fetch all tasks
   useEffect(() => {
-    setLoading(false);
+    const fetchTasks = async () => {
+      try {
+        const res = await fetch("/api/tasks");
+        if (res.ok) {
+          const data = await res.json();
+          setTasks(data.tasks || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch tasks:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchTasks();
   }, []);
 
   if (!isLoaded || !isSignedIn) {

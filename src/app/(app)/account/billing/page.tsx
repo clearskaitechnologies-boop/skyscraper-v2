@@ -73,10 +73,6 @@ export default function BillingPage() {
     }
   }, [isLoaded, isSignedIn]);
 
-  if (!isLoaded) {
-    return <div className="flex h-screen items-center justify-center">Loading...</div>;
-  }
-
   useEffect(() => {
     if (!organization) return;
 
@@ -96,6 +92,10 @@ export default function BillingPage() {
 
     fetchBillingData();
   }, [organization]);
+
+  if (!isLoaded) {
+    return <div className="flex h-screen items-center justify-center">Loading...</div>;
+  }
 
   const openBillingPortal = async () => {
     setPortalLoading(true);

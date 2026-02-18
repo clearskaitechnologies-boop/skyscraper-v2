@@ -81,18 +81,26 @@ export default async function PermissionsPage() {
     createdAt: Date;
   }[] = [];
   try {
-    members = (await prisma.user_registry.findMany({
+    const rawMembers = await prisma.user_registry.findMany({
       where: { orgId: ctx.orgId },
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
-        imageUrl: true,
+        avatarUrl: true,
         createdAt: true,
-      } as unknown as Record<string, boolean>,
+      },
       orderBy: { createdAt: "asc" },
-    })) as unknown as typeof members;
+    });
+    members = rawMembers.map((m) => ({
+      id: m.id,
+      name: m.name,
+      email: m.email,
+      role: m.role,
+      imageUrl: m.avatarUrl,
+      createdAt: m.createdAt,
+    }));
   } catch (error) {
     console.error("[PermissionsPage] Failed to fetch team members:", error);
   }

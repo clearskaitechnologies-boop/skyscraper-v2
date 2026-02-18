@@ -12,11 +12,6 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
-// Client wrapper for TeamInviteForm
-function TeamInviteFormWrapper() {
-  return <TeamInviteForm onSuccess={() => window.location.reload()} />;
-}
-
 export default async function TeamSettingsPage() {
   const user = await currentUser();
   if (!user) redirect("/sign-in");
@@ -101,7 +96,7 @@ export default async function TeamSettingsPage() {
         <p className="mb-4 text-blue-700 dark:text-blue-300">
           Send an invitation to add a new member, or bulk import from a CSV file
         </p>
-        <TeamInviteFormWrapper />
+        <TeamInviteForm />
       </div>
 
       {/* Active Team Members */}

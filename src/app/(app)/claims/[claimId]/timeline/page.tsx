@@ -32,7 +32,6 @@ export default function TimelinePage() {
   const params = useParams();
   const claimIdParam = params?.claimId;
   const claimId = Array.isArray(claimIdParam) ? claimIdParam[0] : claimIdParam;
-  if (!claimId) return null;
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -43,6 +42,9 @@ export default function TimelinePage() {
     eventType: "other",
   });
   const [deleteTarget, setDeleteTarget] = useState<{ id: string; label?: string } | null>(null);
+
+  // SECURITY: Early return AFTER all hooks to avoid React Hook ordering violation
+  if (!claimId) return null;
 
   useEffect(() => {
     fetchTimeline();

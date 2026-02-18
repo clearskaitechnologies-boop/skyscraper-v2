@@ -3,8 +3,8 @@
  * Move a job between workflow categories (claim, repair, out_of_pocket, financed)
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
@@ -28,7 +28,10 @@ export async function POST(req: NextRequest) {
 
     if (itemType === "lead") {
       // Moving a lead to a different category
-      const lead = await prisma.leads.findUnique({ where: { id: itemId } });
+      // SECURITY: Scope lead lookup to user's org
+      const lead = await prisma.leads.findFirst({
+        where: { id: itemId, orgId: authResult.orgId || undefined },
+      });
       if (!lead) {
         return NextResponse.json({ error: "Lead not found" }, { status: 404 });
       }

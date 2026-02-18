@@ -81,6 +81,14 @@ export default async function ServiceAreasPage() {
       />
 
       <div className="grid gap-6">
+        {/* ─── Coming Soon Banner ─── */}
+        <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center dark:border-amber-700 dark:bg-amber-950/30">
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+            🚧 Preview Mode — Service area data shown is sample data. Real service area management
+            coming soon.
+          </p>
+        </div>
+
         {/* ─── Summary Stats ─── */}
         <div className="grid gap-4 md:grid-cols-4">
           <div className="flex items-center gap-3 rounded-xl border border-[color:var(--border)] bg-[color:var(--surface-1,white)] p-4 shadow-sm">

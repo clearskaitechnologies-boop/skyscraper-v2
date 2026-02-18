@@ -4,8 +4,8 @@
  * Uses service role key for reliable server-side uploads
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const type = (formData.get("type") as string) || "logo";
-    const orgId = (formData.get("orgId") as string) || (await getTenant()) || userId;
+    // SECURITY: Always derive orgId server-side — never trust client-supplied orgId
+    const orgId = (await getTenant()) || userId;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });

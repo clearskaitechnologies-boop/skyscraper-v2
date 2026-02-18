@@ -128,7 +128,6 @@ export default function OverviewPage() {
   const router = useRouter();
   const claimIdParam = params?.claimId;
   const claimId = Array.isArray(claimIdParam) ? claimIdParam[0] : claimIdParam;
-  if (!claimId) return null;
   const [claim, setClaim] = useState<ClaimData | null>(null);
   const [stats, setStats] = useState<ClaimStats>({
     photosCount: 0,
@@ -141,6 +140,9 @@ export default function OverviewPage() {
   const [pendingSaves, setPendingSaves] = useState<Set<string>>(new Set());
   const saveQueueRef = useRef<{ [key: string]: any }>({});
   const saveTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // SECURITY: Early return AFTER all hooks to avoid React Hook ordering violation
+  if (!claimId) return null;
 
   // Autosave handler - debounces saves by 2 seconds
   const queueSave = useCallback(

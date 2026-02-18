@@ -4,8 +4,8 @@
  * Supports single and bulk invitations
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -20,6 +20,9 @@ export async function POST(request: NextRequest) {
 
   try {
     const { orgId } = await ensureUserOrgContext(userId);
+    if (!orgId) {
+      return NextResponse.json({ error: "No organization context" }, { status: 403 });
+    }
     const body = await request.json();
     const { type, email, emails, firstName, lastName, message } = body;
 

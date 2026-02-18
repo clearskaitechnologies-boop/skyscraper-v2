@@ -1,4 +1,5 @@
-import { notFound } from "next/navigation";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { notFound, redirect } from "next/navigation";
 
 import prisma from "@/lib/prisma";
 
@@ -9,16 +10,24 @@ export default async function ClientClaimPage({
   params: { claimId: string };
   searchParams: { email?: string };
 }) {
+  // SECURITY: Require authentication
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+
+  const user = await currentUser();
+  const userEmail = user?.emailAddresses?.[0]?.emailAddress;
   const email = searchParams.email;
   const { claimId } = params;
 
-  if (!email) {
+  // SECURITY: Verify the email param matches the signed-in user's email
+  if (!email || !userEmail || email.toLowerCase() !== userEmail.toLowerCase()) {
     return (
       <div className="flex min-h-screen items-center justify-center p-6">
         <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-1)] p-8 text-center">
           <h1 className="text-2xl font-bold text-[color:var(--text)]">Access Denied</h1>
           <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Missing email parameter. Please use the link sent to your email.
+            You don&apos;t have permission to view this claim. Please use the link sent to your
+            email.
           </p>
         </div>
       </div>

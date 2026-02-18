@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Lock, Settings, Shield, User } from "lucide-react";
+import { Bell, Globe, Lock, Settings, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -27,6 +27,10 @@ export default function PortalSettingsPage() {
       />
 
       <div className="mx-auto max-w-3xl space-y-6">
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-center text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+          🚧 <strong>Preview Mode</strong> — Notification preferences are stored locally and will
+          reset on page reload.
+        </div>
         {/* Profile Settings */}
         <Card>
           <CardHeader>

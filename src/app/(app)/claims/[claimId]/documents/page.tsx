@@ -1,6 +1,6 @@
 "use client";
 import { Download, Eye, FileCheck, FileText, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import ClientDocumentSharing from "@/components/claims/ClientDocumentSharing";
@@ -28,22 +28,25 @@ interface ClaimDocument {
   };
 }
 
-export default function ClaimDocumentsPage({ params }: { params: { claimId: string } }) {
+export default function ClaimDocumentsPage() {
+  const params = useParams();
+  const claimId = Array.isArray(params?.claimId) ? params.claimId[0] : params?.claimId;
   const router = useRouter();
   const [documents, setDocuments] = useState<ClaimDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    fetchDocuments();
-  }, [params.claimId]);
+    if (claimId) fetchDocuments();
+  }, [claimId]);
 
   async function fetchDocuments() {
+    if (!claimId) return;
     setLoading(true);
     setError("");
     try {
       const data = await clientFetch<{ documents: ClaimDocument[] }>(
-        `/api/claims/${params.claimId}/documents`
+        `/api/claims/${claimId}/documents`
       );
       setDocuments(data.documents || []);
       setError(""); // Clear any previous errors

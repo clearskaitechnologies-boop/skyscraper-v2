@@ -61,7 +61,8 @@ interface CompanySeatsClientProps {
 /* -------------------------------------------------------------------------- */
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
-const PRICE_PER_SEAT = 80;
+// Imported from shared pricing module
+import { PRICE_PER_SEAT_DOLLARS as PRICE_PER_SEAT } from "@/lib/billing/seat-pricing";
 const MAX_SEATS = 500;
 
 /* -------------------------------------------------------------------------- */

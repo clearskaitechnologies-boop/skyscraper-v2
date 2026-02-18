@@ -1,15 +1,23 @@
 "use client";
 
+import { useUser } from "@clerk/nextjs";
 import { Eye, Globe, ImageIcon, Palette, Settings } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 
 export default function CustomerPortalCustomizationPage() {
+  const { isLoaded, isSignedIn } = useUser();
+  const router = useRouter();
   const [primaryColor, setPrimaryColor] = useState("#3B82F6");
   const [logoUrl, setLogoUrl] = useState("");
   const [customDomain, setCustomDomain] = useState("");
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) router.push("/sign-in");
+  }, [isLoaded, isSignedIn, router]);
 
   return (
     <div className="space-y-6 p-8">
@@ -19,6 +27,13 @@ export default function CustomerPortalCustomizationPage() {
         subtitle="White-label your client-facing portal"
         icon={<Settings className="h-6 w-6" />}
       />
+
+      {/* Coming Soon Banner */}
+      <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center dark:border-amber-700 dark:bg-amber-950/30">
+        <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+          🚧 Preview Mode — Portal customization settings are coming soon. Changes are not saved.
+        </p>
+      </div>
 
       {/* Preview */}
       <div className="rounded-lg bg-white p-6 shadow dark:bg-slate-800">

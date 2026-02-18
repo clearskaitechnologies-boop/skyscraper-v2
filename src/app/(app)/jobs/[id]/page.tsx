@@ -1,5 +1,7 @@
+import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 
+import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 
 type Props = {
@@ -15,11 +17,17 @@ type Props = {
  * - Non-existent jobs → 404
  */
 export default async function JobDetailPage({ params }: Props) {
+  // SECURITY: Require auth + org context
+  const { userId } = await auth();
+  if (!userId) redirect("/sign-in");
+  const orgCtx = await getActiveOrgContext({ required: true });
+  if (!orgCtx.ok) redirect("/onboarding/start");
+
   const { id } = await params;
 
-  // Fetch the lead/job to determine its type
-  const job = await prisma.leads.findUnique({
-    where: { id },
+  // Fetch the lead/job scoped to this org
+  const job = await prisma.leads.findFirst({
+    where: { id, orgId: orgCtx.orgId },
     select: {
       id: true,
       jobType: true,

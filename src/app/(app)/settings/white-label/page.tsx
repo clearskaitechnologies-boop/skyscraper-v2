@@ -42,6 +42,10 @@ export default async function WhiteLabelPage() {
       />
 
       <div className="space-y-6">
+        <div className="rounded-lg border border-amber-300 bg-amber-50 p-3 text-center text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+          🚧 <strong>Preview Mode</strong> — White-label customization is coming soon. Changes are
+          not saved yet.
+        </div>
         <Card>
           <CardHeader>
             <CardTitle>Brand Identity</CardTitle>

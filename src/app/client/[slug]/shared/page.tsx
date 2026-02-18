@@ -17,15 +17,29 @@ export default async function ClientSharedPage({ params }: ClientSharedPageProps
   let reports: any[] = [];
 
   try {
-    // Get all documents marked as visible to client for claims in this network
-    // Note: documents model doesn't have visibleToClient or claim relation
-    // Using FileAsset instead (though it also doesn't have claim relation)
-    // Stub: return empty for now
+    // Look up the client by slug to scope queries
+    const client = await prisma.client.findFirst({
+      where: { slug },
+      select: { id: true, orgId: true },
+    });
+
+    if (!client) {
+      return (
+        <div className="space-y-6">
+          <header className="space-y-2">
+            <h1 className="text-2xl font-semibold text-foreground">Shared with You</h1>
+            <p className="text-sm text-slate-600 dark:text-slate-400">No shared items found.</p>
+          </header>
+        </div>
+      );
+    }
+
     documents = [];
 
-    // Get reports that have been shared (pdfUrl exists and not draft)
+    // SECURITY: Only fetch reports scoped to this client's org
     reports = await prisma.ai_reports.findMany({
       where: {
+        orgId: client.orgId ?? undefined,
         status: { in: ["finalized", "submitted"] },
       },
       orderBy: { createdAt: "desc" },

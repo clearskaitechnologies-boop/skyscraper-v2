@@ -4,8 +4,8 @@
  * Ensures proper context refresh and redirect
  */
 
-import { revalidatePath } from "next/cache";
 import { logger } from "@/lib/logger";
+import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -23,6 +23,12 @@ const onboardingCompleteSchema = z.object({
 
 export async function POST(req: Request) {
   try {
+    const { auth } = await import("@clerk/nextjs/server");
+    const { userId } = await auth();
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { getTenant } = await import("@/lib/auth/tenant");
     const orgId = await getTenant();
 

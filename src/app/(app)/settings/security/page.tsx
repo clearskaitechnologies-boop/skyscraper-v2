@@ -173,6 +173,14 @@ export default async function SecurityLogsPage() {
       />
 
       <div className="grid gap-6">
+        {/* ─── Coming Soon Banner ─── */}
+        <div className="rounded-xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-center dark:border-amber-700 dark:bg-amber-950/30">
+          <p className="text-sm font-semibold text-amber-800 dark:text-amber-200">
+            🚧 Preview Mode — This page shows sample data. Real session tracking via Clerk API
+            coming soon.
+          </p>
+        </div>
+
         {/* ─── Active Sessions ─── */}
         <PageSectionCard
           title="Active Sessions"

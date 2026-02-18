@@ -129,21 +129,32 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
     // Build where clause - include demo claims if demoMode enabled
     const whereClause = demoModeEnabled
       ? {
-          OR: [
+          AND: [
             {
-              orgId: organizationId,
-              ...(searchParams.stage ? { status: searchParams.stage.toLowerCase() } : {}),
+              OR: [
+                {
+                  orgId: organizationId,
+                  ...(searchParams.stage ? { status: searchParams.stage.toLowerCase() } : {}),
+                },
+                { orgId: PUBLIC_DEMO_ORG_ID, isDemo: true },
+              ],
             },
-            { orgId: PUBLIC_DEMO_ORG_ID, isDemo: true },
+            ...(searchParams.search
+              ? [
+                  {
+                    OR: [
+                      {
+                        claimNumber: {
+                          contains: searchParams.search,
+                          mode: "insensitive" as const,
+                        },
+                      },
+                      { title: { contains: searchParams.search, mode: "insensitive" as const } },
+                    ],
+                  },
+                ]
+              : []),
           ],
-          ...(searchParams.search
-            ? {
-                OR: [
-                  { claimNumber: { contains: searchParams.search, mode: "insensitive" as const } },
-                  { title: { contains: searchParams.search, mode: "insensitive" as const } },
-                ],
-              }
-            : {}),
         }
       : where;
 

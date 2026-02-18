@@ -1,4 +1,6 @@
-import { BarChart3, Clock,DollarSign, TrendingUp, Users, Zap } from "lucide-react";
+import { auth } from "@clerk/nextjs/server";
+import { BarChart3, Clock, DollarSign, TrendingUp, Users, Zap } from "lucide-react";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import prisma from "@/lib/prisma";
@@ -8,9 +10,26 @@ export const revalidate = 0;
 
 /**
  * Investor Traction Dashboard
- * Real-time metrics for investors
- * Protected route (password optional)
+ * SECURITY: Requires authentication to view real metrics
  */
+
+export default async function InvestorPage() {
+  // SECURITY: Require auth to view production metrics
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">Loading metrics...</div>
+      }
+    >
+      <MetricsDisplay />
+    </Suspense>
+  );
+}
 
 async function getMetrics() {
   try {

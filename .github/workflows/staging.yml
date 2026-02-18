@@ -53,7 +53,7 @@ jobs:
         run: |
           STAGING_URL="${{ steps.deploy.outputs.url }}"
           echo "Testing: $STAGING_URL"
-          
+
           # Health check
           STATUS=$(curl -sL -o /dev/null -w '%{http_code}' "$STAGING_URL/api/health")
           if [ "$STATUS" = "200" ]; then

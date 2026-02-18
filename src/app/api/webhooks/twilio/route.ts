@@ -1,8 +1,8 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
@@ -13,6 +13,17 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
+    // SECURITY: Validate Twilio request signature
+    const twilioSignature = req.headers.get("x-twilio-signature");
+    const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
+    if (!twilioSignature || !twilioAuthToken) {
+      logger.warn("[twilio-webhook] Missing Twilio signature or auth token");
+      return new NextResponse('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
+        status: 403,
+        headers: { "Content-Type": "text/xml" },
+      });
+    }
+
     const contentType = req.headers.get("content-type") || "";
     let from = "";
     let to = "";

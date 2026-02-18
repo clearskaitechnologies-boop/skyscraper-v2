@@ -3,14 +3,21 @@
  * GET /api/system/truth
  */
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  // SECURITY: Require CRON_SECRET or admin bearer token to access system internals
+  const authHeader = req.headers.get("authorization");
+  const cronSecret = process.env.CRON_SECRET;
+  const bearerToken = authHeader?.replace("Bearer ", "");
+  if (!cronSecret || bearerToken !== cronSecret) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
   const startTime = Date.now();
   const results: any = {
     timestamp: new Date().toISOString(),

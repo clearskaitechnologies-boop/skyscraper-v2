@@ -21,11 +21,9 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { MAX_SEATS, PRICE_PER_SEAT_DOLLARS as PRICE_PER_SEAT } from "@/lib/billing/seat-pricing";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
-
-const PRICE_PER_SEAT = 80;
-const MAX_SEATS = 500;
 
 export default function BillingPage() {
   const { organization } = useOrganization();
