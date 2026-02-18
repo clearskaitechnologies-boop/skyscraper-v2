@@ -9,15 +9,14 @@ import { getUserIdentity } from "@/lib/identity";
  *
  * This page runs after Clerk sign-in/sign-up completes. It:
  * 1. Checks the user's identity (pro vs client)
- * 2. Honors the ?mode= param from the sign-up page (pro or client)
- * 3. Sets the x-user-type cookie for middleware routing
- * 4. Redirects to the appropriate dashboard
+ * 2. Falls back to Clerk org membership check if DB lookup fails
+ * 3. Honors the ?mode= param from the sign-up page (pro or client)
+ * 4. Sets the x-user-type cookie for middleware routing
+ * 5. Redirects to the appropriate dashboard
  *
- * CRITICAL FIX: Previously, ALL unknown users were auto-registered as "client".
- * This broke Pro signups — users who clicked "Create Your Pro Account" were
- * sent to the Client portal because no mode=pro signal was passed.
- * Now: mode=pro → register as pro → /dashboard
- *       mode=client or no mode → register as client → /portal
+ * CRITICAL: This page must NEVER silently default to "client" when the
+ * DB is flaky. If Prisma errors out, we check Clerk org membership
+ * and publicMetadata as fallbacks before defaulting.
  */
 
 async function setUserTypeCookie(type: "pro" | "client") {
@@ -32,6 +31,27 @@ async function setUserTypeCookie(type: "pro" | "client") {
     });
   } catch (e) {
     console.error("[AFTER-SIGN-IN] Cookie set error:", e);
+  }
+}
+
+/**
+ * Direct SQL fallback — bypasses Prisma schema mismatches entirely.
+ * Used when Prisma client throws (e.g. column mismatch after migration).
+ */
+async function getUserTypeDirectSQL(clerkUserId: string): Promise<"pro" | "client" | null> {
+  try {
+    const { default: prisma } = await import("@/lib/prisma");
+    const result = await prisma.$queryRawUnsafe<{ userType: string }[]>(
+      `SELECT "userType" FROM user_registry WHERE "clerkUserId" = $1 LIMIT 1`,
+      clerkUserId
+    );
+    if (result?.[0]?.userType === "pro" || result?.[0]?.userType === "client") {
+      return result[0].userType as "pro" | "client";
+    }
+    return null;
+  } catch (e) {
+    console.error("[AFTER-SIGN-IN] Direct SQL fallback also failed:", e);
+    return null;
   }
 }
 
@@ -57,19 +77,52 @@ export default async function AfterSignInPage({
   }
 
   // ─── 1. Check existing identity in database ───
-  let identity;
+  let existingType: string | undefined;
+
+  // Primary: Prisma ORM lookup
   try {
-    identity = await getUserIdentity(user.id);
+    const identity = await getUserIdentity(user.id);
+    existingType = identity?.userType;
   } catch (error) {
-    console.error("[AFTER-SIGN-IN] Error getting identity:", error);
+    console.error("[AFTER-SIGN-IN] Prisma identity lookup failed:", error);
   }
 
-  const existingType = identity?.userType;
+  // Fallback 1: Direct SQL (bypasses Prisma schema issues)
+  if (!existingType) {
+    const sqlType = await getUserTypeDirectSQL(user.id);
+    if (sqlType) {
+      existingType = sqlType;
+      console.log("[AFTER-SIGN-IN] Recovered user type via direct SQL:", sqlType);
+    }
+  }
+
+  // Fallback 2: Clerk publicMetadata (set by onboarding or admin)
+  if (!existingType) {
+    const clerkUserType = user.publicMetadata?.userType as string | undefined;
+    if (clerkUserType === "pro" || clerkUserType === "client") {
+      existingType = clerkUserType;
+      console.log("[AFTER-SIGN-IN] Recovered user type via Clerk metadata:", clerkUserType);
+    }
+  }
+
+  // Fallback 3: Clerk org membership (any org membership = pro user)
+  if (!existingType) {
+    try {
+      const orgs = user.organizationMemberships;
+      if (orgs && orgs.length > 0) {
+        existingType = "pro";
+        console.log("[AFTER-SIGN-IN] Detected pro via Clerk org membership");
+      }
+    } catch {
+      /* org check failed, continue */
+    }
+  }
+
   console.log("[AFTER-SIGN-IN] User:", user.id, "ExistingType:", existingType, "Mode:", mode);
 
   // ─── 2. If user already has a known type, honor it ───
   if (existingType === "pro" || existingType === "client") {
-    await setUserTypeCookie(existingType);
+    await setUserTypeCookie(existingType as "pro" | "client");
 
     // Honor pending redirect first (invite links, deep links)
     if (pendingRedirect && pendingRedirect.startsWith("/")) {
@@ -91,21 +144,19 @@ export default async function AfterSignInPage({
 
   console.log("[AFTER-SIGN-IN] New user registration — resolvedType:", resolvedType);
 
+  // Try to register in user_registry (best-effort, don't block redirect)
   try {
     const { default: prisma } = await import("@/lib/prisma");
-    await prisma.user_registry.upsert({
-      where: { clerkUserId: user.id },
-      update: { userType: resolvedType, lastSeenAt: new Date() },
-      create: {
-        clerkUserId: user.id,
-        userType: resolvedType,
-        isActive: true,
-        onboardingComplete: false,
-        displayName: `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
-        email: user.emailAddresses?.[0]?.emailAddress || null,
-        avatarUrl: user.imageUrl || null,
-      },
-    });
+    await prisma.$executeRawUnsafe(
+      `INSERT INTO user_registry ("clerkUserId", "userType", "isActive", "onboardingComplete", "displayName", email, "avatarUrl", "createdAt", "updatedAt")
+       VALUES ($1, $2, true, false, $3, $4, $5, NOW(), NOW())
+       ON CONFLICT ("clerkUserId") DO UPDATE SET "userType" = $2, "lastSeenAt" = NOW(), "updatedAt" = NOW()`,
+      user.id,
+      resolvedType,
+      `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+      user.emailAddresses?.[0]?.emailAddress || null,
+      user.imageUrl || null
+    );
   } catch (regError) {
     console.error("[AFTER-SIGN-IN] Error registering user:", regError);
   }
