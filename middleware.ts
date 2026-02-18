@@ -46,6 +46,7 @@ const PRO_ROUTES = [
   "/invitations",
   "/archive",
   "/feedback",
+  "/depreciation",
 ];
 
 const CLIENT_ROUTES = ["/portal"];
