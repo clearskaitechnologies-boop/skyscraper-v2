@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -61,7 +61,7 @@ async function getUserTypeDirectSQL(clerkUserId: string): Promise<"pro" | "clien
   try {
     const { default: prisma } = await import("@/lib/prisma");
     const result = await prisma.$queryRawUnsafe<{ userType: string }[]>(
-      `SELECT "userType" FROM user_registry WHERE "clerkUserId" = $1 LIMIT 1`,
+      `SELECT "userType" FROM app.user_registry WHERE "clerkUserId" = $1 LIMIT 1`,
       clerkUserId
     );
     if (result?.[0]?.userType === "pro" || result?.[0]?.userType === "client") {
@@ -98,12 +98,21 @@ export default async function AfterSignInPage({
   // ─── 1. Check existing identity in database ───
   let existingType: string | undefined;
 
+  console.log("[AFTER-SIGN-IN] ═══ IDENTITY RESOLUTION START ═══");
+  console.log("[AFTER-SIGN-IN] ClerkUserId:", user.id);
+  console.log("[AFTER-SIGN-IN] Clerk publicMetadata:", JSON.stringify(user.publicMetadata));
+  console.log("[AFTER-SIGN-IN] Clerk orgMemberships:", user.organizationMemberships?.length ?? 0);
+
   // Primary: Prisma ORM lookup
   try {
     const identity = await getUserIdentity(user.id);
     existingType = identity?.userType;
+    console.log(
+      "[AFTER-SIGN-IN] Layer 1 (Prisma ORM):",
+      existingType ?? "null — user not found or Prisma error"
+    );
   } catch (error) {
-    console.error("[AFTER-SIGN-IN] Prisma identity lookup failed:", error);
+    console.error("[AFTER-SIGN-IN] Layer 1 (Prisma ORM) THREW:", error);
   }
 
   // Fallback 1: Direct SQL (bypasses Prisma schema issues)
@@ -111,16 +120,24 @@ export default async function AfterSignInPage({
     const sqlType = await getUserTypeDirectSQL(user.id);
     if (sqlType) {
       existingType = sqlType;
-      console.log("[AFTER-SIGN-IN] Recovered user type via direct SQL:", sqlType);
+      console.log("[AFTER-SIGN-IN] Layer 2 (Direct SQL) RECOVERED:", sqlType);
+    } else {
+      console.log("[AFTER-SIGN-IN] Layer 2 (Direct SQL): null — query failed or user not found");
     }
   }
 
   // Fallback 2: Clerk publicMetadata (set by onboarding or admin)
   if (!existingType) {
     const clerkUserType = user.publicMetadata?.userType as string | undefined;
+    console.log(
+      "[AFTER-SIGN-IN] Layer 3 (Clerk metadata) raw value:",
+      JSON.stringify(clerkUserType)
+    );
     if (clerkUserType === "pro" || clerkUserType === "client") {
       existingType = clerkUserType;
-      console.log("[AFTER-SIGN-IN] Recovered user type via Clerk metadata:", clerkUserType);
+      console.log("[AFTER-SIGN-IN] Layer 3 (Clerk metadata) RECOVERED:", clerkUserType);
+    } else {
+      console.log("[AFTER-SIGN-IN] Layer 3 (Clerk metadata): not pro/client, got:", clerkUserType);
     }
   }
 
@@ -128,31 +145,43 @@ export default async function AfterSignInPage({
   if (!existingType) {
     try {
       const orgs = user.organizationMemberships;
+      console.log("[AFTER-SIGN-IN] Layer 4 (Org membership) count:", orgs?.length ?? 0);
       if (orgs && orgs.length > 0) {
         existingType = "pro";
-        console.log("[AFTER-SIGN-IN] Detected pro via Clerk org membership");
+        console.log("[AFTER-SIGN-IN] Layer 4 (Org membership) RECOVERED: pro");
       }
     } catch {
-      /* org check failed, continue */
+      console.error("[AFTER-SIGN-IN] Layer 4 (Org membership) failed");
     }
   }
 
-  console.log("[AFTER-SIGN-IN] User:", user.id, "ExistingType:", existingType, "Mode:", mode);
+  console.log(
+    "[AFTER-SIGN-IN] ═══ FINAL RESULT ═══ User:",
+    user.id,
+    "ExistingType:",
+    existingType,
+    "Mode:",
+    mode
+  );
 
   // ─── 2. If user already has a known type, honor it ───
   if (existingType === "pro" || existingType === "client") {
+    console.log("[AFTER-SIGN-IN] ✅ Known user — setting cookie + syncing metadata:", existingType);
     await setUserTypeCookie(existingType as "pro" | "client");
     await syncClerkMetadata(user.id, existingType as "pro" | "client");
 
     // Honor pending redirect first (invite links, deep links)
     if (pendingRedirect && pendingRedirect.startsWith("/")) {
+      console.log("[AFTER-SIGN-IN] → Redirecting to pending URL:", pendingRedirect);
       redirect(pendingRedirect);
     }
 
     if (existingType === "client") {
+      console.log("[AFTER-SIGN-IN] → Redirecting CLIENT to /portal");
       redirect("/portal");
     }
     // Pro user
+    console.log("[AFTER-SIGN-IN] → Redirecting PRO to /dashboard");
     redirect("/dashboard");
   }
 
@@ -162,13 +191,18 @@ export default async function AfterSignInPage({
   // No mode = default to client (homeowners arriving via Google)
   const resolvedType: "pro" | "client" = mode === "pro" ? "pro" : "client";
 
-  console.log("[AFTER-SIGN-IN] New user registration — resolvedType:", resolvedType);
+  console.log(
+    "[AFTER-SIGN-IN] ⚠️ NEW USER REGISTRATION — mode:",
+    mode,
+    "resolvedType:",
+    resolvedType
+  );
 
   // Try to register in user_registry (best-effort, don't block redirect)
   try {
     const { default: prisma } = await import("@/lib/prisma");
     await prisma.$executeRawUnsafe(
-      `INSERT INTO user_registry ("clerkUserId", "userType", "isActive", "onboardingComplete", "displayName", email, "avatarUrl", "createdAt", "updatedAt")
+      `INSERT INTO app.user_registry ("clerkUserId", "userType", "isActive", "onboardingComplete", "displayName", email, "avatarUrl", "createdAt", "updatedAt")
        VALUES ($1, $2, true, false, $3, $4, $5, NOW(), NOW())
        ON CONFLICT ("clerkUserId") DO UPDATE SET "userType" = $2, "lastSeenAt" = NOW(), "updatedAt" = NOW()`,
       user.id,

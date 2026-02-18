@@ -146,8 +146,8 @@ export default async function StormCenterPage() {
         subtitle="Your real-time war room for storm season. Claims, supplements, revenue, and materials — all in one view."
       />
 
-      {/* KPI Cards Row */}
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+      {/* KPI Cards — 2 rows × 3 columns */}
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
           label="Active Claims"
           value={data?.activeClaims ?? 0}
