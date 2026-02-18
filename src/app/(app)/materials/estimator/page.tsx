@@ -3,6 +3,8 @@
 import { Calculator, Package, RotateCcw, Truck } from "lucide-react";
 import { useState } from "react";
 
+import { PageContainer } from "@/components/layout/PageContainer";
+import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -14,8 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PageContainer } from "@/components/layout/PageContainer";
-import { PageHero } from "@/components/layout/PageHero";
 
 interface EstimateResult {
   materials: Array<{
@@ -44,7 +44,6 @@ const SHINGLE_TYPES = [
   { label: "Metal Standing Seam", value: "metal" },
   { label: "Tile", value: "tile" },
 ];
-
 
 export default function MaterialEstimatorPage() {
   const [totalSqFt, setTotalSqFt] = useState("");
@@ -304,6 +303,6 @@ export default function MaterialEstimatorPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </PageContainer>
   );
 }
