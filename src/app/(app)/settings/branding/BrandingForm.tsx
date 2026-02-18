@@ -53,8 +53,6 @@ export default function BrandingForm({ initial, orgId, userId }: BrandingFormPro
       // Validate form data with Zod
       const validatedData = BrandingSchema.parse(formData);
 
-      console.log("Submitting validated branding data:", { ...validatedData, orgId, userId });
-
       const response = await fetch("/api/branding/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -62,7 +60,6 @@ export default function BrandingForm({ initial, orgId, userId }: BrandingFormPro
       });
 
       const data = await response.json();
-      console.log("Response:", response.status, data);
 
       if (response.ok && data.ok) {
         // Show success toast

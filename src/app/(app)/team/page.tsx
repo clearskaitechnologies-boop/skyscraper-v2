@@ -63,7 +63,6 @@ export default async function TeamPage() {
   const orgCtx = await safeOrgContext();
   const organizationId = orgCtx.orgId || null;
   const userId = orgCtx.userId;
-  console.info("[TeamPage] orgContext", { status: orgCtx.status, organizationId, userId });
   if (orgCtx.status === "unauthenticated") {
     redirect("/sign-in");
   }

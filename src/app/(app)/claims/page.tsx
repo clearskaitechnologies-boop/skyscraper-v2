@@ -5,7 +5,6 @@ import {
   Clock,
   DollarSign,
   FileText,
-  Filter,
   MapPin,
   Plus,
   Search,
@@ -95,7 +94,6 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
 
   const userId = orgResult.userId;
   const organizationId = orgResult.orgId;
-  console.info("[ClaimsPage] orgContext", { organizationId, userId });
 
   const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
   const limit = 20;
@@ -284,21 +282,23 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
       {/* Search & Filter */}
       <Card className="mb-6">
         <CardContent className="p-4">
-          <div className="flex gap-4">
+          <form action="/claims" className="flex gap-4">
+            {searchParams.stage && <input type="hidden" name="stage" value={searchParams.stage} />}
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
               <input
                 type="text"
-                placeholder="Search claims..."
+                name="search"
+                placeholder="Search by claim # or title..."
                 className="w-full rounded-lg border bg-white py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-900"
                 defaultValue={searchParams.search || ""}
               />
             </div>
-            <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" />
-              Filter
+            <Button type="submit" variant="outline">
+              <Search className="mr-2 h-4 w-4" />
+              Search
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
 
@@ -378,6 +378,33 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
               );
             })}
           </div>
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-2">
+          {page > 1 && (
+            <Link
+              href={`/claims?page=${page - 1}${searchParams.stage ? `&stage=${searchParams.stage}` : ""}${searchParams.search ? `&search=${encodeURIComponent(searchParams.search)}` : ""}`}
+            >
+              <Button variant="outline" size="sm">
+                ← Previous
+              </Button>
+            </Link>
+          )}
+          <span className="text-sm text-slate-500">
+            Page {page} of {totalPages} · {total} claims
+          </span>
+          {page < totalPages && (
+            <Link
+              href={`/claims?page=${page + 1}${searchParams.stage ? `&stage=${searchParams.stage}` : ""}${searchParams.search ? `&search=${encodeURIComponent(searchParams.search)}` : ""}`}
+            >
+              <Button variant="outline" size="sm">
+                Next →
+              </Button>
+            </Link>
+          )}
         </div>
       )}
     </PageContainer>

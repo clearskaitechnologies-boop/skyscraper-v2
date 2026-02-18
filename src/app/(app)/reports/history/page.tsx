@@ -82,12 +82,6 @@ export default async function ReportHistoryPage({
       leads = await safeLeadsSelect(orgId, 100).then((l) =>
         l.map((l) => ({ id: l.id, title: l.title }))
       );
-      console.info("[ReportHistory] Loaded context", {
-        claimCount: claims.length,
-        leadCount: leads.length,
-        userId,
-        orgId,
-      });
 
       // Unified fetch
       unified = await getAllUserReports({

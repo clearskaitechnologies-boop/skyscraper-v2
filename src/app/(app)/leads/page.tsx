@@ -19,7 +19,12 @@ export const metadata = {
   description: "View and manage all sales leads, routing, and pipeline status.",
 };
 
-export default async function LeadsPage() {
+type LeadsSearchParams = {
+  search?: string;
+  page?: string;
+};
+
+export default async function LeadsPage({ searchParams }: { searchParams: LeadsSearchParams }) {
   // Use getOrg with mode: "required" - redirects to /sign-in or /onboarding if no org
   const orgResult = await getOrg({ mode: "required" });
 
@@ -42,30 +47,48 @@ export default async function LeadsPage() {
     string,
     { id: string; firstName: string; lastName: string; email: string | null }
   >();
+  let totalLeads = 0;
+
+  const page = Math.max(1, parseInt(searchParams.page || "1", 10) || 1);
+  const limit = 20;
+  const offset = (page - 1) * limit;
 
   try {
     if (orgId) {
       // ⚠️ DEMO SEEDING REMOVED FROM RENDER PATH
       // Demo data is seeded via /api/dev/seed-demo or pnpm run seed:minimal-demo
 
-      // Show only unrouted + repair leads (retail out-of-pocket/financed live in Retail workspace)
-      leads = await prisma.leads.findMany({
-        where: {
-          orgId,
-          OR: [{ jobCategory: { in: ["lead", "repair"] } }, { jobCategory: null }],
-        },
-        orderBy: { createdAt: "desc" },
-        take: 50,
-        select: {
-          id: true,
-          contactId: true,
-          title: true,
-          stage: true,
-          value: true,
-          createdAt: true,
-          jobCategory: true,
-        },
-      });
+      const whereClause: any = {
+        orgId,
+        AND: [
+          { OR: [{ jobCategory: { in: ["lead", "repair"] } }, { jobCategory: null }] },
+          ...(searchParams.search
+            ? [{ title: { contains: searchParams.search, mode: "insensitive" } }]
+            : []),
+        ],
+      };
+
+      // Show only unrouted + repair leads (retail out-of-pocket/financed live in Retail Workspace)
+      const [fetchedLeads, fetchedTotal] = await Promise.all([
+        prisma.leads.findMany({
+          where: whereClause,
+          orderBy: { createdAt: "desc" },
+          take: limit,
+          skip: offset,
+          select: {
+            id: true,
+            contactId: true,
+            title: true,
+            stage: true,
+            value: true,
+            createdAt: true,
+            jobCategory: true,
+          },
+        }),
+        prisma.leads.count({ where: whereClause }),
+      ]);
+      leads = fetchedLeads;
+      totalLeads = fetchedTotal;
 
       const contactIds = Array.from(new Set(leads.map((l) => l.contactId).filter(Boolean)));
       if (contactIds.length > 0) {
@@ -173,16 +196,22 @@ export default async function LeadsPage() {
         {/* Search & Filter - Matches Retail & Claims */}
         <Card>
           <CardContent className="p-4">
-            <div className="flex gap-4">
+            <form action="/leads" className="flex gap-4">
               <div className="relative flex-1">
                 <Activity className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Search leads..."
+                  name="search"
+                  placeholder="Search leads by title..."
                   className="w-full rounded-lg border bg-white py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-slate-900"
+                  defaultValue={searchParams.search || ""}
                 />
               </div>
-            </div>
+              <Button type="submit" variant="outline">
+                <Activity className="mr-2 h-4 w-4" />
+                Search
+              </Button>
+            </form>
           </CardContent>
         </Card>
 
@@ -203,7 +232,7 @@ export default async function LeadsPage() {
             </Card>
           ) : (
             <div className="grid gap-4">
-              {leads.slice(0, 15).map((lead) => {
+              {leads.map((lead) => {
                 const contact = contactsById.get(lead.contactId);
                 const isUnrouted = !lead.jobCategory || lead.jobCategory === "lead";
 
@@ -272,13 +301,35 @@ export default async function LeadsPage() {
                   </Card>
                 );
               })}
-              {leads.length > 15 && (
-                <div className="pt-2 text-center">
-                  <Link href="/leads" className="text-sm text-purple-600 hover:text-purple-700">
-                    View all {leads.length} leads →
-                  </Link>
-                </div>
-              )}
+              {(() => {
+                const totalPages = Math.ceil(totalLeads / limit);
+                if (totalPages <= 1) return null;
+                return (
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    {page > 1 && (
+                      <Link
+                        href={`/leads?page=${page - 1}${searchParams.search ? `&search=${encodeURIComponent(searchParams.search)}` : ""}`}
+                      >
+                        <Button variant="outline" size="sm">
+                          ← Previous
+                        </Button>
+                      </Link>
+                    )}
+                    <span className="text-sm text-slate-500">
+                      Page {page} of {totalPages} · {totalLeads} leads
+                    </span>
+                    {page < totalPages && (
+                      <Link
+                        href={`/leads?page=${page + 1}${searchParams.search ? `&search=${encodeURIComponent(searchParams.search)}` : ""}`}
+                      >
+                        <Button variant="outline" size="sm">
+                          Next →
+                        </Button>
+                      </Link>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           )}
         </div>

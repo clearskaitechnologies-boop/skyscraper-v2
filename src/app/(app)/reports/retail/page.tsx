@@ -24,12 +24,6 @@ export default async function RetailProposalPage({
     redirect("/sign-in");
   }
   const { leads, claims } = await safeRetailContext(orgId);
-  console.info("[RetailProposal] Loaded context", {
-    leadCount: leads.length,
-    claimCount: claims.length,
-    orgId,
-    userId,
-  });
 
   return <RetailProposalClient leads={leads as any} claims={claims as any} />;
 }

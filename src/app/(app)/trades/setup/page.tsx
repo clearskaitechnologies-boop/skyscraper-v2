@@ -91,16 +91,13 @@ export default function TradesSetupPage() {
   };
 
   const handleSubmit = async () => {
-    console.log("[TradesSetup] handleSubmit called!");
     toast.info("Processing your profile...");
     setLoading(true);
-    console.log("[TradesSetup] Starting submit...", formData);
 
     try {
       // Upload avatar if provided
       let avatarUrl = "";
       if (fileInputRef.current?.files?.[0]) {
-        console.log("[TradesSetup] Uploading avatar...");
         const formDataUpload = new FormData();
         formDataUpload.append("file", fileInputRef.current.files[0]);
 
@@ -112,7 +109,6 @@ export default function TradesSetupPage() {
         if (uploadRes.ok) {
           const { url } = await uploadRes.json();
           avatarUrl = url;
-          console.log("[TradesSetup] Avatar uploaded:", url);
         }
       }
 
@@ -120,7 +116,6 @@ export default function TradesSetupPage() {
       const finalJobTitle =
         formData.jobTitle === "custom" ? formData.customTitle : formData.jobTitle;
 
-      console.log("[TradesSetup] Calling onboarding API...");
       const res = await fetch("/api/trades/onboarding", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -145,7 +140,6 @@ export default function TradesSetupPage() {
       });
 
       const result = await res.json();
-      console.log("[TradesSetup] API response:", result);
 
       if (!res.ok) {
         throw new Error(result.error || "Failed to create profile");

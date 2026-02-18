@@ -25,7 +25,6 @@ export default function DepreciationClient({ summaries }: { summaries: Depreciat
 
   const handleExportPDF = (claimId: string) => {
     // TODO: Implement PDF export with jsPDF or similar
-    console.log("Export PDF for claim:", claimId);
     alert("PDF export coming soon!");
   };
 
@@ -82,7 +81,9 @@ export default function DepreciationClient({ summaries }: { summaries: Depreciat
                     {summary.itemCount} items
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">{summary.propertyAddress}</p>
+                <p className="mt-1 text-sm text-slate-700 dark:text-slate-300">
+                  {summary.propertyAddress}
+                </p>
                 <div className="mt-2 flex gap-4 text-sm">
                   <span className="text-slate-700 dark:text-slate-300">
                     RCV: <strong>{formatCurrency(summary.totalRCV)}</strong>
@@ -159,7 +160,9 @@ export default function DepreciationClient({ summaries }: { summaries: Depreciat
                       {summary.items.map((item) => (
                         <tr key={item.id} className="hover:bg-[var(--surface-2)]">
                           <td className="px-3 py-2 text-[color:var(--text)]">{item.description}</td>
-                          <td className="px-3 py-2 text-slate-700 dark:text-slate-300">{item.category}</td>
+                          <td className="px-3 py-2 text-slate-700 dark:text-slate-300">
+                            {item.category}
+                          </td>
                           <td className="px-3 py-2 text-right text-slate-700 dark:text-slate-300">
                             {item.age}y
                           </td>

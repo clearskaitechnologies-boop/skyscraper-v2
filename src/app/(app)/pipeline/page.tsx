@@ -191,7 +191,6 @@ export default async function PipelinePage() {
     // Use required: true to auto-create org if missing
     const orgResult = await getActiveOrgContext({ required: true });
     orgId = orgResult.ok ? orgResult.orgId : null;
-    console.log("[PipelinePage] orgId from context:", orgId);
 
     if (orgId) {
       // Real data only — no demo mode fallback

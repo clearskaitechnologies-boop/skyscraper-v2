@@ -69,36 +69,21 @@ export default async function ReportTemplatesPage() {
         sections: [],
       };
 
-  console.log(`[TEMPLATES_PAGE] Starting for orgId: ${orgId}`);
-
   try {
     // Check if org has ANY templates
     const existingOrgTemplates = await prisma.orgTemplate.count({
       where: { orgId, isActive: true },
     });
 
-    console.log(
-      `[TEMPLATES_PAGE] 📊 Existing template count for ${orgId}: ${existingOrgTemplates}`
-    );
-
     // Only seed if org has ZERO templates (give them one to start)
     if (existingOrgTemplates === 0) {
-      console.log(
-        `[TEMPLATES_PAGE] Org ${orgId} has 0 templates - seeding mandatory starter template`
-      );
-
       // Ensure the mandatory template exists in Template table
       let mandatoryTemplate = await prisma.template.findFirst({
         where: { slug: MANDATORY_TEMPLATE_SLUG },
       });
 
-      console.log(
-        `[TEMPLATES_PAGE] Found existing template: ${mandatoryTemplate ? mandatoryTemplate.id : "NONE"}`
-      );
-
       if (!mandatoryTemplate) {
         mandatoryTemplate = await prisma.template.create({ data: MANDATORY_TEMPLATE_DATA });
-        console.log(`[TEMPLATES_PAGE] Created mandatory template: ${mandatoryTemplate.slug}`);
       } else if (!mandatoryTemplate.isPublished) {
         mandatoryTemplate = await prisma.template.update({
           where: { id: mandatoryTemplate.id },
@@ -112,8 +97,6 @@ export default async function ReportTemplatesPage() {
         update: { isActive: true },
         create: { orgId, templateId: mandatoryTemplate.id, isActive: true },
       });
-
-      console.log(`[TEMPLATES_PAGE] ✅ Seeded template, OrgTemplate id: ${upserted.id}`);
     }
   } catch (seedError) {
     console.error("[TEMPLATES_PAGE] Failed to seed mandatory template:", seedError);
@@ -123,8 +106,6 @@ export default async function ReportTemplatesPage() {
   // This shows templates the company has added from the marketplace
   let templates: any[] = [];
   try {
-    console.log(`[TEMPLATES_PAGE] 🔍 Fetching orgTemplates for orgId: ${orgId}`);
-
     const orgTemplates = await prisma.orgTemplate.findMany({
       where: { orgId, isActive: true },
       include: {
@@ -144,11 +125,6 @@ export default async function ReportTemplatesPage() {
       },
       orderBy: { createdAt: "desc" },
     });
-
-    console.log(
-      `[TEMPLATES_PAGE] 📦 Raw orgTemplates found: ${orgTemplates.length}`,
-      JSON.stringify(orgTemplates.slice(0, 2), null, 2)
-    );
 
     // Map to the format TemplateList expects
     const safeOrgTemplates = orgTemplates.filter((ot) => ot.Template);
@@ -170,20 +146,15 @@ export default async function ReportTemplatesPage() {
     }));
 
     if (templates.length === 0) {
-      console.warn(`[TEMPLATES_PAGE] ⚠️ Org ${orgId} has 0 templates after fetch - re-seeding`);
       const mandatoryTemplate = await prisma.template.findFirst({
         where: { slug: MANDATORY_TEMPLATE_SLUG },
       });
-      console.log(
-        `[TEMPLATES_PAGE] Found template for re-seed: ${mandatoryTemplate?.id || "NONE"}`
-      );
       if (mandatoryTemplate) {
         const reseeded = await prisma.orgTemplate.upsert({
           where: { orgId_templateId: { orgId, templateId: mandatoryTemplate.id } },
           update: { isActive: true },
           create: { orgId, templateId: mandatoryTemplate.id, isActive: true },
         });
-        console.log(`[TEMPLATES_PAGE] ✅ Re-seeded OrgTemplate: ${reseeded.id}`);
         templates = [
           {
             id: reseeded.id,
@@ -204,8 +175,6 @@ export default async function ReportTemplatesPage() {
         ];
       }
     }
-
-    console.log(`[TEMPLATES_PAGE] 📋 Final templates count: ${templates.length}`);
   } catch (e) {
     console.error("[TEMPLATES_PAGE] Failed to fetch orgTemplates:", e);
     templates = [];

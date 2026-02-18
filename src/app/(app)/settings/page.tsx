@@ -74,7 +74,6 @@ export default async function Settings() {
   const orgCtx = await safeOrgContext();
   const organizationId = orgCtx.orgId || null;
   const userId = orgCtx.userId;
-  console.info("[SettingsPage] orgContext", { status: orgCtx.status, organizationId, userId });
 
   // Demo mode: allow access if org exists
   const demoReady = isDemoWorkspaceReady({ hasOrganization: !!organizationId });
@@ -298,7 +297,11 @@ export default async function Settings() {
                   Download a copy of your claims and reports
                 </div>
               </div>
-              <button className="rounded-lg border-2 border-[color:var(--border)] px-4 py-2 font-medium text-[color:var(--text)] transition-all hover:border-[color:var(--primary)] hover:bg-[var(--primary-weak)]">
+              <button
+                disabled
+                title="Coming soon"
+                className="cursor-not-allowed rounded-lg border-2 border-[color:var(--border)] px-4 py-2 font-medium text-[color:var(--text)] opacity-50"
+              >
                 Request Export
               </button>
             </div>
@@ -311,7 +314,11 @@ export default async function Settings() {
                   Permanently delete your account and all data
                 </div>
               </div>
-              <button className="rounded-lg border-2 border-red-300 px-4 py-2 font-medium text-red-600 transition-all hover:border-red-500 hover:bg-red-50 dark:border-red-700 dark:text-red-400 dark:hover:bg-red-950">
+              <button
+                disabled
+                title="Contact support to delete your account"
+                className="cursor-not-allowed rounded-lg border-2 border-red-300 px-4 py-2 font-medium text-red-600 opacity-50 dark:border-red-700 dark:text-red-400"
+              >
                 Delete
               </button>
             </div>

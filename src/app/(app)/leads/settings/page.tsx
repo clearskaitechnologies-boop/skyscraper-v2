@@ -22,7 +22,6 @@ export default async function LeadsSettingsPage() {
 
   // Require manager role (admins implicitly pass)
   const { hasAccess, role } = await checkRole("manager");
-  console.info("[LeadsSettings] RBAC checkRole(manager)", { hasAccess, role });
 
   const permissions = await getCurrentUserPermissions();
   const org = await getOrCreateCurrentOrganization({ requireOrg: false, bootstrapIfMissing: true });

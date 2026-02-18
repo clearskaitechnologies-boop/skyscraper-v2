@@ -75,8 +75,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   let pendingLegal: PendingLegal = [];
 
   try {
-    console.log("[LAYOUT] Starting layout render", new Date().toISOString());
-
     // =========================================================================
     // SINGLE SOURCE OF TRUTH: getActiveOrgSafe
     // - Finds existing org via user_organizations membership
@@ -91,11 +89,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     if (orgResult.ok) {
       orgId = orgResult.org.id;
       userId = orgResult.userId;
-      console.log("[LAYOUT] ✅ Got org:", orgId, "source:", orgResult.source);
     } else {
       // Not authenticated or error - that's fine, render with temp org
       // Individual pages will show sign-in prompts as needed
-      console.log("[LAYOUT] No org, reason:", orgResult.reason, "- rendering with temp org");
     }
 
     // Get current user for legal checks (only if we have a valid org)
@@ -112,11 +108,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         });
         brandingCompleted = !!(branding?.companyName && branding?.email && branding?.colorPrimary);
         onboardingCompleted = true; // Org exists = onboarding complete
-
-        console.log("[LAYOUT] Org completion:", {
-          brandingCompleted,
-          onboardingCompleted,
-        });
       } catch (orgError: any) {
         console.error("[LAYOUT_ORG_ERROR]", orgError?.message);
       }
@@ -129,9 +120,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           userId: user.id,
           audience: "contractor", // Change to "homeowner" or dynamic based on user role
         });
-        console.log("[LAYOUT] Pending legal documents:", pendingLegal.length);
       } else {
-        console.log("[LAYOUT] No user - skipping legal compliance check");
       }
     } catch (legalError: any) {
       console.error("[LAYOUT] Failed to check legal compliance:", legalError);

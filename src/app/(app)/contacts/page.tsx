@@ -164,8 +164,6 @@ async function renderContactsPage() {
   const userId = orgCtx.userId;
   const organizationId = orgCtx.orgId;
 
-  console.log("[CompanyContacts] Querying for orgId:", organizationId);
-
   // Check test mode
   let testMode = false;
   try {
@@ -418,10 +416,6 @@ async function renderContactsPage() {
         console.error("[CompanyContacts] Team members query failed:", teamErr);
         teamMembers = [];
       }
-
-      console.log(
-        `[CompanyContactsPage] Loaded ${contacts.length} contacts, ${connections.length} connections, ${teamMembers.length} team members for org ${organizationId}`
-      );
     } catch (error: any) {
       console.error("[CONTACTS_API_ERROR]", {
         error: error?.message,

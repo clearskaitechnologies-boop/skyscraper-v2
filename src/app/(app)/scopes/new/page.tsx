@@ -1,9 +1,9 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { CheckCircle, Circle, FileText, Flag, Loader2, Upload } from "lucide-react";
+import { CheckCircle, FileText, Flag, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -115,7 +115,6 @@ export default function NewScopePage() {
       // In production, would PUT to /api/scopes/[id] to update included items
       // Then optionally navigate to estimate builder or supplement builder
 
-      console.log("Saving scope:", scope.id);
       setStep("save");
     } catch (error) {
       console.error("Save scope error:", error);
