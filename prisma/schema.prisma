@@ -5557,21 +5557,21 @@ model user_permissions {
 /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model user_registry {
-  id                        String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  clerkUserId               String    @unique
-  userType                  String
-  createdAt                 DateTime  @default(now()) @db.Timestamptz(6)
-  updatedAt                 DateTime  @default(now()) @db.Timestamptz(6)
-  proProfileId              String?   @db.Uuid
-  clientProfileId           String?   @db.Uuid
-  orgId                     String?
-  displayName               String?
-  email                     String?
-  avatarUrl                 String?
-  isActive                  Boolean   @default(true)
-  lastSeenAt                DateTime? @db.Timestamptz(6)
-  onboardingComplete        Boolean   @default(false)
-  primaryEmail              String?
+  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clerkUserId        String    @unique
+  userType           String
+  createdAt          DateTime  @default(now()) @db.Timestamptz(6)
+  updatedAt          DateTime  @default(now()) @db.Timestamptz(6)
+  proProfileId       String?   @db.Uuid
+  clientProfileId    String?   @db.Uuid
+  orgId              String?
+  displayName        String?
+  email              String?
+  avatarUrl          String?
+  isActive           Boolean   @default(true)
+  lastSeenAt         DateTime? @db.Timestamptz(6)
+  onboardingComplete Boolean   @default(false)
+  primaryEmail       String?
 
   @@index([clerkUserId])
   @@index([clerkUserId, userType, isActive])
