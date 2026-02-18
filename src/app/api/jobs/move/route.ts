@@ -6,17 +6,12 @@
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireApiAuth } from "@/lib/auth/apiAuth";
+import { withAuth } from "@/lib/auth/withAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId: userOrgId }) => {
   try {
-    // Use unified auth helper instead of direct auth() call
-    const authResult = await requireApiAuth();
-    if (authResult instanceof NextResponse) return authResult;
-    const { userId } = authResult;
-
     const body = await req.json();
     const { itemId, itemType, fromCategory, toCategory } = body;
 
@@ -28,9 +23,9 @@ export async function POST(req: NextRequest) {
 
     if (itemType === "lead") {
       // Moving a lead to a different category
-      // SECURITY: Scope lead lookup to user's org
+      // SECURITY: Scope lead lookup to user's org (withAuth provides DB orgId)
       const lead = await prisma.leads.findFirst({
-        where: { id: itemId, orgId: authResult.orgId || undefined },
+        where: { id: itemId, orgId: userOrgId },
       });
       if (!lead) {
         return NextResponse.json({ error: "Lead not found" }, { status: 404 });
@@ -103,7 +98,8 @@ export async function POST(req: NextRequest) {
     if (itemType === "claim") {
       // Moving a claim - this is more complex
       // Claims stay in claims table but we can create a linked lead for OOP work
-      const claim = await prisma.claims.findUnique({ where: { id: itemId } });
+      // SECURITY: Scope claim lookup to user's org (prevents cross-tenant IDOR)
+      const claim = await prisma.claims.findFirst({ where: { id: itemId, orgId: userOrgId } });
       if (!claim) {
         return NextResponse.json({ error: "Claim not found" }, { status: 404 });
       }
@@ -197,4 +193,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

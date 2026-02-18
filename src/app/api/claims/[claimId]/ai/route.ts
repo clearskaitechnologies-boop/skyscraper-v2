@@ -5,8 +5,8 @@
  * GET /api/claims/[claimId]/ai - Get AI analysis results
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -85,9 +85,20 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
     const body = await request.json();
     const { analysisType, message, claimContext } = body;
 
-    // Validate claim exists and user has access
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Validate claim exists and user has access — org-scoped to prevent IDOR
+    const authCtx = await auth();
+    const resolvedOrgId = await (async () => {
+      if (!authCtx.userId) return null;
+      const m = await prisma.user_organizations.findFirst({
+        where: { userId: authCtx.userId },
+        select: { organizationId: true },
+        orderBy: { createdAt: "asc" },
+      });
+      return m?.organizationId ?? null;
+    })();
+
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, ...(resolvedOrgId ? { orgId: resolvedOrgId } : {}) },
       select: {
         id: true,
         orgId: true,
@@ -287,9 +298,18 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
 
     const { claimId } = params;
 
-    // Validate claim exists and user has access
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
+    // Validate claim exists and user has access — org-scoped to prevent IDOR
+    const resolvedOrgId = await (async () => {
+      const m = await prisma.user_organizations.findFirst({
+        where: { userId },
+        select: { organizationId: true },
+        orderBy: { createdAt: "asc" },
+      });
+      return m?.organizationId ?? null;
+    })();
+
+    const claim = await prisma.claims.findFirst({
+      where: { id: claimId, ...(resolvedOrgId ? { orgId: resolvedOrgId } : {}) },
       select: { orgId: true },
     });
 

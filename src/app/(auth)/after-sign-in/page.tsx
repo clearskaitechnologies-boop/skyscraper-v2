@@ -2,6 +2,8 @@ import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { logger } from "@/lib/logger";
+
 /**
  * After-sign-in routing — HARDENED v3
  *
@@ -26,7 +28,7 @@ async function setUserTypeCookie(type: "pro" | "client") {
       maxAge: 60 * 60 * 24 * 7, // 7 days
     });
   } catch (e) {
-    console.error("[AFTER-SIGN-IN] Cookie set error:", e);
+    logger.warn("[AFTER-SIGN-IN] Cookie set error", { error: e });
   }
 }
 
@@ -42,9 +44,9 @@ async function syncClerkMetadata(clerkUserId: string, userType: "pro" | "client"
     await clerk.users.updateUserMetadata(clerkUserId, {
       publicMetadata: { userType },
     });
-    console.log("[AFTER-SIGN-IN] Synced Clerk publicMetadata:", userType);
+    logger.info("[AFTER-SIGN-IN] Synced Clerk publicMetadata", { userType });
   } catch (e) {
-    console.error("[AFTER-SIGN-IN] Failed to sync Clerk metadata:", e);
+    logger.warn("[AFTER-SIGN-IN] Failed to sync Clerk metadata", { error: e });
     // Non-fatal — cookie fallback will still work
   }
 }
@@ -59,7 +61,7 @@ async function getClerkUserTypeDirect(clerkUserId: string): Promise<"pro" | "cli
       cache: "no-store",
     });
     if (!r.ok) {
-      console.error("[AFTER-SIGN-IN] Clerk API HTTP", r.status);
+      logger.warn("[AFTER-SIGN-IN] Clerk API HTTP", { status: r.status });
       return null;
     }
     const d = await r.json();
@@ -67,7 +69,7 @@ async function getClerkUserTypeDirect(clerkUserId: string): Promise<"pro" | "cli
     if (ut === "pro" || ut === "client") return ut;
     return null;
   } catch (e) {
-    console.error("[AFTER-SIGN-IN] Clerk API fetch error:", e);
+    logger.warn("[AFTER-SIGN-IN] Clerk API fetch error", { error: e });
     return null;
   }
 }
@@ -85,7 +87,7 @@ async function getUserTypeDirectSQL(clerkUserId: string): Promise<"pro" | "clien
     }
     return null;
   } catch (e) {
-    console.error("[AFTER-SIGN-IN] Direct SQL fallback also failed:", e);
+    logger.warn("[AFTER-SIGN-IN] Direct SQL fallback failed", { error: e });
     return null;
   }
 }
@@ -103,7 +105,7 @@ export default async function AfterSignInPage({
   try {
     user = await currentUser();
   } catch (error) {
-    console.error("[AFTER-SIGN-IN] Error getting current user:", error);
+    logger.error("[AFTER-SIGN-IN] Error getting current user", { error });
     redirect("/sign-in");
   }
 
@@ -111,57 +113,93 @@ export default async function AfterSignInPage({
     redirect("/sign-in");
   }
 
-  console.log("[AFTER-SIGN-IN] START userId:", user.id, "mode:", mode);
+  logger.info("[AFTER-SIGN-IN] START", { userId: user.id, mode });
 
   let resolvedType: "pro" | "client" | null = null;
+
+  // =========================================================================
+  // CRITICAL FIX: If the sign-in page explicitly passed mode=client or mode=pro,
+  // that is an AUTHORITATIVE signal from the surface the user signed in from.
+  // It MUST override any stale Clerk publicMetadata or cookie from a previous session.
+  //
+  // Without this, a user who was ever resolved as "pro" will ALWAYS be routed
+  // to /dashboard even when signing in via /client/sign-in, because L1 (Clerk
+  // publicMetadata) fires before we ever look at the mode param.
+  // =========================================================================
+  if (mode === "client" || mode === "pro") {
+    resolvedType = mode;
+    logger.info("[AFTER-SIGN-IN] MODE OVERRIDE", { mode });
+    // Sync cookie + Clerk metadata + DB registry so ALL layers agree
+    await setUserTypeCookie(resolvedType);
+    await syncClerkMetadata(user.id, resolvedType);
+    // Also update user_registry so L4/L5 resolution stays consistent
+    try {
+      const { default: prisma } = await import("@/lib/prisma");
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO app.user_registry ("clerkUserId", "userType", "isActive", "onboardingComplete", "displayName", email, "avatarUrl", "createdAt", "updatedAt")
+         VALUES ($1, $2, true, false, $3, $4, $5, NOW(), NOW())
+         ON CONFLICT ("clerkUserId") DO UPDATE SET "userType" = $2, "updatedAt" = NOW()`,
+        user.id,
+        resolvedType,
+        `${user.firstName || ""} ${user.lastName || ""}`.trim() || null,
+        user.emailAddresses?.[0]?.emailAddress || null,
+        user.imageUrl || null
+      );
+    } catch (regError) {
+      console.error("[AFTER-SIGN-IN] DB registry update err:", regError);
+    }
+    if (pendingRedirect?.startsWith("/")) redirect(pendingRedirect);
+    if (resolvedType === "client") redirect("/portal");
+    redirect("/dashboard");
+  }
 
   // -- L1: Clerk publicMetadata (fastest, no network call) --
   try {
     const mt = (user.publicMetadata as Record<string, unknown>)?.userType;
-    console.log("[AFTER-SIGN-IN] L1 Clerk meta:", JSON.stringify(mt));
+    logger.debug("[AFTER-SIGN-IN] L1 Clerk meta", { mt });
     if (mt === "pro" || mt === "client") resolvedType = mt;
   } catch (e) {
-    console.error("[AFTER-SIGN-IN] L1 err:", e);
+    logger.warn("[AFTER-SIGN-IN] L1 err", { error: e });
   }
 
   // -- L2: Direct Clerk REST API (bypasses SDK) --
   if (!resolvedType) {
-    console.log("[AFTER-SIGN-IN] L1 miss -> L2 Clerk API");
+    logger.debug("[AFTER-SIGN-IN] L1 miss -> L2 Clerk API");
     const t2 = await getClerkUserTypeDirect(user.id);
-    console.log("[AFTER-SIGN-IN] L2:", t2);
+    logger.debug("[AFTER-SIGN-IN] L2", { t2 });
     if (t2) resolvedType = t2;
   }
 
   // -- L3: Clerk org membership --
   if (!resolvedType) {
     const oc = user.organizationMemberships?.length ?? 0;
-    console.log("[AFTER-SIGN-IN] L3 orgs:", oc);
+    logger.debug("[AFTER-SIGN-IN] L3 orgs", { count: oc });
     if (oc > 0) resolvedType = "pro";
   }
 
   // -- L4: Direct SQL (schema-qualified) --
   if (!resolvedType) {
-    console.log("[AFTER-SIGN-IN] L3 miss -> L4 SQL");
+    logger.debug("[AFTER-SIGN-IN] L3 miss -> L4 SQL");
     const t4 = await getUserTypeDirectSQL(user.id);
-    console.log("[AFTER-SIGN-IN] L4:", t4);
+    logger.debug("[AFTER-SIGN-IN] L4", { t4 });
     if (t4) resolvedType = t4;
   }
 
   // -- L5: Prisma ORM (last resort) --
   if (!resolvedType) {
-    console.log("[AFTER-SIGN-IN] L4 miss -> L5 Prisma ORM");
+    logger.debug("[AFTER-SIGN-IN] L4 miss -> L5 Prisma ORM");
     try {
       const { getUserIdentity } = await import("@/lib/identity");
       const id5 = await getUserIdentity(user.id);
       const t5 = id5?.userType;
-      console.log("[AFTER-SIGN-IN] L5:", t5);
+      logger.debug("[AFTER-SIGN-IN] L5", { t5 });
       if (t5 === "pro" || t5 === "client") resolvedType = t5;
     } catch (e) {
-      console.error("[AFTER-SIGN-IN] L5 err:", e);
+      logger.warn("[AFTER-SIGN-IN] L5 err", { error: e });
     }
   }
 
-  console.log("[AFTER-SIGN-IN] RESOLVED:", resolvedType, "for", user.id);
+  logger.info("[AFTER-SIGN-IN] RESOLVED", { resolvedType, userId: user.id });
 
   // -- Known user: route by type --
   if (resolvedType) {
@@ -174,7 +212,7 @@ export default async function AfterSignInPage({
 
   // -- New user: determine from mode param --
   const newType: "pro" | "client" = mode === "pro" ? "pro" : "client";
-  console.log("[AFTER-SIGN-IN] NEW USER mode:", mode, "->", newType);
+  logger.info("[AFTER-SIGN-IN] NEW USER", { mode, newType });
 
   try {
     const { default: prisma } = await import("@/lib/prisma");
@@ -189,7 +227,7 @@ export default async function AfterSignInPage({
       user.imageUrl || null
     );
   } catch (regError) {
-    console.error("[AFTER-SIGN-IN] DB reg err:", regError);
+    logger.error("[AFTER-SIGN-IN] DB reg err", { error: regError });
   }
 
   await setUserTypeCookie(newType);

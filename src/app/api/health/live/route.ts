@@ -110,6 +110,8 @@ export async function GET() {
       service: "skaiscraper",
       version: getVersion(),
       commitSha: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) || "local",
+      buildTime: process.env.__BUILD_TIME__ || "unknown",
+      deploymentId: process.env.VERCEL_DEPLOYMENT_ID || "local",
       environment: process.env.VERCEL_ENV || process.env.NODE_ENV || "development",
       checks: {
         env: { ok: true },

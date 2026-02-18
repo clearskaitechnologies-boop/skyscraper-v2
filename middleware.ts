@@ -108,6 +108,7 @@ const isPublicRoute = createRouteMatcher([
   // Client portal authentication (clients, not org members)
   "/client/sign-in(.*)",
   "/client/sign-up(.*)",
+  "/client/sign-up(.*)",
   // Portal PAGES are public (layout handles graceful auth for branding/UX)
   // Note: /api/portal/* routes are NOT in this list — they go through the
   // API auth block below which enforces userId at the edge, plus each route

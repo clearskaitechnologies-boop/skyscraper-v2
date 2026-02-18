@@ -8,8 +8,8 @@
  * since ai_reports doesn't have dedicated share columns.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -40,17 +40,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     const reportId = params.id;
 
-    // Verify report exists and belongs to org
-    const report = await prisma.ai_reports.findUnique({
-      where: { id: reportId },
+    // Verify report exists and belongs to org (orgId in WHERE prevents IDOR/enumeration)
+    const report = await prisma.ai_reports.findFirst({
+      where: { id: reportId, orgId: org.id },
     });
 
     if (!report) {
       return NextResponse.json({ error: "Report not found" }, { status: 404 });
-    }
-
-    if (report.orgId !== org.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
     }
 
     // Parse optional body for custom title/notes
