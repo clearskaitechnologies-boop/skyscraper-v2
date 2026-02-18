@@ -85,9 +85,9 @@ export default async function PermissionsPage() {
       where: { orgId: ctx.orgId },
       select: {
         id: true,
-        name: true,
+        displayName: true,
         email: true,
-        role: true,
+        userType: true,
         avatarUrl: true,
         createdAt: true,
       },
@@ -95,9 +95,9 @@ export default async function PermissionsPage() {
     });
     members = rawMembers.map((m) => ({
       id: m.id,
-      name: m.name,
+      name: m.displayName,
       email: m.email,
-      role: m.role,
+      role: m.userType,
       imageUrl: m.avatarUrl,
       createdAt: m.createdAt,
     }));

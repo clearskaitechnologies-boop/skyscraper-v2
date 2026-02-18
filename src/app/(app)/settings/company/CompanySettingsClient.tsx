@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus,X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const companySchema = z.object({
@@ -85,7 +84,7 @@ export function CompanySettingsClient({ org, profile }: CompanySettingsClientPro
   const onSubmit = async (data: CompanyFormValues) => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/contractor/update", {
+      const response = await fetch("/api/contractor/profile", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -96,26 +95,15 @@ export function CompanySettingsClient({ org, profile }: CompanySettingsClientPro
       });
 
       if (!response.ok) {
-        toast({
-          title: "Error",
-          description: "Failed to update company profile. Please try again.",
-          variant: "destructive",
-        });
+        toast.error("Failed to update company profile. Please try again.");
         setIsLoading(false);
         return;
       }
 
-      toast({
-        title: "Success",
-        description: "Company profile updated successfully",
-      });
+      toast.success("Company profile updated successfully");
     } catch (error) {
       console.error("Company update error:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update company profile. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to update company profile. Please try again.");
     } finally {
       setIsLoading(false);
     }

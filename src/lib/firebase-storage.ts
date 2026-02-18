@@ -1,18 +1,16 @@
 // Enhanced Firebase Storage utilities with upload, preview, and thumbnail generation
-import {
 import { logger } from "@/lib/logger";
+import {
   deleteObject,
   getDownloadURL,
   getMetadata,
-  getStorage,
   listAll,
   ref,
-  uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
 import { toast } from "sonner";
 
-import { auth,storage } from "@/lib/firebase";
+import { storage } from "@/lib/firebase";
 
 export interface UploadProgress {
   progress: number;

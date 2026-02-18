@@ -10,6 +10,7 @@ import type { PacketType, ProposalBuildResponse, TonePreset } from "@/lib/propos
 export default function NewProposalPage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useUser();
+  const { userId, orgId } = useAuth();
 
   useEffect(() => {
     if (isLoaded && !isSignedIn) {
@@ -20,8 +21,6 @@ export default function NewProposalPage() {
   if (!isLoaded || !isSignedIn) {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
-
-  const { userId, orgId } = useAuth();
 
   // Form state
   const [selectedLeadId, setSelectedLeadId] = useState("");

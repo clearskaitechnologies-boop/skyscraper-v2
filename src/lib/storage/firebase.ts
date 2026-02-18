@@ -1,12 +1,11 @@
-import {
 import { logger } from "@/lib/logger";
+import {
   deleteObject,
   getDownloadURL,
   listAll,
   ref,
   uploadBytes,
   uploadBytesResumable,
-  type UploadTask,
 } from "firebase/storage";
 
 import { storage } from "../firebase";

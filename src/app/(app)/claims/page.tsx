@@ -57,8 +57,8 @@ function ErrorCard({ message }: { message: string }) {
           <Link href="/dashboard">
             <Button variant="outline">Dashboard</Button>
           </Link>
-          <Link href="/onboarding/start">
-            <Button>Onboarding</Button>
+          <Link href="/claims">
+            <Button>Retry</Button>
           </Link>
         </div>
       </div>

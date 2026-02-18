@@ -29,10 +29,9 @@ export async function uploadPdf({ buffer, path, orgId }: UploadPdfOptions) {
     if (error) {
       throw new Error(`PDF upload failed: ${error.message}`);
     }
-    }
 
     // Generate signed URL (24 hour expiration)
-    const signedUrl = await getSignedUrl(path);
+    const signedUrl = await getSignedUrl(supabase, path);
 
     return {
       path: data.path,
@@ -45,8 +44,14 @@ export async function uploadPdf({ buffer, path, orgId }: UploadPdfOptions) {
   }
 }
 
-export async function getSignedUrl(path: string, expiresIn: number = 86400): Promise<string> {
-  const { data, error } = await supabase.storage.from("documents").createSignedUrl(path, expiresIn);
+export async function getSignedUrl(
+  supabaseClient: ReturnType<typeof getStorageClient>,
+  path: string,
+  expiresIn: number = 86400
+): Promise<string> {
+  const client = supabaseClient || getStorageClient();
+  if (!client) throw new Error("Storage not configured");
+  const { data, error } = await client.storage.from("documents").createSignedUrl(path, expiresIn);
 
   if (error) {
     throw new Error(`Failed to generate signed URL: ${error.message}`);
@@ -56,6 +61,8 @@ export async function getSignedUrl(path: string, expiresIn: number = 86400): Pro
 }
 
 export async function deletePdf(path: string): Promise<void> {
+  const supabase = getStorageClient();
+  if (!supabase) throw new Error("Storage not configured");
   const { error } = await supabase.storage.from("documents").remove([path]);
 
   if (error) {
@@ -64,6 +71,8 @@ export async function deletePdf(path: string): Promise<void> {
 }
 
 export async function getPdfMetadata(path: string) {
+  const supabase = getStorageClient();
+  if (!supabase) throw new Error("Storage not configured");
   const { data, error } = await supabase.storage
     .from("documents")
     .list(path.split("/").slice(0, -1).join("/"), {

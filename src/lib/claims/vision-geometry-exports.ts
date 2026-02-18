@@ -1,27 +1,23 @@
 /**
  * PHASE 36-37: Vision & Geometry Docx Export Helpers
- * 
+ *
  * Helper functions to integrate Vision AI heatmaps and Geometry scorecards
  * into claims packet Docx exports.
- * 
+ *
  * Usage:
  *   import { addVisionHeatmapSection, addGeometryScorecardSection } from "@/lib/claims/vision-geometry-exports";
- *   
+ *
  *   // In generateInsuranceDOCX or generateRetailDOCX:
  *   const visionSections = await addVisionHeatmapSection(visionAnalysis, claimId);
  *   const geometrySections = await addGeometryScorecardSection(slopeAnalysis, scorecards);
  *   sections.push(...visionSections, ...geometrySections);
  */
 
-import {
 import { logger } from "@/lib/logger";
+import {
   AlignmentType,
-  BorderStyle,
-  convertInchesToTwip,
   HeadingLevel,
-  ImageRun,
   Paragraph,
-  Table,
   TableCell,
   TableRow,
   TextRun,
@@ -29,7 +25,7 @@ import { logger } from "@/lib/logger";
 } from "docx";
 
 import type { SlopeAnalysis, SlopeScorecard } from "@/lib/ai/geometry";
-import type { DamageRegion,VisionAnalysis } from "@/lib/ai/vision";
+import type { DamageRegion, VisionAnalysis } from "@/lib/ai/vision";
 import { canvasToBlob } from "@/lib/vision/heatmap";
 
 /**
@@ -60,13 +56,13 @@ async function canvasToBuffer(canvas: HTMLCanvasElement): Promise<Buffer> {
 
 /**
  * Add Vision AI heatmap section to Docx packet
- * 
+ *
  * Includes:
  * - Section header with analysis summary
  * - Embedded heatmap image
  * - Damage summary table
  * - Urgent issues list
- * 
+ *
  * @param visionAnalysis - AI vision analysis result
  * @param claimId - Claim ID for fetching heatmap canvas
  * @returns Array of Paragraphs to insert into Docx document
@@ -94,8 +90,12 @@ export async function addVisionHeatmapSection(
         }),
         new TextRun({
           text: visionAnalysis.overallCondition.toUpperCase(),
-          color: visionAnalysis.overallCondition === "poor" ? "FF0000" : 
-                 visionAnalysis.overallCondition === "fair" ? "FFA500" : "008000",
+          color:
+            visionAnalysis.overallCondition === "poor"
+              ? "FF0000"
+              : visionAnalysis.overallCondition === "fair"
+                ? "FFA500"
+                : "008000",
           bold: true,
         }),
       ],
@@ -168,9 +168,14 @@ export async function addVisionHeatmapSection(
             children: [
               new Paragraph({
                 text: damage.severity,
-                color: damage.severity === "severe" ? "FF0000" : 
-                       damage.severity === "moderate" ? "FFA500" : 
-                       damage.severity === "minor" ? "FFD700" : "008000",
+                color:
+                  damage.severity === "severe"
+                    ? "FF0000"
+                    : damage.severity === "moderate"
+                      ? "FFA500"
+                      : damage.severity === "minor"
+                        ? "FFD700"
+                        : "008000",
               }),
             ],
           }),
@@ -237,13 +242,13 @@ export async function addVisionHeatmapSection(
 
 /**
  * Add Geometry scorecard section to Docx packet
- * 
+ *
  * Includes:
  * - Slope analysis summary
  * - Per-plane scorecards with material estimates
  * - Labor multiplier tables
  * - Safety notes
- * 
+ *
  * @param slopeAnalysis - Roof geometry analysis
  * @param scorecards - Per-plane repair scorecards
  * @returns Array of Paragraphs to insert into Docx document
@@ -287,8 +292,12 @@ export async function addGeometryScorecardSection(
         new TextRun({ text: "Complexity Rating: ", bold: true }),
         new TextRun({
           text: slopeAnalysis.complexityRating.toUpperCase(),
-          color: slopeAnalysis.complexityRating === "high" ? "FF0000" : 
-                 slopeAnalysis.complexityRating === "medium" ? "FFA500" : "008000",
+          color:
+            slopeAnalysis.complexityRating === "high"
+              ? "FF0000"
+              : slopeAnalysis.complexityRating === "medium"
+                ? "FFA500"
+                : "008000",
         }),
       ],
       spacing: { after: 300 },
@@ -327,7 +336,7 @@ export async function addGeometryScorecardSection(
   );
 
   scorecards.forEach((scorecard, idx) => {
-    const plane = slopeAnalysis.planes.find(p => p.id === scorecard.planeId);
+    const plane = slopeAnalysis.planes.find((p) => p.id === scorecard.planeId);
     if (!plane) return;
 
     sections.push(
@@ -339,7 +348,9 @@ export async function addGeometryScorecardSection(
       new Paragraph({
         children: [
           new TextRun({ text: "Slope: ", bold: true }),
-          new TextRun(`${plane.slope} (${plane.slopeAngle}°) - ${plane.slopeCategory.replace("_", " ")}`),
+          new TextRun(
+            `${plane.slope} (${plane.slopeAngle}°) - ${plane.slopeCategory.replace("_", " ")}`
+          ),
         ],
         spacing: { after: 100 },
       }),
@@ -362,8 +373,12 @@ export async function addGeometryScorecardSection(
           new TextRun({ text: "Damage Coverage: ", bold: true }),
           new TextRun({
             text: `${scorecard.damagePercentage.toFixed(1)}%`,
-            color: scorecard.damagePercentage > 50 ? "FF0000" : 
-                   scorecard.damagePercentage > 25 ? "FFA500" : "008000",
+            color:
+              scorecard.damagePercentage > 50
+                ? "FF0000"
+                : scorecard.damagePercentage > 25
+                  ? "FFA500"
+                  : "008000",
           }),
         ],
         spacing: { after: 100 },
@@ -380,8 +395,12 @@ export async function addGeometryScorecardSection(
           new TextRun({ text: "Repair Priority: ", bold: true }),
           new TextRun({
             text: `${scorecard.repairPriority}/10`,
-            color: scorecard.repairPriority >= 8 ? "FF0000" : 
-                   scorecard.repairPriority >= 5 ? "FFA500" : "008000",
+            color:
+              scorecard.repairPriority >= 8
+                ? "FF0000"
+                : scorecard.repairPriority >= 5
+                  ? "FFA500"
+                  : "008000",
           }),
         ],
         spacing: { after: 200 },
@@ -430,7 +449,7 @@ export async function addGeometryScorecardSection(
         })
       );
 
-      scorecard.notes.forEach(note => {
+      scorecard.notes.forEach((note) => {
         sections.push(
           new Paragraph({
             text: `• ${note}`,
@@ -455,20 +474,20 @@ export async function addGeometryScorecardSection(
 
 /**
  * Integration Instructions:
- * 
+ *
  * 1. In lib/claims/generator.ts, add imports:
  *    import { addVisionHeatmapSection, addGeometryScorecardSection } from "./vision-geometry-exports";
- * 
+ *
  * 2. Fetch vision/geometry data for the claim:
  *    const visionData = await fetchVisionAnalysis(claimId);
  *    const geometryData = await fetchGeometryAnalysis(claimId);
- * 
+ *
  * 3. In generateInsuranceDOCX or generateRetailDOCX, add sections:
  *    if (visionData) {
  *      const visionSections = await addVisionHeatmapSection(visionData, claimId);
  *      sections.push(...visionSections);
  *    }
- *    
+ *
  *    if (geometryData) {
  *      const geometrySections = await addGeometryScorecardSection(
  *        geometryData.slopeAnalysis,
@@ -476,12 +495,12 @@ export async function addGeometryScorecardSection(
  *      );
  *      sections.push(...geometrySections);
  *    }
- * 
+ *
  * 4. For heatmap images, you'll need to:
  *    - Generate heatmap Canvas on server-side (Node Canvas or Puppeteer)
  *    - OR: Save heatmap to storage when generated client-side
  *    - Convert Canvas to Buffer and embed in Docx
- * 
+ *
  * 5. Update ClaimPacketData interface to include:
  *    visionAnalysis?: VisionAnalysis;
  *    geometryAnalysis?: { slopeAnalysis: SlopeAnalysis; scorecards: SlopeScorecard[] };

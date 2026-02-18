@@ -116,15 +116,15 @@ export default async function SupplementsPage() {
 
   if (orgCtx.orgId) {
     try {
-      const rows = await prisma.supplement.findMany({
-        where: { claim: { orgId: orgCtx.orgId } },
-        orderBy: { updatedAt: "desc" },
+      const rows = await prisma.supplements.findMany({
+        where: { claims: { orgId: orgCtx.orgId } },
+        orderBy: { updated_at: "desc" },
         take: 50,
         include: {
-          claim: {
+          claims: {
             select: {
               claimNumber: true,
-              homeownerName: true,
+              insured_name: true,
               carrier: true,
             },
           },
@@ -133,13 +133,13 @@ export default async function SupplementsPage() {
 
       supplements = rows.map((r) => ({
         id: r.id,
-        claimNumber: r.claim?.claimNumber || "—",
-        homeownerName: r.claim?.homeownerName || "Unknown",
+        claimNumber: r.claims?.claimNumber || "—",
+        homeownerName: r.claims?.insured_name || "Unknown",
         status: (r.status as SupplementStatus) || "DRAFT",
-        amount: Number(r.amount ?? 0),
-        submittedAt: r.submittedAt,
-        updatedAt: r.updatedAt,
-        carrier: r.claim?.carrier || null,
+        amount: Number(r.total ?? 0),
+        submittedAt: r.submitted_at,
+        updatedAt: r.updated_at,
+        carrier: r.claims?.carrier || null,
       }));
 
       summary.total = supplements.length;

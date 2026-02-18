@@ -31,10 +31,10 @@ export function SettingsForm({
   async function saveDisplayName() {
     setSaving("displayName");
     try {
-      const res = await fetch("/api/profile", {
-        method: "PATCH",
+      const res = await fetch("/api/profile/update", {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ displayName }),
+        body: JSON.stringify({ name: displayName }),
       });
       if (res.ok) {
         toast.success("Display name updated");

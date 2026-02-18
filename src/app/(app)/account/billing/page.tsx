@@ -5,6 +5,7 @@ import { Clock, CreditCard, ExternalLink, FileText, Loader2, Settings } from "lu
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 interface BillingData {
   org: {
@@ -139,9 +140,13 @@ export default function BillingPage() {
             enabled: !data.autoRefill.enabled,
           },
         });
+        toast.success("Auto-refill settings updated");
+      } else {
+        toast.error("Auto-refill settings are not yet available");
       }
     } catch (error) {
       console.error("Failed to toggle auto-refill:", error);
+      toast.error("Auto-refill settings are not yet available");
     }
   };
 

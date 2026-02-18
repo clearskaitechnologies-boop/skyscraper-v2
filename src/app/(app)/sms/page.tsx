@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageCircle, Send } from "lucide-react";
+import { MessageCircle, Plus, Search, Send, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -28,6 +28,14 @@ interface Message {
   createdAt: string;
 }
 
+interface Contact {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
 export default function SMSPage() {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
@@ -35,6 +43,12 @@ export default function SMSPage() {
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
+
+  // New conversation state
+  const [showNewConversation, setShowNewConversation] = useState(false);
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [contactSearch, setContactSearch] = useState("");
+  const [loadingContacts, setLoadingContacts] = useState(false);
 
   // Load threads
   useEffect(() => {
@@ -46,6 +60,39 @@ export default function SMSPage() {
       })
       .catch(() => setLoading(false));
   }, []);
+
+  // Load contacts for new conversation selector
+  const loadContacts = useCallback(() => {
+    if (contacts.length > 0) return; // already loaded
+    setLoadingContacts(true);
+    fetch("/api/contacts")
+      .then((r) => r.json())
+      .then((data) => {
+        setContacts(data.contacts || data || []);
+        setLoadingContacts(false);
+      })
+      .catch(() => setLoadingContacts(false));
+  }, [contacts.length]);
+
+  // Start new conversation with a contact
+  const startConversation = (contact: Contact) => {
+    setSelectedContact(contact.id);
+    setShowNewConversation(false);
+    setContactSearch("");
+    loadMessages(contact.id);
+  };
+
+  // Filtered contacts based on search
+  const filteredContacts = contacts.filter((c) => {
+    if (!contactSearch.trim()) return true;
+    const search = contactSearch.toLowerCase();
+    return (
+      c.firstName?.toLowerCase().includes(search) ||
+      c.lastName?.toLowerCase().includes(search) ||
+      c.phone?.includes(search) ||
+      c.email?.toLowerCase().includes(search)
+    );
+  });
 
   // Load messages for selected contact
   const loadMessages = useCallback((contactId: string) => {
@@ -99,11 +146,87 @@ export default function SMSPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3" style={{ minHeight: "500px" }}>
         {/* Thread List */}
         <ContentCard header="Conversations" noPadding>
+          {/* New Conversation Button */}
+          <div className="border-b border-slate-200/60 p-3 dark:border-slate-700/50">
+            <button
+              onClick={() => {
+                setShowNewConversation(!showNewConversation);
+                if (!showNewConversation) loadContacts();
+              }}
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:scale-[1.01] hover:shadow-md"
+            >
+              <Plus className="h-4 w-4" />
+              New Conversation
+            </button>
+          </div>
+
+          {/* Contact Selector Dropdown */}
+          {showNewConversation && (
+            <div className="border-b border-slate-200/60 bg-slate-50/80 p-3 dark:border-slate-700/50 dark:bg-slate-800/60">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  Select a Contact
+                </span>
+                <button
+                  onClick={() => setShowNewConversation(false)}
+                  className="rounded p-1 hover:bg-slate-200 dark:hover:bg-slate-700"
+                >
+                  <X className="h-3.5 w-3.5 text-slate-400" />
+                </button>
+              </div>
+              <div className="relative mb-2">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-slate-400" />
+                <input
+                  type="text"
+                  value={contactSearch}
+                  onChange={(e) => setContactSearch(e.target.value)}
+                  placeholder="Search contacts..."
+                  className="w-full rounded-lg border border-slate-200/60 bg-white py-2 pl-8 pr-3 text-sm focus:border-emerald-500 focus:outline-none dark:border-slate-700/50 dark:bg-slate-900"
+                />
+              </div>
+              <div className="max-h-48 overflow-y-auto">
+                {loadingContacts ? (
+                  <div className="py-4 text-center text-xs text-slate-400">Loading contacts...</div>
+                ) : filteredContacts.length === 0 ? (
+                  <div className="py-4 text-center text-xs text-slate-400">
+                    {contacts.length === 0
+                      ? "No contacts found. Add contacts first."
+                      : "No matches"}
+                  </div>
+                ) : (
+                  filteredContacts.map((contact) => (
+                    <button
+                      key={contact.id}
+                      onClick={() => startConversation(contact)}
+                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors hover:bg-emerald-50 dark:hover:bg-emerald-900/20"
+                    >
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
+                        {(contact.firstName || "?")[0]}
+                        {(contact.lastName || "")[0]}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate font-medium text-slate-900 dark:text-slate-100">
+                          {contact.firstName} {contact.lastName}
+                        </div>
+                        <div className="truncate text-xs text-slate-500">
+                          {contact.phone || contact.email || "No phone"}
+                        </div>
+                      </div>
+                    </button>
+                  ))
+                )}
+              </div>
+            </div>
+          )}
+
           <div className="max-h-[500px] divide-y divide-slate-200/60 overflow-y-auto dark:divide-slate-700/50">
             {threads.length === 0 && (
               <div className="p-6 text-center text-sm text-slate-500">
                 <MessageCircle className="mx-auto mb-2 h-8 w-8 text-slate-400" />
-                No conversations yet
+                <p className="font-medium">No conversations yet</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Click &quot;New Conversation&quot; above to text a contact
+                </p>
               </div>
             )}
             {threads.map((t) => (
@@ -142,7 +265,10 @@ export default function SMSPage() {
             <div className="flex flex-1 items-center justify-center">
               <div className="text-center text-slate-500">
                 <MessageCircle className="mx-auto mb-3 h-12 w-12" />
-                <p className="text-sm">Select a conversation to view messages</p>
+                <p className="text-sm font-medium">Select a conversation or start a new one</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  Use &quot;New Conversation&quot; to text a contact from your Company Contacts
+                </p>
               </div>
             </div>
           ) : (

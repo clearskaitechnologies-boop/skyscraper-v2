@@ -42,6 +42,8 @@ const navSections: NavSection[] = [
       { label: "Storm Center", href: "/storm-center" },
       { label: "Job Pipeline", href: "/pipeline" },
       { label: "Analytics Dashboard", href: "/analytics/dashboard" },
+      { label: "Weather Analytics", href: "/weather/analytics" },
+      { label: "Quick DOL", href: "/quick-dol" },
       { label: "Smart Actions", href: "/ai/smart-actions" },
     ],
   },
@@ -55,8 +57,6 @@ const navSections: NavSection[] = [
       { label: "Depreciation Builder", href: "/ai/tools/depreciation" },
       { label: "Rebuttal Builder", href: "/ai/tools/rebuttal" },
       { label: "Bad Faith Analysis", href: "/ai/bad-faith" },
-      { label: "Quick DOL", href: "/quick-dol" },
-      { label: "Weather Analytics", href: "/weather/analytics" },
     ],
   },
   {
@@ -70,6 +70,7 @@ const navSections: NavSection[] = [
       { label: "Project Plan Builder", href: "/ai/roofplan-builder" },
       { label: "Mockup Generator", href: "/ai/mockup", featureFlag: "FEATURE_MOCKUP_GENERATOR" },
       { label: "Vision Labs", href: "/vision-lab", featureFlag: "FEATURE_VISION_AI" },
+      { label: "Permits", href: "/permits" },
     ],
   },
   {
@@ -116,12 +117,11 @@ const navSections: NavSection[] = [
   {
     label: "Settings",
     items: [
-      { label: "Company Settings", href: "/settings" },
       { label: "Billing", href: "/settings/billing" },
+      { label: "Company Settings", href: "/settings" },
       { label: "Company Branding", href: "/settings/branding" },
-      { label: "Migrations", href: "/settings/migrations" },
       { label: "Company Seats", href: "/teams" },
-      { label: "Permits", href: "/permits" },
+      { label: "Migrations", href: "/settings/migrations" },
       { label: "Archive", href: "/archive" },
     ],
   },

@@ -312,7 +312,7 @@ export default function InvitationsPage() {
 
   const generateInviteLink = () => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
-    return `${baseUrl}/signup?ref=invitation`;
+    return `${baseUrl}/sign-up?ref=invitation`;
   };
 
   const copyInviteLink = async () => {
