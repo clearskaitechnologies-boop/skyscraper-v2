@@ -1,6 +1,6 @@
 "use client";
 
-import { Calculator, Package, RotateCcw, Truck } from "lucide-react";
+import { Calculator, DollarSign, Package, RotateCcw, Truck } from "lucide-react";
 import { useState } from "react";
 
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -17,47 +17,88 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-interface EstimateResult {
-  materials: Array<{
-    name: string;
-    quantity: number;
-    unit: string;
-    coverage: string;
-  }>;
-  totalSquares: number;
-  wastePercent: number;
-  pitchMultiplier: number;
+// ── Types matching the API response shape ───────────────────────────────────
+interface MaterialLine {
+  category: string;
+  productName: string;
+  quantity: number;
+  unit: string;
+  unitPrice: number;
+  totalPrice: number;
+  coverage?: string;
 }
 
+interface EstimateResult {
+  id: string;
+  materials: MaterialLine[];
+  totalCost: number;
+  wasteFactor: number;
+  measurements: {
+    totalArea: number;
+    pitch: string;
+  };
+}
+
+// ── Pitch options — value is the actual pitch string the API expects ────────
 const ROOF_PITCHES = [
-  { label: "Flat (0-2/12)", value: "flat" },
-  { label: "Low (3-4/12)", value: "low" },
-  { label: "Standard (5-7/12)", value: "standard" },
-  { label: "Steep (8-10/12)", value: "steep" },
-  { label: "Very Steep (11-12/12)", value: "very_steep" },
+  { label: "Flat (2/12)", value: "2/12" },
+  { label: "Low (4/12)", value: "4/12" },
+  { label: "Standard (6/12)", value: "6/12" },
+  { label: "Moderate (8/12)", value: "8/12" },
+  { label: "Steep (10/12)", value: "10/12" },
+  { label: "Very Steep (12/12)", value: "12/12" },
 ];
 
+// ── Shingle types — value matches ShingleSpec.type ─────────────────────────
 const SHINGLE_TYPES = [
-  { label: "3-Tab Asphalt", value: "3tab" },
-  { label: "Architectural Shingle", value: "architectural" },
-  { label: "Designer / Premium", value: "designer" },
-  { label: "Metal Standing Seam", value: "metal" },
-  { label: "Tile", value: "tile" },
+  { label: "3-Tab Asphalt", value: "THREE_TAB" },
+  { label: "Architectural Shingle", value: "ARCHITECTURAL" },
+  { label: "Designer / Premium", value: "PREMIUM" },
+];
+
+// ── Complexity — matches WASTE_FACTORS keys ────────────────────────────────
+const COMPLEXITY_OPTIONS = [
+  { label: "Simple (gable)", value: "LOW" },
+  { label: "Moderate (hip, some valleys)", value: "MEDIUM" },
+  { label: "Complex (multiple valleys/dormers)", value: "HIGH" },
+  { label: "Very Complex (turrets, multi-level)", value: "VERY_HIGH" },
 ];
 
 export default function MaterialEstimatorPage() {
-  const [totalSqFt, setTotalSqFt] = useState("");
-  const [pitch, setPitch] = useState("standard");
-  const [shingleType, setShingleType] = useState("architectural");
+  // Measurements
+  const [totalArea, setTotalArea] = useState("");
+  const [pitch, setPitch] = useState("6/12");
+  const [complexity, setComplexity] = useState("MEDIUM");
   const [ridgeLf, setRidgeLf] = useState("");
+  const [hipLf, setHipLf] = useState("");
   const [valleyLf, setValleyLf] = useState("");
+  const [eaveLf, setEaveLf] = useState("");
+  const [rakeLf, setRakeLf] = useState("");
+
+  // Shingle
+  const [shingleType, setShingleType] = useState("ARCHITECTURAL");
+
+  // State
   const [result, setResult] = useState<EstimateResult | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [routeStatus, setRouteStatus] = useState<"idle" | "routing" | "routed">("idle");
 
+  // ── Auto-estimate linear feet from area if user leaves them blank ────────
+  function deriveLinearFeet(areaNum: number) {
+    const side = Math.sqrt(areaNum);
+    return {
+      ridgeLength: ridgeLf ? Number(ridgeLf) : Math.round(side),
+      hipLength: hipLf ? Number(hipLf) : 0,
+      valleyLength: valleyLf ? Number(valleyLf) : 0,
+      eaveLength: eaveLf ? Number(eaveLf) : Math.round(side * 2),
+      rakeLength: rakeLf ? Number(rakeLf) : Math.round(side * 2),
+    };
+  }
+
   const handleEstimate = async () => {
-    if (!totalSqFt || Number(totalSqFt) <= 0) {
+    const areaNum = Number(totalArea);
+    if (!totalArea || areaNum <= 0) {
       setError("Enter a valid roof area in square feet");
       return;
     }
@@ -65,18 +106,22 @@ export default function MaterialEstimatorPage() {
     setIsLoading(true);
     setError("");
     try {
+      const derived = deriveLinearFeet(areaNum);
+
       const res = await fetch("/api/materials/estimate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "calculate",
           measurements: {
-            totalSqFt: Number(totalSqFt),
+            totalArea: areaNum,
             pitch,
-            ridgeLinearFt: ridgeLf ? Number(ridgeLf) : undefined,
-            valleyLinearFt: valleyLf ? Number(valleyLf) : undefined,
+            complexity,
+            ...derived,
           },
-          shingleType,
+          shingleSpec: {
+            type: shingleType,
+          },
         }),
       });
 
@@ -86,7 +131,7 @@ export default function MaterialEstimatorPage() {
         throw new Error(data.error || "Estimation failed");
       }
 
-      setResult(data);
+      setResult(data.estimate);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -95,6 +140,7 @@ export default function MaterialEstimatorPage() {
   };
 
   const handleRouteToABC = async () => {
+    if (!result) return;
     setRouteStatus("routing");
     try {
       const res = await fetch("/api/materials/estimate", {
@@ -102,17 +148,15 @@ export default function MaterialEstimatorPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action: "route",
-          measurements: {
-            totalSqFt: Number(totalSqFt),
-            pitch,
-            ridgeLinearFt: ridgeLf ? Number(ridgeLf) : undefined,
-            valleyLinearFt: valleyLf ? Number(valleyLf) : undefined,
-          },
-          shingleType,
+          estimate: result,
+          jobSiteZip: "86001",
         }),
       });
 
-      if (!res.ok) throw new Error("Failed to route to ABC Supply");
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || "Failed to route to ABC Supply");
+      }
       setRouteStatus("routed");
     } catch (err: any) {
       setError(err.message);
@@ -121,15 +165,23 @@ export default function MaterialEstimatorPage() {
   };
 
   const handleReset = () => {
-    setTotalSqFt("");
-    setPitch("standard");
-    setShingleType("architectural");
+    setTotalArea("");
+    setPitch("6/12");
+    setComplexity("MEDIUM");
+    setShingleType("ARCHITECTURAL");
     setRidgeLf("");
+    setHipLf("");
     setValleyLf("");
+    setEaveLf("");
+    setRakeLf("");
     setResult(null);
     setError("");
     setRouteStatus("idle");
   };
+
+  // ── Derived stats for the results header ─────────────────────────────────
+  const totalSquares = result ? (result.measurements.totalArea / 100).toFixed(1) : null;
+  const wasteLabel = result?.wasteFactor ? `${Math.round((result.wasteFactor - 1) * 100)}%` : null;
 
   return (
     <PageContainer maxWidth="5xl">
@@ -140,7 +192,7 @@ export default function MaterialEstimatorPage() {
         icon={<Calculator className="h-7 w-7" />}
       />
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Input Form */}
+        {/* ── Input Form ─────────────────────────────────────────────────── */}
         <Card>
           <CardHeader>
             <CardTitle>Roof Measurements</CardTitle>
@@ -149,33 +201,53 @@ export default function MaterialEstimatorPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
+            {/* Total Area */}
             <div className="space-y-2">
               <Label htmlFor="sqft">Total Roof Area (sq ft) *</Label>
               <Input
                 id="sqft"
                 type="number"
-                placeholder="2,400"
-                value={totalSqFt}
-                onChange={(e) => setTotalSqFt(e.target.value)}
+                placeholder="2400"
+                value={totalArea}
+                onChange={(e) => setTotalArea(e.target.value)}
               />
             </div>
 
-            <div className="space-y-2">
-              <Label>Roof Pitch</Label>
-              <Select value={pitch} onValueChange={setPitch}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {ROOF_PITCHES.map((p) => (
-                    <SelectItem key={p.value} value={p.value}>
-                      {p.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            {/* Pitch & Complexity side-by-side */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Roof Pitch</Label>
+                <Select value={pitch} onValueChange={setPitch}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ROOF_PITCHES.map((p) => (
+                      <SelectItem key={p.value} value={p.value}>
+                        {p.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Complexity</Label>
+                <Select value={complexity} onValueChange={setComplexity}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COMPLEXITY_OPTIONS.map((c) => (
+                      <SelectItem key={c.value} value={c.value}>
+                        {c.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
+            {/* Shingle Type */}
             <div className="space-y-2">
               <Label>Shingle Type</Label>
               <Select value={shingleType} onValueChange={setShingleType}>
@@ -192,26 +264,72 @@ export default function MaterialEstimatorPage() {
               </Select>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="ridge">Ridge (linear ft)</Label>
-                <Input
-                  id="ridge"
-                  type="number"
-                  placeholder="60"
-                  value={ridgeLf}
-                  onChange={(e) => setRidgeLf(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="valley">Valley (linear ft)</Label>
-                <Input
-                  id="valley"
-                  type="number"
-                  placeholder="30"
-                  value={valleyLf}
-                  onChange={(e) => setValleyLf(e.target.value)}
-                />
+            {/* Linear measurements — optional, auto-estimated if blank */}
+            <div>
+              <Label className="mb-2 block text-xs font-medium text-muted-foreground">
+                Linear Measurements (optional — estimated from area if blank)
+              </Label>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                <div className="space-y-1">
+                  <Label htmlFor="ridge" className="text-xs">
+                    Ridge (ft)
+                  </Label>
+                  <Input
+                    id="ridge"
+                    type="number"
+                    placeholder="auto"
+                    value={ridgeLf}
+                    onChange={(e) => setRidgeLf(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="hip" className="text-xs">
+                    Hip (ft)
+                  </Label>
+                  <Input
+                    id="hip"
+                    type="number"
+                    placeholder="0"
+                    value={hipLf}
+                    onChange={(e) => setHipLf(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="valley" className="text-xs">
+                    Valley (ft)
+                  </Label>
+                  <Input
+                    id="valley"
+                    type="number"
+                    placeholder="0"
+                    value={valleyLf}
+                    onChange={(e) => setValleyLf(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="eave" className="text-xs">
+                    Eave (ft)
+                  </Label>
+                  <Input
+                    id="eave"
+                    type="number"
+                    placeholder="auto"
+                    value={eaveLf}
+                    onChange={(e) => setEaveLf(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label htmlFor="rake" className="text-xs">
+                    Rake (ft)
+                  </Label>
+                  <Input
+                    id="rake"
+                    type="number"
+                    placeholder="auto"
+                    value={rakeLf}
+                    onChange={(e) => setRakeLf(e.target.value)}
+                  />
+                </div>
               </div>
             </div>
 
@@ -239,7 +357,7 @@ export default function MaterialEstimatorPage() {
           </CardContent>
         </Card>
 
-        {/* Results */}
+        {/* ── Results ────────────────────────────────────────────────────── */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -248,7 +366,7 @@ export default function MaterialEstimatorPage() {
             </CardTitle>
             <CardDescription>
               {result
-                ? `${result.totalSquares} squares • ${result.wastePercent}% waste factor • ${result.pitchMultiplier}x pitch`
+                ? `${totalSquares} squares • ${wasteLabel} waste • ${pitch} pitch`
                 : "Enter measurements and click Calculate"}
             </CardDescription>
           </CardHeader>
@@ -259,17 +377,34 @@ export default function MaterialEstimatorPage() {
                   {result.materials.map((mat, idx) => (
                     <div key={idx} className="flex items-center justify-between px-4 py-3">
                       <div>
-                        <p className="font-medium text-slate-900 dark:text-white">{mat.name}</p>
-                        <p className="text-xs text-slate-500">{mat.coverage}</p>
+                        <p className="font-medium text-slate-900 dark:text-white">
+                          {mat.productName}
+                        </p>
+                        <p className="text-xs text-slate-500">
+                          {mat.category}
+                          {mat.coverage ? ` • ${mat.coverage}` : ""}
+                        </p>
                       </div>
                       <div className="text-right">
                         <span className="text-lg font-bold text-slate-900 dark:text-white">
                           {mat.quantity}
                         </span>
                         <span className="ml-1 text-sm text-slate-500">{mat.unit}</span>
+                        <p className="text-xs text-slate-400">${mat.totalPrice.toLocaleString()}</p>
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* Total Cost */}
+                <div className="flex items-center justify-between rounded-lg bg-slate-50 px-4 py-3 dark:bg-slate-800/60">
+                  <span className="flex items-center gap-2 font-semibold text-slate-700 dark:text-slate-200">
+                    <DollarSign className="h-4 w-4" />
+                    Estimated Total
+                  </span>
+                  <span className="text-xl font-bold text-slate-900 dark:text-white">
+                    ${result.totalCost.toLocaleString()}
+                  </span>
                 </div>
 
                 {/* Route to ABC Supply */}
