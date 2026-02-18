@@ -35,6 +35,25 @@ async function setUserTypeCookie(type: "pro" | "client") {
 }
 
 /**
+ * Sync Clerk publicMetadata with the resolved user type.
+ * This is CRITICAL because the middleware reads sessionClaims.publicMetadata.userType
+ * BEFORE the cookie fallback. If publicMetadata is empty or wrong, the middleware
+ * will use the stale cookie and route the user to the wrong surface.
+ */
+async function syncClerkMetadata(clerkUserId: string, userType: "pro" | "client") {
+  try {
+    const clerk = await clerkClient();
+    await clerk.users.updateUserMetadata(clerkUserId, {
+      publicMetadata: { userType },
+    });
+    console.log("[AFTER-SIGN-IN] Synced Clerk publicMetadata:", userType);
+  } catch (e) {
+    console.error("[AFTER-SIGN-IN] Failed to sync Clerk metadata:", e);
+    // Non-fatal — cookie fallback will still work
+  }
+}
+
+/**
  * Direct SQL fallback — bypasses Prisma schema mismatches entirely.
  * Used when Prisma client throws (e.g. column mismatch after migration).
  */
@@ -123,6 +142,7 @@ export default async function AfterSignInPage({
   // ─── 2. If user already has a known type, honor it ───
   if (existingType === "pro" || existingType === "client") {
     await setUserTypeCookie(existingType as "pro" | "client");
+    await syncClerkMetadata(user.id, existingType as "pro" | "client");
 
     // Honor pending redirect first (invite links, deep links)
     if (pendingRedirect && pendingRedirect.startsWith("/")) {
@@ -162,6 +182,7 @@ export default async function AfterSignInPage({
   }
 
   await setUserTypeCookie(resolvedType);
+  await syncClerkMetadata(user.id, resolvedType);
 
   // Honor pending redirect first
   if (pendingRedirect && pendingRedirect.startsWith("/")) {
