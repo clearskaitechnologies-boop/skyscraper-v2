@@ -1,7 +1,7 @@
 "use client";
 
-import { ClerkProvider } from "@clerk/nextjs";
 import { logger } from "@/lib/logger";
+import { ClerkProvider } from "@clerk/nextjs";
 import * as React from "react";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -11,8 +11,10 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   // 1. Reads user type from database
   // 2. Sets the x-user-type cookie for middleware routing
   // 3. Redirects to /dashboard (pro) or /portal (client)
-  const afterSignInUrl = "/after-sign-in";
-  const afterSignUpUrl = "/after-sign-in";
+  // CRITICAL: Include mode=pro so new users signing in/up via the default
+  // (non-client) flow are registered as "pro", not "client".
+  const afterSignInUrl = "/after-sign-in?mode=pro";
+  const afterSignUpUrl = "/after-sign-in?mode=pro";
 
   if (!publishableKey) {
     logger.warn("⚠️ Missing NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY at runtime.");

@@ -13,10 +13,12 @@ function SignInForm() {
 
   // Build the after-sign-in URL, preserving any pending redirect (e.g. invite tokens)
   // This ensures /trades/join?token=xxx survives the auth flow
+  // CRITICAL: This is the PRO sign-in page — default to mode=pro so new users
+  // are registered correctly. Only override to "client" if explicitly set.
   const afterSignInParams = new URLSearchParams();
-  if (mode === "client") afterSignInParams.set("mode", "client");
+  afterSignInParams.set("mode", mode === "client" ? "client" : "pro");
   if (pendingRedirect) afterSignInParams.set("redirect_url", pendingRedirect);
-  const redirectUrl = `/after-sign-in${afterSignInParams.toString() ? `?${afterSignInParams.toString()}` : ""}`;
+  const redirectUrl = `/after-sign-in?${afterSignInParams.toString()}`;
 
   // Propagate redirect_url to sign-up page so token isn't lost if they switch to sign-up
   const signUpUrl = pendingRedirect

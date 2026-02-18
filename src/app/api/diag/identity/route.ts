@@ -68,7 +68,8 @@ export async function GET() {
       const clerkSecretKey = process.env.CLERK_SECRET_KEY;
       results.clerkSecretKeyLength = clerkSecretKey?.length ?? 0;
       results.clerkSecretKeyStart = clerkSecretKey?.substring(0, 12) ?? "MISSING";
-      results.clerkSecretKeyEnd = clerkSecretKey?.substring((clerkSecretKey?.length ?? 0) - 5) ?? "MISSING";
+      results.clerkSecretKeyEnd =
+        clerkSecretKey?.substring((clerkSecretKey?.length ?? 0) - 5) ?? "MISSING";
       // Check for \n corruption
       results.clerkSecretKeyHasNewline = clerkSecretKey?.includes("\n") ?? false;
 
