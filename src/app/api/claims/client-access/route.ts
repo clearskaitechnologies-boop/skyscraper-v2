@@ -1,21 +1,15 @@
 export const dynamic = "force-dynamic";
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (request: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await request.json();
     const { clientId, claimId, documentIds = [] } = body;
 
@@ -100,16 +94,10 @@ export async function POST(request: NextRequest) {
     logger.error("Error adding client to claim:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+});
 
-export async function GET(request: NextRequest) {
+export const GET = withAuth(async (request: NextRequest, { userId }) => {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { searchParams } = new URL(request.url);
     const claimId = searchParams.get("claimId");
 
@@ -146,4 +134,4 @@ export async function GET(request: NextRequest) {
     logger.error("Error fetching client claims:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
+});

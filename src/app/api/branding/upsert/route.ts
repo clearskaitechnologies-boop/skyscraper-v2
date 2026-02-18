@@ -2,24 +2,14 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: Request) {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export const POST = withAuth(async (req: NextRequest, { userId, orgId: finalOrgId }) => {
   try {
-    // CRITICAL FIX: Use unified org context (auto-creates if needed)
-    const { orgId: finalOrgId } = await ensureUserOrgContext(userId);
-
     const body = await req.json();
     const {
       companyName,
@@ -33,18 +23,9 @@ export async function POST(req: Request) {
       teamPhotoUrl,
     } = body;
 
-    console.log("Branding upsert request:", {
-      userId,
-      finalOrgId,
-      companyName,
-      hasEmail: !!email,
-    });
-
     if (!companyName) {
       return NextResponse.json({ error: "Company name is required" }, { status: 400 });
     }
-
-    logger.debug("Using finalOrgId:", finalOrgId);
 
     const branding = await prisma.org_branding.upsert({
       where: {
@@ -85,15 +66,7 @@ export async function POST(req: Request) {
   } catch (error) {
     logger.error("Branding upsert error:", error);
 
-    // Get detailed error info
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    const errorStack = error instanceof Error ? error.stack : undefined;
-
-    console.error("Detailed error:", {
-      description: errorMessage,
-      stack: errorStack,
-      name: error instanceof Error ? error.name : undefined,
-    });
 
     return NextResponse.json(
       {
@@ -103,4 +76,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+});

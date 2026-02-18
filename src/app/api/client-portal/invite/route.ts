@@ -1,17 +1,13 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
-import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { FROM_EMAIL, getResend, REPLY_TO_EMAIL, TEMPLATES } from "@/lib/email/resend";
 import prisma from "@/lib/prisma";
 import { ClientInviteSchema } from "@/lib/validation/schemas";
 
-export async function POST(req: Request) {
-  const { userId, orgId } = await auth();
-  if (!userId || !orgId) {
-    return new NextResponse("Unauthorized", { status: 401 });
-  }
-
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
     const body = await req.json();
 
@@ -19,8 +15,8 @@ export async function POST(req: Request) {
     const { clientId, email } = ClientInviteSchema.parse(body);
 
     // Verify the Org exists and get internal ID
-    const Org = await prisma.org.findUnique({
-      where: { clerkOrgId: orgId },
+    const Org = await prisma.org.findFirst({
+      where: { id: orgId },
       select: { id: true },
     });
 
@@ -109,4 +105,4 @@ export async function POST(req: Request) {
       status: 500,
     });
   }
-}
+});

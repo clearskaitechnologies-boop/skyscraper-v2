@@ -2,19 +2,15 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { getStripeCustomerIdForUser } from "@/lib/stripe/customer";
 
-export async function POST() {
+export const POST = withAuth(async (_req, { userId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -33,4 +29,4 @@ export async function POST() {
       { status: 500 }
     );
   }
-}
+});

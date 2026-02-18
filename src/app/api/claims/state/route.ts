@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { sendClaimUpdateEmail } from "@/lib/email/resend";
 import prisma from "@/lib/prisma";
 
@@ -48,14 +48,8 @@ function isValidTransition(from: string | null, to: string): boolean {
  * POST /api/claims/state
  * Body: { claimId, state, trigger, metadata }
  */
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
     const parsed = ClaimStateSchema.safeParse(body);
     if (!parsed.success) {
@@ -162,21 +156,15 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * GET /api/claims/state?claimId=xxx
  *
  * Retrieves claim state history
  */
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const searchParams = req.nextUrl.searchParams;
     const claimId = searchParams.get("claimId");
 
@@ -214,4 +202,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

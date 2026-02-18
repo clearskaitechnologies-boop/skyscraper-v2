@@ -7,26 +7,20 @@ export const revalidate = 0;
  * Send an email invite to a contractor
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
 import { env } from "@/env";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 import { REFERRAL } from "@/lib/referrals/config";
-import { ensureOrgReferralCode, getOrgIdFromClerkOrgId } from "@/lib/referrals/utils";
+import { ensureOrgReferralCode } from "@/lib/referrals/utils";
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const FROM = process.env.EMAIL_FROM || "SkaiScraper <no-reply@skaiscrape.com>";
 
-export async function POST(req: Request) {
-  const { orgId: clerkOrgId } = await auth();
-
-  if (!clerkOrgId) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+export const POST = withAuth(async (req: NextRequest, { orgId }) => {
   try {
     const { email } = (await req.json()) as { email: string };
 
@@ -34,12 +28,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const code = await ensureOrgReferralCode(clerkOrgId);
-    const orgId = await getOrgIdFromClerkOrgId(clerkOrgId);
+    // orgId from withAuth is the DB org ID — look up referral code directly
+    const org = await prisma.org.findUnique({
+      where: { id: orgId },
+      select: { id: true, referralCode: true, clerkOrgId: true },
+    });
 
-    if (!orgId) {
+    if (!org) {
       return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
+
+    // Ensure referral code exists (pass clerkOrgId since that's what the utility expects)
+    const code = org.referralCode || (await ensureOrgReferralCode(org.clerkOrgId || orgId));
 
     const base = env.NEXT_PUBLIC_SITE_URL;
     const url = `${base}${REFERRAL.REF_PATH_PREFIX}/${code}`;
@@ -120,4 +120,4 @@ SkaiScraper™ - AI-Powered Operations for Trades Pros
     logger.error("[Referral Invite Error]", error);
     return NextResponse.json({ error: "Failed to send invite" }, { status: 500 });
   }
-}
+});

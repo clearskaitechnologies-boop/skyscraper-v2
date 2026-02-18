@@ -1,8 +1,8 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
 import { getStripeClient } from "@/lib/stripe";
@@ -13,15 +13,7 @@ const stripe = getStripeClient();
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: NextRequest) {
-  return handleCheckout(request);
-}
-
-export async function POST(request: NextRequest) {
-  return handleCheckout(request);
-}
-
-async function handleCheckout(request: NextRequest) {
+const handleCheckout = withAuth(async (request: NextRequest, { userId, orgId }) => {
   try {
     if (isBetaMode()) {
       return NextResponse.json(
@@ -32,12 +24,6 @@ async function handleCheckout(request: NextRequest) {
         },
         { status: 403 }
       );
-    }
-
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     // Get plan and ref from URL params or body
@@ -146,4 +132,7 @@ async function handleCheckout(request: NextRequest) {
     logger.error("[STRIPE_CHECKOUT] Error:", error);
     return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
   }
-}
+});
+
+export const GET = handleCheckout;
+export const POST = handleCheckout;

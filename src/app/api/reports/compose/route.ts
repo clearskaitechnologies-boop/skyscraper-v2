@@ -1,8 +1,8 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
+import { withAuth } from "@/lib/auth/withAuth";
 
 /**
  * AI REPORT COMPOSITION ENDPOINT
@@ -52,14 +52,8 @@ interface ComposeRequest {
   instructions?: string; // Optional additional instructions
 }
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "UNAUTHORIZED" }, { status: 401 });
-    }
-
     const body: ComposeRequest = await req.json();
     const { context, sections, instructions } = body;
 
@@ -151,4 +145,4 @@ Return a JSON object with section IDs as keys and generated content as values.
       { status: 500 }
     );
   }
-}
+});

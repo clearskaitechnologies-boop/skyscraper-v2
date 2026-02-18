@@ -3,31 +3,16 @@
  * Move a claim or lead to a new pipeline stage
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { orgId: userOrgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    // Tenant isolation: resolve the authenticated user's org
-    let userOrgId: string;
-    try {
-      const ctx = await ensureUserOrgContext(userId);
-      userOrgId = ctx.orgId;
-    } catch {
-      return NextResponse.json({ error: "No organization found" }, { status: 403 });
-    }
-
     const body = await req.json();
     const { claimId, leadId, stage } = body;
 
@@ -123,4 +108,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
