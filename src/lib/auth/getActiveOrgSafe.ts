@@ -10,8 +10,8 @@
  * Use this EVERYWHERE that needs org context.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 
 import prisma from "@/lib/prisma";
 
@@ -81,7 +81,7 @@ async function tryCreateOrgMinimal(params: {
           id: crypto.randomUUID(),
           name,
           clerkOrgId: effectiveClerkOrgId,
-          demoMode: true, // New orgs start in demo mode
+          demoMode: false, // Enterprise orgs start in production mode
           updatedAt: new Date(),
         },
         select: { id: true, name: true, clerkOrgId: true },

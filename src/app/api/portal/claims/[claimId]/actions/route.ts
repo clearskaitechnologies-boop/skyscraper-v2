@@ -5,8 +5,8 @@
  * Actions: accept, access, upload_photo, upload_document, add_event, add_comment
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
@@ -133,6 +133,21 @@ async function handleAddComment(
   userId: string,
   input: Extract<ActionInput, { action: "add_comment" }>
 ) {
+  // Verify the file belongs to this claim (prevent cross-claim file comments)
+  const file = await prisma.file_assets.findFirst({
+    where: {
+      id: input.fileId,
+      claimId,
+    },
+  });
+
+  if (!file) {
+    return NextResponse.json(
+      { error: "File not found or does not belong to this claim" },
+      { status: 404 }
+    );
+  }
+
   // Get client info for the comment
   const client = await prisma.client.findFirst({
     where: { userId },

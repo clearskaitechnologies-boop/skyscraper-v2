@@ -949,7 +949,7 @@ model Org {
   aiModeDefault             String?                     @default("auto")
   coldStorageEnabled        Boolean?                    @default(false)
   coldStorageEnabledAt      DateTime?                   @db.Timestamptz(6)
-  demoMode                  Boolean                     @default(true)
+  demoMode                  Boolean                     @default(false)
   demoSeededAt              DateTime?
   is_archived               Boolean                     @default(false)
   BillingSettings           BillingSettings?

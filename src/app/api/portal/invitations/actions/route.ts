@@ -5,8 +5,8 @@
  * Actions: accept, decline, send_invite, send_job_invite
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -91,6 +91,13 @@ async function handleAccept(userId: string, input: Extract<ActionInput, { action
     return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
   }
 
+  // Verify the invitation was meant for this user (email match)
+  const user = await currentUser();
+  const callerEmail = user?.emailAddresses?.[0]?.emailAddress?.toLowerCase();
+  if (!callerEmail || invitation.email?.toLowerCase() !== callerEmail) {
+    return NextResponse.json({ error: "This invitation was not sent to you" }, { status: 403 });
+  }
+
   // Update invitation status
   await prisma.portalInvitation.update({
     where: { id: input.invitationId },
@@ -133,6 +140,13 @@ async function handleDecline(userId: string, input: Extract<ActionInput, { actio
 
   if (!invitation) {
     return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
+  }
+
+  // Verify the invitation was meant for this user (email match)
+  const user = await currentUser();
+  const callerEmail = user?.emailAddresses?.[0]?.emailAddress?.toLowerCase();
+  if (!callerEmail || invitation.email?.toLowerCase() !== callerEmail) {
+    return NextResponse.json({ error: "This invitation was not sent to you" }, { status: 403 });
   }
 
   await prisma.portalInvitation.update({

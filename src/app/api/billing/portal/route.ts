@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { createBillingPortalSession } from "@/lib/billing/portal";
@@ -16,22 +16,27 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const requestedOrgId = body.orgId || orgId;
-
-    if (!requestedOrgId) {
-      return NextResponse.json({ error: "Organization ID required" }, { status: 400 });
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization context required" }, { status: 403 });
     }
 
-    // Fetch Org
-    const Org = await prisma.org.findUnique({
-      where: { id: requestedOrgId },
-      select: {
-        stripeCustomerId: true,
-      },
+    // Resolve org from Clerk orgId — NEVER accept client-supplied orgId
+    const resolvedOrg = await prisma.org.findUnique({
+      where: { clerkOrgId: orgId },
+      select: { id: true, stripeCustomerId: true },
     });
 
-    if (!Org || !Org.stripeCustomerId) {
+    // Verify user membership in this org
+    if (resolvedOrg) {
+      const membership = await prisma.user_organizations.findFirst({
+        where: { userId, organizationId: resolvedOrg.id },
+      });
+      if (!membership) {
+        return NextResponse.json({ error: "Not a member of this organization" }, { status: 403 });
+      }
+    }
+
+    if (!resolvedOrg || !resolvedOrg.stripeCustomerId) {
       return NextResponse.json(
         { error: "No Stripe customer found. Please subscribe first." },
         { status: 404 }
@@ -43,7 +48,7 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     }/account/billing`;
 
-    const portalUrl = await createBillingPortalSession(Org.stripeCustomerId, returnUrl);
+    const portalUrl = await createBillingPortalSession(resolvedOrg.stripeCustomerId, returnUrl);
 
     return NextResponse.json({ url: portalUrl });
   } catch (error) {

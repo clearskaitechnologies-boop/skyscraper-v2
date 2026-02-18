@@ -32,18 +32,35 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization context required" }, { status: 403 });
+    }
+
     const searchParams = request.nextUrl.searchParams;
-    const requestedOrgId = searchParams.get("orgId") || orgId;
     const limit = Math.min(parseInt(searchParams.get("limit") || "25", 10), 100);
     const startingAfter = searchParams.get("startingAfter") || undefined;
 
-    if (!requestedOrgId) {
-      return NextResponse.json({ error: "Organization ID required" }, { status: 400 });
+    // Resolve org from Clerk orgId — NEVER accept client-supplied orgId
+    const resolvedOrg = await prisma.org.findUnique({
+      where: { clerkOrgId: orgId },
+      select: { id: true },
+    });
+
+    if (!resolvedOrg) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
     }
 
-    // Fetch org with stripe customer ID
+    // Verify user membership
+    const membership = await prisma.user_organizations.findFirst({
+      where: { userId, organizationId: resolvedOrg.id },
+    });
+    if (!membership) {
+      return NextResponse.json({ error: "Not a member of this organization" }, { status: 403 });
+    }
+
+    // Fetch org with stripe customer ID using server-derived orgId
     const org = await prisma.org.findUnique({
-      where: { id: requestedOrgId },
+      where: { id: resolvedOrg.id },
       select: {
         id: true,
         stripeCustomerId: true,

@@ -13,12 +13,11 @@
  * ============================================================================
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import type { Org } from "@prisma/client";
 import { redirect } from "next/navigation";
 
-import { ensureDemoDataForOrg } from "@/lib/demoSeed";
 import prisma from "@/lib/prisma";
 
 export interface EnsuredOrg {
@@ -115,49 +114,34 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
 
     logger.debug("[ensureOrgForUser] No existing memberships - checking for orphaned orgs");
 
-    // 2. AUTO-HEAL: Look for existing org by clerkOrgId pattern (prevents duplicate org creation)
+    // 2. AUTO-HEAL: Look for existing org by EXACT clerkOrgId pattern (prevents duplicate org creation)
     let orgToUse: Org | null = null;
 
-    // Try to find org by clerkOrgId containing this userId (old pattern or new pattern)
+    // Try to find org by deterministic clerkOrgId patterns used in auto-creation
     orgToUse = await prisma.org.findFirst({
       where: {
         clerkOrgId: {
-          contains: userId,
-          mode: "insensitive",
+          in: [`org_${userId}`, `auto_${userId}`, userId],
         },
       },
       orderBy: { createdAt: "asc" }, // Prefer oldest org with data
     });
 
     if (orgToUse) {
-      logger.debug("[ensureOrgForUser] Found orphaned org by userId:", orgToUse.id);
+      logger.debug("[ensureOrgForUser] Found orphaned org by exact clerkOrgId:", orgToUse.id);
     }
 
-    // 3. If still no org, try email domain matching
-    if (!orgToUse && primaryEmail && primaryEmail.includes("@")) {
-      const domain = primaryEmail.split("@")[1];
-
-      orgToUse = await prisma.org.findFirst({
-        where: {
-          name: {
-            contains: domain,
-            mode: "insensitive",
-          },
-        },
-      });
-
-      if (orgToUse) {
-        logger.debug("[ensureOrgForUser] Found org by domain:", orgToUse.id);
-      }
-    }
+    // 3. Email domain matching REMOVED — security risk.
+    // Matching orgs by email domain in org name could assign users to the wrong org.
+    // Users must be explicitly invited via Clerk org invitations.
 
     // 4. LAST RESORT: Create new org (but with safeguard to prevent spam)
     if (!orgToUse) {
-      // FINAL CHECK: Look for ANY org with this exact clerkOrgId pattern to prevent duplication
+      // FINAL CHECK: Look for ANY org with exact clerkOrgId pattern to prevent duplication
       const duplicateCheck = await prisma.org.count({
         where: {
           clerkOrgId: {
-            contains: userId,
+            in: [`org_${userId}`, `auto_${userId}`, userId],
           },
         },
       });
@@ -170,7 +154,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
         orgToUse = await prisma.org.findFirst({
           where: {
             clerkOrgId: {
-              contains: userId,
+              in: [`org_${userId}`, `auto_${userId}`, userId],
             },
           },
           orderBy: { createdAt: "asc" },
@@ -206,7 +190,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
           aiModeDefault: "auto",
           aiCacheEnabled: true,
           aiDedupeEnabled: true,
-          demoMode: true,
+          demoMode: false,
           demoSeededAt: null,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -241,23 +225,8 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
 
     logger.debug("[ensureOrgForUser] Ensured membership:", newMembership.id);
 
-    if (orgCreated) {
-      try {
-        const seedResult = await ensureDemoDataForOrg({
-          orgId: orgToUse.id,
-          userId,
-        });
-        logger.debug("[ensureOrgForUser] Demo seed result:", seedResult.reason);
-        if (seedResult.seeded) {
-          await prisma.org.update({
-            where: { id: orgToUse.id },
-            data: { demoMode: true, demoSeededAt: new Date() },
-          });
-        }
-      } catch (seedError) {
-        console.error("[ensureOrgForUser] Demo seed failed:", seedError);
-      }
-    }
+    // Demo seeding REMOVED for enterprise readiness.
+    // New orgs start clean — no fake data injected.
 
     return {
       orgId: orgToUse.id,

@@ -1,10 +1,10 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import prisma from "@/lib/prisma";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
+import prisma from "@/lib/prisma";
 
 /**
  * POST /api/agents/claims-analysis
@@ -26,9 +26,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get org context (may be null)
+    // Get org context (REQUIRED for data isolation)
     const orgResult = await getActiveOrgContext();
-    const orgId = orgResult.ok ? orgResult.orgId : null;
+    if (!orgResult.ok) {
+      return NextResponse.json({ error: "Organization context required" }, { status: 403 });
+    }
+    const orgId = orgResult.orgId;
 
     // Parse and validate request body
     let body;
@@ -60,7 +63,7 @@ export async function POST(req: NextRequest) {
     const claim = await prisma.claims.findFirst({
       where: {
         id: claimId,
-        ...(orgId && { orgId }),
+        orgId,
       },
       select: {
         id: true,
@@ -86,7 +89,7 @@ export async function POST(req: NextRequest) {
     const artifacts = await prisma.ai_reports.findMany({
       where: {
         claimId,
-        ...(orgId && { orgId }),
+        orgId,
       },
       select: {
         id: true,

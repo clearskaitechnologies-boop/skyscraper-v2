@@ -7,8 +7,8 @@
  * Uses the Client model (not client_networks) for profile management.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -21,6 +21,10 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     }
 
     const { slug } = params;
+
+    // Get calling user's email for ownership verification
+    const user = await currentUser();
+    const callerEmail = user?.emailAddresses?.[0]?.emailAddress;
 
     // Find the client by slug (Client model has slug field)
     const client = await prisma.client.findUnique({
@@ -46,6 +50,11 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
 
     if (!client) {
       return NextResponse.json({ profile: null });
+    }
+
+    // Verify ownership: caller's email must match client's email
+    if (!callerEmail || client.email?.toLowerCase() !== callerEmail.toLowerCase()) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     return NextResponse.json({
@@ -100,11 +109,18 @@ export async function POST(request: NextRequest, { params }: { params: { slug: s
     // Find the client by slug
     const existingClient = await prisma.client.findUnique({
       where: { slug },
-      select: { id: true },
+      select: { id: true, email: true },
     });
 
     if (!existingClient) {
       return NextResponse.json({ error: "Client not found" }, { status: 404 });
+    }
+
+    // Verify ownership: caller's email must match client's email
+    const user = await currentUser();
+    const callerEmail = user?.emailAddresses?.[0]?.emailAddress;
+    if (!callerEmail || existingClient.email?.toLowerCase() !== callerEmail.toLowerCase()) {
+      return NextResponse.json({ error: "Access denied" }, { status: 403 });
     }
 
     // Update the client profile

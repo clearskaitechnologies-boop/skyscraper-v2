@@ -13,8 +13,8 @@
  * Use this when normal repair doesn't work.
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -52,7 +52,7 @@ export async function POST(): Promise<NextResponse> {
         id: newOrgId,
         clerkOrgId: effectiveClerkOrgId,
         name: `${userName}'s Organization`,
-        demoMode: true,
+        demoMode: false,
         updatedAt: new Date(),
       },
     });

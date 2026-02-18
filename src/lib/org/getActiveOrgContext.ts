@@ -9,10 +9,9 @@
  * - Creates BillingSettings if missing
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 
-import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
 
 export type OrgContextResult =
@@ -259,61 +258,6 @@ export async function getActiveOrgContext(
     }
 
     if (required) {
-      // BETA: if user has no org, bind them to the shared demo org (if configured).
-      // This prevents the "signed-in but no org" whiplash during demos.
-      if (isBetaMode()) {
-        const demoOrgId = process.env.DEMO_ORG_ID || process.env.BETA_DEMO_ORG_ID;
-        const demoClerkOrgId =
-          process.env.DEMO_ORG_CLERK_ORG_ID || process.env.BETA_DEMO_ORG_CLERK_ORG_ID;
-
-        if (demoOrgId || demoClerkOrgId) {
-          const demoOrg = await prisma.org.findUnique({
-            where: demoOrgId ? { id: demoOrgId } : { clerkOrgId: demoClerkOrgId! },
-          });
-
-          if (demoOrg) {
-            const demoMembership = await prisma.user_organizations.upsert({
-              where: {
-                userId_organizationId: {
-                  userId,
-                  organizationId: demoOrg.id,
-                },
-              },
-              create: {
-                userId,
-                organizationId: demoOrg.id,
-                role: "member",
-              },
-              update: {},
-            });
-
-            console.log("[getActiveOrgContext] Beta demo org bound:", {
-              userId,
-              demoOrgId: demoOrg.id,
-              demoClerkOrgId: demoOrg.clerkOrgId,
-            });
-            console.log("[ORG RESOLUTION]", {
-              userId,
-              clerkOrgId: null,
-              resolvedOrgId: demoOrg.id,
-              mode: "beta-demo-bind",
-            });
-
-            // Ensure workspace primitives exist
-            await ensureOrgPrimitives(demoOrg.id, userId);
-
-            return {
-              ok: true,
-              userId,
-              orgId: demoOrg.id,
-              clerkOrgId: demoOrg.clerkOrgId,
-              role: demoMembership.role ?? "member",
-              membership: demoMembership,
-            };
-          }
-        }
-      }
-
       // Auto-create personal org for user (DETERMINISTIC key prevents duplicates)
       logger.debug("[getActiveOrgContext] Required mode, creating personal org for user:", userId);
 
@@ -326,7 +270,7 @@ export async function getActiveOrgContext(
           id: crypto.randomUUID(),
           name: "My Organization",
           clerkOrgId: fallbackClerkOrgId,
-          demoMode: true, // New personal orgs start in demo mode
+          demoMode: false, // Orgs start in production mode
           updatedAt: new Date(),
         },
       });

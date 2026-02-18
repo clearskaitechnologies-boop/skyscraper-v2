@@ -1,17 +1,18 @@
 # 🎯 TITAN READINESS — MASTER TODO
+
 > Last updated: February 17, 2026 | Build: ✅ PASSING | Deployed: ✅ skaiscrape.com
 
 ---
 
 ## WHERE YOU ACTUALLY STAND RIGHT NOW (HONEST AUDIT)
 
-| Criterion | Status | Evidence |
-|---|---|---|
-| **Handles 720 concurrent users** | 🟡 BUILT, NOT RUN | k6 suite exists (smoke/soak/spike/stress). Soak targets 200 VU. **Tests have never been executed against prod.** |
-| **Sub-300ms latency** | 🟡 CLAIMED, NOT MEASURED | SLO doc says p95 < 400ms. No real baseline measurement exists. Uptime shown as hardcoded "99.9%". |
-| **Zero cross-tenant leakage** | 🟢 TESTED | `cross-org-isolation.test.ts` (605 lines) + `auth-hardening.test.ts` (396 lines). org-scoped queries enforced server-side. |
-| **Survives 30 days of live AZ roofers** | 🔴 NOT STARTED | No external beta users. No field test. No chaos conditions validated. |
-| **Passes a pen test** | 🔴 NOT DONE | Security docs exist. Internal audit done. External pen test = 0/10 in own readiness score. |
+| Criterion                               | Status                   | Evidence                                                                                                                   |
+| --------------------------------------- | ------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| **Handles 720 concurrent users**        | 🟡 BUILT, NOT RUN        | k6 suite exists (smoke/soak/spike/stress). Soak targets 200 VU. **Tests have never been executed against prod.**           |
+| **Sub-300ms latency**                   | 🟡 CLAIMED, NOT MEASURED | SLO doc says p95 < 400ms. No real baseline measurement exists. Uptime shown as hardcoded "99.9%".                          |
+| **Zero cross-tenant leakage**           | 🟢 TESTED                | `cross-org-isolation.test.ts` (605 lines) + `auth-hardening.test.ts` (396 lines). org-scoped queries enforced server-side. |
+| **Survives 30 days of live AZ roofers** | 🔴 NOT STARTED           | No external beta users. No field test. No chaos conditions validated.                                                      |
+| **Passes a pen test**                   | 🔴 NOT DONE              | Security docs exist. Internal audit done. External pen test = 0/10 in own readiness score.                                 |
 
 **Composite: ~62% truly ready. The code is strong. The proof is missing.**
 
@@ -20,6 +21,7 @@
 ## 🔴 CRITICAL — BLOCKERS (Do these first, in order)
 
 ### C-1: Run the k6 load tests for real — TODAY
+
 > You have a full k6 suite. It has never been run against production. This is the most important missing data point.
 
 - [ ] `brew install k6` (if not installed)
@@ -35,6 +37,7 @@
 ---
 
 ### C-2: Get a real latency baseline from production
+
 > Right now "99.9% uptime" is a hardcoded string in the UI. That's a lie you'll get caught on.
 
 - [ ] Wire BetterStack (free tier) to `/api/health/live` → real uptime percentage
@@ -46,6 +49,7 @@
 ---
 
 ### C-3: Migrate top write routes to `withAuth` — INCOMPLETE
+
 > TITAN_10DAY_WARPLAN.md says 338 routes use raw `auth()`. Only 56/659 are canonical. This is the real breach risk.
 
 - [ ] Audit: `grep -r "auth()" src/app/api --include="*.ts" | grep -v withAuth | wc -l` → get actual count
@@ -63,6 +67,7 @@
 ---
 
 ### C-4: Verify DATABASE_URL has pgbouncer params in Vercel prod
+
 > Without this, you'll hit Prisma pool exhaustion at ~50 concurrent users.
 
 - [ ] Log in to Vercel dashboard → Settings → Environment Variables
@@ -73,6 +78,7 @@
 ---
 
 ### C-5: Fix health endpoint HTTP status codes
+
 > `TITAN_10DAY_WARPLAN.md` documents this: `/api/health/live` returns 200 even when degraded.
 > External monitors need real 503 on degraded.
 
@@ -86,6 +92,7 @@
 ## 🟡 HIGH PRIORITY — Run These Within 7 Days
 
 ### H-1: Field chaos test (most important for roofing)
+
 > No amount of load testing replaces a roofer on a rooftop with bad signal.
 
 - [ ] Give 3 field reps the app on iPhone + Android
@@ -97,6 +104,7 @@
 ---
 
 ### H-2: Multi-tenant proof test (two orgs simultaneously)
+
 > The tests cover this in code. You need a live demo you can show.
 
 - [ ] Create 2 separate orgs in production (Org A: "Titan Test", Org B: "ClearSkai Internal")
@@ -109,6 +117,7 @@
 ---
 
 ### H-3: Bulk team CSV import — test it end-to-end
+
 > `scripts/enterprise-data-import.ts` exists (746 lines). Has it been run?
 
 - [ ] Run dry-run with a test CSV of 20 users: `npx tsx scripts/enterprise-data-import.ts --org [testOrgId] --dry-run`
@@ -120,6 +129,7 @@
 ---
 
 ### H-4: Role permission boundary verification
+
 > TITAN_10DAY_WARPLAN.md lists this as non-negotiable. Status: unclear.
 
 - [ ] Log in as `sales_rep` role → confirm cannot access `/analytics`, `/billing`, `/finance`
@@ -131,6 +141,7 @@
 ---
 
 ### H-5: 30-day Arizona beta program — START RECRUITING NOW
+
 > This takes 30 days. Every day you wait is a day you won't have the data before Titan.
 
 - [ ] Identify 3–5 Phoenix/Scottsdale/Mesa mid-size roofing companies
@@ -145,6 +156,7 @@
 ## 🟠 MEDIUM PRIORITY — Within 14 Days
 
 ### M-1: External penetration test — get it scheduled NOW
+
 > "Internal security audit completed" is not a pen test. Titan IT will ask for the report.
 
 - [ ] Option A (fast, affordable): Cobalt.io or Synack on-demand pen test → $3–8K, 2-week turnaround
@@ -157,6 +169,7 @@
 ---
 
 ### M-2: SOC 2 — Start the process, set an honest timeline
+
 > Current score: 0/10. You cannot get SOC 2 in 2 weeks. But you can start.
 
 - [ ] Sign up for Vanta or Drata (automated SOC 2 readiness platform, ~$800/mo)
@@ -168,6 +181,7 @@
 ---
 
 ### M-3: Financial model stress test — worst-case scenarios
+
 > Your margin claims need to survive real math under pressure.
 
 - [ ] Model: 60 of 180 Titan users churn at day 90 → revenue impact
@@ -179,6 +193,7 @@
 ---
 
 ### M-4: SSO (SAML/OIDC) — Verify Clerk enterprise config works
+
 > Titan IT will ask about SSO on day 1. Clerk supports it but it needs to be configured and tested.
 
 - [ ] Verify Clerk organization has Enterprise plan or SSO add-on enabled
@@ -190,6 +205,7 @@
 ---
 
 ### M-5: AccuLynx vs SkaiScraper parallel comparison
+
 > If a Titan rep can run both tools and yours wins — you're done. This is the close.
 
 - [ ] Find 1–2 willing Titan contacts willing to run parallel for 30 days
@@ -203,13 +219,13 @@
 
 Do NOT onboard 180 people on day 1. This is the plan:
 
-| Phase | Users | Duration | Success Gate Before Next Phase |
-|---|---|---|---|
-| **Phase 0** | 3–5 field reps (internal/beta) | 2 weeks | 0 crashes, p95 < 500ms, field tasks complete |
-| **Phase 1** | 10 Titan power users | 2 weeks | NPS > 40, < 1% error rate, 0 data issues |
-| **Phase 2** | 25 Titan users (1 department) | 2 weeks | p95 < 300ms at load, 0 cross-tenant issues |
-| **Phase 3** | 60 Titan users (half org) | 4 weeks | SLA maintained, support load manageable |
-| **Phase 4** | 180 full Titan org | Ongoing | Full monitoring, dedicated support channel |
+| Phase       | Users                          | Duration | Success Gate Before Next Phase               |
+| ----------- | ------------------------------ | -------- | -------------------------------------------- |
+| **Phase 0** | 3–5 field reps (internal/beta) | 2 weeks  | 0 crashes, p95 < 500ms, field tasks complete |
+| **Phase 1** | 10 Titan power users           | 2 weeks  | NPS > 40, < 1% error rate, 0 data issues     |
+| **Phase 2** | 25 Titan users (1 department)  | 2 weeks  | p95 < 300ms at load, 0 cross-tenant issues   |
+| **Phase 3** | 60 Titan users (half org)      | 4 weeks  | SLA maintained, support load manageable      |
+| **Phase 4** | 180 full Titan org             | Ongoing  | Full monitoring, dedicated support channel   |
 
 Each phase needs a signed-off checkpoint before proceeding. Do not skip.
 
@@ -217,16 +233,16 @@ Each phase needs a signed-off checkpoint before proceeding. Do not skip.
 
 ## 📊 WHAT TO SAY AT THE TITAN MEETING (ONLY SAY WHAT'S TRUE)
 
-| Claim | Say It If | Don't Say It If |
-|---|---|---|
-| "We've load-tested at 200 concurrent users" | k6 soak test passed | Tests haven't been run yet |
-| "p95 under 300ms" | Sentry/Vercel data confirms it | It's just the SLO target |
-| "Zero cross-tenant data leakage" | ✅ Say it — tests prove it | — |
-| "SOC 2 certified" | ❌ Never — you don't have it | — |
-| "SOC 2 in progress, Q3 2026" | Vanta is running | You haven't started |
-| "Pen tested" | You have a signed report | "Internal audit" is not a pen test |
-| "99.9% uptime" | BetterStack shows it | It's hardcoded in the UI |
-| "Handles 720 concurrent users" | Stress test confirmed it | It's just a math projection |
+| Claim                                       | Say It If                      | Don't Say It If                    |
+| ------------------------------------------- | ------------------------------ | ---------------------------------- |
+| "We've load-tested at 200 concurrent users" | k6 soak test passed            | Tests haven't been run yet         |
+| "p95 under 300ms"                           | Sentry/Vercel data confirms it | It's just the SLO target           |
+| "Zero cross-tenant data leakage"            | ✅ Say it — tests prove it     | —                                  |
+| "SOC 2 certified"                           | ❌ Never — you don't have it   | —                                  |
+| "SOC 2 in progress, Q3 2026"                | Vanta is running               | You haven't started                |
+| "Pen tested"                                | You have a signed report       | "Internal audit" is not a pen test |
+| "99.9% uptime"                              | BetterStack shows it           | It's hardcoded in the UI           |
+| "Handles 720 concurrent users"              | Stress test confirmed it       | It's just a math projection        |
 
 ---
 

@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getCustomerInvoices, getCustomerPaymentMethods } from "@/lib/billing/portal";
@@ -17,16 +17,33 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const searchParams = request.nextUrl.searchParams;
-    const requestedOrgId = searchParams.get("orgId") || orgId;
-
-    if (!requestedOrgId) {
-      return NextResponse.json({ error: "Organization ID required" }, { status: 400 });
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization context required" }, { status: 403 });
     }
 
-    // Fetch Org with billing info
+    // Resolve org from Clerk orgId — NEVER accept client-supplied orgId
+    const resolvedOrg = await prisma.org.findUnique({
+      where: { clerkOrgId: orgId },
+      select: { id: true },
+    });
+
+    if (!resolvedOrg) {
+      return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+    }
+
+    // Verify user membership
+    const membership = await prisma.user_organizations.findFirst({
+      where: { userId, organizationId: resolvedOrg.id },
+    });
+    if (!membership) {
+      return NextResponse.json({ error: "Not a member of this organization" }, { status: 403 });
+    }
+
+    const serverOrgId = resolvedOrg.id;
+
+    // Fetch Org with billing info using server-derived orgId
     const Org = await prisma.org.findUnique({
-      where: { id: requestedOrgId },
+      where: { id: serverOrgId },
       select: {
         id: true,
         name: true,

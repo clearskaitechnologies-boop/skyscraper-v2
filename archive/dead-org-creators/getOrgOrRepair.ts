@@ -16,8 +16,8 @@
  * 3. Call this at the TOP of every protected page
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import prisma from "@/lib/prisma";
@@ -161,7 +161,7 @@ async function repairOrgInline(
         id: newOrgId,
         clerkOrgId: effectiveClerkOrgId,
         name: "My Organization",
-        demoMode: true, // New orgs start in demo mode
+        demoMode: false, // Enterprise orgs start in production mode
         updatedAt: new Date(),
       },
       select: { id: true, name: true, clerkOrgId: true, demoMode: true },

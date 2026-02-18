@@ -7,8 +7,8 @@
  * UPDATED: Now uses ClientJob model with fallback to claims for backwards compatibility
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getClientFromAuth } from "@/lib/portal/getClientFromAuth";
@@ -401,6 +401,18 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Job ID is required" }, { status: 400 });
     }
 
+    // Verify the client has access to this claim via claimClientLink
+    const hasAccess = await prisma.claimClientLink.findFirst({
+      where: {
+        claimId: jobId,
+        clientId: client.id,
+      },
+    });
+
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Access denied to this job" }, { status: 403 });
+    }
+
     // Update the claim/job in database
     const job = await prisma.claims.update({
       where: {
@@ -472,6 +484,18 @@ export async function DELETE(req: NextRequest) {
 
     if (!jobId) {
       return NextResponse.json({ error: "Job ID is required" }, { status: 400 });
+    }
+
+    // Verify the client has access to this claim via claimClientLink
+    const hasAccess = await prisma.claimClientLink.findFirst({
+      where: {
+        claimId: jobId,
+        clientId: client.id,
+      },
+    });
+
+    if (!hasAccess) {
+      return NextResponse.json({ error: "Access denied to this job" }, { status: 403 });
     }
 
     // Soft delete by changing status to CLOSED
