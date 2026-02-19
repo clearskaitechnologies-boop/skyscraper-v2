@@ -16,6 +16,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 function RemoteSigningContent() {
   const params = useParams();
@@ -70,7 +71,7 @@ function RemoteSigningContent() {
       }
     } catch (err) {
       setError("Failed to load document");
-      console.error(err);
+      logger.error("Failed to load envelope", err);
     } finally {
       setLoading(false);
     }
@@ -127,7 +128,7 @@ function RemoteSigningContent() {
         alert(data.message || "Failed to save signature");
       }
     } catch (err) {
-      console.error("Signature save error:", err);
+      logger.error("Signature save error:", err);
       alert("Failed to save signature");
     }
   }

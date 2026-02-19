@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 // Types
 interface Project {
@@ -158,7 +159,7 @@ export default function BidOpportunitiesPage() {
 
       setProjects(uniqueProjects);
     } catch (error) {
-      console.error("Failed to fetch projects:", error);
+      logger.error("Failed to fetch projects:", error);
       toast.error("Failed to load opportunities");
     } finally {
       setLoading(false);
@@ -211,7 +212,7 @@ export default function BidOpportunitiesPage() {
         toast.error(err.error || "Failed to submit bid");
       }
     } catch (error) {
-      console.error("Bid submission error:", error);
+      logger.error("Bid submission error:", error);
       toast.error("Failed to submit bid");
     } finally {
       setSubmitting(false);

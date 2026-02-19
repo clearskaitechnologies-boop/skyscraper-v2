@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface CoverSheetData {
   propertyAddress: string;
@@ -44,7 +45,7 @@ export default function CoverSheetPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch cover sheet:", err);
+      logger.error("Failed to fetch cover sheet:", err);
     } finally {
       setLoading(false);
     }
@@ -64,7 +65,7 @@ export default function CoverSheetPage() {
         body: JSON.stringify({ claimId, data }),
       });
     } catch (err) {
-      console.error("Failed to save:", err);
+      logger.error("Failed to save:", err);
     } finally {
       setSaving(false);
     }

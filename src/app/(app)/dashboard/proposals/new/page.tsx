@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import type { PacketType, ProposalBuildResponse, TonePreset } from "@/lib/proposals/types";
 
 export default function NewProposalPage() {
@@ -423,7 +424,7 @@ export default function NewProposalPage() {
                       ai: { ...draft.ai, summary: e.target.value },
                     });
                     // Track analytics: proposal.section.regenerated
-                    console.log("[Analytics] proposal.section.regenerated", {
+                    logger.info("[Analytics] proposal.section.regenerated", {
                       draftId: draft.draftId,
                       section: "summary",
                       lengthBefore: draft.ai.summary.length,
@@ -524,7 +525,7 @@ export default function NewProposalPage() {
                     rel="noopener noreferrer"
                     onClick={() => {
                       // Track analytics: proposal.pdf.downloaded
-                      console.log("[Analytics] proposal.pdf.downloaded", {
+                      logger.info("[Analytics] proposal.pdf.downloaded", {
                         draftId: draft.draftId,
                         pdfUrl,
                       });

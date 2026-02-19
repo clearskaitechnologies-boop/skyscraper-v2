@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { logger } from "@/lib/logger";
 import type { ExportProject } from "./actions";
 import { generateBulkCarrierExport, generateCarrierExport } from "./actions";
 
@@ -36,7 +37,7 @@ export default function CarrierExportClient({ projects }: { projects: ExportProj
         alert(result.message || "Export failed");
       }
     } catch (error) {
-      console.error("Export error:", error);
+      logger.error("Export error:", error);
       alert("Failed to generate export");
     } finally {
       setExporting(null);
@@ -62,7 +63,7 @@ export default function CarrierExportClient({ projects }: { projects: ExportProj
         alert(result.message || "Bulk export failed");
       }
     } catch (error) {
-      console.error("Bulk export error:", error);
+      logger.error("Bulk export error:", error);
       alert("Failed to generate bulk export");
     } finally {
       setBulkExporting(false);

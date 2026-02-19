@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface InspectionData {
   inspectionDate: string;
@@ -53,7 +54,7 @@ export default function InspectionOverviewPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch inspection data:", err);
+      logger.error("Failed to fetch inspection data:", err);
     } finally {
       setLoading(false);
     }
@@ -73,7 +74,7 @@ export default function InspectionOverviewPage() {
         body: JSON.stringify({ claimId, data }),
       });
     } catch (err) {
-      console.error("Failed to save:", err);
+      logger.error("Failed to save:", err);
     } finally {
       setSaving(false);
     }

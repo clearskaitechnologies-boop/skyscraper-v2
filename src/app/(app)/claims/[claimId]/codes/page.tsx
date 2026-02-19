@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface CodeItem {
   code: string;
@@ -169,7 +170,7 @@ export default function CodesPage() {
           setClaim(data.claim);
         }
       } catch (err) {
-        console.error("Failed to fetch claim:", err);
+        logger.error("Failed to fetch claim:", err);
       } finally {
         setLoading(false);
       }
@@ -206,7 +207,7 @@ export default function CodesPage() {
         setCodes(data);
       }
     } catch (err) {
-      console.error("Code analysis failed:", err);
+      logger.error("Code analysis failed:", err);
       // Fall back to demo codes on error
       setCodes(DEMO_CODES);
     } finally {

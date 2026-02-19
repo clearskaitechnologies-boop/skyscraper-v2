@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 type QuickDolCandidate = {
   date: string;
@@ -98,7 +99,7 @@ export default function ClaimWeatherPage({ params }: Props) {
         setSelectedDol(sorted[0].date);
       }
     } catch (err: any) {
-      console.error("Quick DOL error:", err);
+      logger.error("Quick DOL error:", err);
       setError(err.message || "Failed to run Quick DOL.");
     } finally {
       setIsQuickDolRunning(false);
@@ -136,7 +137,7 @@ export default function ClaimWeatherPage({ params }: Props) {
       const data = (await res.json()) as WeatherReportApiResponse;
       setReportResult(data);
     } catch (err: any) {
-      console.error("Weather report error:", err);
+      logger.error("Weather report error:", err);
       setError(err.message || "Failed to generate weather report.");
     } finally {
       setIsReportRunning(false);

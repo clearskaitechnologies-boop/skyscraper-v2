@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 export default function EditLeadPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -68,7 +69,7 @@ export default function EditLeadPage({ params }: { params: { id: string } }) {
           temperature: lead.temperature || "",
         });
       } catch (error) {
-        console.error("Error fetching lead:", error);
+        logger.error("Error fetching lead:", error);
         toast.error("Failed to load lead data");
       } finally {
         setIsFetching(false);
@@ -111,7 +112,7 @@ export default function EditLeadPage({ params }: { params: { id: string } }) {
       toast.success("Lead updated successfully! 🎉");
       router.push(`/leads/${params.id}`);
     } catch (error) {
-      console.error("Error updating lead:", error);
+      logger.error("Error updating lead:", error);
       toast.error(error instanceof Error ? error.message : "Failed to update lead");
     } finally {
       setIsLoading(false);

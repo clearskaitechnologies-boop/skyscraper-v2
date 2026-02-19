@@ -1,6 +1,7 @@
 import ClaimsPipeline from "@/components/claims/ClaimsPipeline";
 import { Button } from "@/components/ui/button";
 import { getTenant } from "@/lib/auth/tenant";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { ArrowLeftIcon, LayoutGrid, List, Plus, Settings } from "lucide-react";
@@ -64,9 +65,9 @@ async function getClaimsForPipeline(orgId: string) {
   } catch (err: unknown) {
     const prismaErr = err as { code?: string };
     if (prismaErr?.code === "P2022") {
-      console.warn("[ClaimsTracker] Missing column – pipeline empty");
+      logger.warn("[ClaimsTracker] Missing column – pipeline empty");
     } else {
-      console.warn("[ClaimsTracker] Unexpected claims query error", err);
+      logger.warn("[ClaimsTracker] Unexpected claims query error", err);
     }
     claims = [];
   }

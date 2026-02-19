@@ -5,6 +5,7 @@ import { Loader2, MessageCircle, Send } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { logger } from "@/lib/logger";
 import { inputBase, textareaBase } from "@/lib/ui/inputStyles";
 
 import SectionCard from "../_components/SectionCard";
@@ -47,7 +48,7 @@ export default function MessagesPage() {
         setThreads(data.threads);
       }
     } catch (error) {
-      console.error("Failed to fetch messages:", error);
+      logger.error("Failed to fetch messages:", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +76,7 @@ export default function MessagesPage() {
         messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
       }
     } catch (error) {
-      console.error("Send error:", error);
+      logger.error("Send error:", error);
       alert("Failed to send message");
     } finally {
       setSending(false);

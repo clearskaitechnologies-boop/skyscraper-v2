@@ -1,10 +1,11 @@
 "use client";
 
-import { Mail, MapPin, Navigation, Phone } from "lucide-react";
+import { MapPin, Navigation } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { logger } from "@/lib/logger";
 import type { PropertyLocation } from "./actions";
 
 export default function CompanyMapClient({ locations }: { locations: PropertyLocation[] }) {
@@ -20,7 +21,7 @@ export default function CompanyMapClient({ locations }: { locations: PropertyLoc
     const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || null;
 
     if (!token) {
-      console.warn("Mapbox token not configured");
+      logger.warn("Mapbox token not configured");
       setMapReady(true);
       return;
     }
@@ -47,7 +48,7 @@ export default function CompanyMapClient({ locations }: { locations: PropertyLoc
         script.onload = () => initializeMap(token);
         document.head.appendChild(script);
       } catch (error) {
-        console.error("Failed to load Mapbox:", error);
+        logger.error("Failed to load Mapbox:", error);
         setMapReady(true);
       }
     };

@@ -7,6 +7,7 @@ import ClientDocumentSharing from "@/components/claims/ClientDocumentSharing";
 import { Button } from "@/components/ui/button";
 import { DocumentUpload } from "@/components/uploads";
 import { clientFetch } from "@/lib/http/clientFetch";
+import { logger } from "@/lib/logger";
 /**
  * /claims/[claimId]/documents - Documents tab for specific claim
  * Lists all claim_documents records (depreciation, supplement, certificate PDFs)
@@ -51,7 +52,7 @@ export default function ClaimDocumentsPage() {
       setDocuments(data.documents || []);
       setError(""); // Clear any previous errors
     } catch (err: any) {
-      console.error("[CLAIMS_DOCS] Fetch error:", {
+      logger.error("[CLAIMS_DOCS] Fetch error:", {
         status: err.status,
         message: err.message,
         claimId: params.claimId,
@@ -124,7 +125,7 @@ export default function ClaimDocumentsPage() {
       // Refresh documents list
       await fetchDocuments();
     } catch (err) {
-      console.error("Toggle share failed:", err);
+      logger.error("Toggle share failed:", err);
       alert("Failed to update document sharing. Please try again.");
     }
   };

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface ContractorSummaryData {
   companyName: string;
@@ -46,7 +47,7 @@ export default function ContractorSummaryPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch contractor summary:", err);
+      logger.error("Failed to fetch contractor summary:", err);
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ export default function ContractorSummaryPage() {
         body: JSON.stringify({ claimId, data }),
       });
     } catch (err) {
-      console.error("Failed to save:", err);
+      logger.error("Failed to save:", err);
     } finally {
       setSaving(false);
     }

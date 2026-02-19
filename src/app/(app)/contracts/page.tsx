@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 
@@ -39,7 +40,7 @@ export default async function ContractsPage() {
       },
     });
   } catch (e) {
-    console.error("[Contracts] Error fetching claims:", e);
+    logger.error("[Contracts] Error fetching claims:", e);
   }
 
   try {
@@ -59,7 +60,7 @@ export default async function ContractsPage() {
         j.jobType === "out_of_pocket" || j.jobType === "retail" || j.jobType === "financed"
     );
   } catch (e) {
-    console.error("[Contracts] Error fetching jobs:", e);
+    logger.error("[Contracts] Error fetching jobs:", e);
   }
 
   // ── Compute real stats ────────────────────────────────────────────

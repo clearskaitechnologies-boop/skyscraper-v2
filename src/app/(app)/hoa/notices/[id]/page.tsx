@@ -9,6 +9,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface NoticePack {
   id: string;
@@ -52,7 +53,7 @@ export default function HoaNoticeDetailPage() {
         setNotice(data);
       }
     } catch (error) {
-      console.error("Error fetching notice:", error);
+      logger.error("Error fetching notice:", error);
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ export default function HoaNoticeDetailPage() {
       });
       fetchNotice();
     } catch (error) {
-      console.error("Error sending notice:", error);
+      logger.error("Error sending notice:", error);
     } finally {
       setSending(false);
     }

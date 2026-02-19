@@ -21,6 +21,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface Material {
   id: string;
@@ -146,7 +147,7 @@ export default function RetailBuilderClient({
       toast.success("Draft saved successfully!");
       router.push(`/retail-jobs/${retailJob.id}`);
     } catch (error) {
-      console.error("Error saving draft:", error);
+      logger.error("Error saving draft:", error);
       toast.error("Failed to save draft");
     } finally {
       setIsLoading(false);
@@ -187,7 +188,7 @@ export default function RetailBuilderClient({
       toast.success("🎉 Retail job created! Generating proposal...");
       router.push(`/retail-jobs/${retailJob.id}?generateProposal=true`);
     } catch (error) {
-      console.error("Error creating retail job:", error);
+      logger.error("Error creating retail job:", error);
       toast.error("Failed to create retail job");
     } finally {
       setIsLoading(false);

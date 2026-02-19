@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface ElevationDamage {
   direction: "north" | "east" | "south" | "west";
@@ -99,7 +100,7 @@ export default function DamageGridsPage() {
         );
       }
     } catch (err) {
-      console.error("Failed to fetch damage grid data:", err);
+      logger.error("Failed to fetch damage grid data:", err);
     } finally {
       setLoading(false);
     }
@@ -119,7 +120,7 @@ export default function DamageGridsPage() {
         body: JSON.stringify({ claimId, data }),
       });
     } catch (err) {
-      console.error("Failed to save:", err);
+      logger.error("Failed to save:", err);
     } finally {
       setSaving(false);
     }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface ClaimDetailsSectionProps {
   claimId: string;
@@ -68,12 +69,12 @@ export default function ClaimDetailsSection({ claimId, initialData }: ClaimDetai
       }
 
       const result = await res.json();
-      console.log("✅ Claim updated:", result);
+      logger.info("✅ Claim updated:", result);
 
       setIsEditing(false);
       router.refresh(); // Refresh server component data
     } catch (error) {
-      console.error("❌ Error updating claim:", error);
+      logger.error("❌ Error updating claim:", error);
       alert(error instanceof Error ? error.message : "Failed to update claim. Please try again.");
     } finally {
       setIsSaving(false);

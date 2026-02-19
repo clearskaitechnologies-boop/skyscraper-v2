@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface HomeownerStatementData {
   statementText: string;
@@ -44,7 +45,7 @@ export default function HomeownerStatementPage() {
         );
       }
     } catch (err) {
-      console.error("Failed to fetch homeowner statement:", err);
+      logger.error("Failed to fetch homeowner statement:", err);
     } finally {
       setLoading(false);
     }
@@ -64,7 +65,7 @@ export default function HomeownerStatementPage() {
         body: JSON.stringify({ claimId, data }),
       });
     } catch (err) {
-      console.error("Failed to save:", err);
+      logger.error("Failed to save:", err);
     } finally {
       setSaving(false);
     }

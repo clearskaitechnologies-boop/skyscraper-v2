@@ -3,8 +3,8 @@
  * Receives events from trades microservice to sync with Core CRM
  */
 
-import { headers } from "next/headers";
 import { logger } from "@/lib/logger";
+import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";

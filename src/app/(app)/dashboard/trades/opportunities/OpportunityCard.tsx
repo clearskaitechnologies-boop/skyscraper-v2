@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import GlassPanel from "@/components/trades/GlassPanel";
+import { logger } from "@/lib/logger";
 
 interface JobOpportunity {
   id: string;
@@ -41,7 +42,7 @@ export default function OpportunityCard() {
         throw new Error(data.error || "Failed to load opportunities");
       }
     } catch (error: any) {
-      console.error("Failed to load opportunities:", error);
+      logger.error("Failed to load opportunities:", error);
       toast.error(error.message || "Failed to load job opportunities");
     } finally {
       setLoading(false);
@@ -66,7 +67,7 @@ export default function OpportunityCard() {
       // Remove job from list
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
     } catch (error: any) {
-      console.error("Connection request failed:", error);
+      logger.error("Connection request failed:", error);
       toast.error(error.message || "Failed to send connection request");
     }
   }
@@ -75,7 +76,9 @@ export default function OpportunityCard() {
     return (
       <GlassPanel className="p-8">
         <div className="flex items-center justify-center">
-          <div className="text-sm text-slate-600 dark:text-slate-400 dark:text-slate-600">Loading opportunities...</div>
+          <div className="text-sm text-slate-600 dark:text-slate-400 dark:text-slate-600">
+            Loading opportunities...
+          </div>
         </div>
       </GlassPanel>
     );

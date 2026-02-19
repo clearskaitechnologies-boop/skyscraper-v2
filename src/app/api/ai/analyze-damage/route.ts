@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";

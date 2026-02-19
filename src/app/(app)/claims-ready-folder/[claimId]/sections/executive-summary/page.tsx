@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 export default function ExecutiveSummaryPage() {
   const params = useParams();
@@ -29,7 +30,7 @@ export default function ExecutiveSummaryPage() {
         setSummary(json.summary || "");
       }
     } catch (err) {
-      console.error("Failed to fetch summary:", err);
+      logger.error("Failed to fetch summary:", err);
     } finally {
       setLoading(false);
     }
@@ -53,7 +54,7 @@ export default function ExecutiveSummaryPage() {
         setSummary(json.summary || "");
       }
     } catch (err) {
-      console.error("Failed to generate summary:", err);
+      logger.error("Failed to generate summary:", err);
     } finally {
       setGenerating(false);
     }

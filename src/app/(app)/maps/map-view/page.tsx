@@ -5,6 +5,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import EmptyState from "@/components/ui/EmptyState";
 import { getMapboxToken } from "@/lib/debug/mapboxDebug";
+import { logger } from "@/lib/logger";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import { getOrgLocation } from "@/lib/org/getOrgLocation";
 import prisma from "@/lib/prisma";
@@ -78,7 +79,7 @@ async function getClaimsWithLocations(orgId: string): Promise<MapMarker[]> {
       })
       .filter(Boolean) as MapMarker[];
   } catch (error) {
-    console.error("[MapView] Failed to load claim locations:", error);
+    logger.error("[MapView] Failed to load claim locations:", error);
     return [];
   }
 }
@@ -120,7 +121,7 @@ async function getVendorsWithLocations(): Promise<MapMarker[]> {
       })
       .filter(Boolean) as MapMarker[];
   } catch (error) {
-    console.error("[MapView] Failed to load vendor locations:", error);
+    logger.error("[MapView] Failed to load vendor locations:", error);
     return []; // Return empty array on error
   }
 }

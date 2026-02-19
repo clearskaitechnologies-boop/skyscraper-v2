@@ -46,6 +46,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface WorkRequest {
   id: string;
@@ -87,7 +88,7 @@ export default function ClientLeadsPage() {
         setWorkRequests(data.workRequests);
       }
     } catch (error) {
-      console.error("Failed to fetch work requests:", error);
+      logger.error("Failed to fetch work requests:", error);
       toast.error("Failed to load client leads");
     } finally {
       setLoading(false);
@@ -136,7 +137,7 @@ export default function ClientLeadsPage() {
         toast.error(data.error || "Failed to convert lead");
       }
     } catch (error) {
-      console.error("Convert lead error:", error);
+      logger.error("Convert lead error:", error);
       toast.error("Failed to convert lead");
     } finally {
       setConverting(false);

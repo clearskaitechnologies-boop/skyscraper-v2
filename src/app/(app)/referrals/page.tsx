@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/ui/MetricCard";
+import { logger } from "@/lib/logger";
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 
@@ -41,7 +42,7 @@ export default async function ReferralProgramPage() {
       },
     });
   } catch (e) {
-    console.error("[Referrals] Error fetching referral leads:", e);
+    logger.error("[Referrals] Error fetching referral leads:", e);
   }
 
   // ── Real data: client connections (referrals from client portal) ──
@@ -65,7 +66,7 @@ export default async function ReferralProgramPage() {
       },
     });
   } catch (e) {
-    console.error("[Referrals] Error fetching client connections:", e);
+    logger.error("[Referrals] Error fetching client connections:", e);
   }
 
   // ── Compute stats ────────────────────────────────────────────────

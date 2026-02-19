@@ -10,6 +10,7 @@ import { toast } from "sonner";
 
 import { AttachToClaimDialog } from "@/components/trades/AttachToClaimDialog";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface AcceptDeclineButtonsProps {
   requestId: string;
@@ -47,7 +48,7 @@ export default function AcceptDeclineButtons({
       // Show attach to claim dialog after successful accept
       setShowAttachDialog(true);
     } catch (error: any) {
-      console.error("Accept failed:", error);
+      logger.error("Accept failed:", error);
       toast.error(error.message || "Failed to accept request");
       setAccepting(false);
     }
@@ -84,7 +85,7 @@ export default function AcceptDeclineButtons({
       toast.success("Request declined");
       onResolved?.();
     } catch (error: any) {
-      console.error("Decline failed:", error);
+      logger.error("Decline failed:", error);
       toast.error(error.message || "Failed to decline request");
     } finally {
       setDeclining(false);

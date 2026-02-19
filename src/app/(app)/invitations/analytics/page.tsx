@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 interface InvitationStats {
   period: string;
@@ -77,7 +78,7 @@ export default function InvitationAnalytics() {
       setStats(data.stats || []);
       setTimeline(data.timeline || []);
     } catch (error) {
-      console.error("Error loading analytics:", error);
+      logger.error("Error loading analytics:", error);
       toast.error("Failed to load analytics");
     } finally {
       setLoading(false);
@@ -101,7 +102,7 @@ export default function InvitationAnalytics() {
 
       toast.success("Report downloaded successfully!");
     } catch (error) {
-      console.error("Error downloading report:", error);
+      logger.error("Error downloading report:", error);
       toast.error("Failed to download report");
     }
   };

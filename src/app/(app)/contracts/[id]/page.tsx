@@ -6,6 +6,7 @@ import { notFound, redirect } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 
@@ -82,7 +83,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
       } as unknown as Record<string, unknown>,
     })) as unknown as ClaimDetail | null;
   } catch (e) {
-    console.error("[ContractDetail] Error fetching claim:", e);
+    logger.error("[ContractDetail] Error fetching claim:", e);
   }
 
   // If not a claim, try as a job
@@ -100,7 +101,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         } as unknown as Record<string, boolean>,
       })) as unknown as JobDetail | null;
     } catch (e) {
-      console.error("[ContractDetail] Error fetching job:", e);
+      logger.error("[ContractDetail] Error fetching job:", e);
     }
   }
 

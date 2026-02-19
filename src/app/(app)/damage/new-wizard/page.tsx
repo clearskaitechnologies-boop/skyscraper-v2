@@ -3,7 +3,7 @@
 import { useUser } from "@clerk/nextjs";
 import { CheckCircle, Image as ImageIcon, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { Wizard, WizardStep } from "@/components/common/Wizard";
 import { Badge } from "@/components/ui/badge";
@@ -11,22 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 export default function NewDamageAssessmentPage() {
   const router = useRouter();
@@ -65,7 +51,7 @@ export default function NewDamageAssessmentPage() {
 
       setPhotos((prev) => [...prev, ...newPhotos]);
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
     } finally {
       setUploading(false);
     }
@@ -99,7 +85,7 @@ export default function NewDamageAssessmentPage() {
         alert("Analysis failed: " + (data.error || "Unknown error"));
       }
     } catch (error) {
-      console.error("Analysis error:", error);
+      logger.error("Analysis error:", error);
       alert("Failed to analyze damage");
     } finally {
       setAnalyzing(false);

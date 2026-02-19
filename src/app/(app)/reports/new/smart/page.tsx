@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 
 import { PageHero } from "@/components/layout/PageHero";
 import { ReportPreviewLayout } from "@/components/report/ReportPreviewLayout";
+import { logger } from "@/lib/logger";
 import { GeneratedReport, ReportAudience, ReportKind } from "@/lib/report-engine/report-types";
 
 type ClaimLite = {
@@ -61,7 +62,7 @@ export default function SmartReportBuilderPage() {
         const data = await res.json();
         setClaims(data.claims ?? []);
       } catch (e) {
-        console.error("Failed to load claims list", e);
+        logger.error("Failed to load claims list", e);
       }
     }
     loadClaims();
@@ -116,7 +117,7 @@ export default function SmartReportBuilderPage() {
       const data = (await res.json()) as GeneratedReport;
       setReport(data);
     } catch (err: any) {
-      console.error(err);
+      logger.error("Report build error", err);
       setError(err.message || "Failed to build report.");
       setLoading(false);
     }

@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface WeatherData {
   stormDate: string;
@@ -56,7 +57,7 @@ export default function WeatherCauseOfLossPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch weather data:", err);
+      logger.error("Failed to fetch weather data:", err);
     } finally {
       setLoading(false);
     }
@@ -80,7 +81,7 @@ export default function WeatherCauseOfLossPage() {
         setData((prev) => (prev ? { ...prev, narrativeSummary: json.narrative } : null));
       }
     } catch (err) {
-      console.error("Failed to generate narrative:", err);
+      logger.error("Failed to generate narrative:", err);
     } finally {
       setGenerating(false);
     }

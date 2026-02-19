@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 

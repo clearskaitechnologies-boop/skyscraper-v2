@@ -7,8 +7,8 @@ export const revalidate = 0;
  * Publishes a proposal (marks as published, optionally sends email)
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { FROM_EMAIL, getResend, REPLY_TO_EMAIL, TEMPLATES } from "@/lib/email/resend";

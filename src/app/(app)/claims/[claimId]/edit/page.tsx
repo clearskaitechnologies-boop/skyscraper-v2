@@ -1,5 +1,4 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -16,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 export default function EditClaimPage({ params }: { params: { claimId: string } }) {
   const router = useRouter();
@@ -58,7 +58,7 @@ export default function EditClaimPage({ params }: { params: { claimId: string } 
           status: claim.status || "",
         });
       } catch (error) {
-        console.error("Error fetching claim:", error);
+        logger.error("Error fetching claim:", error);
         toast.error("Failed to load claim data");
       } finally {
         setIsFetching(false);
@@ -102,7 +102,7 @@ export default function EditClaimPage({ params }: { params: { claimId: string } 
       toast.success("Claim updated successfully! 🎉");
       router.push(`/claims/${params.claimId}`);
     } catch (error) {
-      console.error("Error updating claim:", error);
+      logger.error("Error updating claim:", error);
       toast.error(error instanceof Error ? error.message : "Failed to update claim");
     } finally {
       setIsLoading(false);

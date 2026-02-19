@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";

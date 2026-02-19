@@ -5,6 +5,7 @@ import { Check, Image as ImageIcon, Upload, X } from "lucide-react";
 import { useState } from "react";
 
 import { ClaimPhotoUpload } from "@/components/uploads";
+import { logger } from "@/lib/logger";
 
 interface Photo {
   id: string;
@@ -49,7 +50,7 @@ export function CoverPhotoPicker({
         setPhotos(data.photos);
       }
     } catch (error) {
-      console.error("Failed to fetch photos:", error);
+      logger.error("Failed to fetch photos:", error);
     } finally {
       setLoading(false);
     }
@@ -75,7 +76,7 @@ export function CoverPhotoPicker({
       onSet(selectedPhotoUrl, selectedPhoto?.id);
       onClose();
     } catch (error) {
-      console.error("Failed to set cover photo:", error);
+      logger.error("Failed to set cover photo:", error);
       alert("Failed to set cover photo. Please try again.");
     }
   };

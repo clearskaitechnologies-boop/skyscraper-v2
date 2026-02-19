@@ -56,6 +56,7 @@ import {
   type FolderSectionKey,
   SECTION_METADATA,
 } from "@/lib/claims-folder/folderSchema";
+import { logger } from "@/lib/logger";
 
 interface ClaimOption {
   id: string;
@@ -147,7 +148,7 @@ export default function ClaimsReadyFolderPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to fetch claims:", error);
+        logger.error("Failed to fetch claims:", error);
         if (!selectedClaimId) setSelectedClaimId("demo-claim");
       } finally {
         setLoading(false);
@@ -246,7 +247,7 @@ export default function ClaimsReadyFolderPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to fetch claim data:", error);
+        logger.error("Failed to fetch claim data:", error);
       } finally {
         setScoreLoading(false);
       }

@@ -9,6 +9,7 @@ import { Wizard, WizardStep } from "@/components/common/Wizard";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { XactimateTable } from "@/components/xactimate/XactimateTable";
+import { logger } from "@/lib/logger";
 import { XactimateLineItem } from "@/types/xactimate";
 
 type EstimateBuildResponse = {
@@ -113,7 +114,7 @@ export default function EstimateNewPage() {
       const mapped = mapAiItemsToXactimate(data.estimate.items);
       setLineItems(mapped);
     } catch (err: any) {
-      console.error("Estimate builder error:", err);
+      logger.error("Estimate builder error:", err);
       setError(err.message || "Failed to build estimate.");
     } finally {
       setIsRunning(false);
@@ -164,7 +165,7 @@ export default function EstimateNewPage() {
         }
       }, 2000);
     } catch (err: any) {
-      console.error("Save estimate error:", err);
+      logger.error("Save estimate error:", err);
       setSaveMessage(`❌ ${err.message || "Failed to save estimate."}`);
     } finally {
       setIsSaving(false);

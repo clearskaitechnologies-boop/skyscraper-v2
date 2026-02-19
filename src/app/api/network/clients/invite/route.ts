@@ -6,8 +6,8 @@
  * Creates a pending client network with invite token.
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { randomBytes } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 

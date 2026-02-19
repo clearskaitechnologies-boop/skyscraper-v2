@@ -33,11 +33,7 @@ type FormDefinition = {
   requirePhotos?: boolean;
 };
 
-export default function RequestServicePage({
-  params,
-}: {
-  params: { slug: string };
-}) {
+export default function RequestServicePage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
   const router = useRouter();
 
@@ -137,9 +133,7 @@ export default function RequestServicePage({
     return (
       <div className="mx-auto max-w-3xl p-6">
         <h1 className="text-2xl font-bold">Error</h1>
-        <p className="mt-2 text-slate-600">
-          {error || "Unable to load form. Please try again."}
-        </p>
+        <p className="mt-2 text-slate-600">{error || "Unable to load form. Please try again."}</p>
       </div>
     );
   }
@@ -155,9 +149,7 @@ export default function RequestServicePage({
           />
         )}
         <div>
-          <h1 className="text-3xl font-bold">
-            Request Service from {contractor.businessName}
-          </h1>
+          <h1 className="text-3xl font-bold">Request Service from {contractor.businessName}</h1>
           <p className="text-sm text-slate-600">
             {contractor.phone && `📞 ${contractor.phone}`}
             {contractor.phone && contractor.email && " • "}
@@ -166,9 +158,7 @@ export default function RequestServicePage({
         </div>
       </div>
 
-      {formDef.description && (
-        <p className="text-slate-600">{formDef.description}</p>
-      )}
+      {formDef.description && <p className="text-slate-600">{formDef.description}</p>}
 
       {/* Dynamic Form */}
       <div className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
@@ -185,9 +175,7 @@ export default function RequestServicePage({
                 <Input
                   placeholder={field.label}
                   value={values[field.name] || ""}
-                  onChange={(e) =>
-                    setValues({ ...values, [field.name]: e.target.value })
-                  }
+                  onChange={(e) => setValues({ ...values, [field.name]: e.target.value })}
                 />
               </div>
             );
@@ -203,9 +191,7 @@ export default function RequestServicePage({
                 <Textarea
                   placeholder={field.label}
                   value={values[field.name] || ""}
-                  onChange={(e) =>
-                    setValues({ ...values, [field.name]: e.target.value })
-                  }
+                  onChange={(e) => setValues({ ...values, [field.name]: e.target.value })}
                   rows={4}
                 />
               </div>
@@ -223,9 +209,7 @@ export default function RequestServicePage({
                   title={field.label}
                   className="w-full rounded-md border border-slate-300 p-2 text-sm"
                   value={values[field.name] || ""}
-                  onChange={(e) =>
-                    setValues({ ...values, [field.name]: e.target.value })
-                  }
+                  onChange={(e) => setValues({ ...values, [field.name]: e.target.value })}
                 >
                   <option value="">Select {field.label}</option>
                   {field.options?.map((opt, j) => (
@@ -250,9 +234,7 @@ export default function RequestServicePage({
                   type="file"
                   multiple
                   accept="image/*,video/*"
-                  onChange={(e) =>
-                    setPhotoFiles(Array.from(e.target.files || []))
-                  }
+                  onChange={(e) => setPhotoFiles(Array.from(e.target.files || []))}
                   className="w-full rounded-md border border-slate-300 p-2 text-sm"
                 />
                 {photoFiles.length > 0 && (

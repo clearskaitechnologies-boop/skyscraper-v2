@@ -48,8 +48,8 @@ export const revalidate = 0;
  * ============================================================================
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 

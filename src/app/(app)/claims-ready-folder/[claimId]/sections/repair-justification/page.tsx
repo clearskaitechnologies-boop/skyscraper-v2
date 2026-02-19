@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface RepairJustificationData {
   narrative: string;
@@ -42,7 +43,7 @@ export default function RepairJustificationPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch repair justification:", err);
+      logger.error("Failed to fetch repair justification:", err);
     } finally {
       setLoading(false);
     }
@@ -66,7 +67,7 @@ export default function RepairJustificationPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to generate:", err);
+      logger.error("Failed to generate:", err);
     } finally {
       setGenerating(false);
     }

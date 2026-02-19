@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { randomUUID } from "crypto";
 import { logger } from "@/lib/logger";
+import { randomUUID } from "crypto";
 /**
  * Clerk User Webhook Handler
  *

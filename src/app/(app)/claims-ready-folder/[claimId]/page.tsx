@@ -45,6 +45,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import type { ClaimFolder, FolderSection, SectionStatus } from "@/lib/claims-folder/folderSchema";
 import { SECTION_METADATA } from "@/lib/claims-folder/folderSchema";
+import { logger } from "@/lib/logger";
 
 // Section icon mapping
 const SECTION_ICONS: Record<FolderSection, React.ReactNode> = {
@@ -228,7 +229,7 @@ export default function ClaimFolderBuilderPage() {
       // Refresh folder data
       await fetchFolder();
     } catch (err) {
-      console.error("Generation error:", err);
+      logger.error("Generation error:", err);
     } finally {
       setGenerating(null);
     }
@@ -261,7 +262,7 @@ export default function ClaimFolderBuilderPage() {
       window.URL.revokeObjectURL(url);
       setExportDialogOpen(false);
     } catch (err) {
-      console.error("Export error:", err);
+      logger.error("Export error:", err);
     } finally {
       setExporting(false);
     }

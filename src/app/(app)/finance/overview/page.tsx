@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import { logger } from "@/lib/logger";
 
 const fmt = (n: number) =>
   "$" +
@@ -72,7 +73,10 @@ export default function FinancialOverviewPage() {
           setData(json.data);
         } else if (!res.ok) {
           // API returned an error — provide zeroed-out data so the page still renders
-          console.warn("Finance API returned", res.status, json.error || "Unknown error");
+          logger.warn("Finance API returned", {
+            status: res.status,
+            error: json.error || "Unknown error",
+          });
           setData({
             revenue: { total: 0, contract: 0, supplement: 0 },
             costs: { total: 0, material: 0, labor: 0, overhead: 0, other: 0 },
@@ -93,7 +97,7 @@ export default function FinancialOverviewPage() {
           });
         }
       } catch (e) {
-        console.error("Finance overview fetch failed:", e);
+        logger.error("Finance overview fetch failed:", e);
         // On network error, still render with zeroed data
         setData({
           revenue: { total: 0, contract: 0, supplement: 0 },
