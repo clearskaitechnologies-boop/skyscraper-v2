@@ -6,8 +6,8 @@
  * PATCH: Update profile fields
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { withSentryApi } from "@/lib/monitoring/sentryApi";
@@ -27,7 +27,7 @@ export const GET = withSentryApi(
         return NextResponse.json({ error: "Organization not found" }, { status: 404 });
       }
 
-      let member = null as any;
+      let member: Record<string, unknown> | null = null;
       try {
         member = await prisma.users.findFirst({
           where: {
@@ -113,7 +113,7 @@ export const PATCH = withSentryApi(
       }
 
       // Update profile
-      let updated = null as any;
+      let updated: Record<string, unknown> | null = null;
       try {
         updated = await prisma.users.update({
           where: { id: params.memberId },

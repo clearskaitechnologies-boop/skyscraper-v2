@@ -3,12 +3,13 @@
  * Force refresh weather data (rate-limited: 1 per 10 minutes per claim)
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { fetchOpenMeteoWeather, geocodeAddress } from "@/lib/weather/openMeteo";
+import { Prisma } from "@prisma/client";
 
 const RATE_LIMIT_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
             snowfallIn: weatherFacts.snowfallIn,
             sourceLabel: weatherFacts.sourceLabel,
             raw: weatherFacts.raw,
-          } as any,
+          } as unknown as Prisma.InputJsonValue,
           updatedAt: new Date(),
         },
       });
@@ -198,7 +199,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
             snowfallIn: weatherFacts.snowfallIn,
             sourceLabel: weatherFacts.sourceLabel,
             raw: weatherFacts.raw,
-          } as any,
+          } as unknown as Prisma.InputJsonValue,
           updatedAt: new Date(),
         },
       });

@@ -65,7 +65,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     const stream = await renderToStream(<ProposalPDFDocument data={pdfData} />);
     const filename = `${sanitizeFilename(proposal.project_name)}_Proposal.pdf`;
 
-    return new NextResponse(stream as any, {
+    return new NextResponse(stream as unknown as BodyInit, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

@@ -39,7 +39,7 @@ export const GET = withSentryApi(async (req: Request, { params }: { params: { ke
     logger.error("Flag GET error", { key: params.key, err: errMsg, stack: errStack });
     return NextResponse.json({ error: "Internal server error", detail: errMsg }, { status: 500 });
   }
-}) as any;
+});
 
 export const POST = withSentryApi(
   withRateLimit(async (req: Request, { params }: { params: { key: string } }) => {
@@ -76,7 +76,7 @@ export const POST = withSentryApi(
       return NextResponse.json({ error: errMsg }, { status: 400 });
     }
     return NextResponse.json({ key: params.key, enabled, rolloutPercent, targeting });
-  }) as any
+  })
 );
 
 export const DELETE = withSentryApi(
@@ -99,5 +99,5 @@ export const DELETE = withSentryApi(
     }
     await deleteFlag(params.key, orgId);
     return NextResponse.json({ key: params.key, deleted: true });
-  }) as any
+  })
 );

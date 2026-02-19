@@ -1,7 +1,7 @@
 // app/api/video/create/route.ts
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { buildClaimVideoScript } from "@/lib/ai/video/buildClaimVideoScript";
@@ -9,6 +9,7 @@ import { buildRetailVideoScript } from "@/lib/ai/video/buildRetailVideoScript";
 import { createVideoFromScript } from "@/lib/ai/video/createVideoFromScript";
 import prisma from "@/lib/prisma";
 import { buildReportData } from "@/lib/reports/buildReportData";
+import type { ReportConfig } from "@/lib/reports/types";
 import { uploadVideoToFirebase } from "@/lib/storage/uploadVideoToFirebase";
 
 export async function POST(req: Request) {
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
       ],
     };
 
-    const data = await buildReportData(config as any);
+    const data = await buildReportData(config as ReportConfig);
 
     // Build video script
     const script =
@@ -70,7 +71,7 @@ export async function POST(req: Request) {
         claimId,
         type,
         url,
-      } as any,
+      } as Record<string, unknown>,
     });
 
     return NextResponse.json({ url });

@@ -76,7 +76,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       const stream = await renderToStream(<ContractorPacketPDFDocument data={pdfData} />);
       const filename = `${sanitizeFilename(packet.packet_name)}.pdf`;
 
-      return new NextResponse(stream as any, {
+      return new NextResponse(stream as unknown as BodyInit, {
         status: 200,
         headers: {
           "Content-Type": "application/pdf",

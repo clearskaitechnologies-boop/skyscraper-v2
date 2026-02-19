@@ -68,7 +68,7 @@ export default async function AdminDashboardPage() {
     totalReports: 0,
     claimsByStatus: {} as Record<string, number>,
     totalClaimValue: 0,
-    recentActivity: [] as any[],
+    recentActivity: [] as Record<string, unknown>[],
   };
 
   try {
@@ -123,10 +123,12 @@ export default async function AdminDashboardPage() {
       totalReports: reportsCount,
       claimsByStatus: statusMap,
       totalClaimValue: totalValue,
-      recentActivity: (recentActivities as any[]).map((a: any) => ({
-        ...a,
-        createdAt: a.createdAt?.toISOString() || null,
-      })),
+      recentActivity: (recentActivities as Record<string, unknown>[]).map(
+        (a: Record<string, unknown>) => ({
+          ...a,
+          createdAt: (a.createdAt as Date)?.toISOString() || null,
+        })
+      ),
     };
   } catch (err) {
     logger.error("[AdminDashboard] Stats query failed:", err?.message);

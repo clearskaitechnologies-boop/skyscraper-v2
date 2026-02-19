@@ -64,7 +64,10 @@ function parseMultipart(req: NextRequest) {
     bb.on("error", reject);
 
     // Fix for Next.js ReadableStream
-    const stream = req.body as any;
+    const stream = req.body as ReadableStream & {
+      pipe?: (dest: unknown) => void;
+      getReader?: () => ReadableStreamDefaultReader;
+    };
     if (stream && typeof stream.pipe === "function") {
       stream.pipe(bb);
     } else {
@@ -287,7 +290,7 @@ export async function POST(req: NextRequest) {
             userName: await getUserName(userId),
             leadId: leadId ?? undefined,
             claimId: claimId ?? undefined,
-          } as any,
+          } as Record<string, unknown>,
         });
 
         results.push({

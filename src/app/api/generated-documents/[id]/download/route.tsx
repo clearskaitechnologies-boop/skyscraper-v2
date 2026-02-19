@@ -165,7 +165,7 @@ export async function GET(req: NextRequest, context: { params: Promise<{ id: str
     }
 
     // Return PDF stream
-    return new NextResponse(stream as any, {
+    return new NextResponse(stream as unknown as BodyInit, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="${filename}"`,

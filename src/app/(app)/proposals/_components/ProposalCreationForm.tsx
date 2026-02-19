@@ -158,14 +158,15 @@ export function ProposalCreationForm({ templates, orgId }: ProposalCreationFormP
                 <SelectItem key={template.id} value={template.id}>
                   {template.name}
                   {template.is_default && " (Default)"}
-                  {(template as any).templateType === "SYSTEM" && " [SYSTEM]"}
+                  {(template as Record<string, unknown>).templateType === "SYSTEM" && " [SYSTEM]"}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           {selectedTemplate && (
             <p className="text-xs text-[color:var(--muted)]">
-              {(selectedTemplate as any).description || "No description"}
+              {((selectedTemplate as Record<string, unknown>).description as string) ||
+                "No description"}
             </p>
           )}
         </div>

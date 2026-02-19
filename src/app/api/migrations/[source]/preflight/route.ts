@@ -10,12 +10,12 @@
  * 4. Report (summary)
  */
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { logger } from "@/lib/logger";
 import { AccuLynxClient } from "@/lib/migrations/acculynx-client";
 import type { MigrationSource } from "@/lib/migrations/base-engine";
 import { JobNimbusClient } from "@/lib/migrations/jobnimbus-client";
 import prisma from "@/lib/prisma";
-import { withAuth } from "@/lib/auth/withAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -30,8 +30,8 @@ interface PreflightResult {
   connectionValid: boolean;
   connectionError?: string;
   preview: {
-    contacts: { total: number; sample: any[] };
-    jobs: { total: number; sample: any[] };
+    contacts: { total: number; sample: Record<string, unknown>[] };
+    jobs: { total: number; sample: Record<string, unknown>[] };
     documents: { total: number };
     tasks?: { total: number };
   };
@@ -83,8 +83,8 @@ async function runPreflight(
 ): Promise<PreflightResult> {
   const warnings: string[] = [];
   let preview = {
-    contacts: { total: 0, sample: [] as any[] },
-    jobs: { total: 0, sample: [] as any[] },
+    contacts: { total: 0, sample: [] as Record<string, unknown>[] },
+    jobs: { total: 0, sample: [] as Record<string, unknown>[] },
     documents: { total: 0 },
     tasks: { total: 0 },
   };
