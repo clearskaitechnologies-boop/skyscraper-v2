@@ -50,6 +50,16 @@ vi.mock("@/lib/prisma", () => ({
   },
 }));
 
+// Logger mock
+vi.mock("@/lib/logger", () => ({
+  logger: {
+    debug: vi.fn(),
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+  },
+}));
+
 // Sentry mock
 vi.mock("@sentry/nextjs", () => ({
   captureException: vi.fn(),
@@ -72,6 +82,18 @@ vi.mock("@/lib/ratelimit", () => ({
     limit: 10,
     remaining: 9,
     reset: Date.now() + 60_000,
+  }),
+}));
+
+// @/lib/stripe mock — ensure getStripeClient returns mock with constructEvent
+vi.mock("@/lib/stripe", () => ({
+  getStripeClient: () => ({
+    webhooks: {
+      constructEvent: mockConstructEvent,
+    },
+    subscriptions: {
+      retrieve: vi.fn().mockResolvedValue({ trial_end: null }),
+    },
   }),
 }));
 

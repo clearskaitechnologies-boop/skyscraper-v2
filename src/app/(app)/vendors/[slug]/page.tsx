@@ -250,18 +250,56 @@ export default function VendorDetailPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg text-gray-600">Loading vendor...</div>
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-950 dark:to-slate-900">
+        {/* Hero skeleton */}
+        <div className="relative h-64 animate-pulse bg-gradient-to-r from-blue-600/20 to-indigo-600/20" />
+        <div className="mx-auto max-w-7xl space-y-6 p-6">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="animate-pulse rounded-lg border bg-card p-4">
+                <div className="mb-2 h-3 w-20 rounded bg-muted" />
+                <div className="h-6 w-16 rounded bg-muted" />
+              </div>
+            ))}
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <div className="space-y-4 md:col-span-2">
+              {[...Array(2)].map((_, i) => (
+                <div key={i} className="animate-pulse rounded-lg border bg-card p-6">
+                  <div className="mb-4 h-5 w-32 rounded bg-muted" />
+                  <div className="space-y-2">
+                    <div className="h-4 w-full rounded bg-muted" />
+                    <div className="h-4 w-3/4 rounded bg-muted" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="animate-pulse rounded-lg border bg-card p-6">
+              <div className="mb-4 h-5 w-24 rounded bg-muted" />
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="h-4 w-full rounded bg-muted" />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (!vendor) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold text-gray-900">Vendor Not Found</h1>
-        <Link href="/vendors">
-          <Button className="mt-4">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <Building2 className="h-8 w-8 text-muted-foreground" />
+        </div>
+        <h1 className="text-2xl font-bold">Vendor Not Found</h1>
+        <p className="text-muted-foreground">
+          This vendor may have been removed or the URL is incorrect.
+        </p>
+        <Link href="/vendor-network">
+          <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Vendors
           </Button>

@@ -1,12 +1,16 @@
+import { requireApiAuth } from "@/lib/auth/apiAuth";
 import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
 
 /**
- * Public diagnostic endpoint - shows what routes exist in build
- * Used to verify critical routes are present in deployed manifest
+ * Routes diagnostic endpoint
+ * Locked: exposes full route enumeration (50 route keys)
  */
 export async function GET() {
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const manifestPath = path.join(process.cwd(), ".next/server/app-paths-manifest.json");
 

@@ -21,6 +21,7 @@ import {
   SubscriptionRequiredError,
 } from "@/lib/billing/requireActiveSubscription";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { model3dSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
@@ -56,7 +57,14 @@ async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: st
     }
 
     const body = await request.json();
-    const { action = "detectObjects", payload } = body;
+    const validation = validateAIRequest(model3dSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { success: false, error: validation.error, details: validation.details },
+        { status: 400 }
+      );
+    }
+    const { action, payload } = validation.data;
 
     // Validate payload
     if (!payload || (!payload.images && !payload.pointCloud)) {

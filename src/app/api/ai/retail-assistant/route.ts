@@ -3,6 +3,7 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
+import { retailAssistantSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 // Force Node.js runtime for OpenAI SDK
 export const runtime = "nodejs";
@@ -15,11 +16,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Authentication required" }, { status: 401 });
     }
 
-    const { message, jobId, history } = await request.json();
-
-    if (!message) {
-      return NextResponse.json({ error: "Message required" }, { status: 400 });
+    const body = await request.json();
+    const validation = validateAIRequest(retailAssistantSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
     }
+    const { message, jobId, history } = validation.data;
 
     // Initialize OpenAI client
     const openai = getOpenAI();

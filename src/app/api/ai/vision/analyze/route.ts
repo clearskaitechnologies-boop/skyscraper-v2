@@ -13,6 +13,7 @@ import { analyzePropertyImage } from "@/lib/ai/vision";
 import { aiFail, aiOk, classifyOpenAiError } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
+import { visionAnalyzeSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string | null }) {
   try {
@@ -38,11 +39,14 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     }
 
     const body = await req.json();
-    const { imageUrl, focusAreas, claimId } = body;
-
-    if (!imageUrl) {
-      return NextResponse.json(aiFail("imageUrl required", "BAD_REQUEST"), { status: 400 });
+    const validation = validateAIRequest(visionAnalyzeSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { success: false, error: validation.error, details: validation.details },
+        { status: 400 }
+      );
     }
+    const { imageUrl, focusAreas, claimId } = validation.data;
 
     const analysis = await analyzePropertyImage(imageUrl, user.orgId, {
       focusAreas,
@@ -67,4 +71,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
   }
 }
 
-export const POST = withAiBilling(createAiConfig("vision_analyze", { costPerRequest: 25 }), POST_INNER);
+export const POST = withAiBilling(
+  createAiConfig("vision_analyze", { costPerRequest: 25 }),
+  POST_INNER
+);

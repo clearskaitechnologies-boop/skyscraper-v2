@@ -64,6 +64,10 @@ check "Admin metrics rejects no-auth" "401" "$BASE_URL/api/admin/metrics"
 check "Ops errors rejects no-auth" "401" "$BASE_URL/api/ops/errors"
 check "Config rejects no-auth" "401" "$BASE_URL/api/config"
 check "Diagnostics rejects no-auth" "401" "$BASE_URL/api/diagnostics/routes"
+check "Build info rejects no-auth" "401" "$BASE_URL/api/build-info"
+check "Deploy info rejects no-auth" "401" "$BASE_URL/api/deploy-info"
+check "Routes manifest rejects no-auth" "401" "$BASE_URL/api/routes-manifest"
+check "Status rejects no-auth" "401" "$BASE_URL/api/status"
 
 echo ""
 echo "═══ 3. Rate-Limited Endpoints (no token → 401 before rate limit) ═══"
@@ -79,8 +83,6 @@ check "Cron stripe-reconcile rejects no-secret" "401" "$BASE_URL/api/cron/stripe
 
 echo ""
 echo "═══ 5. Public Endpoints (should work without auth) ═══"
-check "Status endpoint is public" "200" "$BASE_URL/api/status"
-check "Build info is public" "200" "$BASE_URL/api/build-info"
 check "Stripe prices is public" "200" "$BASE_URL/api/stripe/prices"
 check "Templates marketplace is public" "200" "$BASE_URL/api/templates/marketplace"
 check "Contact form accepts POST" "200" "$BASE_URL/api/contact" "POST" '{"name":"Test","email":"test@example.com","message":"Hello"}'

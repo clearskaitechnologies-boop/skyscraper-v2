@@ -9,6 +9,7 @@ import {
 import { generateRecommendations } from "@/lib/ml/recommendations/engine";
 import { upsertRecommendations } from "@/lib/ml/recommendations/persist";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { recommendationsRefreshSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * POST /api/ai/recommendations/refresh
@@ -53,7 +54,8 @@ async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
 
     // Get claimId from request body
     const body = await req.json().catch(() => ({}));
-    const claimId = body.claimId || null;
+    const validation = validateAIRequest(recommendationsRefreshSchema, body);
+    const claimId = validation.success ? validation.data.claimId || null : body.claimId || null;
 
     logger.info("[POST /api/ai/recommendations/refresh] Regenerating...", {
       userId,

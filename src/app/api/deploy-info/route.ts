@@ -1,7 +1,8 @@
-import { promises as fs } from "fs";
 import { logger } from "@/lib/logger";
+import { promises as fs } from "fs";
 import path from "path";
 
+import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { Prisma } from "@prisma/client";
 import { NextResponse } from "next/server";
 
@@ -11,8 +12,12 @@ export const dynamic = "force-dynamic";
 /**
  * Deployment Info Endpoint
  * Shows which commit is actually deployed to production
+ * Locked: exposes Node version, Prisma version, binary targets
  */
 export async function GET() {
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   let binaryTargets: string[] = [];
   try {
     const schemaPath = path.join(process.cwd(), "prisma", "schema.prisma");

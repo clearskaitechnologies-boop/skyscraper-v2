@@ -12,6 +12,7 @@ import { logger } from "@/lib/logger";
 
 import { AICoreRouter, getRegistryStats, listAIModules, listAITasks } from "@/lib/ai/router";
 import { AiBillingContext, createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { routerSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(request: NextRequest, ctx: AiBillingContext) {
   try {
@@ -19,21 +20,19 @@ async function POST_INNER(request: NextRequest, ctx: AiBillingContext) {
 
     // Parse request body
     const body = await request.json();
-    const { task, payload } = body;
-
-    // Validate task parameter
-    if (!task || typeof task !== "string") {
+    const validation = validateAIRequest(routerSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
         {
           success: false,
-          error:
-            "Missing or invalid 'task' parameter. Expected string in format 'module.function'.",
+          error: validation.error,
+          details: validation.details,
           example: { task: "video.analyze", payload: { file: "..." } },
-          availableTasks: listAITasks().slice(0, 20), // Show first 20 as examples
         },
         { status: 400 }
       );
     }
+    const { task, payload } = validation.data;
 
     // Execute AI task
     const result = await AICoreRouter(task, payload);

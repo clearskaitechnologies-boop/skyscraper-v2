@@ -1,3 +1,4 @@
+import { requireApiAuth } from "@/lib/auth/apiAuth";
 import fs from "fs";
 import { NextResponse } from "next/server";
 import path from "path";
@@ -8,8 +9,12 @@ export const dynamic = "force-dynamic";
 /**
  * Routes Diagnostic Endpoint
  * Shows which app routes exist in the build
+ * Locked: exposes full attack surface map
  */
 export async function GET() {
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   try {
     const manifestPath = path.join(process.cwd(), ".next/server/app-paths-manifest.json");
 

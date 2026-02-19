@@ -48,8 +48,15 @@ export const dashboardAssistantSchema = z.object({
 
 export const retailAssistantSchema = z.object({
   message: messageField,
-  leadId: z.string().optional(),
-  claimId: z.string().optional(),
+  jobId: z.string().optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string(),
+      })
+    )
+    .optional(),
 });
 
 // ─── Damage Analysis ───────────────────────────────────────────
@@ -209,8 +216,8 @@ export const domainSchema = z.object({
 });
 
 export const routerSchema = z.object({
-  query: z.string().min(1, "Query is required"),
-  context: z.record(z.unknown()).optional(),
+  task: z.string().min(1, "Task is required (format: 'module.function')"),
+  payload: z.record(z.unknown()).optional(),
 });
 
 export const runSchema = z.object({
@@ -262,34 +269,40 @@ export const rebuttalExportPdfSchema = z.object({
 });
 
 // ─── 3D ────────────────────────────────────────────────────────
-export const model3dSchema = z
-  .object({
-    imageUrl: z.string().url().optional(),
-    imageBase64: z.string().optional(),
-    propertyType: z.string().optional(),
-  })
-  .refine((d) => d.imageUrl || d.imageBase64, {
-    message: "Either imageUrl or imageBase64 is required",
-  });
+export const model3dSchema = z.object({
+  action: z
+    .enum(["detectObjects", "estimateDepth", "reconstruct", "processPointCloud"])
+    .default("detectObjects"),
+  payload: z
+    .object({
+      images: z.array(z.string()).optional(),
+      pointCloud: z.record(z.unknown()).optional(),
+    })
+    .passthrough()
+    .refine((d) => d.images || d.pointCloud, {
+      message: "Either images or pointCloud data is required in payload",
+    }),
+});
 
 // ─── Agents ────────────────────────────────────────────────────
 export const agentsSchema = z.object({
-  agentType: z.string().min(1, "Agent type is required"),
-  input: z.record(z.unknown()).optional(),
-  claimId: z.string().optional(),
+  action: z
+    .enum(["optimizePolicy", "coordinateWorkflow", "allocateResources", "planActions"])
+    .default("optimizePolicy"),
+  payload: z
+    .object({
+      context: z.record(z.unknown()),
+    })
+    .passthrough(),
 });
 
 // ─── Vision ────────────────────────────────────────────────────
-export const visionAnalyzeSchema = z
-  .object({
-    imageUrl: z.string().url().optional(),
-    imageBase64: z.string().optional(),
-    prompt: z.string().optional(),
-    analysisType: z.enum(["damage", "material", "measurement", "general"]).default("general"),
-  })
-  .refine((d) => d.imageUrl || d.imageBase64, {
-    message: "Either imageUrl or imageBase64 is required",
-  });
+export const visionAnalyzeSchema = z.object({
+  imageUrl: z.string().url("imageUrl must be a valid URL"),
+  focusAreas: z.array(z.string()).optional(),
+  claimId: z.string().optional(),
+  analysisType: z.enum(["damage", "material", "measurement", "general"]).default("general"),
+});
 
 // ─── Depreciation ──────────────────────────────────────────────
 export const depreciationExportSchema = z.object({

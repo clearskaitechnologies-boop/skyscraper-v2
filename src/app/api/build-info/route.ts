@@ -1,12 +1,15 @@
+import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { NextResponse } from "next/server";
 
 /**
  * Build Information API
  * Returns deployment fingerprint for production verification
- *
- * This is the "truth endpoint" - hit this to verify what's actually deployed
+ * Locked: exposes git SHA, branch, deployment URL
  */
 export async function GET() {
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   const commitSha =
     process.env.NEXT_PUBLIC_COMMIT_SHA ||
     process.env.VERCEL_GIT_COMMIT_SHA ||

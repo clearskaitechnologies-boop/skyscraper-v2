@@ -1,10 +1,14 @@
+import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { NextResponse } from "next/server";
 
 /**
- * Public diagnostic endpoint - shows what build is deployed
- * Used to verify production deployment without guessing
+ * Deployment diagnostic endpoint
+ * Locked: exposes Vercel region, deployment URL, Node version
  */
 export async function GET() {
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   const commitSha =
     process.env.NEXT_PUBLIC_COMMIT_SHA || process.env.VERCEL_GIT_COMMIT_SHA || "unknown";
 
