@@ -1,8 +1,8 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { db } from "@/lib/db";
+import prisma from "@/lib/prisma";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
@@ -19,8 +19,7 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
     const { id } = await context.params;
 
     // Verify ownership
-    // @ts-expect-error - Notification model does not exist in Prisma schema
-    const existing = await db.notification.findUnique({
+    const existing = await prisma.notification.findUnique({
       where: { id },
     });
 
@@ -32,8 +31,7 @@ export async function DELETE(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // @ts-expect-error - Notification model does not exist in Prisma schema
-    await db.notification.delete({
+    await prisma.notification.delete({
       where: { id },
     });
 
