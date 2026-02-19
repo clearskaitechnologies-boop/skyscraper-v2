@@ -56,7 +56,7 @@ export async function POST(request: Request) {
 
     // Check if report_orders table exists (it may not yet)
     // For MVP, just return success and log the purchase
-    console.log(`[PURCHASE] Order created:`, {
+    logger.info(`[PURCHASE] Order created:`, {
       orgId,
       userId,
       sku,

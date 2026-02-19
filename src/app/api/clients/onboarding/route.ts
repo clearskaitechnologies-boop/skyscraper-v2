@@ -113,7 +113,7 @@ export async function POST(request: Request) {
         },
       });
     } catch (syncError) {
-      console.error("[CLIENT_ONBOARDING] Clerk sync failed:", syncError);
+      logger.error("[CLIENT_ONBOARDING] Clerk sync failed:", syncError);
       // Non-fatal - continue
     }
 

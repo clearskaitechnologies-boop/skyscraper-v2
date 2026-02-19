@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
         paymentMethods = await getCustomerPaymentMethods(Org.stripeCustomerId);
         invoices = await getCustomerInvoices(Org.stripeCustomerId, 12);
       } catch (stripeError) {
-        console.error("Stripe fetch error (non-blocking):", stripeError);
+        logger.error("Stripe fetch error (non-blocking):", stripeError);
       }
     }
 

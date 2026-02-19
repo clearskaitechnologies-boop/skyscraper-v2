@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
 import { TRADE_LABELS } from "@/lib/trades/trade-types";
 
 type ContractorLite = {
@@ -41,7 +42,7 @@ export default function ContractorsSearchPage({
         setResults(data.contractors || []);
         setSearched(true);
       } else {
-        console.error(data.error);
+        logger.error(data.error);
       }
     } finally {
       setLoading(false);

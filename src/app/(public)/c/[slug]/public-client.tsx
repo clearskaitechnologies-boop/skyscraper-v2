@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { logger } from "@/lib/logger";
 import { TRADE_LABELS } from "@/lib/trades/trade-types";
 
 type ContractorPublic = {
@@ -58,7 +59,7 @@ export default function ContractorPublicPage({
         }),
       });
       if (!res.ok) {
-        console.error("Failed to submit request");
+        logger.error("Failed to submit request");
         return;
       }
       setSubmitted(true);

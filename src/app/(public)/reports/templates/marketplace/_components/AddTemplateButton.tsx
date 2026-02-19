@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { logger } from "@/lib/logger";
+
 interface AddTemplateButtonProps {
   templateId: string;
   templateTitle: string;
@@ -32,7 +34,7 @@ export function AddTemplateButton({ templateId, templateTitle }: AddTemplateButt
       toast.success(`"${templateTitle}" added to your company!`);
       router.push("/reports/templates");
     } catch (error: any) {
-      console.error("Error adding template:", error);
+      logger.error("Error adding template:", error);
       toast.error(error.message || "Failed to add template. Please try again.");
     } finally {
       setAdding(false);

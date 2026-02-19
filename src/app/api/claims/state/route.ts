@@ -136,7 +136,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
           claim.claimNumber || claimId,
           state,
           `Status changed from ${currentState} to ${state}. Triggered by: ${trigger}`
-        ).catch((err) => console.error("Failed to send claim update email:", err));
+        ).catch((err) => logger.error("Failed to send claim update email:", err));
       }
     } catch (error) {
       logger.error("Failed to create notification:", error);

@@ -161,7 +161,7 @@ export async function POST(request: NextRequest) {
         conflictsFound: conflicts.length,
         criticalIssues: summary.criticalIssues,
       },
-    }).catch(console.error);
+    }).catch(logger.error);
 
     // 13. Return comprehensive report
     return NextResponse.json({

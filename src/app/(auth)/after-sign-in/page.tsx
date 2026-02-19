@@ -146,7 +146,7 @@ export default async function AfterSignInPage({
         user.imageUrl || null
       );
     } catch (regError) {
-      console.error("[AFTER-SIGN-IN] DB registry update err:", regError);
+      logger.error("[AFTER-SIGN-IN] DB registry update err:", regError);
     }
     if (pendingRedirect?.startsWith("/")) redirect(pendingRedirect);
     if (resolvedType === "client") redirect("/portal");

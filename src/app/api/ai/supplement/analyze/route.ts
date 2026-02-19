@@ -212,7 +212,7 @@ Return your analysis as valid JSON.`;
       const jsonStr = jsonMatch ? jsonMatch[1] || jsonMatch[0] : responseText;
       analysisData = JSON.parse(jsonStr);
     } catch (parseError) {
-      console.error("Failed to parse AI response:", parseError);
+      logger.error("Failed to parse AI response:", parseError);
       // Return demo data on parse failure
       return NextResponse.json(getDemoAnalysis());
     }

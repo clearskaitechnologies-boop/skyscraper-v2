@@ -86,7 +86,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
               metadata: { format: "pdf", itemCount: depreciationItems.length },
             },
           })
-          .catch(console.error);
+          .catch(logger.error);
 
         return new NextResponse(pdfBuffer, {
           headers: {

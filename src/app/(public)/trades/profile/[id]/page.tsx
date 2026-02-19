@@ -29,6 +29,7 @@ import { ReviewList } from "@/components/reviews/ReviewList";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface HoursOfOperation {
   monday?: { open: string; close: string; closed?: boolean };
@@ -118,7 +119,7 @@ export default function PublicProfilePage({ params }: { params: { id: string } }
           setPosts(postsData.posts || postsData || []);
         }
       } catch (error) {
-        console.error("Failed to load profile:", error);
+        logger.error("Failed to load profile:", error);
       } finally {
         setLoading(false);
       }

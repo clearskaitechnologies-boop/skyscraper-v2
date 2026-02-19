@@ -141,7 +141,7 @@ Be assertive but professional.
     logger.debug(`[AI Supplement] Action logged for claim ${claimId}`);
 
     // Automation event logging
-    console.log(
+    logger.info(
       `[AI Supplement] Event: SUPPLEMENT_GENERATED, tokens: ${completion.usage?.total_tokens}`
     );
 

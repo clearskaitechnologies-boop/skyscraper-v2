@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { ok, withErrorHandler } from "@/lib/api/response";
 import { requireApiAuth, verifyClaimAccess } from "@/lib/auth/apiAuth";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 /**
@@ -61,7 +62,7 @@ async function handleGET(req: NextRequest, { params }: { params: Promise<{ claim
     return ok({ reports });
   } catch (dbError: any) {
     // Graceful fallback
-    console.warn(
+    logger.warn(
       "[GET /api/claims/[claimId]/reports] DB error (returning empty):",
       dbError.message
     );

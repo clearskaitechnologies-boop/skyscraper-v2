@@ -148,7 +148,7 @@ export async function POST(req: Request) {
 
         logger.debug(`Photo uploaded: ${record.id} - ${photo.name}`);
       } catch (uploadError: any) {
-        console.error(`Failed to upload photo ${photo.name}:`, uploadError);
+        logger.error(`Failed to upload photo ${photo.name}:`, uploadError);
         // Continue with other photos but log the error
         // NOTE: Consider rolling back tokens if all uploads fail
       }

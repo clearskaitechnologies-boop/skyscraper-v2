@@ -5,6 +5,7 @@ import { BarChart, CheckCircle2, Clock, TrendingUp, Users, Zap } from "lucide-re
 import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface DailyMetrics {
@@ -59,7 +60,7 @@ export function MetricsClient() {
         setMetrics(data.metrics);
         setUserUsage(data.userUsage || []);
       } catch (err) {
-        console.error("Metrics fetch error:", err);
+        logger.error("Metrics fetch error:", err);
         setError(err instanceof Error ? err.message : "Failed to load metrics");
       } finally {
         setLoading(false);

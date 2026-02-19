@@ -21,7 +21,7 @@ async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
     const body = await req.json().catch(() => ({}));
     const claimId = body.claimId || null;
 
-    console.log("[POST /api/ai/recommendations/refresh] Regenerating...", {
+    logger.info("[POST /api/ai/recommendations/refresh] Regenerating...", {
       userId,
       orgId,
       claimId,

@@ -132,7 +132,7 @@ export async function POST(req: Request) {
         }
       }
     } catch (notifErr) {
-      console.error("[client/connect] Notification error:", notifErr);
+      logger.error("[client/connect] Notification error:", notifErr);
     }
 
     return NextResponse.json({

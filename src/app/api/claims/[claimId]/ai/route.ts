@@ -225,7 +225,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
           tokensUsed: completion.usage?.total_tokens || 0,
         });
       } catch (aiError: any) {
-        console.error("[CLAIM_AI_FAIL] OpenAI Error:", aiError);
+        logger.error("[CLAIM_AI_FAIL] OpenAI Error:", aiError);
         return NextResponse.json(
           {
             ok: false,

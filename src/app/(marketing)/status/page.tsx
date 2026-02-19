@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface HealthData {
   ok: boolean;
@@ -34,7 +35,7 @@ export default function StatusPage() {
         setHealthData(data);
         setLastChecked(new Date());
       } catch (error) {
-        console.error("[STATUS] Health check failed:", error);
+        logger.error("[STATUS] Health check failed:", error);
       } finally {
         setIsLoading(false);
       }

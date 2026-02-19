@@ -439,7 +439,7 @@ async function handleInviteClient(
       clientName: payload.clientName || "there",
       magicLink,
     },
-  }).catch(console.error);
+  }).catch(logger.error);
 
   return NextResponse.json({
     success: true,

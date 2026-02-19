@@ -7,6 +7,7 @@ import { NextResponse } from "next/server";
 import { getResolvedOrgResult } from "@/lib/auth/getResolvedOrgId";
 import { resolveClaim } from "@/lib/claims/resolveClaim";
 import { prismaModel } from "@/lib/db/prismaModel";
+import { logger } from "@/lib/logger";
 import { getActiveOrg } from "@/lib/org/getActiveOrg";
 
 export const dynamic = "force-dynamic";
@@ -261,7 +262,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
     return NextResponse.json({ success: true, data: workspaceData });
   } catch (error: any) {
     const errorId = `workspace-${Date.now()}`;
-    console.error("[workspace-api] Error:", { errorId, error });
+    logger.error("[workspace-api] Error:", { errorId, error });
     return NextResponse.json(
       {
         error: "Internal server error",

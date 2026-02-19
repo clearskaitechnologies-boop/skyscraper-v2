@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 interface BuildInfo {
   git: string | null;
   gitShort: string | null;
@@ -45,7 +47,7 @@ export default function ProofPage() {
         setDb(dbRes);
         setMaps(mapsRes);
       } catch (error) {
-        console.error("Failed to load proof data:", error);
+        logger.error("Failed to load proof data:", error);
       } finally {
         setLoading(false);
       }

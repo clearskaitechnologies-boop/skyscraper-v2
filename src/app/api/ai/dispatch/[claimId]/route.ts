@@ -100,7 +100,7 @@ async function POST_INNER(
     // TODO: When ai_actions table is added to schema, log AI action here
     // TODO: When claim_automation_events table is added, create event here
 
-    console.log("[AI-DISPATCH] Created dispatch:", {
+    logger.info("[AI-DISPATCH] Created dispatch:", {
       dispatchId,
       claimId,
       trade,

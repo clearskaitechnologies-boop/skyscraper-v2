@@ -100,7 +100,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     try {
       validated = createClaimSchema.parse(body);
     } catch (validationError: any) {
-      console.error("[CreateClaim] Validation error:", validationError);
+      logger.error("[CreateClaim] Validation error:", validationError);
       if (validationError instanceof z.ZodError) {
         const fieldErrors = validationError.errors
           .map((err) => `${err.path.join(".")}: ${err.message}`)

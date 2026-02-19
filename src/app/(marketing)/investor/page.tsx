@@ -3,6 +3,7 @@ import { BarChart3, Clock, DollarSign, TrendingUp, Users, Zap } from "lucide-rea
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +47,7 @@ async function getMetrics() {
       avgClaimsPerOrg: totalOrgs > 0 ? (totalClaims / totalOrgs).toFixed(1) : "0",
     };
   } catch (error) {
-    console.error("Investor metrics error:", error);
+    logger.error("Investor metrics error:", error);
     return {
       totalClaims: 0,
       totalOrgs: 0,

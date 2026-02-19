@@ -80,7 +80,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (syncError) {
-      console.error("[REGISTER_CLIENT] Clerk sync failed:", syncError);
+      logger.error("[REGISTER_CLIENT] Clerk sync failed:", syncError);
     }
 
     return NextResponse.json({

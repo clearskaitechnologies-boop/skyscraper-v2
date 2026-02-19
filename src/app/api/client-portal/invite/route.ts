@@ -89,7 +89,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
         }),
       });
     } catch (emailError: any) {
-      console.error("Error sending client invite email:", emailError);
+      logger.error("Error sending client invite email:", emailError);
       // Don't fail the whole request if email fails - log and continue
     }
 

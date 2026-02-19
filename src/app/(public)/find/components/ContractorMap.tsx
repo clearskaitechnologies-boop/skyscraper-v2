@@ -4,6 +4,8 @@ import { useState } from "react";
 // @ts-expect-error - react-map-gl types may not match at build time
 import Map, { Marker, Popup } from "react-map-gl/mapbox";
 
+import { logger } from "@/lib/logger";
+
 interface ContractorWithCoords {
   id: string;
   slug: string;
@@ -94,7 +96,7 @@ export default function ContractorMap({ contractors, origin }: ContractorMapProp
       mapStyle="mapbox://styles/mapbox/streets-v12"
       style={{ width: "100%", height: "100%" }}
       onError={(e: any) => {
-        console.error("Mapbox error:", e);
+        logger.error("Mapbox error:", e);
         setError("Map failed to load");
       }}
     >

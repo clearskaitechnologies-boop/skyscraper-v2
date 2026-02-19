@@ -3,6 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 
 import { BETA_PAYMENTS_DISABLED_MESSAGE, isBetaMode } from "@/lib/beta";
+import { logger } from "@/lib/logger";
 import { getStripeClient } from "@/lib/stripe";
 
 const stripe = getStripeClient();
@@ -65,7 +66,7 @@ export async function createTokenCheckout(orgId: string, pack: string) {
 
     return { url: session.url };
   } catch (error) {
-    console.error("Stripe checkout error:", error);
+    logger.error("Stripe checkout error:", error);
     throw new Error("Failed to create checkout session");
   }
 }

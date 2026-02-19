@@ -26,6 +26,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -263,7 +264,7 @@ export default function WeatherAnalyticsPage() {
       const result = await res.json();
       setInsights(result);
     } catch (e: any) {
-      console.error("Failed to generate insights:", e);
+      logger.error("Failed to generate insights:", e);
     } finally {
       setInsightsLoading(false);
     }

@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface Vendor {
   id: string;
@@ -69,7 +70,7 @@ function LegacyVendorsPage() {
       const data = await response.json();
       setVendors(data.vendors || []);
     } catch (error) {
-      console.error("Failed to fetch vendors:", error);
+      logger.error("Failed to fetch vendors:", error);
     } finally {
       setLoading(false);
     }

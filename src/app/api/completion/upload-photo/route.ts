@@ -45,7 +45,7 @@ export async function POST(req: Request) {
     // SECURITY: Validate that file was actually uploaded to Supabase
     // storageKey should be provided if file is in Supabase Storage
     if (!storageKey) {
-      console.warn(
+      logger.warn(
         `[completion:upload-photo] Missing storageKey for ${fileName}. ` +
           "File may not be in Supabase Storage. Use /api/claims/files/upload instead."
       );
