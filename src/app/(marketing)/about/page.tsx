@@ -208,6 +208,18 @@ export default function AboutPage() {
             View Pricing
           </Link>
         </section>
+
+        {/* Enterprise Readiness */}
+        <div className="mt-12 text-center">
+          <a
+            href="/titan-proof/presentation.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground/40 transition-colors hover:text-muted-foreground/70"
+          >
+            Enterprise Readiness ↗
+          </a>
+        </div>
       </div>
     </main>
   );
