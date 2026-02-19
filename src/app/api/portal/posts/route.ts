@@ -3,8 +3,8 @@
  * Handle client social posts - create, list, and manage posts
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -22,13 +22,13 @@ export async function GET(req: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20", 10);
     const offset = parseInt(searchParams.get("offset") || "0", 10);
 
-    // Get user's organization
-    const user = await prisma.users.findUnique({
+    // Get user from user_registry (works for both client & pro users)
+    const registry = await prisma.user_registry.findUnique({
       where: { clerkUserId: userId },
       select: { id: true, orgId: true },
     });
 
-    if (!user) {
+    if (!registry) {
       return NextResponse.json({ posts: [] });
     }
 
@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
           cp.comment_count,
           cp.created_at as "createdAt"
         FROM client_posts cp
-        WHERE cp.user_id = ${user.id}
+        WHERE cp.user_id = ${registry.id}
         ORDER BY cp.created_at DESC
         LIMIT ${limit} OFFSET ${offset}
       `) as any[];
@@ -56,7 +56,7 @@ export async function GET(req: NextRequest) {
       const postsWithLikes = await Promise.all(
         posts.map(async (post: any) => {
           const isLiked = await prisma.$queryRaw`
-            SELECT 1 FROM post_likes WHERE post_id = ${post.id} AND user_id = ${user.id}
+            SELECT 1 FROM post_likes WHERE post_id = ${post.id} AND user_id = ${registry.id}
           `;
           return {
             ...post,
@@ -93,13 +93,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Content is required" }, { status: 400 });
     }
 
-    // Get user
-    const user = await prisma.users.findUnique({
+    // Get user from user_registry (works for both client & pro users)
+    const registry = await prisma.user_registry.findUnique({
       where: { clerkUserId: userId },
       select: { id: true, orgId: true },
     });
 
-    if (!user) {
+    if (!registry) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
     try {
       const newPost = (await prisma.$queryRaw`
         INSERT INTO client_posts (user_id, organization_id, type, content, images, contractor_id, rating)
-        VALUES (${user.id}, ${user.orgId}, ${type}, ${content}, ${JSON.stringify(images)}::jsonb, ${contractorId || null}, ${rating || null})
+        VALUES (${registry.id}, ${registry.orgId}, ${type}, ${content}, ${JSON.stringify(images)}::jsonb, ${contractorId || null}, ${rating || null})
         RETURNING 
           id,
           type,
