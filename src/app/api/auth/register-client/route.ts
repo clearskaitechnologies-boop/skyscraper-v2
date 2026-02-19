@@ -5,8 +5,8 @@
  * Creates a new client profile using the unified Client model.
  */
 
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 

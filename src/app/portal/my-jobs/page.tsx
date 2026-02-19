@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { format, isValid } from "date-fns";
 import {
   ArrowRight,
@@ -175,7 +176,7 @@ export default function MyJobsPage() {
         setShowDemoClaim(demoEnabled);
       }
     } catch (error) {
-      console.error("Failed to fetch data:", error);
+      logger.error("Failed to fetch data:", error);
       setShowDemoJob(demoEnabled);
       setShowDemoClaim(demoEnabled);
     } finally {

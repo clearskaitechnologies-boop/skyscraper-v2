@@ -1,7 +1,7 @@
 // /api/signatures/request
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getOrgClaimOrThrow } from "@/lib/auth/orgScope";
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
 
     // In test mode, log instead of sending email
     if (isTestMode()) {
-      console.log(
+      logger.info(
         `[TestMode][Notify] Signature requested from ${signerEmail} for document "${document.title}"`
       );
     }

@@ -15,8 +15,8 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { JobNimbusMigrationEngine } from "@/lib/migrations/jobnimbus-engine";
 import { getCurrentUserPermissions } from "@/lib/permissions";
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 3. Run migration
-    console.log(
+    logger.info(
       `[API] JobNimbus migration started by ${userId} for org ${orgId} (dryRun=${!!dryRun})`
     );
 

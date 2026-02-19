@@ -9,8 +9,8 @@
  * Schedule: Weekly (0 0 * * 0) - Sundays at midnight
  */
 
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
@@ -74,7 +74,7 @@ export async function GET(request: Request) {
         });
         insights.processed++;
       } catch (orgError) {
-        console.error(`[AI-INSIGHTS] Error processing org ${org.id}:`, orgError);
+        logger.error(`[AI-INSIGHTS] Error processing org ${org.id}:`, orgError);
         insights.errors++;
       }
     }

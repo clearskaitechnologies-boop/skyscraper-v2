@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -23,7 +24,7 @@ export default function NewStormIntakePage() {
         });
         router.push(`/storm-intake/${intake.id}`);
       } catch (err) {
-        console.error("Failed to create intake:", err);
+        logger.error("Failed to create intake:", err);
         setError("Failed to start intake. Please try again.");
       }
     };

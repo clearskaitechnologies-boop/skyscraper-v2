@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -47,7 +48,7 @@ export default function ClientRequestPage({ params }: ClientRequestPageProps) {
         alert("Failed to submit request. Please try again.");
       }
     } catch (error) {
-      console.error("Failed to submit request:", error);
+      logger.error("Failed to submit request:", error);
       alert("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

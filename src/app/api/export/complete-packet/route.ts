@@ -218,7 +218,7 @@ https://skaiscrape.com`
         hasEstimate: !!estimate,
         fileName,
       },
-    }).catch(console.error);
+    }).catch(logger.error);
 
     return NextResponse.json({
       success: true,

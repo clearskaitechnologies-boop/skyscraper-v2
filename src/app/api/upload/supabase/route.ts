@@ -15,8 +15,8 @@
  * - Audit logging
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -299,7 +299,7 @@ export async function POST(request: NextRequest) {
           });
         }
       } catch (firebaseError) {
-        console.error("[Firebase Upload] Fallback failed:", firebaseError);
+        logger.error("[Firebase Upload] Fallback failed:", firebaseError);
       }
 
       return NextResponse.json({ error: `Upload failed: ${error.message}` }, { status: 500 });

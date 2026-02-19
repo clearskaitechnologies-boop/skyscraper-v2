@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import { z } from "zod";
 
@@ -255,7 +255,7 @@ const basePOST = async (request: NextRequest) => {
               updatedAt: new Date(),
             },
           });
-          console.info("[POST /api/leads] Created property profile for contact", {
+          logger.info("[POST /api/leads] Created property profile for contact", {
             contactId: contact.id,
             address: fullAddress,
           });

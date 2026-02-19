@@ -24,11 +24,7 @@ type ContractorPublic = {
   gallery?: { url: string; caption?: string }[] | null;
 };
 
-export default function ContractorPublicPage({
-  contractor,
-}: {
-  contractor: ContractorPublic;
-}) {
+export default function ContractorPublicPage({ contractor }: { contractor: ContractorPublic }) {
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -69,9 +65,7 @@ export default function ContractorPublicPage({
   }
 
   const humanTrades =
-    contractor.trades?.map(
-      (t) => TRADE_LABELS.find((x) => x.id === t)?.label || t
-    ) || [];
+    contractor.trades?.map((t) => TRADE_LABELS.find((x) => x.id === t)?.label || t) || [];
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -91,9 +85,7 @@ export default function ContractorPublicPage({
             )}
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-xl font-semibold">
-                  {contractor.businessName}
-                </h1>
+                <h1 className="text-xl font-semibold">{contractor.businessName}</h1>
                 {contractor.verified && (
                   <span className="rounded-full border border-emerald-400/40 bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-200">
                     SkaiScraper Verified
@@ -108,10 +100,7 @@ export default function ContractorPublicPage({
               {humanTrades.length > 0 && (
                 <div className="mt-1 flex flex-wrap gap-1">
                   {humanTrades.slice(0, 3).map((t) => (
-                    <span
-                      key={t}
-                      className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px]"
-                    >
+                    <span key={t} className="rounded-full bg-slate-800 px-2 py-0.5 text-[10px]">
                       {t}
                     </span>
                   ))}
@@ -146,9 +135,7 @@ export default function ContractorPublicPage({
           {contractor.about && (
             <section className="rounded-xl border bg-white p-4 shadow-sm">
               <h2 className="mb-1 text-sm font-semibold">About</h2>
-              <p className="whitespace-pre-line text-sm text-slate-600">
-                {contractor.about}
-              </p>
+              <p className="whitespace-pre-line text-sm text-slate-600">{contractor.about}</p>
             </section>
           )}
 
@@ -160,9 +147,7 @@ export default function ContractorPublicPage({
                   <li key={idx} className="border-b pb-2 last:border-0 last:pb-0">
                     <div className="font-medium">{s.name}</div>
                     {s.description && (
-                      <div className="mt-0.5 text-xs text-slate-500">
-                        {s.description}
-                      </div>
+                      <div className="mt-0.5 text-xs text-slate-500">{s.description}</div>
                     )}
                   </li>
                 ))}
@@ -182,9 +167,7 @@ export default function ContractorPublicPage({
                       className="h-28 w-full rounded-lg border object-cover"
                     />
                     {g.caption && (
-                      <figcaption className="text-[11px] text-slate-500">
-                        {g.caption}
-                      </figcaption>
+                      <figcaption className="text-[11px] text-slate-500">{g.caption}</figcaption>
                     )}
                   </figure>
                 ))}
@@ -197,9 +180,8 @@ export default function ContractorPublicPage({
           <h2 className="text-sm font-semibold">Request Service</h2>
           {submitted ? (
             <div className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-700">
-              Your request has been sent. The contractor will reach out to you
-              soon. You&apos;ll have the option to add them to your Trade Team
-              after they connect with you.
+              Your request has been sent. The contractor will reach out to you soon. You&apos;ll
+              have the option to add them to your Trade Team after they connect with you.
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2 text-sm">
@@ -232,9 +214,7 @@ export default function ContractorPublicPage({
                 />
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-[11px] text-slate-600">
-                  Service address
-                </label>
+                <label className="text-[11px] text-slate-600">Service address</label>
                 <input
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
@@ -244,7 +224,8 @@ export default function ContractorPublicPage({
               </div>
               <div className="flex flex-col gap-1">
                 <label className="text-[11px] text-slate-600">Trade</label>
-                <select title="Trade"
+                <select
+                  title="Trade"
                   className="rounded-md border px-2 py-1.5 text-sm"
                   value={trade}
                   onChange={(e) => setTrade(e.target.value)}
@@ -258,9 +239,7 @@ export default function ContractorPublicPage({
                 </select>
               </div>
               <div className="flex flex-col gap-1">
-                <label className="text-[11px] text-slate-600">
-                  What&apos;s going on?
-                </label>
+                <label className="text-[11px] text-slate-600">What&apos;s going on?</label>
                 <textarea
                   value={details}
                   onChange={(e) => setDetails(e.target.value)}
@@ -276,8 +255,7 @@ export default function ContractorPublicPage({
                 {submitting ? "Sending..." : "Send Request"}
               </button>
               <p className="text-[10px] text-slate-500">
-                Your info goes directly to this contractor. No spam. No
-                reselling your data.
+                Your info goes directly to this contractor. No spam. No reselling your data.
               </p>
             </form>
           )}

@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { runDamageBuilder } from "@/lib/ai/damage";
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     }
 
     logger.debug("[Damage Builder] Starting analysis for user:", userId);
-    console.log("[Damage Builder] Input:", {
+    logger.info("[Damage Builder] Input:", {
       claimId: body.claimId,
       leadId: body.leadId,
       photoCount: body.photos.length,

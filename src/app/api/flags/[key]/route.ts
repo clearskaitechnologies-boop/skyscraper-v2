@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 import { requireAdmin } from "@/lib/security/roles";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -35,7 +36,7 @@ export const GET = withSentryApi(async (req: Request, { params }: { params: { ke
   } catch (err: unknown) {
     const errMsg = err instanceof Error ? err.message : String(err);
     const errStack = err instanceof Error ? err.stack : undefined;
-    console.error("Flag GET error", { key: params.key, err: errMsg, stack: errStack });
+    logger.error("Flag GET error", { key: params.key, err: errMsg, stack: errStack });
     return NextResponse.json({ error: "Internal server error", detail: errMsg }, { status: 500 });
   }
 }) as any;

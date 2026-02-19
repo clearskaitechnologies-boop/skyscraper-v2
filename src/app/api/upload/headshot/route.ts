@@ -86,7 +86,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ url: downloadUrl, storage: "firebase" });
         }
       } catch (firebaseError) {
-        console.error("[Headshot Upload] Firebase fallback failed:", firebaseError);
+        logger.error("[Headshot Upload] Firebase fallback failed:", firebaseError);
       }
 
       return NextResponse.json({ error: "Failed to upload file" }, { status: 500 });

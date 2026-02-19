@@ -8,6 +8,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getAuthContext } from "@/lib/auth/getAuthContext";
+import { logger } from "@/lib/logger";
 import {
   calculateMaterials,
   createOrderDraft,
@@ -145,7 +146,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: false, error: "Unknown action" }, { status: 400 });
   } catch (err) {
-    console.error("[MATERIALS] Error:", err);
+    logger.error("[MATERIALS] Error:", err);
     return NextResponse.json(
       { ok: false, error: err instanceof Error ? err.message : "Internal error" },
       { status: 500 }

@@ -4,8 +4,8 @@
  * Searches for contractors with filtering and sorting
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -240,7 +240,7 @@ export async function GET(req: NextRequest) {
       }
 
       if (!pro) {
-        console.log(
+        logger.info(
           `[find-pro] Pro not found for ID: ${proId}. Checked: tradesCompanyMember, tradesCompany, userId lookup`
         );
         // Return error with details

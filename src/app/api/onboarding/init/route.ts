@@ -61,8 +61,8 @@ export const revalidate = 0;
  * ============================================================================
  */
 
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextResponse } from "next/server";
 
@@ -206,7 +206,7 @@ export async function POST() {
       typeof error === "object" && error !== null && "code" in error
         ? (error as { code: string }).code
         : undefined;
-    console.error("[onboarding/init] \u274C Onboarding init error:", {
+    logger.error("[onboarding/init] \u274C Onboarding init error:", {
       message: errObj.message,
       code: errorCode,
       classification,

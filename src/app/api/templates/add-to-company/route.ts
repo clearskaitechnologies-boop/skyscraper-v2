@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     });
 
     if (!org) {
-      console.error("[ADD_TO_COMPANY_ERROR] Organization not found", { clerkOrgId });
+      logger.error("[ADD_TO_COMPANY_ERROR] Organization not found", { clerkOrgId });
       return NextResponse.json({ ok: false, error: "ORG_NOT_FOUND" }, { status: 404 });
     }
 

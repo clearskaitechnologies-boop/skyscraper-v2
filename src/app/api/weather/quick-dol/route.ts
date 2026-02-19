@@ -1,6 +1,6 @@
 // src/app/api/weather/quick-dol/route.ts
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { QuickDolInput, runQuickDol } from "@/lib/ai/weather";
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
           },
         });
       } catch (dbErr) {
-        console.error("[weather/quick-dol] Failed to save to ai_reports:", dbErr);
+        logger.error("[weather/quick-dol] Failed to save to ai_reports:", dbErr);
         // Continue even if save fails - don't break demo
       }
     }

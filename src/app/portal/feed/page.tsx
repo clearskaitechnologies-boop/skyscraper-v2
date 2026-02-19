@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { useUser } from "@clerk/nextjs";
 import {
   Activity,
@@ -95,7 +96,7 @@ export default function FeedPage() {
         setActivities(data.activities || []);
       }
     } catch (error) {
-      console.error("Failed to fetch activity:", error);
+      logger.error("Failed to fetch activity:", error);
     } finally {
       setLoading(false);
     }

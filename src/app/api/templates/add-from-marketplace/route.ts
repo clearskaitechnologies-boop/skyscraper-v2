@@ -1,5 +1,5 @@
-import * as Sentry from "@sentry/nextjs";
 import { logger } from "@/lib/logger";
+import * as Sentry from "@sentry/nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -56,7 +56,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Create template in database from registry
-      console.log(
+      logger.info(
         `[ADD_TEMPLATE] Creating template ${registryTemplate.slug} in database from registry`
       );
       template = await prisma.template.create({

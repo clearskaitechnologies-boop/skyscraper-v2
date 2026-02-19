@@ -1,7 +1,7 @@
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
@@ -77,7 +77,7 @@ export async function GET() {
     const orgFilter =
       companyId && companyId !== orgId ? { OR: [{ orgId }, { orgId: companyId }] } : { orgId };
 
-    console.log(
+    logger.info(
       "[DASHBOARD_STATS] resolved orgId:",
       orgId,
       "companyId:",

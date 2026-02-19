@@ -1,6 +1,6 @@
 // ORG-SCOPE: Scoped by userId/email — queries client_access by userEmail. No cross-tenant risk.
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
         },
       });
     } catch (dbError) {
-      console.error("[GET /api/portal/claims] DB Error:", dbError);
+      logger.error("[GET /api/portal/claims] DB Error:", dbError);
       // Return empty array instead of throwing
       return NextResponse.json({
         ok: true,

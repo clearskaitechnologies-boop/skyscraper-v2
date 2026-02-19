@@ -8,6 +8,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Loader2, Wrench } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 
@@ -337,7 +338,7 @@ export default function JobDetailPage() {
         setTimeline(data.events || []);
       }
     } catch (error) {
-      console.error("Failed to load job data:", error);
+      logger.error("Failed to load job data:", error);
       toast.error("Failed to load project details");
     } finally {
       setLoading(false);

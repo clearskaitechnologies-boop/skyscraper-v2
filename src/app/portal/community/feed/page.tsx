@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Globe, Heart, Loader2, MessageCircle, Share2, Users } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
@@ -47,7 +48,7 @@ export default function CommunityFeedPage() {
         setHasMore(newPosts.length >= 20);
       }
     } catch (error) {
-      console.error("Failed to fetch community posts:", error);
+      logger.error("Failed to fetch community posts:", error);
       toast.error("Failed to load community posts");
     } finally {
       setLoading(false);

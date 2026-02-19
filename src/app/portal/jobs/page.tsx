@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { ArrowRight, Briefcase, Loader2, Plus, Wrench } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -35,7 +36,7 @@ export default function PortalJobsPage() {
         setJobs(data.jobs || []);
       }
     } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+      logger.error("Failed to fetch jobs:", error);
     } finally {
       setLoading(false);
     }

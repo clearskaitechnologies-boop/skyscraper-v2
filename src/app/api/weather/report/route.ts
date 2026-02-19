@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -164,7 +164,7 @@ export async function POST(req: NextRequest) {
         logger.debug(`[Weather API] PDF saved for claim ${body.claim_id}`);
       }
     } catch (pdfError) {
-      console.error("[Weather API] PDF generation failed (non-critical):", pdfError);
+      logger.error("[Weather API] PDF generation failed (non-critical):", pdfError);
       // Continue - PDF failure should not break the weather report
     }
 

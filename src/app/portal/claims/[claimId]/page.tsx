@@ -6,6 +6,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import { useAuth } from "@clerk/nextjs";
 import { Home, Loader2 } from "lucide-react";
 import Link from "next/link";
@@ -380,7 +381,7 @@ export default function PortalClaimDetailPage() {
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);
-      console.error("Failed to load claim:", err);
+      logger.error("Failed to load claim:", err);
     } finally {
       setLoading(false);
     }

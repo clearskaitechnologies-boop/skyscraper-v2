@@ -11,8 +11,8 @@
  * - O&P
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -233,7 +233,7 @@ export async function POST(request: NextRequest) {
         totalAmount: totals.total,
         lineItemCount: pricedItems.length,
       },
-    }).catch(console.error);
+    }).catch(logger.error);
 
     // 15. Return success
     return NextResponse.json({

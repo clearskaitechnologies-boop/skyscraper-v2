@@ -5,8 +5,8 @@
  * Allows clients to initiate connection requests to trades companies.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";

@@ -1,7 +1,7 @@
 // /api/signatures/respond
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
 import { notifyDocumentSigned } from "@/lib/notifications/sendNotification";
@@ -94,7 +94,7 @@ export async function POST(req: NextRequest) {
 
     // Notify Pro
     if (isTestMode()) {
-      console.log(
+      logger.info(
         `[TestMode][Notify] Document "${signatureEnvelope.documentName}" ${action} by ${signatureEnvelope.signerEmail}`
       );
     }

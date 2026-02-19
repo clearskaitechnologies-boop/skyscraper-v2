@@ -87,7 +87,7 @@ export async function POST(req: NextRequest) {
           });
         }
       } catch (dbError) {
-        console.error("[Branding Upload] DB update error:", dbError);
+        logger.error("[Branding Upload] DB update error:", dbError);
         // Non-fatal — the upload still succeeded
       }
     }

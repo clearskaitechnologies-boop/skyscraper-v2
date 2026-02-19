@@ -6,8 +6,8 @@
  * Returns conflicts, recommendations, and carrier-friendly adjusted scope
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 

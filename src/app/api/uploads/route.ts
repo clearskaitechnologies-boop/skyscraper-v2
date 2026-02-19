@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import Busboy from "busboy";
 import crypto from "crypto";
 import mime from "mime";
@@ -301,7 +301,7 @@ export async function POST(req: NextRequest) {
           note,
         });
       } catch (fileError: any) {
-        console.error(`Error processing file ${files[i].filename}:`, fileError);
+        logger.error(`Error processing file ${files[i].filename}:`, fileError);
         errors.push({
           filename: files[i].filename,
           error: "Upload failed",

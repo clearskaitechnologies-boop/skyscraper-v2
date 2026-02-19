@@ -5,8 +5,8 @@
  * Creates or updates ClientProConnection records.
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -175,7 +175,7 @@ export async function POST(req: NextRequest) {
       });
     } catch (workRequestError) {
       // Non-fatal - log but continue
-      console.error("[JOIN] Failed to create work request:", workRequestError);
+      logger.error("[JOIN] Failed to create work request:", workRequestError);
     }
 
     return NextResponse.json({

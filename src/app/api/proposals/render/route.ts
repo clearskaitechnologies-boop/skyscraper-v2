@@ -7,8 +7,8 @@ export const revalidate = 0;
  * Renders a proposal draft to PDF and uploads to storage
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { renderProposalPdf } from "@/lib/proposals/render";
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     });
 
     // Track analytics: proposal.render.succeeded
-    console.log("[Analytics] proposal.render.succeeded", {
+    logger.info("[Analytics] proposal.render.succeeded", {
       userId,
       orgId,
       proposalId: result.proposalId,

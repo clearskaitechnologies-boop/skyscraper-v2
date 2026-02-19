@@ -1,5 +1,6 @@
 import { Activity, CheckCircle, Clock, FileText, MessageSquare } from "lucide-react";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 interface ClientActivityPageProps {
@@ -34,7 +35,7 @@ export default async function ClientActivityPage({ params }: ClientActivityPageP
       });
     }
   } catch (error) {
-    console.error("[ClientActivityPage] Error fetching activities:", error);
+    logger.error("[ClientActivityPage] Error fetching activities:", error);
     // Gracefully handle DB errors
   }
 

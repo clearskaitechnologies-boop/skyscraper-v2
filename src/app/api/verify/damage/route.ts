@@ -22,8 +22,8 @@ export const revalidate = 0;
  * @returns { ok: true, finding: {...} } or { ok: false, error: string }
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
+import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireAuth } from "@/lib/auth/requireAuth";
@@ -164,7 +164,7 @@ export async function POST(req: NextRequest) {
     // Step 4: Poll for findings
     logger.debug("Step 4: Polling for findings (60s timeout)...");
     const finding = await pollForFindings(photoId, 60000);
-    console.log(`✓ Finding received:`, {
+    logger.info(`✓ Finding received:`, {
       severity: finding.severity,
       confidence: finding.confidence,
     });

@@ -6,8 +6,8 @@
  * Creates/updates user_registry and Client table entries.
  */
 
-import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 

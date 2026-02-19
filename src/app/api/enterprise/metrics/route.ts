@@ -16,6 +16,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { createRedisClientSafely } from "@/lib/upstash";
 import { NextResponse } from "next/server";
@@ -159,7 +160,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error("[enterprise/metrics] Error:", error);
+    logger.error("[enterprise/metrics] Error:", error);
     return NextResponse.json(
       {
         status: "error",

@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (notifErr) {
-      console.error("[connections/decline] Notification error:", notifErr);
+      logger.error("[connections/decline] Notification error:", notifErr);
     }
 
     return NextResponse.json({ ok: true, connection: updated });

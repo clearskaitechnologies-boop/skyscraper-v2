@@ -3,8 +3,8 @@
  * Uses Clerk's native organization invitation system
  */
 
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -73,7 +73,7 @@ export async function POST(request: Request) {
         },
       });
     } catch (clerkError: any) {
-      console.error("Clerk invitation error:", clerkError);
+      logger.error("Clerk invitation error:", clerkError);
 
       // Handle duplicate invitation
       if (clerkError.errors?.[0]?.code === "duplicate_record") {

@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { format, isValid } from "date-fns";
 import { ArrowRight, CheckCircle, Clock, FileText, MapPin, Shield, Sparkles } from "lucide-react";
 import Link from "next/link";
@@ -60,7 +61,7 @@ export default function ClaimsListPage() {
         setShowDemoMode(true);
       }
     } catch (error) {
-      console.error("Failed to fetch claims:", error);
+      logger.error("Failed to fetch claims:", error);
       setShowDemoMode(true);
     } finally {
       setLoading(false);

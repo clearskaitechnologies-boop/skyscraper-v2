@@ -15,8 +15,8 @@ export const revalidate = 0;
  * Worker will call OpenAI Vision API and insert findings.
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
@@ -178,7 +178,7 @@ export async function POST(req: Request) {
       JSON.stringify({
         photoIds: uploadedPhotos.map((p) => p.id),
         photoCount: uploadedPhotos.length,
-        
+
         userId,
       })
     );
@@ -193,7 +193,6 @@ export async function POST(req: Request) {
       JSON.stringify({
         proposalId,
         photoCount: uploadedPhotos.length,
-        
       })
     );
 

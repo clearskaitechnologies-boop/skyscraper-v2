@@ -1,6 +1,7 @@
 import { ExternalLink, FileIcon, FileSpreadsheet, FileText, Image } from "lucide-react";
 import Link from "next/link";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 interface ClientSharedPageProps {
@@ -46,7 +47,7 @@ export default async function ClientSharedPage({ params }: ClientSharedPageProps
       take: 20,
     });
   } catch (error) {
-    console.error("[ClientSharedPage] Error fetching shared items:", error);
+    logger.error("[ClientSharedPage] Error fetching shared items:", error);
     // Gracefully handle DB errors - show empty state
   }
 

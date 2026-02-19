@@ -62,10 +62,7 @@ async function handleGET(req: NextRequest, { params }: { params: Promise<{ claim
     return ok({ reports });
   } catch (dbError: any) {
     // Graceful fallback
-    logger.warn(
-      "[GET /api/claims/[claimId]/reports] DB error (returning empty):",
-      dbError.message
-    );
+    logger.warn("[GET /api/claims/[claimId]/reports] DB error (returning empty):", dbError.message);
     return ok({ reports: [], message: "Reports system not yet initialized" });
   }
 }

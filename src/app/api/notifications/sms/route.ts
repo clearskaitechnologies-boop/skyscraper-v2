@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
           sid: result.sid,
         });
       } catch (twilioError: any) {
-        console.error("Twilio error:", twilioError);
+        logger.error("Twilio error:", twilioError);
         return NextResponse.json(
           { error: `Twilio error: ${twilioError.message}` },
           { status: 500 }

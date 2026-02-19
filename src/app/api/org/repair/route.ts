@@ -22,8 +22,8 @@
  * - /org-error repair button
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -68,7 +68,11 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
 
       const orphanedMemberships = allMemberships.filter((m) => !m.Org);
       if (orphanedMemberships.length > 0) {
-        logger.debug("[org/repair] Cleaning up", orphanedMemberships.length, "orphaned memberships");
+        logger.debug(
+          "[org/repair] Cleaning up",
+          orphanedMemberships.length,
+          "orphaned memberships"
+        );
         await tx.user_organizations.deleteMany({
           where: {
             id: { in: orphanedMemberships.map((m) => m.id) },
@@ -229,7 +233,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
       logger.warn("[org/repair] Branding check failed (non-fatal):", brandingError.message);
     }
 
-    console.log(
+    logger.info(
       "[org/repair] Complete. OrgId:",
       result.id,
       "Repaired:",

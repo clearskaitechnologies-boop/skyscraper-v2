@@ -1,5 +1,6 @@
-import { Calendar,Hammer, MapPin } from "lucide-react";
+import { Calendar, Hammer, MapPin } from "lucide-react";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 interface ClientProjectsPageProps {
@@ -21,7 +22,7 @@ export default async function ClientProjectsPage({ params }: ClientProjectsPageP
       take: 20,
     });
   } catch (error) {
-    console.error("[ClientProjectsPage] Error:", error);
+    logger.error("[ClientProjectsPage] Error:", error);
   }
 
   return (

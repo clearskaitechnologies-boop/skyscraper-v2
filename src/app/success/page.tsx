@@ -1,14 +1,15 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Suspense,useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 
 import { trackSubscriptionCompleted } from "@/lib/analytics.client";
 
 function SuccessContent() {
   const sp = useSearchParams();
-  
+
   // Snapshot values so they don't change mid-render
   const params = useMemo(() => {
     return {
@@ -48,7 +49,7 @@ function SuccessContent() {
         }
       }
     } catch (error) {
-      console.error("Failed to verify session:", error);
+      logger.error("Failed to verify session:", error);
     } finally {
       setLoading(false);
     }
@@ -164,14 +165,16 @@ function SuccessContent() {
 
 export default function SuccessPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+            <p className="mt-4 text-gray-600">Loading...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <SuccessContent />
     </Suspense>
   );

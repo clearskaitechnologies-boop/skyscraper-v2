@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const mimeType = beforeImage.type;
     const beforeImageDataUrl = `data:${mimeType};base64,${base64}`;
 
-    console.log(
+    logger.info(
       `[Mockup Generate] User: ${user.id}, Project: ${projectType}, Size: ${beforeImage.size} bytes`
     );
     logger.debug(`[Mockup Generate] AI Prompt: ${aiPrompt}`);

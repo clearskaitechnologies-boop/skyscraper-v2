@@ -1,5 +1,5 @@
-import { auth, clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { prismaMaybeModel } from "@/lib/db/prismaModel";
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
         });
         logger.debug(`✅ Welcome email sent to ${userEmail}`);
       } catch (emailError) {
-        console.error("Failed to send welcome email:", emailError);
+        logger.error("Failed to send welcome email:", emailError);
         // Don't fail the request if email fails
       }
     }

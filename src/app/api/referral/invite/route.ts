@@ -108,7 +108,7 @@ SkaiScraper™ - AI-Powered Operations for Trades Pros
           `,
         });
       } catch (emailError) {
-        console.error("[Referral Email Error]", emailError);
+        logger.error("[Referral Email Error]", emailError);
         // Continue even if email fails - referral is still tracked
       }
     } else {

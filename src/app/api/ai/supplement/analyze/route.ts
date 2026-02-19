@@ -5,8 +5,8 @@
  * Uses GPT-4 Vision for document analysis and Xactimate-style pricing.
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";

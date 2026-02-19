@@ -5,8 +5,8 @@ import { BarChart, CheckCircle2, Clock, TrendingUp, Users, Zap } from "lucide-re
 import { useEffect, useState } from "react";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { logger } from "@/lib/logger";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface DailyMetrics {
   date: string;

@@ -4,8 +4,8 @@
  * Manages connection requests from clients to contractors
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -180,7 +180,7 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (notifErr) {
-      console.error("[portal/connections] Notification error:", notifErr);
+      logger.error("[portal/connections] Notification error:", notifErr);
     }
 
     return NextResponse.json({

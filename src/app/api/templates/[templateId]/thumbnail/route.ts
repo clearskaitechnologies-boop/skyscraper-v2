@@ -9,8 +9,8 @@
  * - Returns placeholder if all else fails
  */
 
-import fs from "fs/promises";
 import { logger } from "@/lib/logger";
+import fs from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
@@ -324,7 +324,7 @@ export async function GET(req: NextRequest, { params }: { params: { templateId: 
           }
         }
       } catch (genError) {
-        console.error(`[THUMBNAIL_API] On-demand generation failed for ${templateId}:`, genError);
+        logger.error(`[THUMBNAIL_API] On-demand generation failed for ${templateId}:`, genError);
         // Fall through to placeholder
       }
     }

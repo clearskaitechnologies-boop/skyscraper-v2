@@ -4,6 +4,8 @@
 
 import { notFound } from "next/navigation";
 
+import { logger } from "@/lib/logger";
+
 interface Props {
   params: { id: string };
 }
@@ -14,6 +16,6 @@ interface Props {
  */
 export default async function StormIntakePage({ params }: Props) {
   // stormIntake model doesn't exist in schema
-  console.log(`[Storm Intake] Model not available, id: ${params.id}`);
+  logger.info(`[Storm Intake] Model not available, id: ${params.id}`);
   notFound();
 }

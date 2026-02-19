@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Heart, MessageCircle, Search, Star, Trash2, UserCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -84,7 +85,7 @@ export default function ContractorsPage() {
         setSavedPros(savedData.savedPros || []);
       }
     } catch (error) {
-      console.error("Failed to load pros:", error);
+      logger.error("Failed to load pros:", error);
     } finally {
       setLoading(false);
     }

@@ -2,8 +2,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -114,7 +114,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       data: { companyId: null },
     });
 
-    console.log(
+    logger.info(
       `[TRADE_DELETE] ⚠️ Detached ${detached.count} members from company ${params.id} before deletion`
     );
 

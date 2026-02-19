@@ -170,7 +170,7 @@ export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
             memberCount: 1,
           });
         } catch (autoCreateError) {
-          console.error("[trades/company] Auto-create failed:", autoCreateError);
+          logger.error("[trades/company] Auto-create failed:", autoCreateError);
         }
       }
 

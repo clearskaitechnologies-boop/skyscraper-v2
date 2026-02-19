@@ -8,8 +8,8 @@
  * BatchJob, MailerBatch, and MailerJob models are added.
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { LOB_ENABLED } from "@/lib/lob/client";
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     // STUB: BatchJob, MailerBatch, and MailerJob models not yet in Prisma schema
     // Return a placeholder response indicating feature is not yet available
-    console.log(
+    logger.info(
       `[Mailers] Stub: Would send ${template} mailers for batch ${batchJobId} with selection: ${selection}`
     );
 

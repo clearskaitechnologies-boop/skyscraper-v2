@@ -4,8 +4,8 @@
  * NOW USES: ensureOrgForUser to guarantee org exists
  */
 
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { ensureOrgForUser } from "@/lib/auth/ensureOrgForUser";
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
 
     const testModeActive = isTestMode();
 
-    console.log(`[OrgInit] Org ${orgId} fully initialized`, {
+    logger.info(`[OrgInit] Org ${orgId} fully initialized`, {
       testMode: testModeActive,
     });
 

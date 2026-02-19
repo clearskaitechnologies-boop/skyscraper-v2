@@ -3,8 +3,8 @@
  * Creates a connection request from client to a pro
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -178,7 +178,7 @@ export async function POST(req: NextRequest) {
         select: { userId: true },
       });
 
-      console.log(
+      logger.info(
         `[connect-pro] Connection created: ${connection.id}. Notifying ${companyMembers.length} company members.`
       );
 

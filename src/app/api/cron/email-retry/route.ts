@@ -4,6 +4,7 @@ export const revalidate = 0;
 export const maxDuration = 120;
 
 // CRON: EMAIL RETRY WORKER
+import { logger } from "@/lib/logger";
 import * as Sentry from "@sentry/nextjs";
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
@@ -99,7 +100,7 @@ export async function GET(req: Request) {
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("[CRON:EMAIL_RETRY] Fatal error:", error?.message || error);
+    logger.error("[CRON:EMAIL_RETRY] Fatal error:", error?.message || error);
     try {
       Sentry.captureException(error, { tags: { component: "email-retry-cron" } });
     } catch (_) {}

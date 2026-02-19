@@ -64,7 +64,7 @@ export async function POST(req: Request) {
 
     const testModeActive = isTestMode();
 
-    console.log(`[Onboarding] Org ${orgId} marked as onboardingCompleted`, {
+    logger.info(`[Onboarding] Org ${orgId} marked as onboardingCompleted`, {
       testMode: testModeActive,
       companyName: companyInfo?.name,
     });

@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { Clock } from "lucide-react";
 import { redirect } from "next/navigation";
@@ -31,7 +32,7 @@ export default async function InviteAcceptancePage({ params }: InvitePageProps) 
       },
     })
     .catch((error) => {
-      console.error("[Invite Page] Error fetching invite:", error);
+      logger.error("[Invite Page] Error fetching invite:", error);
       return null;
     });
 

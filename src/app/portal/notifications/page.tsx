@@ -1,5 +1,6 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import {
   Bell,
   BellOff,
@@ -45,7 +46,7 @@ export default function PortalNotificationsPage() {
         setNotifications(data.notifications || []);
       }
     } catch (error) {
-      console.error("Failed to fetch notifications:", error);
+      logger.error("Failed to fetch notifications:", error);
     } finally {
       setLoading(false);
     }

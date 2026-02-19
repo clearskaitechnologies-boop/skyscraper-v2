@@ -7,8 +7,8 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { createRedisClientSafely } from "@/lib/upstash";
@@ -103,7 +103,7 @@ export async function GET() {
       environment: process.env.NODE_ENV || "unknown",
     };
 
-    console.log(
+    logger.info(
       `[${Date.now()}][/api/health] Status: ${status} | DB: ${databaseOk} | Redis: ${redisConfigured ? redisOk : "unconfigured"} | Auth: ${authOk} | Storage: ${storageOk}`
     );
 
