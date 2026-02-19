@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ url: session.url, sessionId: session.id });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Full Access checkout error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to create checkout session" },

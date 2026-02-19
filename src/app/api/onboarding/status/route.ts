@@ -40,7 +40,7 @@ export const GET = withAuth(async (_req: NextRequest, { userId }) => {
       steps: onboarding,
       dismissedAt: meta.onboardingDismissedAt || null,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: error.message || "Failed to fetch onboarding status" },
       { status: 500 }
@@ -88,7 +88,7 @@ export const POST = withAuth(async (req: NextRequest, { userId }) => {
       onboardingComplete: allComplete,
       steps: currentSteps,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: error.message || "Failed to update onboarding status" },
       { status: 500 }

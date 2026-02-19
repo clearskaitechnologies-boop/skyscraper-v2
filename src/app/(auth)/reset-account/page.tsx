@@ -34,7 +34,7 @@ export default function ResetAccountPage() {
       const data = await res.json();
       setDebugInfo(data);
       setStatus("idle");
-    } catch (e: any) {
+    } catch (e) {
       setError(e.message);
       setStatus("error");
     }
@@ -60,7 +60,7 @@ export default function ResetAccountPage() {
         setError(data.error || "Reset failed");
         setStatus("error");
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Network error");
       setStatus("error");
     } finally {

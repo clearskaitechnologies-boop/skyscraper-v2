@@ -94,7 +94,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
       success: true,
       description: `Documents sent to ${recipientEmail}`,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Send to Adjuster] Error:", error);
     return NextResponse.json(
       { error: "Failed to send email", details: error.message },

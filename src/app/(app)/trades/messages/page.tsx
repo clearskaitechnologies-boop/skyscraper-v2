@@ -336,7 +336,7 @@ export default function TradesMessagesPage() {
         setSendError(errorMsg);
         toast.error(errorMsg);
       }
-    } catch (error: any) {
+    } catch (error) {
       const msg = error?.message || "Network error — please try again";
       logger.error("Failed to send message:", error);
       setSendError(msg);

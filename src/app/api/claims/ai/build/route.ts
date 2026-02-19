@@ -158,7 +158,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, summary, lineItems: uniqueItems });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI CLAIM BUILDER ERROR]", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },

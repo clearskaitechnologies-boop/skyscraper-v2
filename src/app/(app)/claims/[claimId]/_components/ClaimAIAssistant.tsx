@@ -80,7 +80,7 @@ What would you like help with?`,
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[AI_ASSISTANT] Error:", {
         status: error.status,
         message: error.message,

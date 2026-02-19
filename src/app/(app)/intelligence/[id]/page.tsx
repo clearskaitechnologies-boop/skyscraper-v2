@@ -189,7 +189,7 @@ export default function IntelligenceWizardPage({ params }: PageProps) {
 
       // Redirect to report view
       router.push(`/claims/${claimId}?tab=reports`);
-    } catch (err: any) {
+    } catch (err) {
       logger.error(err);
       setError(err.message || "Failed to generate report");
     } finally {

@@ -80,7 +80,7 @@ export async function GET(req: Request) {
     const messages = threads.flatMap((t) => t.Message);
 
     return NextResponse.json({ messages });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error fetching messages:", error);
     return new NextResponse(error?.message || "Internal server error", {
       status: 500,

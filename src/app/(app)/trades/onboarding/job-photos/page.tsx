@@ -129,7 +129,7 @@ export default function JobPhotosOnboardingPage() {
 
       toast.success("Portfolio uploaded successfully!");
       router.push("/trades/profile");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Portfolio upload error:", error);
       toast.error(error.message || "Failed to upload photos");
     } finally {

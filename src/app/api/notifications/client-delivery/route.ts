@@ -46,7 +46,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ success: true, notifications });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] client-delivery GET error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
@@ -90,7 +90,7 @@ export async function POST(req: Request) {
       success: true,
       notification: { id: notification.id, title: notification.title },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] client-delivery POST error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

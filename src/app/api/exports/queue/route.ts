@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json(jobs);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Export Queue GET]", error);
     return NextResponse.json(
       { error: error.message || "Failed to get queue" },

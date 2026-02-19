@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     // 🛡️ RBAC: Check permission to invite team members
     try {
       await requirePermission("team:invite");
-    } catch (error: any) {
+    } catch (error) {
       return createForbiddenResponse(
         error.message || "You don't have permission to invite team members",
         {
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
           status: invitation.status,
         },
       });
-    } catch (clerkError: any) {
+    } catch (clerkError) {
       logger.error("Clerk invitation error:", clerkError);
 
       // Handle duplicate invitation

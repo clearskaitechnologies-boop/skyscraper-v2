@@ -36,7 +36,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
 
     return apiOk({ invoice });
-  } catch (err: any) {
+  } catch (err) {
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -108,7 +108,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     });
 
     return apiOk({ invoice: updated, action });
-  } catch (err: any) {
+  } catch (err) {
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }
@@ -136,7 +136,7 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 
     await prisma.contractor_invoices.delete({ where: { id } });
     return apiOk({ deleted: true });
-  } catch (err: any) {
+  } catch (err) {
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
 }

@@ -378,7 +378,7 @@ export default function PortalClaimDetailPage() {
         const data = await eventsRes.json();
         setTimeline(data.events || []);
       }
-    } catch (err: unknown) {
+    } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "An error occurred";
       setError(errorMessage);
       logger.error("Failed to load claim:", err);

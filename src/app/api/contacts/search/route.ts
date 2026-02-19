@@ -48,7 +48,7 @@ export const GET = withOrgScope(async (req, { orgId }) => {
         phone: c.phone,
       })),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/contacts/search] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to search contacts" },

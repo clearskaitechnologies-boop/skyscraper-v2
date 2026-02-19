@@ -75,7 +75,7 @@ export async function GET(req: Request, { params }: { params: { jobId: string } 
         events: result.rows, // All events for this job
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API ERROR] /api/jobs/[jobId]:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   } finally {

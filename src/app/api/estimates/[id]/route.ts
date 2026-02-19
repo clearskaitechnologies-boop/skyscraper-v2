@@ -75,7 +75,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         sections,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] Get estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch estimates" },
@@ -141,7 +141,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       success: true,
       estimates,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] Update estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update estimates" },
@@ -181,7 +181,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
       success: true,
       description: "Estimate deleted",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] Delete estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to delete estimates" },

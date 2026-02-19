@@ -88,7 +88,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, acceptances, count: acceptances.length });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Legal Accept] ❌ Error:", {
       message: error.message,
       stack: error.stack,

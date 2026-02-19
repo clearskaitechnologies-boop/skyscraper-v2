@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(partners);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to fetch partners:", error);
     return NextResponse.json({ error: "Failed to fetch partners" }, { status: 500 });
   }
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newPartner, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to create Partner:", error);
     return NextResponse.json({ error: "Failed to create Partner" }, { status: 500 });
   }

@@ -51,7 +51,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       success: true,
       message: "Share link revoked",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error revoking video share:", error);
     return NextResponse.json(
       { error: "Failed to revoke share link", details: error.message },

@@ -20,7 +20,7 @@ export async function GET() {
       count: presentCount,
       missing: priceKeys.filter((k) => !prices[k]),
     });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ ok: false, error: e.message || "server-error" }, { status: 500 });
   }
 }

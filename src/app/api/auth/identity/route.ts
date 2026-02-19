@@ -83,7 +83,7 @@ export async function GET() {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[/api/auth/identity] Error:", error);
     return NextResponse.json(
       { error: "Failed to get identity", message: error.message },

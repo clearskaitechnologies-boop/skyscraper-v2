@@ -20,7 +20,7 @@ export async function POST(req: Request) {
 
     const result = await runDominusAutomations(claimId, orgId);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Automation Run Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to run automation" },

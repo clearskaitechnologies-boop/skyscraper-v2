@@ -41,7 +41,7 @@ export default function WeatherWidgets() {
           ],
         };
         setData(synthetic);
-      } catch (e: any) {
+      } catch (e) {
         setError(e.message || "Failed weather fetch");
       } finally {
         setLoading(false);

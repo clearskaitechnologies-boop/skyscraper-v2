@@ -47,7 +47,7 @@ const baseGET = async (request: NextRequest, { params }: { params: { id: string 
       events,
       count: events.length,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[Timeline API Error]:", err);
     return NextResponse.json({ error: "Failed to fetch timeline" }, { status: 500 });
   }

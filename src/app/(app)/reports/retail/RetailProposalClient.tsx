@@ -65,7 +65,7 @@ export default function RetailProposalClient({
         return;
       }
       setResult(data);
-    } catch (e: any) {
+    } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);

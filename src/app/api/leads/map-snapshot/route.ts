@@ -49,7 +49,7 @@ const basePOST = async (req: Request) => {
     const json = result.data;
 
     return NextResponse.json({ ok: true, mapUrl: url });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API ERROR] /api/leads/map-snapshot:", error);
     return NextResponse.json(
       { error: error.message || "Failed to save map snapshot" },

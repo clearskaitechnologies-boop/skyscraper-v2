@@ -55,7 +55,7 @@ export async function GET(_req: NextRequest, { params }: { params: { slug: strin
         orgId: member?.orgId || company.orgId,
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("❌ [GET /api/contractors/public/[slug]] Error:", error);
     return NextResponse.json({ error: "Failed to load contractor profile" }, { status: 500 });
   }

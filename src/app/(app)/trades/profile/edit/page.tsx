@@ -358,7 +358,7 @@ export default function EditProfilePage() {
 
       toast.success("✅ Profile updated!");
       router.push("/trades/profile");
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save profile";
       logger.error("[EditProfile] Error:", error);
       toast.error(message);

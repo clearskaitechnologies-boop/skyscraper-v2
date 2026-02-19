@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
   try {
     event = stripe.webhooks.constructEvent(raw, sig, process.env.STRIPE_WEBHOOK_SECRET!);
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Stripe signature verify failed", err?.message);
     Sentry.captureException(err, {
       tags: { component: "stripe-webhook" },

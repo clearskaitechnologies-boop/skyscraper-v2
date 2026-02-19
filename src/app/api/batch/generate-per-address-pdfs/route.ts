@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
             pdfUrl,
             success: true,
           };
-        } catch (error: any) {
+        } catch (error) {
           logger.error(`[PerAddressPDF] Failed for ${address}:`, error);
           return {
             address,
@@ -120,7 +120,7 @@ export async function POST(req: NextRequest) {
         templateUsed: templateSlug,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[PerAddressPDF] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate PDFs" },

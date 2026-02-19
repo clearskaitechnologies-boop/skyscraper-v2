@@ -426,7 +426,7 @@ export function DepreciationBuilderClient({
       setGeneratedPacketUrl(data.url);
       setPayoutStatus("invoice_generated");
       toast.success("Final payout packet generated successfully!");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Generate packet error:", error);
       toast.error(error.message || "Failed to generate invoice");
     } finally {
@@ -473,7 +473,7 @@ export function DepreciationBuilderClient({
 
       const data = await res.json();
       toast.success(data.message || "Certificate sent to client!");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to send to client:", error);
       toast.error(error.message || "Failed to send certificate");
     }
@@ -533,7 +533,7 @@ export function DepreciationBuilderClient({
       toast.success(
         `Submitted to carrier successfully!${data.emailSent ? " Email notification sent." : ""}`
       );
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Submit error:", error);
       toast.error(error.message || "Failed to submit to carrier");
     } finally {

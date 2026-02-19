@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     logger.info("Auto-refill toggled: " + autoRefill + " for org " + orgId);
 
     return NextResponse.json({ success: true, autoRefill, refillThreshold: refillThreshold || 100 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Auto-refill toggle error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update auto-refill" },

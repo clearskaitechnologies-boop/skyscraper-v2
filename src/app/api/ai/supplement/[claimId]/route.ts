@@ -153,7 +153,7 @@ Be assertive but professional.
       carrierStrategy: carrierStrategy ? true : false,
       pushbackType,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("AI Supplement Generation Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to generate supplement" },

@@ -49,7 +49,7 @@ export async function saveBranding(formData: FormData) {
     revalidatePath("/", "layout"); // Revalidate root layout for header branding
 
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[saveBranding] Error:", error);
     return { success: false, error: error.message };
   }

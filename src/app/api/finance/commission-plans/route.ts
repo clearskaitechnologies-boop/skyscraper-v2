@@ -31,7 +31,7 @@ export const GET = withAuth(async (_req: NextRequest, { orgId }) => {
         createdAt: p.created_at.toISOString(),
       })),
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] commission-plans GET error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
@@ -72,7 +72,7 @@ export const POST = withAuth(
       });
 
       return NextResponse.json({ success: true, data: { id: plan.id } }, { status: 201 });
-    } catch (err: any) {
+    } catch (err) {
       logger.error("[API] commission-plans POST error:", err);
       return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }

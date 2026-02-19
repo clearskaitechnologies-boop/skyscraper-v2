@@ -149,7 +149,7 @@ export async function GET(req: NextRequest) {
       recentActivity,
       weatherAlerts: [], // Weather alerts populated by weather service integration
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[storm-center-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

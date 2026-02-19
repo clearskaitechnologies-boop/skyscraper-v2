@@ -101,7 +101,7 @@ export function TemplatePreviewModal({ template, onClose }: TemplatePreviewModal
       } else {
         throw new Error(data.error || "Unknown error");
       }
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Failed to fetch template:", err);
       setError(err.message);
     } finally {

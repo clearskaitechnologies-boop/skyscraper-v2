@@ -51,7 +51,7 @@ export default function ClaimDocumentsPage() {
       );
       setDocuments(data.documents || []);
       setError(""); // Clear any previous errors
-    } catch (err: any) {
+    } catch (err) {
       logger.error("[CLAIMS_DOCS] Fetch error:", {
         status: err.status,
         message: err.message,

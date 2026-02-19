@@ -179,7 +179,7 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
         })) || [],
     }));
     total = fetchedTotal;
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[ClaimsPage] Prisma query failed", {
       error: error?.message || error,
       organizationId,

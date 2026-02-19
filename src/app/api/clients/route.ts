@@ -31,7 +31,7 @@ const baseGET = async (req: NextRequest) => {
 const basePOST = async (req: NextRequest) => {
   try {
     await requirePermission("claims:create");
-  } catch (error: any) {
+  } catch (error) {
     return createForbiddenResponse(error.message || "You don't have permission to create clients", {
       currentRole: error.currentRole,
       requiredPermission: "claims:create",

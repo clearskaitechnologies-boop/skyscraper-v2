@@ -53,7 +53,7 @@ export async function POST() {
       routes,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     (log as any)("admin/purge-cache", "Cache purge failed", { error: error.message });
     return NextResponse.json(
       {

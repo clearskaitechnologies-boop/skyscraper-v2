@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       },
     });
     return NextResponse.json(referral, { status: 201 });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }

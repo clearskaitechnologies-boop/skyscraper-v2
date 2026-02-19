@@ -228,7 +228,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
         repaired.push("created_branding");
         logger.debug("[org/repair] Created org_branding row");
       }
-    } catch (brandingError: any) {
+    } catch (brandingError) {
       // Non-fatal - branding table may not exist in all environments
       logger.warn("[org/repair] Branding check failed (non-fatal):", brandingError.message);
     }
@@ -246,7 +246,7 @@ export async function POST(): Promise<NextResponse<RepairResult>> {
       orgName: result.name || "My Organization",
       repaired: repaired.length > 0 ? repaired : undefined,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[org/repair] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Repair failed" },
@@ -288,7 +288,7 @@ export async function GET(): Promise<NextResponse> {
       orgName: org?.name || null,
       needsRepair: !org,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 }

@@ -92,7 +92,7 @@ export async function POST(req: NextRequest) {
       signatureRequest: signatureEnvelope,
       message: "Signature request sent successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error creating signature request:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create signature request" },

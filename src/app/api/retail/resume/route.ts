@@ -75,7 +75,7 @@ export async function GET() {
       data: draft.data ?? {},
       updatedAt: draft.updated_at,
     });
-  } catch (err: any) {
+  } catch (err) {
     return NextResponse.json(
       { ok: false, reason: "UNEXPECTED", detail: err?.message ?? "Unknown error" },
       { status: 200 }

@@ -92,7 +92,7 @@ export const POST = withAuth(async (request: NextRequest, { userId, orgId }) => 
         });
 
         results.push({ email: invitee.email, status: "sent" });
-      } catch (err: any) {
+      } catch (err) {
         results.push({ email: invitee.email, status: "error", error: err.message });
       }
     }
@@ -107,7 +107,7 @@ export const POST = withAuth(async (request: NextRequest, { userId, orgId }) => 
       total: results.length,
       results,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[POST /api/invitations/send] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to send invitations" },

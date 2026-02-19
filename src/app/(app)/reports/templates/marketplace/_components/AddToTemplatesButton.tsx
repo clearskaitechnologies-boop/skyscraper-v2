@@ -52,7 +52,7 @@ export function AddToTemplatesButton({
       setAdded(true);
       // Notify parent to update state
       onAdded?.(templateId, templateSlug);
-    } catch (err: any) {
+    } catch (err) {
       // Check for 401 unauthorized - user needs to sign in
       if (
         err.status === 401 ||

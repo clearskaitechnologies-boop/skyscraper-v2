@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
         createdAt: review.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[CREATE_REVIEW]", error);
 
     if (error.name === "ZodError") {

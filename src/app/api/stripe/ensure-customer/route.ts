@@ -22,7 +22,7 @@ export const POST = withAuth(async (_req, { userId }) => {
     const stripeCustomerId = await getStripeCustomerIdForUser(userId, email, name);
 
     return NextResponse.json({ stripe_customer_id: stripeCustomerId });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to ensure Stripe customer:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to ensure Stripe customer" },

@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[BID_SUBMIT_ERROR]", error);
     return NextResponse.json(
       { error: "Failed to submit bid", details: error.message },
@@ -217,7 +217,7 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.json({ error: "Invalid user type" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[BID_GET_ERROR]", error);
     return NextResponse.json(
       { error: "Failed to retrieve bids", details: error.message },
@@ -265,7 +265,7 @@ export async function PATCH(request: NextRequest) {
       success: true,
       message: `Bid ${action}ed successfully`,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[BID_UPDATE_ERROR]", error);
     return NextResponse.json(
       { error: "Failed to update bid", details: error.message },

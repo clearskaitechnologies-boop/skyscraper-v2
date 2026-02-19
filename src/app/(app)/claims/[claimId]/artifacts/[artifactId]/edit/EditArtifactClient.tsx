@@ -48,7 +48,7 @@ export default function EditArtifactClient({
 
       router.push(`/claims/${claimId}/artifacts/${artifactId}/view`);
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "An error occurred while saving");
     } finally {
       setSaving(false);

@@ -149,7 +149,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
       newState: state,
       trigger,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("State transition error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update claim state" },
@@ -195,7 +195,7 @@ export const GET = withAuth(async (req: NextRequest, { userId, orgId }) => {
       currentState: claim.status,
       history,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("State history error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to retrieve state history" },

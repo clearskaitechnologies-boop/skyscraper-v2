@@ -126,7 +126,7 @@ export async function POST(
         // Send final result
         const finalEvent = `data: ${JSON.stringify({ type: "complete", result })}\n\n`;
         controller.enqueue(encoder.encode(finalEvent));
-      } catch (error: any) {
+      } catch (error) {
         // Send error event
         const errorEvent = `data: ${JSON.stringify({ type: "error", message: error.message })}\n\n`;
         controller.enqueue(encoder.encode(errorEvent));

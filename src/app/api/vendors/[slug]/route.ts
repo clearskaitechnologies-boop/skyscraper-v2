@@ -51,7 +51,7 @@ export async function GET(request: NextRequest, { params }: { params: { slug: st
     };
 
     return NextResponse.json({ vendor });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error fetching vendor:", error);
     return NextResponse.json(
       {

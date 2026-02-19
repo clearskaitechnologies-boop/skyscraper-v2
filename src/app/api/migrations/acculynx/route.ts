@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       errors: result.errors.length > 0 ? result.errors.slice(0, 50) : [], // cap error list
       durationMs: result.durationMs,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] /api/migrations/acculynx error:", err);
     return NextResponse.json(
       { ok: false, error: err.message || "Migration failed" },

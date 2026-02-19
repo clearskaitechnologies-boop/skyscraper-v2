@@ -185,7 +185,7 @@ export async function GET(request: NextRequest) {
         diag: `/api/diag/org`,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[BOOTSTRAP] Error:", error);
     return NextResponse.json(
       {

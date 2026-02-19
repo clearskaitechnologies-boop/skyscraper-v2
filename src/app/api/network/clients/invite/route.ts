@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
       inviteLink,
       message: `Invite sent to ${email}`,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Client Invite Error]", error);
     return NextResponse.json(
       { error: "Failed to send invite", details: error.message },

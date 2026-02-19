@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ estimate }, { status: 200 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Estimate build error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to build estimate" },

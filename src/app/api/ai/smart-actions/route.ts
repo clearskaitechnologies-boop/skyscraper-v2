@@ -267,7 +267,7 @@ export async function GET() {
         },
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] smart-actions error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

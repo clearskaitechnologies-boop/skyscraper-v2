@@ -221,7 +221,7 @@ export async function POST(req: Request) {
       weather: normalized,
       tokensCharged: 0,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("AI Weather Run failed:", error);
 
     if (orgIdForTelemetry && userIdForTelemetry) {

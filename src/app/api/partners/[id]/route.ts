@@ -33,7 +33,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 
     return NextResponse.json(partner);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to fetch Partner:", error);
     return NextResponse.json({ error: "Failed to fetch Partner" }, { status: 500 });
   }
@@ -84,7 +84,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     });
 
     return NextResponse.json(partner);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to update Partner:", error);
     return NextResponse.json({ error: "Failed to update Partner" }, { status: 500 });
   }
@@ -123,7 +123,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to delete Partner:", error);
     return NextResponse.json({ error: "Failed to delete Partner" }, { status: 500 });
   }

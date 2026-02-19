@@ -98,7 +98,7 @@ export async function GET(request: Request) {
       groups: formattedGroups,
       total: formattedGroups.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Network Groups] Error:", error);
     return NextResponse.json({ error: "Failed to fetch groups" }, { status: 500 });
   }
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
       success: true,
       group,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Create Group] Error:", error);
     return NextResponse.json({ error: "Failed to create group" }, { status: 500 });
   }

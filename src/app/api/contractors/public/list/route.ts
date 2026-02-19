@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
       origin: zip ? { zip } : null,
       total: contractors.length,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("❌ [GET /api/contractors/public/list] Error:", error);
     return NextResponse.json({ error: "Failed to load contractors" }, { status: 500 });
   }

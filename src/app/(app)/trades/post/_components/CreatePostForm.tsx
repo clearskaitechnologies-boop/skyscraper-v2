@@ -58,7 +58,7 @@ export function CreatePostForm({ userId, profileId }: CreatePostFormProps) {
       // Success - redirect to feed
       router.push("/trades?posted=true");
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
       setLoading(false);
     }

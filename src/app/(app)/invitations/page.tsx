@@ -160,7 +160,7 @@ export default function InvitationsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to accept");
       toast.success("Connection accepted!");
       await loadReceived();
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Accept error:", err);
       toast.error(err.message || "Failed to accept connection");
     } finally {
@@ -180,7 +180,7 @@ export default function InvitationsPage() {
       if (!res.ok) throw new Error(data.error || "Failed to decline");
       toast.success("Connection declined");
       await loadReceived();
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Decline error:", err);
       toast.error(err.message || "Failed to decline connection");
     } finally {

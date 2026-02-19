@@ -34,7 +34,7 @@ export async function GET() {
       totalRoutes: keys.length,
       sampleKeys: keys.slice(0, 30),
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({
       ok: false,
       error: error.message,

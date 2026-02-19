@@ -43,7 +43,7 @@ export async function GET() {
         },
         orderBy: [{ category: "asc" }, { name: "asc" }],
       });
-    } catch (e: any) {
+    } catch (e) {
       dbWarning = e?.message ?? "DATABASE_UNAVAILABLE";
       logger.warn("[MARKETPLACE_API] Database query failed, using registry:", dbWarning);
       dbTemplates = [];
@@ -146,7 +146,7 @@ export async function GET() {
       source: "registry",
       ...(dbWarning ? { warning: dbWarning } : {}),
     });
-  } catch (e: any) {
+  } catch (e) {
     logger.error("[MARKETPLACE_API] Error:", e);
     // Final fallback: never 500 for demo QA.
     return NextResponse.json({

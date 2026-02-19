@@ -84,7 +84,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     // 🛡️ RBAC: Check permission to create claims
     try {
       await requirePermission("claims:create");
-    } catch (error: any) {
+    } catch (error) {
       return createForbiddenResponse(
         error.message || "You don't have permission to create claims",
         {
@@ -99,7 +99,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
     let validated;
     try {
       validated = createClaimSchema.parse(body);
-    } catch (validationError: any) {
+    } catch (validationError) {
       logger.error("[CreateClaim] Validation error:", validationError);
       if (validationError instanceof z.ZodError) {
         const fieldErrors = validationError.errors
@@ -275,7 +275,7 @@ export const POST = withOrgScope(async (req, { userId, orgId }) => {
       { ...claim },
       { status: 201, headers: { "Cache-Control": "no-store" } }
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return apiError(400, "VALIDATION_ERROR", "Validation failed", error.errors);
     }
@@ -327,7 +327,7 @@ export const GET = withOrgScope(async (req, { orgId }) => {
       { claims, total, limit, offset },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/claims] Error:", error);
     return apiError(500, "INTERNAL_ERROR", error.message || "Failed to fetch claims");
   }

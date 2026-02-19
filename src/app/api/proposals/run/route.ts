@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       jobId,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error enqueuing proposal generation job:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }

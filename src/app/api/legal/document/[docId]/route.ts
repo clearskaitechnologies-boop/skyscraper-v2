@@ -46,7 +46,7 @@ export async function GET(request: Request, { params }: Params) {
       required: docConfig.required,
       audience: docConfig.audience,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Legal Document] Error:", error);
     return NextResponse.json({ error: "Failed to fetch document" }, { status: 500 });
   }

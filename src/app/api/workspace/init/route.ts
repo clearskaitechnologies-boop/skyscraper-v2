@@ -127,7 +127,7 @@ export async function POST() {
       created: true,
       message: "Workspace initialized successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[WORKSPACE_INIT] Fatal error:", error);
     return NextResponse.json(
       {

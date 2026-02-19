@@ -61,7 +61,7 @@ export default function ConnectionRequestCard() {
       } else {
         throw new Error(data.error || "Failed to load requests");
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to load requests:", error);
       toast.error(error.message || "Failed to load connection requests");
     } finally {

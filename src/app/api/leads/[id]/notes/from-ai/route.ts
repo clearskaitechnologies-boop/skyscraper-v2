@@ -81,7 +81,7 @@ const basePOST = async (
         description: updatedLead.description,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error saving note:", error);
     return NextResponse.json(
       { error: "Failed to save note", details: error.message },

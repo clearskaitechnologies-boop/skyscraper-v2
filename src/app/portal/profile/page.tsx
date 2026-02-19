@@ -753,7 +753,7 @@ export default function ClientProfilePage() {
 
       setIsEditing(false);
       toast.success("Profile saved successfully!");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to save profile:", error);
       toast.error(error.message || "Failed to save profile");
     } finally {

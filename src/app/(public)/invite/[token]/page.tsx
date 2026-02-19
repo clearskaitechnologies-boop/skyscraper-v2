@@ -53,7 +53,7 @@ export default function InvitePage() {
       setTimeout(() => {
         window.location.href = "/";
       }, 2000);
-    } catch (error: any) {
+    } catch (error) {
       setStatus("error");
       setMessage(
         error.message || "Failed to accept invitation. The link may be expired or invalid."

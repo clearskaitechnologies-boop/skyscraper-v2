@@ -228,7 +228,7 @@ export async function POST(req: NextRequest) {
         "Content-Length": pdfBuffer.length.toString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Supplement Export PDF Error]", error);
     return NextResponse.json({ error: error.message || "Failed to export PDF" }, { status: 500 });
   }

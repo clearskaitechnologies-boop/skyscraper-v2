@@ -53,7 +53,7 @@ export default function CompanyInfoEditor({ memberId, initialData }: CompanyInfo
 
       toast.success("Company info saved!");
       setIsEditing(false);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message || "Failed to save company info");
     } finally {
       setSaving(false);

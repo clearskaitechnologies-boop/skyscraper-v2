@@ -149,7 +149,7 @@ export async function GET() {
         jobCount: financials?._count ?? 0,
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] finance/overview error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

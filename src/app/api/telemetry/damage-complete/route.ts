@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Telemetry error:", error);
     return NextResponse.json({ error: error.message || "Telemetry failed" }, { status: 500 });
   }

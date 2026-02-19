@@ -98,7 +98,7 @@ export async function GET(req: Request) {
 
           logger.debug(`Reconciled Org ${Org.id}: ${currentBalance} → ${expectedTokens} tokens`);
         }
-      } catch (error: any) {
+      } catch (error) {
         errors.push(`Org ${Org.id}: ${error.message}`);
         logger.error(`Reconciliation error for Org ${Org.id}:`, error);
       }

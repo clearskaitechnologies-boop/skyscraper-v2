@@ -95,7 +95,7 @@ export async function GET() {
             : `⚠️  ${brokenCount} templates need fixes before demo`,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[verify-all] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to verify templates" },

@@ -54,7 +54,7 @@ export default function NewHoaNoticePage() {
       }
 
       router.push(`/hoa/notices/${data.id}`);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

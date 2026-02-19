@@ -52,7 +52,7 @@ export default async function NewProjectPage() {
             companyName: sp.tradesCompany.name,
             tradeType: sp.tradesCompany.specialties?.[0] || "General",
           }));
-        } catch (savedProsError: any) {
+        } catch (savedProsError) {
           logger.info("[NewProjectPage] Saved pros fetch (non-critical):", savedProsError?.message);
         }
 
@@ -76,11 +76,11 @@ export default async function NewProjectPage() {
             name: c.tradesCompany?.name || "Contractor",
             email: c.tradesCompany?.email || "",
           }));
-        } catch (connError: any) {
+        } catch (connError) {
           logger.info("[NewProjectPage] Connections fetch (non-critical):", connError?.message);
         }
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[NewProjectPage] Error loading client profile:", error);
       if (error?.code !== "P2025" && error?.code !== "P2021") {
         hasError = true;

@@ -141,7 +141,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[payments-create]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -179,7 +179,7 @@ export async function GET(req: NextRequest) {
     };
 
     return apiOk({ payments, totals });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[payments-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

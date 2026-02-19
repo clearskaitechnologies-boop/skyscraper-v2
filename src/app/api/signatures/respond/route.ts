@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       signatureEnvelope: updated,
       message: action === "signed" ? "Document signed successfully" : "Signature declined",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error responding to signature request:", error);
     return NextResponse.json(
       { error: error.message || "Failed to process signature response" },

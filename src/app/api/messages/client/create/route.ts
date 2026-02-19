@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
       success: true,
       threadId: thread.id,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[messages/client/create] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },

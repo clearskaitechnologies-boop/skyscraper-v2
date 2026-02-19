@@ -85,7 +85,7 @@ export async function GET(request: Request) {
       pros: trendingPros,
       total: trendingPros.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Trending Pros] Error:", error);
     return NextResponse.json({ error: "Failed to fetch trending pros" }, { status: 500 });
   }

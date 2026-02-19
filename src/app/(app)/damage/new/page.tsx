@@ -112,7 +112,7 @@ export default function DamageNewPage() {
 
       const data = (await res.json()) as DamageBuildApiResponse;
       setResult(data);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Error running damage builder:", err);
       setError(err.message || "Failed to run damage builder.");
     } finally {

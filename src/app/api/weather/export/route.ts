@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (err: any) {
+  } catch (err) {
     logger.error("WEATHER PACKET EXPORT ERROR:", err);
     return NextResponse.json({ error: err?.message || "Packet export failed" }, { status: 500 });
   }

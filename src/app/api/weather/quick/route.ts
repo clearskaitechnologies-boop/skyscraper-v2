@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       note: "Quick weather lookup",
       fetchedAt: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Quick weather error:", error);
     return NextResponse.json({ error: error.message || "Weather fetch failed" }, { status: 500 });
   }

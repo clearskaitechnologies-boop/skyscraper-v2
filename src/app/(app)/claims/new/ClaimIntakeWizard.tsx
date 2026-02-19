@@ -200,7 +200,7 @@ export function ClaimIntakeWizard({ orgId }: Props) {
       if (parsed.roofType) setRoofType(parsed.roofType);
       if (parsed.squareFootage) setSquareFootage(String(parsed.squareFootage));
       if (parsed.dateOfLoss) setDateOfLoss(parsed.dateOfLoss);
-    } catch (err: any) {
+    } catch (err) {
       setSowError(err.message || "Failed to parse scope of work");
     } finally {
       setSowParsing(false);
@@ -345,7 +345,7 @@ export function ClaimIntakeWizard({ orgId }: Props) {
 
       photos.forEach((p) => URL.revokeObjectURL(p.preview));
       router.push(`/claims/${claimId}`);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message ?? "Something went wrong.");
     } finally {
       setLoading(false);

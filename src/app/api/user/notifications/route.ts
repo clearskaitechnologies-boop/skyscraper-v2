@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ notifications, unreadCount });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Get notifications error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to retrieve notifications" },
@@ -130,7 +130,7 @@ export async function PATCH(req: NextRequest) {
     });
 
     return NextResponse.json({ message: "Notifications marked as read" });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Update notifications error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update notifications" },

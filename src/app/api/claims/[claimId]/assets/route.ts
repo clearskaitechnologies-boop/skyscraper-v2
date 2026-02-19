@@ -86,7 +86,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
       default:
         return NextResponse.json({ error: "Invalid type" }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       // Handle JSON action (artifact creation)
       return handleJsonAction(req, claimId, orgId!, userId!);
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Assets POST] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

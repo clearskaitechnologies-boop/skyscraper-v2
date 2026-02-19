@@ -92,7 +92,7 @@ export async function POST(request: Request) {
     let context;
     try {
       context = await buildProposalContext({ orgId: effectiveOrgId, leadId, jobId });
-    } catch (e: any) {
+    } catch (e) {
       const msg = e?.message || '';
       if (msg.startsWith('NOT_FOUND:')) {
         const parts = msg.split(':');

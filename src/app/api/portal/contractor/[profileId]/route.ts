@@ -152,7 +152,7 @@ export async function GET(
     };
 
     return NextResponse.json({ profile });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("[GET /api/portal/contractor/[profileId]] Error:", error);
     return NextResponse.json({ error: "Failed to fetch contractor" }, { status: 500 });
   }

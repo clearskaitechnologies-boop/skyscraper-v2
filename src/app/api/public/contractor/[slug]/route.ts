@@ -107,7 +107,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
       },
       forms,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("❌ [GET /api/public/contractor/[slug]] Error:", error);
     return NextResponse.json({ error: "Failed to load contractor profile" }, { status: 500 });
   }

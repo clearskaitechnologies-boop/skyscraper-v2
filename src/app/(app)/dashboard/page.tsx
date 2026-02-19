@@ -226,7 +226,7 @@ export default async function DashboardPage() {
         </div>
       </PageContainer>
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[DASHBOARD_FATAL]", {
       message: error?.message,
       name: error?.name,

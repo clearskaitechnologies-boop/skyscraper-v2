@@ -205,7 +205,7 @@ export async function POST(req: NextRequest) {
       connection,
       message: "Connection request sent",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[POST /api/portal/connect-pro] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create connection" },
@@ -286,7 +286,7 @@ export async function GET(req: NextRequest) {
         .filter((c) => c.status?.toLowerCase() === "pending")
         .map((c) => c.contractorId),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/portal/connect-pro] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to check connection" },

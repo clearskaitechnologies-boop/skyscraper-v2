@@ -174,7 +174,7 @@ export async function GET(request: Request) {
       hasMore: feedItems.length >= limit,
       total: feedItems.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Network Feed] Error:", error);
     return NextResponse.json({ error: "Failed to fetch feed" }, { status: 500 });
   }

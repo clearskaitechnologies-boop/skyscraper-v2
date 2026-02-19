@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
           },
         },
       });
-    } catch (err: any) {
+    } catch (err) {
       logger.error(
         "[CRON:TRIALS_SWEEP] Skipping expiredTrials step due to DB schema issue:",
         err?.message || err
@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
           },
         },
       });
-    } catch (err: any) {
+    } catch (err) {
       logger.error(
         "[CRON:TRIALS_SWEEP] Skipping T-24 step due to DB schema issue:",
         err?.message || err
@@ -200,7 +200,7 @@ export async function GET(request: NextRequest) {
           },
         },
       });
-    } catch (err: any) {
+    } catch (err) {
       logger.error(
         "[CRON:TRIALS_SWEEP] Skipping T-1 step due to DB schema issue:",
         err?.message || err

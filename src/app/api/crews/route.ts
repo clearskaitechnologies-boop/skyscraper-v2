@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
     };
 
     return apiOk({ schedules: enriched, summary });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[crews-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -135,7 +135,7 @@ export async function POST(req: NextRequest) {
     });
 
     return apiOk({ schedule }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[crews-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

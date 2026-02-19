@@ -43,7 +43,7 @@ export default async function ActivityPage() {
         select: { id: true, type: true, createdAt: true, status: true },
       }),
     ]);
-  } catch (err: any) {
+  } catch (err) {
     return (
       <div className="p-6">
         <div className="mx-auto max-w-lg rounded-xl border border-[color:var(--border)] p-8 text-center">

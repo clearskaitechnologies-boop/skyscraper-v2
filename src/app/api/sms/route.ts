@@ -55,7 +55,7 @@ export async function GET(req: NextRequest) {
     `;
 
     return apiOk({ threads, count: Array.isArray(threads) ? threads.length : 0 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[sms-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
     });
 
     return apiOk({ message, twilioStatus: status }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[sms-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

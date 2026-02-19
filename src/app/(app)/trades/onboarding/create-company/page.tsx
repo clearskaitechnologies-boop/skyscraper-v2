@@ -84,7 +84,7 @@ export default function CreateCompanyPage() {
 
       toast.success("Company created successfully!");
       router.push("/trades/onboarding/job-photos");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Company creation error:", error);
       toast.error(error.message || "Failed to create company");
     } finally {

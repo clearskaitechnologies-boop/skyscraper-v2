@@ -186,7 +186,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId: userOrgId
     }
 
     return NextResponse.json({ error: "Invalid itemType" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Move Job] Error:", error);
     return NextResponse.json(
       { error: "Failed to move job", details: error.message },

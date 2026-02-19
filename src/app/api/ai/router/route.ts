@@ -42,7 +42,7 @@ async function POST_INNER(request: NextRequest, ctx: AiBillingContext) {
     const statusCode = result.success ? 200 : 400;
 
     return NextResponse.json(result, { status: statusCode });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Router] Unexpected error:", error);
 
     return NextResponse.json(
@@ -122,7 +122,7 @@ async function GET_INNER(request: NextRequest, ctx: AiBillingContext) {
         domain: "/api/ai/domain",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

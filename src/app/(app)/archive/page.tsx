@@ -72,7 +72,7 @@ export default function ArchivePage() {
       }
       toast.success(`${item.title} restored successfully!`);
       fetchArchivedItems();
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message || "Failed to restore item");
     } finally {
       setRestoring(null);

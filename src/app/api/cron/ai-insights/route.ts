@@ -86,7 +86,7 @@ export async function GET(request: Request) {
       insights,
       ms: Date.now() - started,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI-INSIGHTS] Cron error:", error);
     Sentry.captureException(error, { tags: { cron: "ai-insights" } });
 

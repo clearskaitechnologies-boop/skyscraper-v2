@@ -70,7 +70,7 @@ export async function GET(req: Request) {
           `);
 
           send("snapshot", { rows: result.rows });
-        } catch (error: any) {
+        } catch (error) {
           logger.error("[SSE ERROR] polling job_events:", error);
           send("error", { description: error.message });
         } finally {

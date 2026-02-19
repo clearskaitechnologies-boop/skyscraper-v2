@@ -309,7 +309,7 @@ export default function CompanyEditPage() {
 
       toast.success("✅ Company updated!");
       router.push("/trades/company");
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save company";
       logger.error("[CompanyEdit] Error:", error);
       toast.error(message);

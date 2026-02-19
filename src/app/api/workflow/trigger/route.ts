@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       success: true,
       message: `Triggered stage: ${stageName}`,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[Workflow Trigger Error]:", err);
     return NextResponse.json(
       { error: err.message || "Failed to trigger workflow" },

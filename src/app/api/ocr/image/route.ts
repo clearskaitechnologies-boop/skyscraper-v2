@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, text, record });
-  } catch (e: any) {
+  } catch (e) {
     logger.error("OCR Image Error:", e);
     return NextResponse.json({ ok: false, error: e.message }, { status: 500 });
   }

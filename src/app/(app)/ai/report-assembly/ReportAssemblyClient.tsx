@@ -153,7 +153,7 @@ export default function ReportAssemblyClient() {
       data.mode = type;
       data.includedSections = selected;
       setResult(data);
-    } catch (e: any) {
+    } catch (e) {
       setError(e.message || "Failed");
     } finally {
       setLoading(false);

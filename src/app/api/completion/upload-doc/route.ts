@@ -100,7 +100,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(document);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Completion Document Upload Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to upload document" },
@@ -130,7 +130,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(documents);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Completion Documents Get Error]", error);
     return NextResponse.json(
       { error: error.message || "Failed to get documents" },

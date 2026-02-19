@@ -59,7 +59,7 @@ export async function GET(req: NextRequest) {
     }));
 
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Template list error:", error);
     // Return empty array instead of error for graceful degradation
     return NextResponse.json([]);

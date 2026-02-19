@@ -218,7 +218,7 @@ export default function DamageBuilderClient({ leadId, jobId }: DamageBuilderClie
           findingsCount: json.findings?.length || 0,
         }),
       }).catch(() => {});
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
       setCurrentStep("upload");
     } finally {
@@ -277,7 +277,7 @@ export default function DamageBuilderClient({ leadId, jobId }: DamageBuilderClie
       a.download = `damage-report-${Date.now()}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setExporting(false);
@@ -306,7 +306,7 @@ export default function DamageBuilderClient({ leadId, jobId }: DamageBuilderClie
       } else {
         setError("Failed to create share link");
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(typeof err.message === "string" ? err.message : "Failed to share");
     }
   }

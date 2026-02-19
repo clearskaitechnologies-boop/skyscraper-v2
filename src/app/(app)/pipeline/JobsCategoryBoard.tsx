@@ -293,7 +293,7 @@ export function JobsCategoryBoard({ initialJobs }: JobsCategoryBoardProps) {
         throw new Error(errData.error || `Server error ${r.status}`);
       }
       toast.success(`Moved to ${STAGES.find((s) => s.id === to)?.label ?? to}`);
-    } catch (err: any) {
+    } catch (err) {
       setJobs((p) => p.map((j) => (j.id === job.id ? job : j)));
       toast.error(err?.message || "Failed to move job");
     }

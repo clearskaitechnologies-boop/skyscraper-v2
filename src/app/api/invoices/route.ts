@@ -88,7 +88,7 @@ export const GET = withAuth(async (req: NextRequest, { orgId }) => {
     }));
 
     return apiOk({ invoices: enriched, count: enriched.length, limit, offset });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[invoices-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -150,7 +150,7 @@ export const POST = withAuth(async (req: NextRequest, { orgId }) => {
     });
 
     return apiOk({ invoice: { ...invoice, invoiceNo } }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[invoices-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

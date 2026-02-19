@@ -359,7 +359,7 @@ async function generateContractorPacketAsync(
     }
 
     logger.debug(`[Contractor Packet] ✓ Generation complete for ${packetId}`);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[Contractor Packet] Generation failed for ${packetId}:`, error);
 
     // Update status to failed

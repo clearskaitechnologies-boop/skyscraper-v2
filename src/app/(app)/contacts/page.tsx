@@ -39,7 +39,7 @@ export default async function CompanyContactsPage() {
   // ULTRA-DEFENSIVE: Wrap entire page in try-catch to prevent ANY uncaught errors
   try {
     return await renderContactsPage();
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[CompanyContacts] FATAL PAGE ERROR:", {
       message: error?.message,
       stack: error?.stack,
@@ -417,7 +417,7 @@ async function renderContactsPage() {
         logger.error("[CompanyContacts] Team members query failed:", teamErr);
         teamMembers = [];
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[CONTACTS_API_ERROR]", {
         error: error?.message,
         code: error?.code,

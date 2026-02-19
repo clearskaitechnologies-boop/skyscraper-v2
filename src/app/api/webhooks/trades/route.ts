@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ success: true, event: payload.event });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Trades webhook error:", error);
     return NextResponse.json(
       { error: error.message || "Webhook processing failed" },

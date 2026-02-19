@@ -47,7 +47,7 @@ export async function GET(req: Request) {
     const weather = await fetchWeatherForDate(address, claim.dateOfLoss);
 
     return NextResponse.json({ ok: true, weather });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[WEATHER INTELLIGENCE ERROR]", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },

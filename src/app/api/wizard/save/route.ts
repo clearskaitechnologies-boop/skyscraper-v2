@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       ok: true,
       draft,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Wizard save error:", err);
     return NextResponse.json({ error: err.message ?? "Internal error" }, { status: 500 });
   }

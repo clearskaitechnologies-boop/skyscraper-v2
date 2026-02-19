@@ -117,7 +117,7 @@ export default function ClaimsAnalysisPage() {
       }
 
       setResult(data);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to analyze claim");
     } finally {
       setLoading(false);

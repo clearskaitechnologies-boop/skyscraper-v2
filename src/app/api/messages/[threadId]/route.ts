@@ -423,7 +423,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
           where: { id: threadId },
           data: { archivedAt: new Date(), archivedBy: userId },
         });
-      } catch (dbErr: any) {
+      } catch (dbErr) {
         // Column may not exist yet if migration hasn't been applied
         if (dbErr.message?.includes("archivedAt") || dbErr.code === "P2009") {
           logger.warn(
@@ -443,7 +443,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
           where: { id: threadId },
           data: { archivedAt: null, archivedBy: null },
         });
-      } catch (dbErr: any) {
+      } catch (dbErr) {
         if (dbErr.message?.includes("archivedAt") || dbErr.code === "P2009") {
           logger.warn(
             "[messages] archivedAt column missing — run migration 20260211_message_thread_archived.sql"

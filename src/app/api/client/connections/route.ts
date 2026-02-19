@@ -142,7 +142,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({ connections: pros });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[client/connections] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch connections" },

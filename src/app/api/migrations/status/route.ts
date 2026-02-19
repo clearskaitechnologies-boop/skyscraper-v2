@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
           : null,
       })),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Migration Status] Error:", error);
     return NextResponse.json({ error: "Failed to fetch migrations" }, { status: 500 });
   }

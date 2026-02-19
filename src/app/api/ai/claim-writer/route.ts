@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     );
 
     return NextResponse.json(aiOk(result));
-  } catch (err: any) {
+  } catch (err) {
     logger.error("claim-writer route error:", err);
 
     return NextResponse.json(

@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       size: file.size,
       uploadedAt: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal upload-photo error:", error);
     return NextResponse.json({ error: error.message || "Upload failed" }, { status: 500 });
   }

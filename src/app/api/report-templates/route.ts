@@ -24,7 +24,7 @@ export async function GET(req: Request) {
       .catch(() => []);
 
     return NextResponse.json(templates);
-  } catch (err: any) {
+  } catch (err) {
     logger.error("GET /api/report-templates error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to fetch templates" },
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json(newTemplate, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("POST /api/report-templates error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to create template" },

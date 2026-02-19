@@ -70,7 +70,7 @@ export const POST = withAuth(async (request: NextRequest, { orgId }) => {
   try {
     const result = await runPreflight(upperSource, orgId, body);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[Migration Preflight] ${upperSource} error:`, error);
     return NextResponse.json({ error: error.message || "Preflight check failed" }, { status: 500 });
   }
@@ -119,7 +119,7 @@ async function runPreflight(
 
       // Estimate documents (typically 2-5 per job)
       preview.documents.total = Math.round(preview.jobs.total * 2.5);
-    } catch (err: any) {
+    } catch (err) {
       connectionValid = false;
       connectionError = err.message;
     }
@@ -147,7 +147,7 @@ async function runPreflight(
       }));
 
       preview.documents.total = Math.round(preview.jobs.total * 3);
-    } catch (err: any) {
+    } catch (err) {
       connectionValid = false;
       connectionError = err.message;
     }

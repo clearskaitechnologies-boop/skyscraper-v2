@@ -118,7 +118,7 @@ export async function GET(request: NextRequest) {
         end: endDate,
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[Calendar API Error]:", err);
     return NextResponse.json({ error: "Failed to fetch events" }, { status: 500 });
   }

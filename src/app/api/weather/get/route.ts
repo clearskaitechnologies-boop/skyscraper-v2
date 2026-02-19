@@ -46,7 +46,7 @@ export async function GET(req: Request) {
       success: true,
       report,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("WEATHER GET ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to fetch weather report" },

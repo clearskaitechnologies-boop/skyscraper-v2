@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
             completion.choices[0]?.message?.content ||
             "Here's a demo response. Ask about supplements, weather, or documentation.";
           return NextResponse.json({ ok: true, reply: response, response });
-        } catch (err: any) {
+        } catch (err) {
           logger.error("[CLAIM_AI_DEMO_FAIL] OpenAI Error:", err);
           return NextResponse.json(
             {
@@ -224,7 +224,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
           response, // backward compatibility
           tokensUsed: completion.usage?.total_tokens || 0,
         });
-      } catch (aiError: any) {
+      } catch (aiError) {
         logger.error("[CLAIM_AI_FAIL] OpenAI Error:", aiError);
         return NextResponse.json(
           {
@@ -279,7 +279,7 @@ Your goal: Help adjusters maximize accurate claim value while maintaining profes
       { success: false, error: "Either 'message' or 'analysisType' is required" },
       { status: 400 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Analysis] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
@@ -340,7 +340,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
         hasPolicyOptimization: !!analysis.policyOptimization,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Analysis] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

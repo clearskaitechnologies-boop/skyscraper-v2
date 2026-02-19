@@ -77,7 +77,7 @@ export default function LinkCompanyPage() {
 
       toast.success("Pending company created!");
       router.push("/trades/onboarding/waiting");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Create company error:", error);
       toast.error(error.message || "Failed to create pending company");
     } finally {
@@ -107,7 +107,7 @@ export default function LinkCompanyPage() {
 
       toast.success(result.message);
       router.push("/trades/onboarding/waiting");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Join company error:", error);
       toast.error(error.message || "Failed to join company");
     } finally {

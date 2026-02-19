@@ -98,7 +98,7 @@ export default function ClaimWeatherPage({ params }: Props) {
         );
         setSelectedDol(sorted[0].date);
       }
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Quick DOL error:", err);
       setError(err.message || "Failed to run Quick DOL.");
     } finally {
@@ -136,7 +136,7 @@ export default function ClaimWeatherPage({ params }: Props) {
 
       const data = (await res.json()) as WeatherReportApiResponse;
       setReportResult(data);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Weather report error:", err);
       setError(err.message || "Failed to generate weather report.");
     } finally {

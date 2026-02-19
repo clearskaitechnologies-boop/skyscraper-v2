@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
       success: true,
       assessment,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] Save damage assessment error:", error);
 
     if (error.name === "ZodError") {
@@ -175,7 +175,7 @@ export async function GET(req: NextRequest) {
       success: true,
       assessments,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] List damage assessments error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch damage assessments" },

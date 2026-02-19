@@ -57,7 +57,7 @@ export default function ChartsPanel() {
           claimsOverTime: json.data.claimsOverTime || [],
           leadsBySource: json.data.leadsBySource || [],
         });
-      } catch (e: any) {
+      } catch (e) {
         logger.warn("[ChartsPanel] Falling back to empty charts:", e);
         setData({
           claimsByStatus: [],

@@ -42,7 +42,7 @@ export const PATCH = withSentryApi(
     try {
       const saved = await setFlag(params.key, enabled, orgId, rolloutPercent, targeting);
       return NextResponse.json(saved);
-    } catch (err: any) {
+    } catch (err) {
       return NextResponse.json({ error: err?.message || "Invalid targeting" }, { status: 400 });
     }
   }) as any

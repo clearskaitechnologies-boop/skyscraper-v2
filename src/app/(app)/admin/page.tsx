@@ -128,7 +128,7 @@ export default async function AdminDashboardPage() {
         createdAt: a.createdAt?.toISOString() || null,
       })),
     };
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[AdminDashboard] Stats query failed:", err?.message);
   }
 

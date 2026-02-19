@@ -132,7 +132,7 @@ export const POST = withAuth(async (request: NextRequest, { orgId, userId }) => 
       status: "generating",
       message: "Proposal generation started",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Proposals] Failed to create proposal:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create proposal" },
@@ -175,7 +175,7 @@ async function generateProposalAsync(
     });
 
     logger.debug(`[Proposals] ✓ Generation complete: ${proposalId}`);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[Proposals] Generation failed for ${proposalId}:`, error);
 
     // Update proposal with error
@@ -204,7 +204,7 @@ export const GET = withAuth(async (_request: NextRequest, { orgId }) => {
       LIMIT 50`;
 
     return NextResponse.json(proposals);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Proposals] Failed to fetch proposals:", error);
     return NextResponse.json({ error: "Failed to fetch proposals" }, { status: 500 });
   }

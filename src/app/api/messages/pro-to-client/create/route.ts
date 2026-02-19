@@ -236,7 +236,7 @@ export async function POST(req: NextRequest) {
       messageId: message.id,
       clientName: client.name,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[messages/pro-to-client/create] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },

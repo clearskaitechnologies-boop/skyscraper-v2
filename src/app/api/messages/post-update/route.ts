@@ -51,7 +51,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, message: msg });
-  } catch (e: any) {
+  } catch (e) {
     logger.error("[Message:post-update]", e);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

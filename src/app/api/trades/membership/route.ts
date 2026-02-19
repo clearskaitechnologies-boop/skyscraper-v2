@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       expiresAt: membershipData?.expires_at || null,
       stripeSubscriptionId: membershipData?.stripe_subscription_id || null,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("GET /api/trades/membership error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

@@ -88,7 +88,7 @@ export async function PATCH(
         sharedWithClient,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Files Share PATCH] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

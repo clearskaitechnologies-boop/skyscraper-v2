@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: "desc" },
     });
     return NextResponse.json(materials);
-  } catch (e: any) {
+  } catch (e) {
     if (e instanceof OrgScopeError) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -57,7 +57,7 @@ export async function POST(req: Request) {
       } as any,
     });
     return NextResponse.json(created, { status: 201 });
-  } catch (e: any) {
+  } catch (e) {
     if (e instanceof OrgScopeError) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }

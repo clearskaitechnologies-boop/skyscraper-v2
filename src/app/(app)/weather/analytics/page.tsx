@@ -263,7 +263,7 @@ export default function WeatherAnalyticsPage() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const result = await res.json();
       setInsights(result);
-    } catch (e: any) {
+    } catch (e) {
       logger.error("Failed to generate insights:", e);
     } finally {
       setInsightsLoading(false);

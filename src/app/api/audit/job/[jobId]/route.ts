@@ -20,7 +20,7 @@ export async function GET(
     const logs = await getJobAuditLogs(jobId);
 
     return NextResponse.json({ logs });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Error fetching audit logs:', error);
     return NextResponse.json(
       { error: error.message || 'Internal server error' },

@@ -75,7 +75,7 @@ export default function NewCommunityPage() {
 
       toast.success("Community created successfully!");
       router.push(`/maps/communities/${data.community.id}`);
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Error creating community:", error);
       toast.error(error.message || "Failed to create community");
     } finally {

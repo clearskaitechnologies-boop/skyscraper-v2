@@ -111,7 +111,7 @@ export async function GET(req: NextRequest) {
         };
 
     return NextResponse.json({ profile: profileData });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/portal/profile] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to load profile" }, { status: 500 });
   }
@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
         preferredContact: client.preferredContact,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation error", details: error.errors },

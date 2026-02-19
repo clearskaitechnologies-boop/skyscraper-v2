@@ -85,7 +85,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ task
     }
 
     return NextResponse.json({ task });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Task Update] PUT error:", error);
 
     if (error.name === "ZodError") {
@@ -135,7 +135,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Task Delete] DELETE error:", error);
     return NextResponse.json(
       { error: "Failed to delete task", description: error.message },

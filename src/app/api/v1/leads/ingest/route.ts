@@ -137,7 +137,7 @@ export async function POST(req: NextRequest) {
     });
 
     return apiOk({ lead, contactId: contact.id }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[lead-ingest]", err);
     return apiError(500, "INTERNAL_ERROR", err.message || "Lead ingestion failed");
   }

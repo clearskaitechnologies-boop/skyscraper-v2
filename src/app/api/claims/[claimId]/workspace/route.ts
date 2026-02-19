@@ -260,7 +260,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
     };
 
     return NextResponse.json({ success: true, data: workspaceData });
-  } catch (error: any) {
+  } catch (error) {
     const errorId = `workspace-${Date.now()}`;
     logger.error("[workspace-api] Error:", { errorId, error });
     return NextResponse.json(

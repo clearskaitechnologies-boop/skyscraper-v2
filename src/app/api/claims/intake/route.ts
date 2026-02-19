@@ -171,7 +171,7 @@ export async function POST(req: Request) {
       });
 
     return NextResponse.json({ claimId: claim.id }, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Intake API] Error:", error);
     return NextResponse.json({ error: error.message || "Failed to create claim" }, { status: 500 });
   }

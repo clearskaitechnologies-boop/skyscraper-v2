@@ -148,7 +148,7 @@ export async function POST(req: Request) {
         createdAt: message.createdAt,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] /api/messages/create error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create message" },

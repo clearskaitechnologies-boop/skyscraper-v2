@@ -28,7 +28,7 @@ export default function ClaimFinancialPage() {
       if (!res.ok) throw new Error(data.error);
 
       setAnalysis(data.analysis);
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message);
     } finally {
       setLoading(false);

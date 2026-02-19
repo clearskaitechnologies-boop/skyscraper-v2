@@ -235,7 +235,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
         "Content-Length": pdfBuffer.length.toString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Rebuttal Export PDF Error]", error);
     return NextResponse.json({ error: error.message || "Failed to export PDF" }, { status: 500 });
   }

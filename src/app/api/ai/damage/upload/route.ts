@@ -147,7 +147,7 @@ export async function POST(req: Request) {
         });
 
         logger.debug(`Photo uploaded: ${record.id} - ${photo.name}`);
-      } catch (uploadError: any) {
+      } catch (uploadError) {
         logger.error(`Failed to upload photo ${photo.name}:`, uploadError);
         // Continue with other photos but log the error
         // NOTE: Consider rolling back tokens if all uploads fail
@@ -219,7 +219,7 @@ export async function POST(req: Request) {
       description: `${uploadedPhotos.length} photo${uploadedPhotos.length > 1 ? "s" : ""} uploaded successfully. Analysis queued.`,
       jobId, // Job ID for tracking
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("AI Damage Upload failed:", error);
 
     // Handle auth errors

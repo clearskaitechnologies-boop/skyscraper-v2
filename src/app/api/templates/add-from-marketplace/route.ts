@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
       description: template.description,
       message: "Template added to your library",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[ADD_TEMPLATE] Error:", error);
 
     // Capture error in Sentry

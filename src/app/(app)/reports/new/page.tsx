@@ -106,7 +106,7 @@ export default function NewReportPage() {
       const url = URL.createObjectURL(blob);
       setPreviewUrl(url);
       setShowPreview(true);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to generate preview");
     } finally {
       setIsGenerating(false);
@@ -169,7 +169,7 @@ export default function NewReportPage() {
 
       // Redirect to canonical report history
       router.push("/reports/history");
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to create report");
       setLoading(false);
     }

@@ -45,7 +45,7 @@ export const PUT = withAuth(
       });
 
       return NextResponse.json({ success: true });
-    } catch (err: any) {
+    } catch (err) {
       logger.error("[API] commission-plans PUT error:", err);
       return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
@@ -70,7 +70,7 @@ export const DELETE = withAuth(
       await prisma.commission_plans.delete({ where: { id } });
 
       return NextResponse.json({ success: true });
-    } catch (err: any) {
+    } catch (err) {
       logger.error("[API] commission-plans DELETE error:", err);
       return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }

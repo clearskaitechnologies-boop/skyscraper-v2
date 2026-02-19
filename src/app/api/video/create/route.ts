@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ url });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Video generation error:", err);
     return NextResponse.json({ error: err.message || "Failed to create video" }, { status: 500 });
   }

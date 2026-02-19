@@ -64,7 +64,7 @@ export const GET = withAuth(async (_req: NextRequest, { userId, orgId, role }) =
       proof: `Org "${org?.name}" sees ${claimCount} claims, ${reportCount} reports, ${contactCount} contacts. Any other org will see different numbers — that IS tenant isolation.`,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[isolation-proof] Error:", error);
     return NextResponse.json(
       { ok: false, error: "Failed to generate isolation proof" },

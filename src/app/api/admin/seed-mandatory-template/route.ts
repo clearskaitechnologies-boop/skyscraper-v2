@@ -92,7 +92,7 @@ export async function POST() {
         });
         seededCount++;
         logger.debug(`[SeedTemplate] Added "${template.name}" to org: ${org.name}`);
-      } catch (error: any) {
+      } catch (error) {
         // Ignore duplicate key errors
         if (error.code !== "P2002") {
           logger.error(`[SeedTemplate] Error for org ${org.name}:`, error);

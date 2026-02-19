@@ -123,7 +123,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
     }
 
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/network/clients/[slug]/profile] Error:", error);
     return NextResponse.json({ error: "Failed to fetch client" }, { status: 500 });
   }

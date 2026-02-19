@@ -159,7 +159,7 @@ export async function POST(req: NextRequest) {
       success: true,
       estimates,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] Create estimates error:", error);
 
     if (error.name === "ZodError") {
@@ -228,7 +228,7 @@ export async function GET(req: NextRequest) {
       success: true,
       estimates,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] List estimates error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch estimates" },

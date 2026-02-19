@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       },
       { status: 501 }
     );
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("Error in HOA notice:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Failed to process notice" },

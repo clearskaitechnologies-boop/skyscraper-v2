@@ -81,7 +81,7 @@ async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: str
         availableCategories: ["damage", "workflow", "communication", "analysis", "estimation"],
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Skills] Error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

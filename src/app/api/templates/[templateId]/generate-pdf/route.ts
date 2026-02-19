@@ -37,7 +37,7 @@ export const POST = withOrgScope(
           "Content-Disposition": `attachment; filename="template-${templateId}.pdf"`,
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`[PDF_GENERATION_API] Error:`, error);
 
       Sentry.captureException(error, {

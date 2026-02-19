@@ -14,7 +14,7 @@ export async function POST(_req: Request, { params }: { params: { key: string } 
     await delFlagCache(cacheKey);
     logCacheEvent('invalidate', cacheKey);
     return NextResponse.json({ invalidated: cacheKey });
-  } catch (err: any) {
+  } catch (err) {
     return NextResponse.json({ error: err?.message || 'Unauthorized' }, { status: 401 });
   }
 }

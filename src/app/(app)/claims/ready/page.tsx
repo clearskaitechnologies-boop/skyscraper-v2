@@ -82,7 +82,7 @@ export default async function ClaimsReadyPage() {
       updatedAt: claim.updatedAt?.toISOString() || null,
       dateOfLoss: claim.dateOfLoss?.toISOString() || null,
     }));
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[ClaimsReadyPage] Query failed:", err?.message);
     fetchError = err?.message || "Failed to load ready claims";
   }

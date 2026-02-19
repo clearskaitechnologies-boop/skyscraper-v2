@@ -137,7 +137,7 @@ export default function PublicTemplatePreviewPage() {
         } else {
           throw new Error(data.error || "Template not found");
         }
-      } catch (err: any) {
+      } catch (err) {
         logger.error("[TEMPLATE_PREVIEW] Error:", err);
         setError(err.message);
       } finally {

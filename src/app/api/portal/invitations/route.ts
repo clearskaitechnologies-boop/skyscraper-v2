@@ -78,7 +78,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ invitations });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[portal/invitations] Failed to fetch:", error);
     return NextResponse.json({ error: "Failed to fetch invitations" }, { status: 500 });
   }

@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   try {
     const result = await runDailyWeatherIngest();
     return NextResponse.json({ ok: true, result });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[CRON] Weather ingest failed:", error);
     Sentry.captureException(error, { tags: { component: "cron-weather" } });
     return NextResponse.json(

@@ -48,7 +48,7 @@ export async function GET() {
         latestVersion: doc.latestVersion,
       })),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Legal Pending] Error:", error);
     return NextResponse.json({ error: "Internal server error: " + error.message }, { status: 500 });
   }

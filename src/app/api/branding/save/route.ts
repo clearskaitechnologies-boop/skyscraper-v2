@@ -183,7 +183,7 @@ export async function POST(req: Request) {
 
     logger.debug(`[branding/save] ✅ Successfully saved branding for org ${resolvedOrgId}`);
     return NextResponse.json({ ok: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[branding/save] ❌ Error saving branding:", {
       message: error.message,
       code: error.code,

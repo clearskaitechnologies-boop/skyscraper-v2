@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       success: true,
       message: `${company.name} added to your trade team`,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("❌ [POST /api/customer/trade-team/add] Error:", error);
     return NextResponse.json({ error: "Failed to add contractor" }, { status: 500 });
   }

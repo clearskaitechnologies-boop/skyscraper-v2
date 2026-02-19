@@ -181,7 +181,7 @@ export async function POST(req: Request) {
   let orgId: string;
   try {
     orgId = (await ensureUserOrgContext(userId)).orgId;
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     logger.error("[trades/profile POST] ❌ Failed to resolve orgId", message);
     return NextResponse.json({ error: "Organization context missing" }, { status: 403 });
@@ -263,7 +263,7 @@ export async function POST(req: Request) {
     await ensureVendorForOrg(orgId);
 
     return NextResponse.json({ profile }, { status: 201 });
-  } catch (error: unknown) {
+  } catch (error) {
     const err = error instanceof Error ? error : new Error("Unknown error");
     logger.error("[trades/profile POST] ❌ Error creating profile:", {
       message: err.message,
@@ -290,7 +290,7 @@ export async function PATCH(req: Request) {
   let orgId: string;
   try {
     orgId = (await ensureUserOrgContext(userId)).orgId;
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
     logger.error("[trades/profile PATCH] ❌ Failed to resolve orgId", message);
     return NextResponse.json({ error: "Organization context required" }, { status: 403 });
@@ -348,7 +348,7 @@ export async function PATCH(req: Request) {
     await ensureVendorForOrg(orgId);
 
     return NextResponse.json({ profile });
-  } catch (error: unknown) {
+  } catch (error) {
     const err = error instanceof Error ? error : new Error("Unknown error");
     logger.error("[trades/profile PATCH] ❌ Error updating profile:", {
       message: err.message,

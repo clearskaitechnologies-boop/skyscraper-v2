@@ -88,7 +88,7 @@ export async function GET(
           job.totalRecords > 0 ? Math.round((job.importedRecords / job.totalRecords) * 100) : 0,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Migration Report] Error:", error);
     return NextResponse.json({ error: "Failed to fetch migration details" }, { status: 500 });
   }
@@ -251,7 +251,7 @@ export async function POST(
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Migration Control] Error:", error);
     return NextResponse.json({ error: error.message || "Operation failed" }, { status: 500 });
   }

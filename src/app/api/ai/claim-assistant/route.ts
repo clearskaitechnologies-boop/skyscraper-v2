@@ -65,7 +65,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
       response,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[claim-assistant] Error", { error: error?.message || error });
 
     // Return more specific error messages

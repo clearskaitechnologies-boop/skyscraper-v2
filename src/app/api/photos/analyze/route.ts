@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
       recommendations: report.recommendations || [],
       itemCount: report.items.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[photos/analyze] Error:", error);
 
     // If OpenAI key is missing, return a clear message

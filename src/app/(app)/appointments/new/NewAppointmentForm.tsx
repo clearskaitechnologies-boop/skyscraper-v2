@@ -117,7 +117,7 @@ export default function NewAppointmentForm({ claims, leads }: NewAppointmentForm
       toast.success("Appointment created successfully!");
       router.push("/appointments");
       router.refresh();
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to create appointment:", error);
       toast.error(error.message || "Failed to create appointment");
     } finally {

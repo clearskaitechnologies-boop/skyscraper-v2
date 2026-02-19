@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       data: { role: 'MANAGER' },
     });
     return NextResponse.redirect(new URL('/teams', request.url));
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ error: e?.message || 'elevation failed' }, { status: 500 });
   }
 }

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
     return NextResponse.json({ workRequests: [] });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal work-requests GET error:", error);
     return NextResponse.json({ error: error.message || "Failed to fetch work requests" }, { status: 500 });
   }
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal work-requests POST error:", error);
     return NextResponse.json({ error: error.message || "Failed to create work request" }, { status: 500 });
   }

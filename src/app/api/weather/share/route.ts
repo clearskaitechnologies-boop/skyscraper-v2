@@ -53,7 +53,7 @@ export async function POST(req: Request) {
       url: shareUrl,
       token,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("WEATHER SHARE ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to create share link" },

@@ -73,7 +73,7 @@ export async function GET(_req: NextRequest) {
     }));
 
     return NextResponse.json({ jobs });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/jobs] Error:", error);
     return NextResponse.json({ jobs: [] }, { status: 200 });
   }

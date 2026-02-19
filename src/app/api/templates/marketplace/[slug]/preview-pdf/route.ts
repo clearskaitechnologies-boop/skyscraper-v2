@@ -219,7 +219,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
     //     "Content-Disposition": `inline; filename="${slug}-preview.pdf"`,
     //   },
     // });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[PREVIEW_PDF] Generation error:", error);
     // As a last resort, return a category-based static PDF to avoid breaking embeds.
     try {

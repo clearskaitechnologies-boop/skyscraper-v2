@@ -116,7 +116,7 @@ async function POST_INNER(
         status: "PENDING",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Contractor Dispatch Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to dispatch contractor" },

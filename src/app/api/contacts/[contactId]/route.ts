@@ -52,7 +52,7 @@ export const GET = withOrgScope(
           zipCode: contact.zipCode,
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[GET /api/contacts/:id] Error:", error);
       return NextResponse.json(
         { error: error.message || "Failed to fetch contact" },
@@ -138,7 +138,7 @@ export const PATCH = withOrgScope(
           zipCode: contact.zipCode,
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[PATCH /api/contacts/:id] Error:", error);
       return NextResponse.json(
         { error: error.message || "Failed to update contact" },

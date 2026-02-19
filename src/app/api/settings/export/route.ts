@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
         "Content-Disposition": "attachment; filename=\"skaiscrape-export.json\"",
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Settings export error:", error);
     return NextResponse.json({ error: error.message || "Export failed" }, { status: 500 });
   }

@@ -63,7 +63,7 @@ export async function POST(req: NextRequest) {
       message: `${itemType} archived successfully`,
       archivedAt: now.toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Archive] Error:", error);
     return NextResponse.json(
       { error: "Failed to archive", details: error.message },
@@ -204,7 +204,7 @@ export async function GET(req: NextRequest) {
         coldStoragePrice: 7.99,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Archive GET] Error:", error);
     return NextResponse.json(
       { error: "Failed to fetch archive", details: error.message },
@@ -263,7 +263,7 @@ export async function DELETE(req: NextRequest) {
       success: true,
       message: `${itemType} restored from archive`,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Archive DELETE] Error:", error);
     return NextResponse.json(
       { error: "Failed to restore", details: error.message },

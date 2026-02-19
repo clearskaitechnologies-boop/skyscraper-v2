@@ -150,7 +150,7 @@ export default function CompanyInvitePage() {
       setInviteTitle("");
       setInviteRole("member");
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to send invite");
     } finally {
       setSending(false);
@@ -189,7 +189,7 @@ export default function CompanyInvitePage() {
 
       toast.success(action === "approve" ? "Employee approved! 🎉" : "Request declined.");
       loadData();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to process request");
     } finally {
       setProcessing(null);
@@ -231,7 +231,7 @@ export default function CompanyInvitePage() {
       setClientInviteFirstName("");
       setClientInviteLastName("");
       setClientInviteMessage("");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to send client invite");
     } finally {
       setSendingClientInvite(false);

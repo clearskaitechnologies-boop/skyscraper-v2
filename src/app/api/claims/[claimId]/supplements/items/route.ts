@@ -22,7 +22,7 @@ export async function GET(req: Request, { params }: { params: { claimId: string 
     });
 
     return NextResponse.json(items);
-  } catch (e: any) {
+  } catch (e) {
     if (e instanceof OrgScopeError) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
@@ -45,7 +45,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
     });
 
     return NextResponse.json(item);
-  } catch (e: any) {
+  } catch (e) {
     if (e instanceof OrgScopeError) {
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }

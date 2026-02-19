@@ -34,12 +34,12 @@ export const POST = withSentryApi(async (req: Request) => {
           flag.targeting || null
         );
         results.push({ key: flag.key, status: "imported" });
-      } catch (err: any) {
+      } catch (err) {
         results.push({ key: flag.key, status: "error", error: err?.message });
       }
     }
     return NextResponse.json({ results });
-  } catch (err: any) {
+  } catch (err) {
     return NextResponse.json({ error: err?.message || "Unauthorized" }, { status: 401 });
   }
 });

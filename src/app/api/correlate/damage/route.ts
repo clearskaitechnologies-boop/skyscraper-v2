@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       correlation,
       description: "Forensic correlation analysis complete",
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("CORRELATION ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Correlation analysis failed" },

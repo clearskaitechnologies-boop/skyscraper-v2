@@ -70,7 +70,7 @@ export async function GET(req: NextRequest) {
         orgId: member?.orgId || company.orgId,
       },
     });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("❌ [GET /api/contractors/public/get] Error:", error);
     return NextResponse.json({ error: "Failed to load contractor profile" }, { status: 500 });
   }

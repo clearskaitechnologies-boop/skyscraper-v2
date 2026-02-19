@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
       },
       rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("❌ [GET /api/public/search] Error:", error);
     return NextResponse.json({ error: "Failed to search contractors" }, { status: 500 });
   }

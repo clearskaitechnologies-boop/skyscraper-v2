@@ -77,7 +77,7 @@ export const POST = withAuth(
         monthlyTotal: (newSeatCount * PRICE_PER_SEAT_CENTS) / 100,
         prorated: true,
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[update-seats] Error:", error);
       return NextResponse.json(
         { error: error?.message || "Failed to update seats" },
@@ -111,7 +111,7 @@ export const GET = withAuth(async (_req: NextRequest, { orgId }) => {
       pricePerSeat: PRICE_PER_SEAT_CENTS / 100,
       monthlyTotal: ((sub?.seatCount || 0) * PRICE_PER_SEAT_CENTS) / 100,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[update-seats GET] Error:", error);
     return NextResponse.json(
       { error: error?.message || "Failed to get seat info" },

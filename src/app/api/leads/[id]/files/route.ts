@@ -54,7 +54,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     }));
 
     return NextResponse.json({ files: filesWithSharing });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Leads Files GET] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

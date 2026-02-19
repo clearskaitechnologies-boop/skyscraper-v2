@@ -109,7 +109,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         });
         brandingCompleted = !!(branding?.companyName && branding?.email && branding?.colorPrimary);
         onboardingCompleted = true; // Org exists = onboarding complete
-      } catch (orgError: any) {
+      } catch (orgError) {
         logger.error("[LAYOUT_ORG_ERROR]", orgError?.message);
       }
     }
@@ -123,7 +123,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         });
       } else {
       }
-    } catch (legalError: any) {
+    } catch (legalError) {
       logger.error("[LAYOUT] Failed to check legal compliance:", legalError);
       // Don't block - just log the error
     }
@@ -164,7 +164,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         </div>
       </AppProviders>
     );
-  } catch (layoutError: any) {
+  } catch (layoutError) {
     // Redirect passthrough
     if (layoutError?.message === "NEXT_REDIRECT" || layoutError?.stack?.includes("NEXT_REDIRECT")) {
       throw layoutError;

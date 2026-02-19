@@ -61,7 +61,7 @@ export async function GET() {
           : "OK - Has " + memberships.length + " org membership(s)",
       fixUrl: `/api/public/db-fix?userId=${userId}`,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
         ok: false,

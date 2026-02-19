@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       success: true,
       report,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Error generating intelligence report:", err);
     return NextResponse.json(
       { error: err.message || "Failed to generate intelligence report" },

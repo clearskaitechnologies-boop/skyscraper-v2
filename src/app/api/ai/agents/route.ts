@@ -45,7 +45,7 @@ async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: st
     return NextResponse.json(result, {
       status: result.success ? 200 : 400,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Multi-Agent AI] Error:", error);
 
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
@@ -88,7 +88,7 @@ export async function GET() {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }

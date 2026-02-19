@@ -281,7 +281,7 @@ Describe what repairs would be needed to restore this to its original condition.
     } finally {
       if (browser) await browser.close();
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("❌ MOCKUP_GENERATE_ERROR:", error);
 
     return NextResponse.json(

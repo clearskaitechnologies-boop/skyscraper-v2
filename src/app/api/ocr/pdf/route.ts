@@ -53,7 +53,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ ok: true, text, record });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("OCR PDF Error:", err);
     return NextResponse.json({ ok: false, error: err.message }, { status: 500 });
   }

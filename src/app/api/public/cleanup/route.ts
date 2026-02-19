@@ -112,7 +112,7 @@ export async function GET(req: NextRequest) {
         ? "Dry run - no changes made. Set dryRun=false to execute"
         : "Cleanup complete!",
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ ok: false, error: error.message, actions }, { status: 500 });
   }
 }

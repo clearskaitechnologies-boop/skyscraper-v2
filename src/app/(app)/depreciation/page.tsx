@@ -86,7 +86,7 @@ export default function DepreciationPage() {
       }
 
       setPdfUrl(data.url);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

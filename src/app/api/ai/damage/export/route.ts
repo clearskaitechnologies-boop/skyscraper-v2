@@ -333,7 +333,7 @@ export async function POST(req: NextRequest) {
         "Content-Disposition": `attachment; filename="damage-report-${Date.now()}.pdf"`,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("PDF export error:", error);
     return NextResponse.json({ error: error.message || "Export failed" }, { status: 500 });
   }

@@ -70,7 +70,7 @@ export default async function PortalLayout({ children }: { children: React.React
           audience: "homeowner", // Clients only see client-relevant docs
         });
         logger.debug("[Portal Layout] Pending legal documents:", pendingLegal.length);
-      } catch (legalError: any) {
+      } catch (legalError) {
         logger.error("[Portal Layout] Failed to check legal compliance:", legalError);
         // Don't block - just log the error
       }

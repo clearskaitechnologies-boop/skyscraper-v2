@@ -21,7 +21,7 @@ export async function GET() {
       orgMemberships: user?.organizationMemberships?.length ?? 0,
       firstName: user?.firstName,
     };
-  } catch (e: any) {
+  } catch (e) {
     results.currentUser = { error: e.message };
   }
 
@@ -39,7 +39,7 @@ export async function GET() {
     } else {
       results.prismaORM = { error: "No user ID" };
     }
-  } catch (e: any) {
+  } catch (e) {
     results.prismaORM = { error: e.message?.substring(0, 200) };
   }
 
@@ -57,7 +57,7 @@ export async function GET() {
         rowCount: result?.length ?? 0,
       };
     }
-  } catch (e: any) {
+  } catch (e) {
     results.directSQL = { error: e.message?.substring(0, 200) };
   }
 
@@ -89,7 +89,7 @@ export async function GET() {
         };
       }
     }
-  } catch (e: any) {
+  } catch (e) {
     results.clerkDirectAPI = { error: e.message?.substring(0, 200) };
   }
 

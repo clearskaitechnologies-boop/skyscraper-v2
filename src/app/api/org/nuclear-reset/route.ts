@@ -100,7 +100,7 @@ export async function POST(): Promise<NextResponse> {
         ON CONFLICT ("orgId") DO NOTHING
       `;
       logger.debug("[NUCLEAR RESET] Created org_branding");
-    } catch (e: any) {
+    } catch (e) {
       logger.warn("[NUCLEAR RESET] Branding skipped:", e.message);
     }
 
@@ -108,7 +108,7 @@ export async function POST(): Promise<NextResponse> {
     try {
       await seedDemoData(org.id);
       logger.debug("[NUCLEAR RESET] Seeded demo data");
-    } catch (e: any) {
+    } catch (e) {
       logger.warn("[NUCLEAR RESET] Demo seed failed:", e.message);
     }
 
@@ -126,7 +126,7 @@ export async function POST(): Promise<NextResponse> {
       orgName: org.name,
       message: "Account completely reset. Please refresh the page.",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[NUCLEAR RESET] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Reset failed" },
@@ -240,7 +240,7 @@ export async function GET(): Promise<NextResponse> {
         orgName: m.Org?.name || "DELETED",
       })),
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ ok: false, error: error.message }, { status: 500 });
   }
 }

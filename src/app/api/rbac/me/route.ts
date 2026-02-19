@@ -22,7 +22,7 @@ export async function GET() {
       permissions: context.permissions,
       hierarchy: context.hierarchy,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API] RBAC me error:", error);
     return NextResponse.json({ error: error.message || "Failed to fetch role" }, { status: 500 });
   }

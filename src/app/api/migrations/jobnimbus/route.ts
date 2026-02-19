@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
       errors: result.errors?.slice(0, 50) ?? [],
       durationMs: result.durationMs,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] /api/migrations/jobnimbus error:", err);
     return NextResponse.json(
       { ok: false, error: err.message || "Migration failed" },

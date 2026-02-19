@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
           message: "SMS sent successfully",
           sid: result.sid,
         });
-      } catch (twilioError: any) {
+      } catch (twilioError) {
         logger.error("Twilio error:", twilioError);
         return NextResponse.json(
           { error: `Twilio error: ${twilioError.message}` },

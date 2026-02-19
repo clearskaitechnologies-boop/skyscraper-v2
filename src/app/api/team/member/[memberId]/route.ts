@@ -43,7 +43,7 @@ export const GET = withSentryApi(
             role: true,
           },
         });
-      } catch (e: any) {
+      } catch (e) {
         // If column missing in DB, retry without headshotUrl and log
         if (
           typeof e?.message === "string" &&
@@ -129,7 +129,7 @@ export const PATCH = withSentryApi(
             role: true,
           },
         });
-      } catch (e: any) {
+      } catch (e) {
         if (typeof e?.message === "string" && e.message.includes("headshot_url")) {
           logger.warn("[PATCH team member] headshot_url column missing - retrying without it");
           updated = await prisma.users.update({

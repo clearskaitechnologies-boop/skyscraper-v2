@@ -36,7 +36,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
       .catch(() => {});
 
     return NextResponse.json({ success: true });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("DELETE /api/report-templates/[id] error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to delete template" },

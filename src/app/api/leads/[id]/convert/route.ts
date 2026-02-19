@@ -210,7 +210,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       },
       message: "Lead successfully converted to claim",
     });
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       const fieldErrors = error.errors
         .map((err) => `${err.path.join(".")}: ${err.message}`)

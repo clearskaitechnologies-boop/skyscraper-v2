@@ -76,7 +76,7 @@ export default function AIMetricsDashboard() {
       if (!res.ok) throw new Error("Failed to fetch metrics");
       const data = await res.json();
       setMetrics(data);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

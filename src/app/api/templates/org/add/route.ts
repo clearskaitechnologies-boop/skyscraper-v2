@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       message: "Template added to company library",
       orgTemplate,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[POST /api/templates/org/add] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Failed to add template" },

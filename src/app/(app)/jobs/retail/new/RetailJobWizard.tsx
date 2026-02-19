@@ -184,7 +184,7 @@ export function RetailJobWizard({ orgId }: Props) {
       photos.forEach((p) => URL.revokeObjectURL(p.preview));
       toast.success("✅ Retail job created successfully!");
       router.push(`/jobs/retail/${leadId}`);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message ?? "Something went wrong.");
     } finally {
       setLoading(false);

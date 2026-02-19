@@ -56,7 +56,7 @@ export async function GET(
     }
 
     return NextResponse.json(state);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Section API]", error);
     return NextResponse.json({ error: error.message || "Failed to get section" }, { status: 500 });
   }
@@ -111,7 +111,7 @@ export async function POST(
       aiContent?.sections?.[0]?.content ||
       "(Suggestion temporarily unavailable)";
     return NextResponse.json({ sectionKey: key, content });
-  } catch (e: unknown) {
+  } catch (e) {
     const errorMessage = e instanceof Error ? e.message : "Internal error";
     logger.error("[AI Section Suggest] Failure", e);
     return NextResponse.json({ error: errorMessage }, { status: 500 });

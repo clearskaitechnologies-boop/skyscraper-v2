@@ -106,7 +106,7 @@ export async function POST(req: Request) {
       ok: true,
       description: "Access link sent successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[CLIENT AUTH REQUEST ERROR]", error);
     return NextResponse.json(
       {

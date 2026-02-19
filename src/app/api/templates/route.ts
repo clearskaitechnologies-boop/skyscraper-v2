@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
     const { orgId } = await requireRole(["contractor", "adjuster", "admin"]);
     const templates = await listTemplates(orgId);
     return NextResponse.json({ templates, system: "legacy" });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: error.message || "Internal server error" },
       { status: error.message === "Unauthorized" ? 401 : 500 }
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
       templateId: result.id,
       description: `Template "${name}" saved successfully`,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       { error: error.message || "Internal server error" },
       {

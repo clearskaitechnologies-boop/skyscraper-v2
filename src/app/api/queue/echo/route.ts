@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Failed to enqueue echo job:", error);
 
     return NextResponse.json(

@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
       await safePersist(userId, orgId, claimId, routeName, trimmedQuestion, answer);
       return NextResponse.json({ answer });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Ask Dominus API error:", error);
     return NextResponse.json(
       { error: error?.message || "Ask Dominus encountered an error. Please try again." },

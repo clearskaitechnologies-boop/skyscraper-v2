@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
       },
       imageUrl,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Damage E2E verification FAILED:", error);
 
     return NextResponse.json(

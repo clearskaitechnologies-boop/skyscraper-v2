@@ -300,7 +300,7 @@ export async function POST(req: NextRequest) {
           category,
           note,
         });
-      } catch (fileError: any) {
+      } catch (fileError) {
         logger.error(`Error processing file ${files[i].filename}:`, fileError);
         errors.push({
           filename: files[i].filename,
@@ -316,7 +316,7 @@ export async function POST(req: NextRequest) {
       totalUploaded: results.length,
       totalErrors: errors.length,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Upload error:", err);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }

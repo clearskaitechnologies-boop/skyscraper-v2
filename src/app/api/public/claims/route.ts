@@ -87,7 +87,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, claims: dto });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[api/public/claims] error", error);
     return NextResponse.json(
       {

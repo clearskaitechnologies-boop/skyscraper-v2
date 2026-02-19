@@ -76,7 +76,7 @@ export async function POST(_: Request, ctx: { params: Promise<{ templateId: stri
     });
 
     return NextResponse.json({ ok: true, previewPdfUrl: pdfPublic, thumbnailUrl: thumbPublic });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ ok: false, error: e?.message ?? "UNKNOWN_ERROR" }, { status: 500 });
   }
 }

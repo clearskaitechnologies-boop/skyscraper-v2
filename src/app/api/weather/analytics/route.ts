@@ -190,7 +190,7 @@ export async function GET(req: NextRequest) {
       topRegions,
       recentReports,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[Weather Analytics] Fatal error:", err?.message || err);
     // Return empty-state data instead of 500 so the page still renders
     return NextResponse.json({

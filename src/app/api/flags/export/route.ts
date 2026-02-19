@@ -29,7 +29,7 @@ export const GET = withSentryApi(async (req: Request) => {
       targeting: r.targeting ? (() => { try { return JSON.parse(r.targeting); } catch { return null; } })() : null,
     }));
     return NextResponse.json({ items: flags });
-  } catch (err: any) {
+  } catch (err) {
     return NextResponse.json({ error: err?.message || 'Unauthorized' }, { status: 401 });
   }
 });

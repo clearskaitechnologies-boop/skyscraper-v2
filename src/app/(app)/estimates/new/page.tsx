@@ -113,7 +113,7 @@ export default function EstimateNewPage() {
 
       const mapped = mapAiItemsToXactimate(data.estimate.items);
       setLineItems(mapped);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Estimate builder error:", err);
       setError(err.message || "Failed to build estimate.");
     } finally {
@@ -164,7 +164,7 @@ export default function EstimateNewPage() {
           router.push(`/estimates`);
         }
       }, 2000);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Save estimate error:", err);
       setSaveMessage(`❌ ${err.message || "Failed to save estimate."}`);
     } finally {

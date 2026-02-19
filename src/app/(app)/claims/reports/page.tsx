@@ -66,7 +66,7 @@ async function getClaimsWithMaterials(orgId: string) {
         : null,
       materialCount: claim._count.reports,
     }));
-  } catch (err: any) {
+  } catch (err) {
     logger.warn("[ClaimsReports] Claims query error", err);
     return [];
   }

@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
       },
       steps,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
         ok: false,

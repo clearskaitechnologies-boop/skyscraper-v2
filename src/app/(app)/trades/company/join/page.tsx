@@ -94,7 +94,7 @@ export default function JoinCompanyPage() {
 
       setSubmitted(true);
       toast.success("Request sent! The company admin will review it.");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to submit request");
     } finally {
       setSubmitting(false);

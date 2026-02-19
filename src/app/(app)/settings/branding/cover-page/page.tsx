@@ -152,7 +152,7 @@ export default function CoverPageBuilderPage() {
         throw new Error(errorMsg);
       }
       toast.success("Cover page settings saved!");
-    } catch (e: any) {
+    } catch (e) {
       logger.error("[CoverPage] Save error:", e);
       toast.error(e?.message || "Failed to save cover page settings");
     } finally {

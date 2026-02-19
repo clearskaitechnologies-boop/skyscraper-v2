@@ -80,7 +80,7 @@ export default function NewVendorPage() {
 
       router.push("/vendors");
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       logger.error(err);
       alert(`Failed to create vendor: ${err.message}`);
       setSaving(false);

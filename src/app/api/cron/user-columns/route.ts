@@ -59,7 +59,7 @@ export async function GET(request: Request) {
       present,
       ms: Date.now() - started,
     });
-  } catch (e: any) {
+  } catch (e) {
     Sentry.captureException(e, { tags: { cron: "user-columns" } });
     return NextResponse.json(
       { ok: false, error: e.message, ms: Date.now() - started },

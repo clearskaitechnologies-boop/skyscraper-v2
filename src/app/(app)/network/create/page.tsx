@@ -132,7 +132,7 @@ function AddClientPage() {
       }
 
       router.push("/network/clients");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message || "Failed to create client");
     } finally {
       setLoading(false);
@@ -167,7 +167,7 @@ function AddClientPage() {
       setInviteSent(true);
       setInviteLink(result.inviteLink || "");
       toast.success(`Invite sent to ${inviteEmail}!`);
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message || "Failed to send invite");
     } finally {
       setInviteSending(false);
@@ -229,7 +229,7 @@ function AddClientPage() {
 
       toast.success(`${contact.name} added to your client network!`);
       router.push("/network/clients");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message);
     } finally {
       setLoading(false);
@@ -458,7 +458,7 @@ function TradeCreatePage() {
       }
 
       router.push("/network/trades");
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

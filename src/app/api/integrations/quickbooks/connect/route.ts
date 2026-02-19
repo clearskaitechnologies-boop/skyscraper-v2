@@ -49,7 +49,7 @@ export async function POST() {
       authUrl,
       message: "Redirect user to authUrl to complete QuickBooks connection",
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[QB] Connect error:", err);
     return NextResponse.json({ error: "Failed to start QuickBooks connection" }, { status: 500 });
   }

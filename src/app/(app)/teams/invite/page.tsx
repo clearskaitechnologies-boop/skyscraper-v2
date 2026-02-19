@@ -57,7 +57,7 @@ export default function InviteTeamMemberPage() {
       setTimeout(() => {
         router.push("/teams");
       }, 3000);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to send invitation");
     } finally {
       setIsSubmitting(false);

@@ -175,7 +175,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ clients: clientsWithStatus });
-  } catch (error: any) {
+  } catch (error) {
     log.error("[clients/connections] Failed to fetch", { error: error.message });
     return NextResponse.json({ error: "Failed to fetch clients" }, { status: 500 });
   }
@@ -284,7 +284,7 @@ export async function POST(req: Request) {
         });
         emailSent = true;
         log.info("[clients/connections] Invitation email sent", { email });
-      } catch (emailError: any) {
+      } catch (emailError) {
         log.error("[clients/connections] Failed to send email", { error: emailError.message });
         // Don't fail - client was created, email can be resent
       }
@@ -308,7 +308,7 @@ export async function POST(req: Request) {
       status: "created",
       emailSent,
     });
-  } catch (error: any) {
+  } catch (error) {
     log.error("[clients/connections] Failed to invite", { error: error.message });
     return NextResponse.json({ error: "Failed to invite client" }, { status: 500 });
   }

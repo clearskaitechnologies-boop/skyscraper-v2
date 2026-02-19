@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     logger.info("Message thread created: " + thread.id);
     return NextResponse.json(thread, { status: 201 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal create-thread error:", error);
     return NextResponse.json({ error: error.message || "Failed to create message thread" }, { status: 500 });
   }

@@ -343,7 +343,7 @@ export function FinalPayoutClient({ claim, orgId, userId }: FinalPayoutClientPro
       setGeneratedPacketUrl(data.url);
       setPayoutStatus("invoice_generated");
       toast.success("Final payout packet generated successfully!");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Generate packet error:", error);
       toast.error(error.message || "Failed to generate invoice");
     } finally {
@@ -382,7 +382,7 @@ export function FinalPayoutClient({ claim, orgId, userId }: FinalPayoutClientPro
       toast.success(
         `Submitted to carrier successfully!${data.emailSent ? " Email notification sent." : ""}`
       );
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Submit error:", error);
       toast.error(error.message || "Failed to submit to carrier");
     } finally {

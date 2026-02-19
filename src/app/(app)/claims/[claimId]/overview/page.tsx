@@ -170,7 +170,7 @@ export default function OverviewPage() {
           }
 
           toast.success("Changes saved", { duration: 2000 });
-        } catch (err: any) {
+        } catch (err) {
           toast.error(err.message || "Failed to save changes");
           // Revert optimistic updates on failure
           fetchData();

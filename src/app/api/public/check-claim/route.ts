@@ -63,7 +63,7 @@ export async function GET(req: NextRequest) {
       demoClaims,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json(
       {
         ok: false,

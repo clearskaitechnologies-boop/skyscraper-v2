@@ -113,7 +113,7 @@ export default function RequestServicePage({ params }: { params: { slug: string 
       const json = await res.json();
 
       router.push(`/request/${slug}/success?lead=${json.leadId}`);
-    } catch (err: any) {
+    } catch (err) {
       logger.error(err);
       alert(err.message || "There was an error submitting your request.");
     } finally {

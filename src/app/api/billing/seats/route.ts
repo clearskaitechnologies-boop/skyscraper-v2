@@ -69,7 +69,7 @@ export async function GET() {
           },
       pricing: summary,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[billing/seats] Error:", error);
     return NextResponse.json({ error: error?.message || "Failed to check seats" }, { status: 500 });
   }

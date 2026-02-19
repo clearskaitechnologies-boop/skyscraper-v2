@@ -78,7 +78,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
       success: true,
       claim: updatedClaim,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[POST /api/claims/${params.claimId}/dol] Error:`, error);
 
     if (error instanceof z.ZodError) {

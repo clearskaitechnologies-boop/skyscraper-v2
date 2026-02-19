@@ -116,7 +116,7 @@ export default function NewProposalPage() {
       const data: ProposalBuildResponse = await res.json();
       setDraft(data);
       setDraftId(data.draftId);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setIsBuilding(false);
@@ -149,7 +149,7 @@ export default function NewProposalPage() {
 
       const data = await res.json();
       setPdfUrl(data.pdfUrl);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setIsRendering(false);
@@ -176,7 +176,7 @@ export default function NewProposalPage() {
 
       // Success - redirect to dashboard
       router.push("/dashboard?proposalPublished=true");
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setIsPublishing(false);
@@ -193,7 +193,7 @@ export default function NewProposalPage() {
       if (!res.ok) throw new Error("Failed to fetch weather");
       const data = await res.json();
       alert(`Weather added: ${data.condition || "Unknown"}`);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     }
   };

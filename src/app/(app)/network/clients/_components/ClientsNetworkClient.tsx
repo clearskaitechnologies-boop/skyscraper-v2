@@ -37,7 +37,7 @@ export function ClientsNetworkClient() {
       }
       const data = (await res.json()) as { contacts?: ContactSearchResult[] };
       setResults(Array.isArray(data.contacts) ? data.contacts : []);
-    } catch (e: any) {
+    } catch (e) {
       setError(e?.message || "Search failed");
       setResults([]);
     } finally {

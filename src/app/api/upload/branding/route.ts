@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ url: publicUrl, storage: "supabase" });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Branding Upload] Error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }

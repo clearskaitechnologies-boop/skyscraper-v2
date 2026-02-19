@@ -128,7 +128,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
@@ -179,7 +179,7 @@ async function handleGeneratePacket(
         generatedAt: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[generate_packet] Error:", error);
     return NextResponse.json(
       { error: "Failed to generate packet", details: error.message },

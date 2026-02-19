@@ -87,7 +87,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
       setSearchQuery("");
       setContacts([]);
       toast.success("Client attached successfully!");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Attach client failed:", error);
       toast.error(error.message || "Failed to attach client. Please try again.");
     }
@@ -126,7 +126,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
       toast.success("Invite sent successfully!");
       setInviteEmail("");
       setInviteName("");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Send invite failed:", error);
       toast.error(error.message || "Failed to send invite. Please try again.");
     } finally {

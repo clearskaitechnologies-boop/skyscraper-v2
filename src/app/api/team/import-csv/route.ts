@@ -200,7 +200,7 @@ export const POST = withAuth(
               status: invitation.status || "pending",
             });
             imported++;
-          } catch (err: any) {
+          } catch (err) {
             if (err.errors?.[0]?.code === "duplicate_record") {
               errors.push({ email, reason: "Already invited" });
               skipped++;
@@ -236,7 +236,7 @@ export const POST = withAuth(
         errors: errors.length > 0 ? errors : undefined,
         invitations: results,
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[team/import-csv] Error:", error);
       return NextResponse.json(
         { error: error?.message || "Failed to import team members" },

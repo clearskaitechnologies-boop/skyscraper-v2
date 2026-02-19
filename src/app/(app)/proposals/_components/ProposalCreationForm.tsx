@@ -71,7 +71,7 @@ export function ProposalCreationForm({ templates, orgId }: ProposalCreationFormP
 
       // Navigate to proposal status page
       router.push(`/proposals/${data.proposalId}`);
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to create proposal:", error);
       alert(`Failed to create proposal: ${error.message}`);
     } finally {

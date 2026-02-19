@@ -153,7 +153,7 @@ export const POST = withAuth(
         seatCount,
         monthlyTotal: (seatCount * PRICE_PER_SEAT_CENTS) / 100,
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[create-subscription] Error:", error);
       return NextResponse.json(
         { error: error?.message || "Failed to create subscription" },

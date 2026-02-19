@@ -34,7 +34,7 @@ export default function OrgErrorPage() {
       } else {
         setError(data.error || "Repair failed. Please try again.");
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Network error. Please try again.");
     } finally {
       setIsRepairing(false);

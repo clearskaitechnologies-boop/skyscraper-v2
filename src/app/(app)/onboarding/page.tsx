@@ -68,7 +68,7 @@ export default function OnboardingPage() {
       // Success - redirect to dashboard
       router.push("/dashboard");
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
       setIsLoading(false);
     }

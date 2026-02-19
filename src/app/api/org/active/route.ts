@@ -51,7 +51,7 @@ export async function GET() {
       demoMode: demoModeValue,
       source: orgResult.source,
     });
-  } catch (e: any) {
+  } catch (e) {
     logger.error("[/api/org/active] Error:", e);
     return NextResponse.json({ ok: false, reason: "error", error: e.message }, { status: 500 });
   }

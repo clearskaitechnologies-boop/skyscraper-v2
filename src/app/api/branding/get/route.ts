@@ -67,7 +67,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(branding);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[branding/get] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

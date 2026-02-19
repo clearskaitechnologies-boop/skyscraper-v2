@@ -88,7 +88,7 @@ export async function POST(req: NextRequest) {
       status: 200,
       headers: { "Content-Type": "text/xml" },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[twilio-webhook]", err);
     // Always return 200 to Twilio to prevent retries
     return new NextResponse('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {

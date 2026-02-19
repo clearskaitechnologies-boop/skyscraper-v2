@@ -193,7 +193,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }

@@ -170,7 +170,7 @@ export async function POST(req: Request, { params }: { params: { claimId: string
         { status: 400 }
       );
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Depreciation Export] Error:", error);
     return NextResponse.json(
       { error: "Failed to generate depreciation invoice", details: error.message },

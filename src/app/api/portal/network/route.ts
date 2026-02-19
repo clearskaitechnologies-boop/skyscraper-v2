@@ -95,7 +95,7 @@ export async function GET(req: NextRequest) {
         };
       }),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Network GET] Error:", error);
     return NextResponse.json(
       { connections: [], error: error.message || "Failed to fetch connections" },
@@ -195,7 +195,7 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Network POST] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to update connection" },

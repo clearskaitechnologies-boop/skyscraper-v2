@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
     };
 
     return apiOk({ permits, summary });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[permits-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -122,7 +122,7 @@ export async function POST(req: NextRequest) {
     });
 
     return apiOk({ permit }, { status: 201 });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[permits-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

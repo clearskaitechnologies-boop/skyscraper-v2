@@ -52,7 +52,7 @@ export default function ClientSetupPage() {
 
       toast.success("Account created! Welcome to SkaiScrape.");
       router.push("/portal");
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Something went wrong");
     } finally {
       setIsSubmitting(false);

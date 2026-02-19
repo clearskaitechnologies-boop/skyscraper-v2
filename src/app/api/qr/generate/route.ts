@@ -9,7 +9,7 @@ export async function GET(req: Request) {
     const url = `${base}/portal/${token}`;
     const qrDataUrl = await QRCode.toDataURL(url);
     return Response.json({ qr: qrDataUrl, url });
-  } catch (e: any) {
+  } catch (e) {
     return Response.json({ error: e.message }, { status: 500 });
   }
 }

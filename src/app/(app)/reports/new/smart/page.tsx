@@ -116,7 +116,7 @@ export default function SmartReportBuilderPage() {
 
       const data = (await res.json()) as GeneratedReport;
       setReport(data);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Report build error", err);
       setError(err.message || "Failed to build report.");
       setLoading(false);

@@ -198,7 +198,7 @@ export default function ProProfilePage() {
       setShowMessageModal(false);
       setMessageText("");
       router.push(`/portal/messages/${data.threadId}`);
-    } catch (err: unknown) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Failed to send message";
       toast.error(errMsg);
     } finally {

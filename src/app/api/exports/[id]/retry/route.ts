@@ -42,7 +42,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     // ENHANCEMENT: Trigger export worker to retry this export job
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Export Retry]", error);
     return NextResponse.json({ error: error.message || "Failed to retry export" }, { status: 500 });
   }

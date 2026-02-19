@@ -218,7 +218,7 @@ export async function POST(req: NextRequest) {
       pdfSaved,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Rebuttal Generation Error]", error);
     return NextResponse.json(
       {

@@ -88,7 +88,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
           companyName: orgBranding?.companyName || "SkaiScraper",
         }),
       });
-    } catch (emailError: any) {
+    } catch (emailError) {
       logger.error("Error sending client invite email:", emailError);
       // Don't fail the whole request if email fails - log and continue
     }
@@ -99,7 +99,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
       clerkUserId: clerkUser.id,
       // Don't return token in production - it's sent via email
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error inviting client to portal:", error);
     return new NextResponse(error?.message || "Internal server error", {
       status: 500,

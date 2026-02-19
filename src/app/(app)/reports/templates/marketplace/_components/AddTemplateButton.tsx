@@ -33,7 +33,7 @@ export function AddTemplateButton({ templateId, templateTitle }: AddTemplateButt
 
       toast.success(`"${templateTitle}" added to your company!`);
       router.push("/reports/templates");
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Error adding template:", error);
       toast.error(error.message || "Failed to add template. Please try again.");
     } finally {

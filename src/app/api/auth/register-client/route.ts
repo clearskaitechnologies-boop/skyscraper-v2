@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       slug: client.slug,
       message: "Client account created successfully",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[/api/auth/register-client] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to create client account" },

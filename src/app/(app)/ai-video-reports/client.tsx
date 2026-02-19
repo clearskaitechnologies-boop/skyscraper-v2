@@ -157,7 +157,7 @@ export default function VideoReportsClient() {
           tokensUsed: json.tokensUsed,
         }),
       });
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setAnalyzing(false);

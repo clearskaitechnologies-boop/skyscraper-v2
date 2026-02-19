@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
         "Content-Length": pdfBuffer.length.toString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[PDF_EXPORT] Export failed:", error);
     Sentry.captureException(error, {
       tags: { component: "pdf-export" },
@@ -105,7 +105,7 @@ export async function GET() {
       },
       strategy: hasLibreOffice ? "LibreOffice + pdf-lib fallback" : "pdf-lib only",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[PDF_EXPORT] Capability check failed:", error);
     return NextResponse.json(
       { error: error.message || "Capability check failed" },

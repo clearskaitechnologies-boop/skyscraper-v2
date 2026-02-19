@@ -44,7 +44,7 @@ export default async function NetworkOverviewPage() {
 
     try {
       return await countFn(args);
-    } catch (err: unknown) {
+    } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       warnOnce(label, `fallback to 0 (${msg})`);
       return 0;

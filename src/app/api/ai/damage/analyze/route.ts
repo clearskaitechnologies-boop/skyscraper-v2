@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
               { status: 422 }
             );
           }
-        } catch (error: any) {
+        } catch (error) {
           Sentry.captureException(error, {
             tags: { operation: "heic-conversion" },
             extra: { fileName: photo.name, mimeType: photo.type },
@@ -218,7 +218,7 @@ Always respond with valid JSON matching the requested schema.`,
         photoCount: convertedPhotos.length,
       })
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Damage analysis error:", error);
     Sentry.captureException(error);
     return NextResponse.json(

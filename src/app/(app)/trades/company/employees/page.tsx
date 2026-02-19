@@ -93,7 +93,7 @@ export default function ManageEmployeesPage() {
 
       toast.success(!currentIsAdmin ? "Admin access granted" : "Admin access revoked");
       loadEmployees();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to update permissions");
     } finally {
       setUpdating(null);
@@ -119,7 +119,7 @@ export default function ManageEmployeesPage() {
 
       toast.success(!currentCanEdit ? "Edit access granted" : "Edit access revoked");
       loadEmployees();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to update permissions");
     } finally {
       setUpdating(null);
@@ -141,7 +141,7 @@ export default function ManageEmployeesPage() {
       toast.success(`${name} removed from company`);
       setDeleteTarget(null);
       loadEmployees();
-    } catch (error: any) {
+    } catch (error) {
       toast.error(error.message || "Failed to remove employee");
     } finally {
       setUpdating(null);

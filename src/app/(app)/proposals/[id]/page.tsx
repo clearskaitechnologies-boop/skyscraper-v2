@@ -45,7 +45,7 @@ export default function ProposalStatusPage({ params }: ProposalStatusPageProps) 
       const data = await res.json();
       setProposal(data);
       setLoading(false);
-    } catch (err: any) {
+    } catch (err) {
       logger.error("Failed to fetch proposal:", err);
       setError(err.message);
       setLoading(false);

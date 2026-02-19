@@ -163,7 +163,7 @@ export async function POST(req: Request) {
       orgName: result.org.name,
       created: result.created,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[bootstrap] Error:", error);
     return NextResponse.json(
       { ok: false, error: error.message || "Bootstrap failed" },

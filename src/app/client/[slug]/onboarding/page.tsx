@@ -131,7 +131,7 @@ export default function ClientOnboardingPage() {
 
       toast.success("Profile created successfully!");
       router.push(`/client/${slug}/profile`);
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to save profile";
       toast.error(message);
     } finally {

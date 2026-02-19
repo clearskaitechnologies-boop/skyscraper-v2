@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json(photo);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Completion Photo Upload Error]", error);
     return NextResponse.json({ error: error.message || "Failed to upload photo" }, { status: 500 });
   }
@@ -137,7 +137,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json(photos);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Completion Photos Get Error]", error);
     return NextResponse.json({ error: error.message || "Failed to get photos" }, { status: 500 });
   }

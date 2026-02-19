@@ -47,7 +47,7 @@ async function resolveClientRecord(userId: string) {
           clientId: client.id,
           userId,
         });
-      } catch (backfillErr: any) {
+      } catch (backfillErr) {
         // userId unique constraint — another client record already has this userId
         log.warn("[messages/threads] Could not backfill userId", {
           clientId: client.id,
@@ -91,7 +91,7 @@ async function resolveClientRecord(userId: string) {
       });
       log.info("[messages/threads] Auto-created client record", { clientId: client.id, userId });
       return client;
-    } catch (createErr: any) {
+    } catch (createErr) {
       log.warn("[messages/threads] Auto-create client failed", { error: createErr.message });
     }
   }
@@ -320,7 +320,7 @@ export async function GET(req: Request) {
     });
 
     return NextResponse.json({ threads });
-  } catch (error: any) {
+  } catch (error) {
     log.error("[messages/threads] Request failed", {
       error: error?.message,
       duration: Date.now() - startTime,

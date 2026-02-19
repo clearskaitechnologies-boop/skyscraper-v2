@@ -33,7 +33,7 @@ export const GET = withSentryApi(async (req: Request, { params }: { params: { ke
     }
     const enabled = await evaluateFlag(params.key, orgId, userId || null);
     return NextResponse.json({ key: params.key, enabled, userScoped: true });
-  } catch (err: unknown) {
+  } catch (err) {
     const errMsg = err instanceof Error ? err.message : String(err);
     const errStack = err instanceof Error ? err.stack : undefined;
     logger.error("Flag GET error", { key: params.key, err: errMsg, stack: errStack });
@@ -71,7 +71,7 @@ export const POST = withSentryApi(
     const targeting = body.targeting || null;
     try {
       await setFlag(params.key, enabled, effectiveOrgId, rolloutPercent, targeting);
-    } catch (err: unknown) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Invalid targeting";
       return NextResponse.json({ error: errMsg }, { status: 400 });
     }
@@ -93,7 +93,7 @@ export const DELETE = withSentryApi(
     try {
       const { orgId: adminOrgId } = await requireAdmin();
       orgId = adminOrgId;
-    } catch (err: unknown) {
+    } catch (err) {
       const errMsg = err instanceof Error ? err.message : "Unauthorized";
       return NextResponse.json({ error: errMsg }, { status: 401 });
     }

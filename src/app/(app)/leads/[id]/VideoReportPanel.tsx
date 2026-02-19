@@ -155,7 +155,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
       // Start polling for status
       pollJobStatus(data.jobId);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setIsGenerating(false);
@@ -202,7 +202,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
       // Reload report to get script/storyboard data
       await loadExistingReport();
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message);
     } finally {
       setIsRunning(false);
@@ -235,7 +235,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
       setIsPublic(true);
 
       toast.success("Anyone with this link can view the video report.");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message);
     } finally {
       setIsSharing(false);
@@ -273,7 +273,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
       setIsPublic(false);
 
       toast.success("Share link has been disabled.");
-    } catch (err: any) {
+    } catch (err) {
       toast.error(err.message);
     } finally {
       setIsSharing(false);

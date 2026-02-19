@@ -76,7 +76,7 @@ export async function GET() {
     });
 
     return NextResponse.json(payload);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/dashboard/charts] error:", error);
     return NextResponse.json(
       { ok: false, error: error.message ?? "Unknown error" },

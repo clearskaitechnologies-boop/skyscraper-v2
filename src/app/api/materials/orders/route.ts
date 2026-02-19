@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
       success: true,
       order,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Material order error:", error);
     // Return descriptive error instead of generic message
     const message =

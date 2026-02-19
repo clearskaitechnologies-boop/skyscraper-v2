@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal claims create error:", error);
     return NextResponse.json({ error: error.message || "Failed to create claim" }, { status: 500 });
   }

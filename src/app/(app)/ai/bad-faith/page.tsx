@@ -118,7 +118,7 @@ export default function BadFaithDetectorPage() {
         }
 
         setResult(data);
-      } catch (err: any) {
+      } catch (err) {
         setError(
           err.message || "Failed to analyze claim. Please check your connection and try again."
         );
@@ -155,7 +155,7 @@ export default function BadFaithDetectorPage() {
       }
 
       setPolicyResult(data);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to analyze policy coverage");
     } finally {
       setPolicyLoading(false);
@@ -188,7 +188,7 @@ export default function BadFaithDetectorPage() {
       }
 
       setRiskResult(data);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to analyze risk");
     } finally {
       setRiskLoading(false);

@@ -76,7 +76,7 @@ export async function GET() {
     }));
 
     return NextResponse.json({ received });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[GET /api/connections/received]", error);
     return NextResponse.json({ error: "Failed to load received connections" }, { status: 500 });
   }

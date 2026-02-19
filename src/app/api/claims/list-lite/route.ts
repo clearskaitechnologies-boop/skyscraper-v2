@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     }));
 
     return NextResponse.json({ claims: claimsLite });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Claims list-lite error:", error);
     return NextResponse.json({ error: error.message || "Failed to fetch claims" }, { status: 500 });
   }

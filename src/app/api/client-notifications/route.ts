@@ -47,7 +47,7 @@ export async function GET(req: NextRequest) {
           }
         }
       }
-    } catch (tableError: any) {
+    } catch (tableError) {
       if (tableError?.code !== "P2021") {
         logger.error("Error fetching claim notifications:", tableError);
       }

@@ -155,7 +155,7 @@ export default function TradesSetupPage() {
       setTimeout(() => {
         window.location.replace("/trades/profile");
       }, 100);
-    } catch (error: unknown) {
+    } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to create profile";
       logger.error("[TradesSetup] Error:", error);
       toast.error(message);

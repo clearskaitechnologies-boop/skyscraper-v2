@@ -58,7 +58,7 @@ export async function POST(req: Request) {
       },
       { status: 501 }
     );
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to send mailers";
     logger.error("[Mailers] Send error:", error);
     return NextResponse.json(

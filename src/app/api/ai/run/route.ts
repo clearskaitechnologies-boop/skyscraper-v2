@@ -82,7 +82,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     });
 
     return NextResponse.json({ jobId });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Run API]", error);
     return NextResponse.json({ error: error.message || "Failed to run AI" }, { status: 500 });
   }

@@ -29,7 +29,7 @@ export async function GET() {
     });
 
     return NextResponse.json({ branding: branding ?? null });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Branding GET] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -87,7 +87,7 @@ export async function POST(req: Request) {
       });
       return NextResponse.json({ branding: created });
     }
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Branding POST] Error:", error);
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

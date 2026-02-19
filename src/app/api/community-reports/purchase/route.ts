@@ -78,7 +78,7 @@ export async function POST(request: Request) {
       // Future: redirect to Stripe checkout or order confirmation page
       nextAction: "pending_payment",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[PURCHASE] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to purchase report" },

@@ -35,7 +35,7 @@ export async function POST() {
       ok: true,
       markedRead: result.count,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[POST /api/notifications/mark-all] Error:", error);
     return NextResponse.json({ error: "Failed to mark notifications" }, { status: 500 });
   }

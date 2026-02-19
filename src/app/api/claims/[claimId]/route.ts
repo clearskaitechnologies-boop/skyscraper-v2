@@ -121,7 +121,7 @@ export const GET = withOrgScope(
 
       logger.debug(`[GET /api/claims/${params.claimId}] FOUND claim: ${claim.id}`);
       return NextResponse.json({ claim }, { headers: { "Cache-Control": "no-store" } });
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`[GET /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to fetch claim" },
@@ -141,7 +141,7 @@ export const PATCH = withOrgScope(
       // 🛡️ RBAC: Check permission to edit claims
       try {
         await requirePermission("claims:edit");
-      } catch (error: any) {
+      } catch (error) {
         return createForbiddenResponse(
           error.message || "You don't have permission to edit claims",
           {
@@ -279,7 +279,7 @@ export const PATCH = withOrgScope(
       }
 
       return NextResponse.json({ claim }, { headers: { "Cache-Control": "no-store" } });
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`[PATCH /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to update claim" },
@@ -299,7 +299,7 @@ export const DELETE = withOrgScope(
       // 🛡️ RBAC: Check permission to delete claims
       try {
         await requirePermission("claims:delete");
-      } catch (error: any) {
+      } catch (error) {
         return createForbiddenResponse(
           error.message || "You don't have permission to delete claims",
           {
@@ -360,7 +360,7 @@ export const DELETE = withOrgScope(
         success: true,
         description: "Claim archived successfully",
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`[DELETE /api/claims/${params.claimId}] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to delete claim" },

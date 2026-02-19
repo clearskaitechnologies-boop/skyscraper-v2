@@ -85,7 +85,7 @@ export async function GET(req: NextRequest) {
         : { ok: false, reason: "NO_MEMBERSHIP" },
       steps,
     });
-  } catch (error: any) {
+  } catch (error) {
     return NextResponse.json({ ok: false, error: error.message, steps }, { status: 500 });
   }
 }

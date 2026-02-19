@@ -80,7 +80,7 @@ export default function BillingPage() {
       );
       mutate("/api/billing/seats");
       setSeatInput(null);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to create subscription.");
     } finally {
       setIsCreating(false);
@@ -113,7 +113,7 @@ export default function BillingPage() {
       );
       mutate("/api/billing/seats");
       setSeatInput(null);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to update seats.");
     } finally {
       setIsUpdating(false);
@@ -136,7 +136,7 @@ export default function BillingPage() {
         const data = await res.json();
         setError(data.error || "Failed to open billing portal.");
       }
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Failed to open billing portal.");
     } finally {
       setPortalLoading(false);

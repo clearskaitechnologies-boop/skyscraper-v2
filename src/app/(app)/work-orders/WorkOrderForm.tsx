@@ -41,7 +41,7 @@ export function WorkOrderForm({ claims }: { claims: Claim[] }) {
       }
       setOpen(false);
       startTransition(() => router.refresh());
-    } catch (error: any) {
+    } catch (error) {
       setErr(error.message);
     }
   }

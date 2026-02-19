@@ -96,7 +96,7 @@ export async function getClaim(claimId: string, orgId?: string): Promise<GetClai
 
     logger.debug("[getClaim] SUCCESS", { claimNumber: claim.claimNumber });
     return { ok: true, claim };
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[getClaim] DB_ERROR", { error: error.message, stack: error.stack });
     return {
       ok: false,

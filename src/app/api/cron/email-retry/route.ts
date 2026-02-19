@@ -65,7 +65,7 @@ export async function GET(req: Request) {
         });
 
         sent++;
-      } catch (error: any) {
+      } catch (error) {
         const errorMsg = String(error?.message || error);
         errors.push(errorMsg);
 
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
       errors: errors.length > 0 ? errors : undefined,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[CRON:EMAIL_RETRY] Fatal error:", error?.message || error);
     try {
       Sentry.captureException(error, { tags: { component: "email-retry-cron" } });

@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
       reports: reports || [],
       count: reports.length,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API /reports] Error fetching reports:", error);
     return NextResponse.json(
       {

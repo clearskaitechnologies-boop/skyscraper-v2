@@ -84,7 +84,7 @@ function AcceptInviteContent() {
           `/client/claim/${data.claimId}?email=${encodeURIComponent(invite?.clientEmail || "")}`
         );
       }, 2000);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "Something went wrong");
     } finally {
       setAccepting(false);

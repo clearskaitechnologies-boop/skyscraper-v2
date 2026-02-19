@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     });
 
     return NextResponse.json({ items: products });
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error("Error fetching products:", error);
     const message = error instanceof Error ? error.message : "Internal server error";
     return NextResponse.json({ error: message }, { status: 500 });

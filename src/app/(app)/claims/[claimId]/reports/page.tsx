@@ -39,7 +39,7 @@ export default function ClaimReportsPage({ params }: { params: { claimId: string
       
       const data = await res.json();
       setReports(data.reports || []);
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -58,7 +58,7 @@ export default function ClaimReportsPage({ params }: { params: { claimId: string
       
       // Refresh list
       fetchReports();
-    } catch (err: any) {
+    } catch (err) {
       alert(`Error: ${err.message}`);
     }
   }

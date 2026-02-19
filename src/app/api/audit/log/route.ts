@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error) {
     logger.error('Audit log POST failed:', error);
     return NextResponse.json(
       { error: error?.message || 'Internal server error' },

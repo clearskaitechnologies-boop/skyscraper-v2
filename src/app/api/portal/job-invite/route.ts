@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       message: "Job invite sent successfully",
       createdAt: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Portal job-invite error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to send job invite" },

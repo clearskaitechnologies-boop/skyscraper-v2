@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       { ok: true, purged: { path, tag } },
       { headers: { "Cache-Control": "no-store" } }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Revalidate] Error:", error);
     return NextResponse.json(
       { error: error.message || "Revalidation failed" },

@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
     }
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[QB_SYNC_ERROR]", err);
 
     // Handle specific QB errors
@@ -219,7 +219,7 @@ async function syncAllUnbilledJobs(orgId: string, limit: number) {
         status: result.status as "synced" | "already_synced",
         qbInvoiceId: result.qbInvoiceId,
       });
-    } catch (err: any) {
+    } catch (err) {
       results.push({
         jobId: job.id,
         status: "error",

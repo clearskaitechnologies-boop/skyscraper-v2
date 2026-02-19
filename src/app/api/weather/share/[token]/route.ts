@@ -43,7 +43,7 @@ export async function GET(
       success: true,
       report,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("WEATHER SHARE GET ERROR:", err);
     return NextResponse.json(
       { error: err?.message || "Failed to fetch shared report" },

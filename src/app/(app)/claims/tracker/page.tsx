@@ -62,7 +62,7 @@ async function getClaimsForPipeline(orgId: string) {
       },
       orderBy: { createdAt: "desc" },
     });
-  } catch (err: unknown) {
+  } catch (err) {
     const prismaErr = err as { code?: string };
     if (prismaErr?.code === "P2022") {
       logger.warn("[ClaimsTracker] Missing column – pipeline empty");

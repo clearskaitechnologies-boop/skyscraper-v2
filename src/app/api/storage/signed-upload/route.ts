@@ -105,7 +105,7 @@ export async function POST(req: Request) {
       token: data.token, // Optional: upload token
       expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(), // 5 min
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Signed upload URL generation failed:", error);
 
     // Handle auth errors

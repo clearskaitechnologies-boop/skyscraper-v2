@@ -256,7 +256,7 @@ export async function GET(req: Request) {
         source: "computed",
       },
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[API] leaderboard error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

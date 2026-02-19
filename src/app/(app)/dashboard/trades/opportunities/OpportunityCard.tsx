@@ -41,7 +41,7 @@ export default function OpportunityCard() {
       } else {
         throw new Error(data.error || "Failed to load opportunities");
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Failed to load opportunities:", error);
       toast.error(error.message || "Failed to load job opportunities");
     } finally {
@@ -66,7 +66,7 @@ export default function OpportunityCard() {
       toast.success("Connection request sent to client!");
       // Remove job from list
       setJobs((prev) => prev.filter((j) => j.id !== jobId));
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Connection request failed:", error);
       toast.error(error.message || "Failed to send connection request");
     }

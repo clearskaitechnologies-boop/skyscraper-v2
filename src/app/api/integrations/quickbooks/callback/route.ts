@@ -48,7 +48,7 @@ export async function GET(req: Request) {
     );
 
     return NextResponse.redirect(new URL("/settings/integrations?qb=success", req.url));
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[QB] Callback error:", err);
     return NextResponse.redirect(
       new URL("/settings/integrations?qb=error&reason=exchange_failed", req.url)
@@ -68,7 +68,7 @@ export async function POST() {
 
     const authUrl = getAuthorizationUrl(ctx.orgId);
     return NextResponse.json({ success: true, authUrl });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[QB] Auth URL error:", err);
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }

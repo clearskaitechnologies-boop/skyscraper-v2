@@ -35,7 +35,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ preferences });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Email Preferences GET] Error:", error);
     return NextResponse.json({ error: "Failed to fetch preferences" }, { status: 500 });
   }
@@ -140,7 +140,7 @@ export async function POST(request: Request) {
       success: true,
       preferences,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Email Preferences POST] Error:", error);
     return NextResponse.json({ error: "Failed to save preferences" }, { status: 500 });
   }
@@ -174,7 +174,7 @@ export async function DELETE() {
       success: true,
       message: "Unsubscribed from marketing emails",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Email Preferences DELETE] Error:", error);
     return NextResponse.json({ error: "Failed to unsubscribe" }, { status: 500 });
   }

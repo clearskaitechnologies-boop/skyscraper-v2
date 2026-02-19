@@ -197,7 +197,7 @@ export default function ContractorProfilePage() {
       logger.debug(`[Profile] Loaded profile:`, data.profile?.id);
       setProfile(data.profile);
       setError(null);
-    } catch (err: unknown) {
+    } catch (err) {
       // Retry on network errors
       if (retries > 0 && err instanceof TypeError) {
         logger.debug(`[Profile] Network error, retrying... (${retries} left)`);
@@ -282,7 +282,7 @@ export default function ContractorProfilePage() {
       }
 
       toast.success("Connection request sent! 🎉");
-    } catch (error: unknown) {
+    } catch (error) {
       // Revert on error
       setConnectionStatus("none");
       const errMsg = error instanceof Error ? error.message : "Failed to send connection request";
@@ -345,7 +345,7 @@ export default function ContractorProfilePage() {
       setShowMessageModal(false);
       setMessage("");
       router.push(`/portal/messages/${data.threadId}`);
-    } catch (error: unknown) {
+    } catch (error) {
       const errMsg = error instanceof Error ? error.message : "Failed to send message";
       toast.error(errMsg);
     } finally {

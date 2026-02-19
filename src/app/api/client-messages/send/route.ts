@@ -92,7 +92,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ success: true, message });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Error sending message:", error);
     return new NextResponse(error?.message || "Internal server error", {
       status: 500,

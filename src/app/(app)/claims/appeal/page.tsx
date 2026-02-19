@@ -127,7 +127,7 @@ export default function ClaimsAppealPage() {
       setReportId(data.reportId);
       setSuccess(true);
       fetchAppealHistory(); // Refresh history
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message || "An error occurred while generating the appeal");
     } finally {
       setLoading(false);

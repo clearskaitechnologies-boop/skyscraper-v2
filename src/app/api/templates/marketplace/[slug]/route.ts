@@ -103,7 +103,7 @@ export async function GET(req: NextRequest, { params }: { params: { slug: string
         placeholderCount: getPremiumRegistryBySlug(template.slug!)?.placeholdersRequired ?? 0,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[GET /api/templates/marketplace/${params.slug}] Error:`, error);
     return NextResponse.json(
       { ok: false, error: error.message || "Failed to fetch template" },

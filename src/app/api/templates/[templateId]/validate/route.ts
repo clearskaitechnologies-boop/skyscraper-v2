@@ -52,7 +52,7 @@ export async function POST(req: Request) {
       validation: hasValidation,
       missingPlaceholders,
     });
-  } catch (e: any) {
+  } catch (e) {
     return NextResponse.json({ ok: false, error: e?.message ?? "UNKNOWN_ERROR" }, { status: 500 });
   }
 }

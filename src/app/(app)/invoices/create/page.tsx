@@ -91,7 +91,7 @@ export default function CreateInvoicePage() {
       }
       router.push("/invoices");
       router.refresh();
-    } catch (err: any) {
+    } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);

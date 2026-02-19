@@ -151,7 +151,7 @@ export async function POST(req: Request) {
         estimatedTime: calculateEstimatedTime(addOns),
       })
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("AI Proposals Run failed:", error);
 
     // Handle auth errors

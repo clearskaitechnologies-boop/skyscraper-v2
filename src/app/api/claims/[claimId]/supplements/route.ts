@@ -90,7 +90,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
       { supplement },
       { status: 201, headers: { "Cache-Control": "no-store" } }
     );
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: "Validation failed", details: error.errors },
@@ -132,7 +132,7 @@ export async function GET(req: NextRequest, { params }: { params: { claimId: str
     });
 
     return NextResponse.json({ supplements }, { headers: { "Cache-Control": "no-store" } });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[GET /api/claims/${params.claimId}/supplements] Error:`, error);
     return NextResponse.json(
       { error: error.message || "Failed to fetch supplements" },

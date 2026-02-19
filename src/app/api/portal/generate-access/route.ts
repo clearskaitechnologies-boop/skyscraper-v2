@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     if (!client) return NextResponse.json({ error: "Client not found" }, { status: 404 });
     const tokenRecord = await generatePortalToken(clientId, orgId);
     return NextResponse.json({ ok: true, token: tokenRecord.token, id: tokenRecord.id });
-  } catch (e: any) {
+  } catch (e) {
     logger.error("[portal:generate-access]", e);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

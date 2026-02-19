@@ -21,7 +21,7 @@ async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string 
     const summary = await getUsageSummary(userId, orgId || userId);
 
     return NextResponse.json(summary);
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[AI Usage API]", error);
     return NextResponse.json({ error: error.message || "Failed to get usage" }, { status: 500 });
   }

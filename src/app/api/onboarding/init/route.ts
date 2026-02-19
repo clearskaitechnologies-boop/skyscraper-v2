@@ -199,7 +199,7 @@ export async function POST() {
       orgId: Org.id,
       description: "Organization created successfully",
     });
-  } catch (error: unknown) {
+  } catch (error) {
     const errObj = error instanceof Error ? error : new Error(String(error));
     const classification = classifyError(errObj);
     const errorCode =

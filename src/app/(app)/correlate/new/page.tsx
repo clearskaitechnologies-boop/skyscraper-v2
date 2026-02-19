@@ -46,7 +46,7 @@ export default function CorrelationWizardPage() {
 
       setResult(data.correlation);
       alert("Forensic correlation analysis complete!");
-    } catch (err: any) {
+    } catch (err) {
       alert(err.message);
     } finally {
       setLoading(false);

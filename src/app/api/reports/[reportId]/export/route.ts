@@ -93,7 +93,7 @@ export async function POST(
     }
 
     return NextResponse.json({ error: "No file generated" }, { status: 500 });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Export API] Error:", error);
     return NextResponse.json(
       { error: error.message || "Internal server error", stack: error.stack },

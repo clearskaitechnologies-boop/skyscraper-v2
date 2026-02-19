@@ -67,7 +67,7 @@ export async function POST() {
     });
 
     return response;
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[/api/auth/sync-identity] Error:", error);
     return NextResponse.json(
       { error: "Failed to sync identity", message: error.message },

@@ -298,7 +298,7 @@ export async function POST(req: NextRequest) {
                 coverPhoto: coverPhoto || null,
               },
             });
-      } catch (prismaError: any) {
+      } catch (prismaError) {
         logger.error("[Trades Onboarding] Prisma error:", prismaError);
         return NextResponse.json(
           {
@@ -546,7 +546,7 @@ export async function POST(req: NextRequest) {
       },
       { status: 400 }
     );
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Trades Onboarding Error]", error);
     return NextResponse.json(
       {
@@ -628,7 +628,7 @@ export async function GET() {
       onboardingComplete: false,
       nextStep: "link_company",
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[Trades Onboarding Status Error]", error);
     return NextResponse.json(
       {

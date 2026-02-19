@@ -47,7 +47,7 @@ export default function AcceptDeclineButtons({
 
       // Show attach to claim dialog after successful accept
       setShowAttachDialog(true);
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Accept failed:", error);
       toast.error(error.message || "Failed to accept request");
       setAccepting(false);
@@ -84,7 +84,7 @@ export default function AcceptDeclineButtons({
 
       toast.success("Request declined");
       onResolved?.();
-    } catch (error: any) {
+    } catch (error) {
       logger.error("Decline failed:", error);
       toast.error(error.message || "Failed to decline request");
     } finally {

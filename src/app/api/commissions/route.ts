@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
     };
 
     return apiOk({ records: enriched, totals, count: enriched.length });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[commissions-get]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
     });
 
     return apiOk({ record: updated, action });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("[commissions-post]", err);
     return apiError(500, "INTERNAL_ERROR", err.message);
   }

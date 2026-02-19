@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
       expiresAt: status.expires_at,
       subscriptionId: status.stripe_subscription_id,
     });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Full Access status error:", err);
     return NextResponse.json({ error: err.message || "Failed to fetch status" }, { status: 500 });
   }
@@ -76,7 +76,7 @@ export async function DELETE(req: NextRequest) {
     await stripe.subscriptions.cancel(membership[0].stripe_subscription_id);
 
     return NextResponse.json({ ok: true, description: "Subscription canceled" });
-  } catch (err: any) {
+  } catch (err) {
     logger.error("Full Access cancel error:", err);
     return NextResponse.json(
       { error: err.message || "Failed to cancel subscription" },

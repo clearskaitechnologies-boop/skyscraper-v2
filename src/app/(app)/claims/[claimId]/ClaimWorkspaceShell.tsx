@@ -163,7 +163,7 @@ export function ClaimWorkspaceShell({
       if (!initialClaim?.id) {
         logger.error("[ClaimWorkspaceShell] Invalid claim data: missing ID");
       }
-    } catch (error: any) {
+    } catch (error) {
       logger.error("[ClaimWorkspaceShell] Error during initialization", {
         message: error?.message,
         name: error?.name,

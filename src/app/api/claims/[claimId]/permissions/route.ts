@@ -30,7 +30,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
       success: true,
       permissions,
     });
-  } catch (error: any) {
+  } catch (error) {
     if (error instanceof OrgScopeError) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }

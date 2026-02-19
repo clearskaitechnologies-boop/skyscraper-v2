@@ -64,7 +64,7 @@ export async function POST(req: Request) {
       url,
       title: reports.title,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("PDF generation error:", error);
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }

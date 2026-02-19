@@ -55,7 +55,7 @@ export async function GET(request: NextRequest) {
       members: formattedMembers,
       source: "user_organizations",
     });
-  } catch (error: unknown) {
+  } catch (error) {
     const message = error instanceof Error ? error.message : "Failed to fetch team members";
     logger.error("[GET /api/team/members] Error:", error);
     return NextResponse.json({ error: message }, { status: 500 });

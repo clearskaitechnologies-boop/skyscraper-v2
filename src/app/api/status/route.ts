@@ -16,7 +16,7 @@ export async function GET() {
   try {
     const result = await pool.query("SELECT NOW() as current_time");
     dbStatus = result.rows[0] ? "connected" : "error";
-  } catch (error: any) {
+  } catch (error) {
     dbStatus = "error";
     dbError = error?.message || "Connection failed";
   }

@@ -110,7 +110,7 @@ export async function POST(req: Request) {
       path,
       expiresAt: new Date(Date.now() + expiresIn * 1000).toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("Signed read URL generation failed:", error);
 
     // Handle auth errors

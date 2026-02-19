@@ -102,7 +102,7 @@ export const GET = withOrgScope(
             }
           : null,
       });
-    } catch (error: any) {
+    } catch (error) {
       logger.error(`[TEMPLATE_PREVIEW] Error:`, error);
       return NextResponse.json(
         { error: error.message || "Failed to load template preview" },

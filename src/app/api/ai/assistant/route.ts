@@ -56,7 +56,7 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
       session = await prisma.$queryRaw<any[]>`
         SELECT * FROM ai_sessions WHERE "user_id" = ${userId} ORDER BY created_at DESC LIMIT 1
       `.then((r) => r[0]);
-    } catch (err: any) {
+    } catch (err) {
       logger.warn("[AI ASSISTANT] ai_sessions table error, continuing without session logging", {
         error: err.message,
       });

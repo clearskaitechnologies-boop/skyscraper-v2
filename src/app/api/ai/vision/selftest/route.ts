@@ -59,7 +59,7 @@ async function GET_INNER(_req: Request, ctx: { userId: string; orgId: string | n
       usage: response.usage,
       timestamp: new Date().toISOString(),
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("OpenAI Vision selftest failed:", error);
 
     return NextResponse.json(

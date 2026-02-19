@@ -54,7 +54,7 @@ export const POST = withAuth(async (req: NextRequest, { orgId, userId }) => {
         "Content-Disposition": `attachment; filename="${filename}"`,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[API:CLAIM_PACKET] Generation failed:", error);
     Sentry.captureException(error, {
       tags: { component: "claim-packet-api", orgId },

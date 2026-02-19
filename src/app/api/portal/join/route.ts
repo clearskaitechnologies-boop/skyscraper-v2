@@ -184,7 +184,7 @@ export async function POST(req: NextRequest) {
       connectionId: connection.id,
       clientSlug: client.slug,
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error("[JOIN] Error:", error);
     return NextResponse.json(
       { error: error.message || "Failed to process request" },

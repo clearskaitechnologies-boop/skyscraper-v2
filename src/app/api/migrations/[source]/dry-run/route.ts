@@ -125,7 +125,7 @@ export async function POST(
   try {
     const result = await runDryRun(upperSource, orgId, apiKey || accessToken || "", options);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
     logger.error(`[Migration Dry-Run] ${upperSource} error:`, error);
     return NextResponse.json({ error: error.message || "Dry run failed" }, { status: 500 });
   }
