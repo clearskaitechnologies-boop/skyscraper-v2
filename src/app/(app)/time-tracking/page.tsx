@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 
+import { logger } from "@/lib/logger";
+
 export const dynamic = "force-dynamic";
 
 export default async function TimeTrackingPage() {
@@ -37,7 +39,7 @@ export default async function TimeTrackingPage() {
       take: 20,
     });
   } catch (e) {
-    console.error("[TimeTracking] Error fetching members:", e);
+    logger.error("[TimeTracking] Error fetching members:", e);
   }
 
   // ── Fetch real job schedules for the team ──────────────────────────
@@ -61,7 +63,7 @@ export default async function TimeTrackingPage() {
       },
     });
   } catch (e) {
-    console.error("[TimeTracking] Error fetching schedules:", e);
+    logger.error("[TimeTracking] Error fetching schedules:", e);
   }
 
   // ── Compute stats ────────────────────────────────────────────────

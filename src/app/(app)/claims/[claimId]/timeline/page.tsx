@@ -6,8 +6,8 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
-import { inputBase, selectBase, textareaBase } from "@/lib/ui/inputStyles";
 import { logger } from "@/lib/logger";
+import { inputBase, selectBase, textareaBase } from "@/lib/ui/inputStyles";
 
 import SectionCard from "../_components/SectionCard";
 

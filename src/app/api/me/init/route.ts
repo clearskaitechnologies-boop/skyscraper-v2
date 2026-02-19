@@ -78,7 +78,7 @@ export async function POST(request: Request) {
             await startTrial(dbOrg.id, "solo");
             logger.debug(`[ORG_CREATION] Started 72h trial for personal Org ${dbOrg.id}`);
           } catch (trialError) {
-            console.error("[ORG_CREATION] Failed to start trial:", trialError);
+            logger.error("[ORG_CREATION] Failed to start trial:", trialError);
           }
         }
       }
@@ -119,7 +119,7 @@ export async function POST(request: Request) {
             await startTrial(dbOrg.id, "business");
             logger.debug(`[ORG_CREATION] Started 72h trial for team Org ${dbOrg.id}`);
           } catch (trialError) {
-            console.error("[ORG_CREATION] Failed to start trial:", trialError);
+            logger.error("[ORG_CREATION] Failed to start trial:", trialError);
           }
         }
       } else {

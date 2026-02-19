@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { logger } from "@/lib/logger";
+
 type Contractor = {
   id: string;
   businessName: string;
@@ -31,7 +33,7 @@ export default function RequestSuccessPage({ params }: { params: { slug: string 
         const json = await res.json();
         setContractor(json.contractor);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
       }
     }
     load();
@@ -63,7 +65,7 @@ export default function RequestSuccessPage({ params }: { params: { slug: string 
         }
       }
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       alert("An error occurred. Please try again.");
     } finally {
       setAdding(false);

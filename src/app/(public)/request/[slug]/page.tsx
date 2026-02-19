@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 type Contractor = {
   id: string;
   businessName: string;
@@ -66,7 +68,7 @@ export default function RequestServicePage({
 
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        logger.error(err);
         setError("Failed to load form");
         setLoading(false);
       }
@@ -116,7 +118,7 @@ export default function RequestServicePage({
 
       router.push(`/request/${slug}/success?lead=${json.leadId}`);
     } catch (err: any) {
-      console.error(err);
+      logger.error(err);
       alert(err.message || "There was an error submitting your request.");
     } finally {
       setSubmitting(false);

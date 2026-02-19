@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 interface Template {
   id: string;
   title: string;
@@ -58,7 +60,7 @@ export default function CompanyDocumentsPage() {
         setTemplates(data.templates);
       }
     } catch (error) {
-      console.error("Failed to load templates:", error);
+      logger.error("Failed to load templates:", error);
     } finally {
       setLoading(false);
     }
@@ -91,7 +93,7 @@ export default function CompanyDocumentsPage() {
         alert(data.message || "Upload failed");
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       alert("Upload failed");
     } finally {
       setUploading(false);

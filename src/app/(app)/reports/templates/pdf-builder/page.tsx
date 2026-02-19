@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 interface Claim {
   id: string;
   claim_number: string;
@@ -156,7 +158,7 @@ export default function PdfBuilderPage() {
       const data = await res.json();
       setPreview(data);
     } catch (error) {
-      console.error("Preview error:", error);
+      logger.error("Preview error:", error);
     } finally {
       setLoading(false);
     }
@@ -189,7 +191,7 @@ export default function PdfBuilderPage() {
         alert(`PDF generation failed: ${error.error}`);
       }
     } catch (error) {
-      console.error("Generate error:", error);
+      logger.error("Generate error:", error);
       alert("PDF generation failed");
     } finally {
       setGenerating(false);

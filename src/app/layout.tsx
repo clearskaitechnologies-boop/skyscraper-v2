@@ -8,6 +8,8 @@ import type { ReactNode } from "react";
 import { PHProvider } from "@/lib/analytics.tsx";
 import { ThemeProvider } from "@/modules/ui/theme/ThemeProvider";
 
+import { logger } from "@/lib/logger";
+
 // Note: Clerk validation moved to runtime API health checks
 // Build-time validation causes Vercel builds to fail
 
@@ -60,8 +62,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
   if (!clerkKey) {
-    console.error("❌ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set! Auth will not work.");
-    console.error(
+    logger.error("❌ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set! Auth will not work.");
+    logger.error(
       "Available env vars:",
       Object.keys(process.env).filter((k) => k.includes("CLERK") || k.includes("PUBLIC"))
     );

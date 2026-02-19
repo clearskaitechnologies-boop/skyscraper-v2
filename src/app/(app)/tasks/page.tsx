@@ -18,6 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { logger } from "@/lib/logger";
+
 interface Task {
   id: string;
   title: string;
@@ -65,7 +67,7 @@ export default function TasksPage() {
           setTasks(data.tasks || []);
         }
       } catch (error) {
-        console.error("Failed to fetch tasks:", error);
+        logger.error("Failed to fetch tasks:", error);
       } finally {
         setLoading(false);
       }
@@ -94,7 +96,7 @@ export default function TasksPage() {
         );
       }
     } catch (error) {
-      console.error("Update task error:", error);
+      logger.error("Update task error:", error);
     }
   };
 

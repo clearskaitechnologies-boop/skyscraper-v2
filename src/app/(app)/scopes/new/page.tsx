@@ -29,6 +29,8 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 export default function NewScopePage() {
   const router = useRouter();
   const { isLoaded, isSignedIn } = useUser();
@@ -89,7 +91,7 @@ export default function NewScopePage() {
         setStep("structure");
       }
     } catch (error) {
-      console.error("Build scope error:", error);
+      logger.error("Build scope error:", error);
     } finally {
       setLoading(false);
     }
@@ -117,7 +119,7 @@ export default function NewScopePage() {
 
       setStep("save");
     } catch (error) {
-      console.error("Save scope error:", error);
+      logger.error("Save scope error:", error);
     } finally {
       setLoading(false);
     }

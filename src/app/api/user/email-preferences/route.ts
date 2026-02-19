@@ -1,5 +1,5 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log(
+    logger.info(
       `[Email Preferences] User ${userId} updated preferences - marketing: ${marketingOptIn}`
     );
 
@@ -129,7 +129,7 @@ export async function POST(request: Request) {
         logger.debug(`[Email Subscribers] Added/updated ${email} to newsletter list`);
       } catch (dbError) {
         // Table might not exist yet - that's okay, just log it
-        console.log(
+        logger.info(
           "[Email Subscribers] Could not add to newsletter list (table may not exist):",
           dbError
         );

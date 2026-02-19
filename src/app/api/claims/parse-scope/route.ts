@@ -100,7 +100,7 @@ export async function POST(req: Request) {
         const pdfData = await pdfParse(buffer);
         pdfText = pdfData.text;
       } catch (pdfErr) {
-        console.error("[parse-scope] PDF text extraction failed:", pdfErr);
+        logger.error("[parse-scope] PDF text extraction failed:", pdfErr);
         return NextResponse.json(
           { error: "Failed to read PDF. Please try uploading an image instead." },
           { status: 422 }
@@ -167,7 +167,7 @@ export async function POST(req: Request) {
         .trim();
       parsed = JSON.parse(jsonStr);
     } catch {
-      console.error("[parse-scope] Failed to parse AI response:", raw);
+      logger.error("[parse-scope] Failed to parse AI response:", raw);
       return NextResponse.json(
         { error: "AI could not extract structured data from this document." },
         { status: 422 }

@@ -1,12 +1,12 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { useOrganization, useUser } from "@clerk/nextjs";
 import { Clock, CreditCard, ExternalLink, FileText, Loader2, Settings } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { logger } from "@/lib/logger";
 
 interface BillingData {
   org: {

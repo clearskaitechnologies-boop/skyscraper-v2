@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 interface AIStats {
   totalOperations: number;
   successRate: number;
@@ -58,7 +60,7 @@ export default function AIInsightsDashboard() {
         });
       }
     } catch (error) {
-      console.error("[AI Insights] Failed to fetch stats:", error);
+      logger.error("[AI Insights] Failed to fetch stats:", error);
     } finally {
       setLoading(false);
     }
@@ -87,7 +89,7 @@ export default function AIInsightsDashboard() {
         a.click();
       }
     } catch (error) {
-      console.error("[AI Insights] Failed to export logs:", error);
+      logger.error("[AI Insights] Failed to export logs:", error);
     }
   };
 

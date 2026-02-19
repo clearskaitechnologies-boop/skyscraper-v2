@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
     // Create notification (ProjectNotification requires claimId, no userId/type/jobId)
     if (!data.claimId) {
       // If no claimId provided, just log and return success without DB write
-      console.log(
+      logger.info(
         `[REAL-TIME] Event: ${event}, User: ${userId || authUserId}, Org: ${effectiveOrgId} (no claimId, skipping DB)`
       );
       return NextResponse.json({
@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       logger.debug(`[REAL-TIME] Pusher configured, would push: ${event}`);
     }
 
-    console.log(
+    logger.info(
       `[REAL-TIME] Event: ${event}, User: ${userId || authUserId}, Org: ${effectiveOrgId}`
     );
 

@@ -31,6 +31,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { logger } from "@/lib/logger";
+
 interface ProfileData {
   id: string;
   firstName: string;
@@ -105,7 +107,7 @@ export default function ClientProfilePage() {
         }
       }
     } catch (error) {
-      console.error("Failed to fetch profile:", error);
+      logger.error("Failed to fetch profile:", error);
     } finally {
       setLoading(false);
     }
@@ -130,7 +132,7 @@ export default function ClientProfilePage() {
         toast.error(err.error || "Failed to save profile");
       }
     } catch (error) {
-      console.error("Failed to save profile:", error);
+      logger.error("Failed to save profile:", error);
       toast.error("Failed to save profile");
     } finally {
       setIsSaving(false);

@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { logger } from "@/lib/logger";
+
 /**
  * Single Thread View - Client Portal
  * Direct link to a specific message thread from Activity Feed
@@ -58,7 +60,7 @@ export default function ThreadDetailPage() {
         setThreads(data.threads || []);
       }
     } catch (error) {
-      console.error("Failed to fetch threads:", error);
+      logger.error("Failed to fetch threads:", error);
     }
   };
 
@@ -73,7 +75,7 @@ export default function ThreadDetailPage() {
         setSelectedThreadId(id);
       }
     } catch (error) {
-      if (!silent) console.error("Failed to fetch thread:", error);
+      if (!silent) logger.error("Failed to fetch thread:", error);
     } finally {
       if (!silent) setLoading(false);
     }

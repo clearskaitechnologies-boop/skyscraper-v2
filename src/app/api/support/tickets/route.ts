@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { pool } from "@/server/db";
@@ -53,7 +53,7 @@ export async function POST(req: Request) {
 
     const ticket = result.rows[0];
 
-    console.log(`[SUPPORT_TICKET] Created ticket ${ticket.id} for org ${orgId}:`, {
+    logger.info(`[SUPPORT_TICKET] Created ticket ${ticket.id} for org ${orgId}:`, {
       type,
       title,
     });
@@ -83,7 +83,7 @@ export async function POST(req: Request) {
             <p>Our team will review your request and respond within 24-48 hours during weekdays.</p>
             <p><a href="${process.env.NEXT_PUBLIC_APP_URL}/support">View Support Tickets</a></p>
           `,
-        }).catch((err) => console.error("Failed to send ticket confirmation email:", err));
+        }).catch((err) => logger.error("Failed to send ticket confirmation email:", err));
       }
     } catch (error) {
       logger.error("Failed to send support ticket email:", error);

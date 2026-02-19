@@ -4,8 +4,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import JSZip from "jszip";
 import { cache } from "react";
 
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 export interface ExportProject {
   id: string;

@@ -37,6 +37,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 // ─── CLAIM TYPE CATEGORIES ─────────────────────────────────────────
 const CLAIM_CATEGORIES = [
   {
@@ -447,14 +449,14 @@ export default function NewClaimWizard() {
             body: fd,
           });
         } catch (uploadErr) {
-          console.warn("Photo upload failed (non-critical):", uploadErr);
+          logger.warn("Photo upload failed (non-critical):", uploadErr);
         }
       }
 
       toast.success("Claim created successfully!");
       router.push(`/portal/claims/${claimId}`);
     } catch (err) {
-      console.error("Error creating claim:", err);
+      logger.error("Error creating claim:", err);
       setError("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);

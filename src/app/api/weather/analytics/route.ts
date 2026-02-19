@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
+import { logger } from "@/lib/logger";
+
 /**
  * GET /api/weather/analytics
  *
@@ -64,7 +66,7 @@ export async function GET(req: NextRequest) {
         },
       });
     } catch (e) {
-      console.warn("[Weather Analytics] weather_reports query failed (non-fatal):", e);
+      logger.warn("[Weather Analytics] weather_reports query failed (non-fatal):", e);
     }
 
     // ── Weather Events Summary ──
@@ -189,7 +191,7 @@ export async function GET(req: NextRequest) {
       recentReports,
     });
   } catch (err: any) {
-    console.error("[Weather Analytics] Fatal error:", err?.message || err);
+    logger.error("[Weather Analytics] Fatal error:", err?.message || err);
     // Return empty-state data instead of 500 so the page still renders
     return NextResponse.json({
       summary: { totalReports: 0, claimsWithWeather: 0, avgConfidence: null, totalEvents: 0 },

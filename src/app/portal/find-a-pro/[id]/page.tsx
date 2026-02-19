@@ -42,6 +42,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 interface Pro {
   id: string;
   companyId?: string | null;
@@ -114,7 +116,7 @@ export default function ProProfilePage() {
         }
       }
     } catch (err) {
-      console.error("Failed to fetch profile:", err);
+      logger.error("Failed to fetch profile:", err);
       toast.error("Failed to load profile");
     } finally {
       setLoading(false);
@@ -145,7 +147,7 @@ export default function ProProfilePage() {
         }
       }
     } catch (err) {
-      console.error("Failed to check connection status:", err);
+      logger.error("Failed to check connection status:", err);
     }
   }
 

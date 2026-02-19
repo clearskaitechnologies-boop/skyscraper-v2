@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
       }
     } catch (tableError: any) {
       if (tableError?.code !== "P2021") {
-        console.error("Error fetching claim notifications:", tableError);
+        logger.error("Error fetching claim notifications:", tableError);
       }
     }
 
@@ -93,7 +93,7 @@ export async function GET(req: NextRequest) {
         }
       }
     } catch (msgError) {
-      console.error("Error fetching message notifications:", msgError);
+      logger.error("Error fetching message notifications:", msgError);
     }
 
     // Sort all notifications by date, newest first

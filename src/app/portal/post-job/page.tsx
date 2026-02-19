@@ -41,6 +41,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 const TRADE_CATEGORIES = [
   { value: "roofing", label: "Roofing" },
   { value: "plumbing", label: "Plumbing" },
@@ -173,7 +175,7 @@ export default function PostJobRequestPage() {
       }
       toast.success("Photos uploaded!");
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       toast.error("Failed to upload photo");
     } finally {
       setUploading(false);
@@ -210,7 +212,7 @@ export default function PostJobRequestPage() {
       toast.success("Job request posted! Contractors can now respond.");
       router.push("/portal/my-jobs");
     } catch (error) {
-      console.error("Submit error:", error);
+      logger.error("Submit error:", error);
       toast.error("Failed to post job request");
     } finally {
       setSubmitting(false);

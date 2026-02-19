@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 const CLIENT_CATEGORIES = [
   { value: "Homeowner", label: "Homeowner", description: "I own my home" },
   { value: "Renter", label: "Renter", description: "I rent my home" },
@@ -153,7 +155,7 @@ export default function ClientOnboardingPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to check profile:", error);
+        logger.error("Failed to check profile:", error);
       }
     }
     if (isLoaded && user) {
@@ -261,7 +263,7 @@ export default function ClientOnboardingPage() {
       toast.success("🎉 Profile created! Welcome to SkaiScraper!");
       router.push("/portal");
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       toast.error("Failed to save profile. Please try again.");
     } finally {
       setLoading(false);

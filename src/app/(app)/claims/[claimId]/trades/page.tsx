@@ -5,8 +5,8 @@ import { Hammer, Loader2, Mail, Phone, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-import { inputBase, selectBase } from "@/lib/ui/inputStyles";
 import { logger } from "@/lib/logger";
+import { inputBase, selectBase } from "@/lib/ui/inputStyles";
 
 import SectionCard from "../_components/SectionCard";
 

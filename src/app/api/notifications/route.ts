@@ -8,6 +8,8 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db";
 import prisma from "@/lib/prisma";
 
+import { logger } from "@/lib/logger";
+
 export async function GET() {
   const user = await currentUser();
   if (!user) return new Response("Unauthorized", { status: 401 });
@@ -31,7 +33,7 @@ export async function GET() {
       .catch((err: Error) => {
         // Silently handle missing notifications table — use TradeNotification instead
         if (!err.message?.includes("does not exist")) {
-          console.error("[notifications] Raw SQL error:", err.message);
+          logger.error("[notifications] Raw SQL error:", err.message);
         }
         return { rows: [] };
       }),
@@ -137,7 +139,7 @@ export async function GET() {
       }
     }
   } catch (msgError) {
-    console.error("[notifications] Error fetching message notifications:", msgError);
+    logger.error("[notifications] Error fetching message notifications:", msgError);
   }
 
   // Sort by date, newest first

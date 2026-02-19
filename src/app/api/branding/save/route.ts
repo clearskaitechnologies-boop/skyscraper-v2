@@ -119,7 +119,7 @@ export async function POST(req: Request) {
       }
     }
 
-    console.log(`[branding/save] 💾 Saving branding for org ${resolvedOrgId}:`, {
+    logger.info(`[branding/save] 💾 Saving branding for org ${resolvedOrgId}:`, {
       companyName,
       hasLogo: !!logoUrl,
       userId: user.id,
@@ -184,7 +184,7 @@ export async function POST(req: Request) {
     logger.debug(`[branding/save] ✅ Successfully saved branding for org ${resolvedOrgId}`);
     return NextResponse.json({ ok: true });
   } catch (error: any) {
-    console.error("[branding/save] ❌ Error saving branding:", {
+    logger.error("[branding/save] ❌ Error saving branding:", {
       message: error.message,
       code: error.code,
       stack: error.stack?.split("\n")[0], // First line of stack for context

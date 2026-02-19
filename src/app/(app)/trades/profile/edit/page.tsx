@@ -23,6 +23,8 @@ import { StandardButton } from "@/components/ui/StandardButton";
 import { Textarea } from "@/components/ui/textarea";
 import { TRADE_TYPES } from "@/lib/trades/constants";
 
+import { logger } from "@/lib/logger";
+
 /* ─── Grouped trades from canonical source ─── */
 const GROUPED_TRADES: Record<string, { value: string; label: string }[]> = {
   "Construction & Building": TRADE_TYPES.filter((t) =>
@@ -268,7 +270,7 @@ export default function EditProfilePage() {
           router.push("/trades/onboarding");
         }
       } catch (error) {
-        console.error("[EditProfile] Failed to load profile:", error);
+        logger.error("[EditProfile] Failed to load profile:", error);
         toast.error("Failed to load profile");
       } finally {
         setInitialLoading(false);
@@ -358,7 +360,7 @@ export default function EditProfilePage() {
       router.push("/trades/profile");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to save profile";
-      console.error("[EditProfile] Error:", error);
+      logger.error("[EditProfile] Error:", error);
       toast.error(message);
     } finally {
       setLoading(false);

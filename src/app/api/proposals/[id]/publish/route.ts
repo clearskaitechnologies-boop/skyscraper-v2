@@ -98,13 +98,13 @@ export async function POST(request: Request, { params }: { params: { id: string 
 
         await Promise.allSettled(emailPromises);
       } catch (emailError) {
-        console.error("Error sending proposal emails:", emailError);
+        logger.error("Error sending proposal emails:", emailError);
         // Don't fail the whole request if email fails
       }
     }
 
     // Track analytics: proposal.published
-    console.log("[Analytics] proposal.published", {
+    logger.info("[Analytics] proposal.published", {
       userId,
       orgId,
       proposalId: id,

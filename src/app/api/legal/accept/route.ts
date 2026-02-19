@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       acceptances.push(acceptance);
     }
 
-    console.log("[Legal Accept] ✅ Success:", {
+    logger.info("[Legal Accept] ✅ Success:", {
       userId,
       count: acceptances.length,
       documents: documents.map((d) => d.documentId),
@@ -89,7 +89,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ ok: true, acceptances, count: acceptances.length });
   } catch (error: any) {
-    console.error("[Legal Accept] ❌ Error:", {
+    logger.error("[Legal Accept] ❌ Error:", {
       message: error.message,
       stack: error.stack,
       name: error.name,

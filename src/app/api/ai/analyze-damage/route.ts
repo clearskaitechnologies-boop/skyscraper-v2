@@ -104,7 +104,7 @@ export async function POST(request: NextRequest) {
 
         break; // Don't retry on 4xx errors
       } catch (fetchError) {
-        console.error(`[AI_VISION] Attempt ${attempt} failed:`, fetchError);
+        logger.error(`[AI_VISION] Attempt ${attempt} failed:`, fetchError);
         lastError = fetchError instanceof Error ? fetchError : new Error(String(fetchError));
 
         if (attempt < MAX_RETRIES) {
@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!aiResponse || !aiResponse.ok) {
-      console.error(`[AI_VISION] All retry attempts exhausted. Last error:`, lastError);
+      logger.error(`[AI_VISION] All retry attempts exhausted. Last error:`, lastError);
       return NextResponse.json(
         {
           error: "AI Vision service unavailable. Please try again later.",

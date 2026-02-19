@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
+
 const TRADE_OPTIONS = [
   "Roofing",
   "Solar",
@@ -107,7 +109,7 @@ export default function TradesOnboardingPage() {
           }
         }
       } catch (error) {
-        console.error("Failed to load profile:", error);
+        logger.error("Failed to load profile:", error);
       }
     }
     loadProfile();
@@ -221,7 +223,7 @@ export default function TradesOnboardingPage() {
       toast.success("✅ Profile saved!");
       router.push("/trades/profile");
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to save profile");
     } finally {
       setLoading(false);

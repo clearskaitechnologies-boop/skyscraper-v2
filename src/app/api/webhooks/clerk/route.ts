@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
         if (result.success) {
           logger.debug(`[Webhook] ✅ User ${userId} fully bootstrapped`);
         } else {
-          console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
+          logger.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
         }
       } catch (error) {
         logger.error(`[Webhook] ❌ Bootstrap failed for user ${userId}:`, error);
@@ -152,7 +152,7 @@ export async function POST(req: NextRequest) {
         if (result.success) {
           logger.debug(`[Webhook] ✅ Org ${orgId} bootstrapped successfully`);
         } else {
-          console.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
+          logger.error(`[Webhook] ⚠️ Bootstrap completed with errors:`, result.errors);
         }
       } catch (error) {
         logger.error(`[Webhook] ❌ Bootstrap failed for Org ${orgId}:`, error);

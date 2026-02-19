@@ -136,7 +136,7 @@ async function handleConnectionRequested(data: WebhookPayload["data"]) {
     });
 
     // Note: ProjectNotification requires orgId + claimId, so we log instead for trades
-    console.log(
+    logger.info(
       `[Trades Webhook] Connection request from ${user.email} to pro ${proClerkId} for ${serviceType || "a project"}`
     );
   } catch (error) {
@@ -173,7 +173,7 @@ async function handleConnectionAccepted(data: WebhookPayload["data"]) {
     }
 
     // Note: ProjectNotification requires orgId + claimId, so we log instead for trades
-    console.log(
+    logger.info(
       `[Trades Webhook] Connection accepted: pro ${proClerkId} accepted client ${clientClerkId} for connection ${connectionId}`
     );
   } catch (error) {

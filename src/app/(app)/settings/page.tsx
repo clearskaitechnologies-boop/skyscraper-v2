@@ -12,6 +12,8 @@ import { safeOrgContext } from "@/lib/safeOrgContext";
 import { panelGhost, textMuted } from "@/lib/theme";
 import { isDemoWorkspaceReady } from "@/lib/workspace/demoWorkspaceReady";
 
+import { logger } from "@/lib/logger";
+
 import { SettingsForm } from "./_components/SettingsForm";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +97,7 @@ export default async function Settings() {
         select: { demoMode: true, demoSeededAt: true },
       });
     } catch (error) {
-      console.error("[SettingsPage] Failed to fetch org demo status:", error);
+      logger.error("[SettingsPage] Failed to fetch org demo status:", error);
     }
   }
 
@@ -115,7 +117,7 @@ export default async function Settings() {
       });
       orgName = orgData?.name ?? "";
     } catch (error) {
-      console.error("[SettingsPage] Failed to fetch org name:", error);
+      logger.error("[SettingsPage] Failed to fetch org name:", error);
     }
   }
   const userFullName =

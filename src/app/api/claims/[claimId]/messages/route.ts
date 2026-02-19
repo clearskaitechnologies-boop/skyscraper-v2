@@ -151,7 +151,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
           visible_to_client: thread.participants.includes("client"),
         },
       })
-      .catch((err) => console.error("Failed to create timeline event:", err));
+      .catch((err) => logger.error("Failed to create timeline event:", err));
 
     // Create notification for recipient (if they're not the sender)
     const notificationRecipientId = thread.participants.find((p) => p !== userId);
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest, { params }: { params: { claimId: st
             },
           },
         })
-        .catch((err) => console.error("Failed to create notification:", err));
+        .catch((err) => logger.error("Failed to create notification:", err));
     }
 
     return NextResponse.json({ success: true, message, threadId: thread.id });

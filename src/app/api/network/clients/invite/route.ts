@@ -133,7 +133,7 @@ export async function POST(req: NextRequest) {
           `,
       });
     } catch (emailError) {
-      console.error("[Client Invite] Failed to send email:", emailError);
+      logger.error("[Client Invite] Failed to send email:", emailError);
       // Continue even if email fails - they can use the link
     }
 
@@ -148,7 +148,7 @@ export async function POST(req: NextRequest) {
       void existingUser;
     } catch (notifError) {
       // Notification is optional, continue
-      console.error("[Client Invite] Failed to create notification:", notifError);
+      logger.error("[Client Invite] Failed to create notification:", notifError);
     }
 
     return NextResponse.json({

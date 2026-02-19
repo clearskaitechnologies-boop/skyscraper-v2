@@ -16,8 +16,8 @@ import { PostHogPageview } from "@/lib/analytics.tsx";
 import { getActiveOrgSafe } from "@/lib/auth/getActiveOrgSafe";
 import { isBuildPhase } from "@/lib/buildPhase";
 import { getPendingLegalForUser } from "@/lib/legal/getPendingLegal";
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 // Replaced legacy UnifiedNavigation with new AppSidebar for consistent two-tone design
 import { AppSidebar } from "./_components/AppSidebar";

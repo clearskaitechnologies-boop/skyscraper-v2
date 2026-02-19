@@ -59,6 +59,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { logger } from "@/lib/logger";
+
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
 /* -------------------------------------------------------------------------- */
@@ -296,7 +298,7 @@ export default function MigrationWizardPage() {
           }
         }
       } catch (err) {
-        console.error("[MIGRATION] Poll error:", err);
+        logger.error("[MIGRATION] Poll error:", err);
         setTimeout(poll, 5000);
       }
     };

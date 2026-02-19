@@ -30,6 +30,8 @@ import { StatCard } from "@/components/ui/MetricCard";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import { logger } from "@/lib/logger";
+
 interface Lead {
   id: string;
   name: string;
@@ -85,7 +87,7 @@ export default function VisionLabPage() {
           setLeads(data.leads || []);
         }
       } catch (err) {
-        console.error("Failed to load leads:", err);
+        logger.error("Failed to load leads:", err);
       } finally {
         setIsLoadingLeads(false);
       }
@@ -208,7 +210,7 @@ export default function VisionLabPage() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Analysis failed");
-      console.error("Analysis error:", err);
+      logger.error("Analysis error:", err);
     } finally {
       setIsAnalyzing(false);
     }

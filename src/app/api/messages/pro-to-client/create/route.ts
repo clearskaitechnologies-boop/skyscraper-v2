@@ -223,10 +223,10 @@ export async function POST(req: NextRequest) {
         }
       }
     } catch (contactErr) {
-      console.error("[pro-to-client/create] Contact creation error:", contactErr);
+      logger.error("[pro-to-client/create] Contact creation error:", contactErr);
     }
 
-    console.log(
+    logger.info(
       `[pro-to-client/create] Pro ${userId} sent message to client ${clientId} in thread ${thread.id}`
     );
 

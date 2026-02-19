@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
           fileSizeLimit: 10 * 1024 * 1024, // 10MB
         });
         if (createError && !createError.message.includes("already exists")) {
-          console.error("[Avatar Upload] Failed to create bucket:", createError);
+          logger.error("[Avatar Upload] Failed to create bucket:", createError);
         }
       }
 
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ url: downloadUrl, storage: "firebase" });
       }
     } catch (firebaseError) {
-      console.error("[Avatar Upload] Firebase fallback failed:", firebaseError);
+      logger.error("[Avatar Upload] Firebase fallback failed:", firebaseError);
     }
 
     return NextResponse.json(

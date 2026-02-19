@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
           description: "Image uploaded to Supabase Storage",
         });
       } catch (supabaseError) {
-        console.error("[Branding Upload] Supabase failed, trying Firebase:", supabaseError);
+        logger.error("[Branding Upload] Supabase failed, trying Firebase:", supabaseError);
         // Fall through to Firebase fallback
       }
     }
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (firebaseError) {
-      console.error("[Branding Upload] Firebase fallback failed:", firebaseError);
+      logger.error("[Branding Upload] Firebase fallback failed:", firebaseError);
     }
 
     // Final fallback: Convert file to base64 data URL
