@@ -9,11 +9,12 @@ export const revalidate = 0;
 // Body: { reportId, engine, sectionKey?, context? }
 // Returns: { jobId } or { jobIds: string[] }
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
+import { runSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 import { validateQuota } from "@/modules/ai/core/tokens";
 import { enqueue } from "@/modules/ai/jobs/queue";
 import type { AITokenBucket } from "@/modules/ai/types";
@@ -23,11 +24,14 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const { userId, orgId } = ctx;
 
     const body = await req.json();
-    const { reportId, engine, sectionKey, context } = body;
-
-    if (!reportId) {
-      return NextResponse.json({ error: "reportId required" }, { status: 400 });
+    const validation = validateAIRequest(runSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
     }
+    const { reportId, engine, sectionKey, context } = validation.data;
 
     // Map engine to token bucket
     const bucketMap: Record<string, AITokenBucket> = {

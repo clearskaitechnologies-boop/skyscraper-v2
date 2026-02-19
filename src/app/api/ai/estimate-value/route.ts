@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
+import { estimateValueSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * AI-powered exposure/value estimation endpoint
@@ -20,7 +21,15 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       return NextResponse.json({ error: getRateLimitError(rateLimit.reset) }, { status: 429 });
     }
 
-    const { damageType, propertyAddress, dateOfLoss, propertyType } = await req.json();
+    const body = await req.json();
+    const validation = validateAIRequest(estimateValueSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
+    }
+    const { damageType, propertyAddress, dateOfLoss, propertyType } = validation.data;
 
     // AI Logic: Estimate value based on damage type and property characteristics
     let estimatedValueCents = 0;

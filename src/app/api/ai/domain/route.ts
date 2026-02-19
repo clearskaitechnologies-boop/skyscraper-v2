@@ -10,34 +10,31 @@
  * - Cross-domain generalization
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { domainSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
     const { userId } = ctx;
 
     const body = await request.json();
-    const { action = "align", payload } = body;
-
-    // Validate payload
-    if (!payload || (!payload.source && !payload.target)) {
+    const validation = validateAIRequest(domainSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing source or target domain data in payload.",
-          required: {
-            source: "Source domain data",
-            target: "Target domain data",
-          },
+          error: validation.error,
+          details: validation.details,
         },
         { status: 400 }
       );
     }
+    const { action, payload } = validation.data;
 
     // Route to appropriate domain task
     const task = `adaptation.${action}`;

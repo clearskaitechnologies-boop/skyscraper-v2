@@ -8,13 +8,14 @@
  * - "Insufficient damage" → Hit count + code violations
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import prisma from "@/lib/prisma";
+import { supplementClaimSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 const openai = getOpenAI();
 
@@ -32,7 +33,14 @@ async function POST_INNER(
 
     const { claimId } = params;
     const body = await request.json();
-    const { pushbackType, carrierNotes } = body;
+    const validation = validateAIRequest(supplementClaimSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
+    }
+    const { pushbackType, carrierNotes } = validation.data;
 
     // Get claim data
     const claim = await prisma.claims.findFirst({

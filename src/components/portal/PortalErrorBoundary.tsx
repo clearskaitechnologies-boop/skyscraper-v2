@@ -37,10 +37,10 @@ export class PortalErrorBoundary extends Component<Props, State> {
     if (this.state.hasError) {
       return (
         <div className="flex min-h-[400px] items-center justify-center p-8">
-          <div className="max-w-md rounded-xl border-2 border-red-200 bg-red-50 p-8 text-center shadow-lg">
-            <div className="mb-4 inline-flex rounded-full bg-red-100 p-4">
+          <div className="max-w-md rounded-xl border-2 border-red-200 bg-red-50 p-8 text-center shadow-lg dark:border-red-800 dark:bg-red-950/30">
+            <div className="mb-4 inline-flex rounded-full bg-red-100 p-4 dark:bg-red-900/40">
               <svg
-                className="h-8 w-8 text-red-600"
+                className="h-8 w-8 text-red-600 dark:text-red-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -53,11 +53,11 @@ export class PortalErrorBoundary extends Component<Props, State> {
                 />
               </svg>
             </div>
-            <h2 className="mb-2 text-xl font-bold text-gray-900">Portal Error</h2>
-            <p className="mb-4 text-sm text-gray-700">
+            <h2 className="mb-2 text-xl font-bold text-gray-900 dark:text-white">Portal Error</h2>
+            <p className="mb-4 text-sm text-gray-700 dark:text-gray-300">
               {this.state.error?.message || "Something went wrong loading this page."}
             </p>
-            <p className="mb-6 text-xs text-gray-600">
+            <p className="mb-6 text-xs text-gray-600 dark:text-gray-400">
               Our team has been notified. Try refreshing or returning to the portal home.
             </p>
             <div className="space-y-2">
@@ -69,7 +69,7 @@ export class PortalErrorBoundary extends Component<Props, State> {
               </button>
               <a
                 href="/portal"
-                className="block w-full rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                className="block w-full rounded-lg border border-gray-300 bg-white px-6 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-slate-800 dark:text-gray-200 dark:hover:bg-slate-700"
               >
                 Return to Portal
               </a>

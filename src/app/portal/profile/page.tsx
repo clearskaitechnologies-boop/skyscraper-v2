@@ -233,8 +233,8 @@ function PropertyPhotoGallery() {
             onClick={() => setActiveFolder("all")}
             className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
               activeFolder === "all"
-                ? "bg-slate-900 text-white shadow-sm"
-                : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                ? "bg-slate-900 text-white shadow-sm dark:bg-white dark:text-slate-900"
+                : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
             }`}
           >
             📁 All ({photos.length})
@@ -247,8 +247,8 @@ function PropertyPhotoGallery() {
                 onClick={() => setActiveFolder(f.value)}
                 className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                   activeFolder === f.value
-                    ? "bg-slate-900 text-white shadow-sm"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    ? "bg-slate-900 text-white shadow-sm dark:bg-white dark:text-slate-900"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 }`}
               >
                 {f.icon} {f.label} {count > 0 && `(${count})`}
@@ -301,7 +301,7 @@ function PropertyPhotoGallery() {
             {/* Upload More Card */}
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:border-blue-400 hover:bg-blue-50"
+              className="flex aspect-square flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 transition-all hover:border-blue-400 hover:bg-blue-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:border-blue-500 dark:hover:bg-blue-950/30"
             >
               <Plus className="mb-1 h-6 w-6 text-slate-400" />
               <span className="text-xs text-slate-500">Add More</span>
@@ -310,7 +310,7 @@ function PropertyPhotoGallery() {
         ) : (
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 py-12 transition-all hover:border-blue-400 hover:bg-blue-50"
+            className="flex w-full flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 py-12 transition-all hover:border-blue-400 hover:bg-blue-50 dark:border-slate-600 dark:bg-slate-800/50 dark:hover:border-blue-500 dark:hover:bg-blue-950/30"
           >
             {uploading ? (
               <div className="animate-pulse text-slate-500">Uploading...</div>
@@ -431,9 +431,9 @@ function ConnectionsSection() {
     <div className="space-y-6">
       {/* Pending Connection Requests */}
       {pendingConnections.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50/50">
+        <Card className="border-amber-200 bg-amber-50/50 dark:border-amber-800 dark:bg-amber-950/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-700">
+            <CardTitle className="flex items-center gap-2 text-amber-700 dark:text-amber-400">
               <Users className="h-5 w-5" />
               Pending Requests ({pendingConnections.length})
             </CardTitle>
@@ -478,7 +478,7 @@ function ConnectionsSection() {
               {connections.map((conn: any) => (
                 <div
                   key={conn.id}
-                  className="flex items-center gap-4 rounded-lg border p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50"
+                  className="flex items-center gap-4 rounded-lg border p-4 transition-all hover:border-blue-200 hover:bg-blue-50/50 dark:hover:border-blue-800 dark:hover:bg-blue-950/30"
                 >
                   {conn.logo ? (
                     <Image
@@ -820,7 +820,7 @@ export default function ClientProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-green-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       {/* Hidden file inputs */}
       <input
         ref={avatarInputRef}
@@ -1385,10 +1385,10 @@ export default function ClientProfilePage() {
                       <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                         <Link
                           href="/portal/my-jobs"
-                          className="group rounded-xl border bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                          className="group rounded-xl border bg-gradient-to-br from-blue-50 to-blue-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-blue-800/50 dark:from-blue-950/40 dark:to-blue-900/20"
                         >
                           <Briefcase className="mx-auto mb-1 h-5 w-5 text-blue-600" />
-                          <p className="text-2xl font-bold text-blue-700">
+                          <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
                             {activityStats.activeProjects}
                           </p>
                           <p className="text-xs text-slate-500 group-hover:text-blue-600">
@@ -1397,10 +1397,10 @@ export default function ClientProfilePage() {
                         </Link>
                         <Link
                           href="/portal/contractors"
-                          className="group rounded-xl border bg-gradient-to-br from-pink-50 to-pink-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                          className="group rounded-xl border bg-gradient-to-br from-pink-50 to-pink-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-pink-800/50 dark:from-pink-950/40 dark:to-pink-900/20"
                         >
                           <Heart className="mx-auto mb-1 h-5 w-5 text-pink-600" />
-                          <p className="text-2xl font-bold text-pink-700">
+                          <p className="text-2xl font-bold text-pink-700 dark:text-pink-400">
                             {activityStats.savedContractors}
                           </p>
                           <p className="text-xs text-slate-500 group-hover:text-pink-600">
@@ -1409,10 +1409,10 @@ export default function ClientProfilePage() {
                         </Link>
                         <Link
                           href="/portal/claims"
-                          className="group rounded-xl border bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                          className="group rounded-xl border bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-amber-800/50 dark:from-amber-950/40 dark:to-amber-900/20"
                         >
                           <Shield className="mx-auto mb-1 h-5 w-5 text-amber-600" />
-                          <p className="text-2xl font-bold text-amber-700">
+                          <p className="text-2xl font-bold text-amber-700 dark:text-amber-400">
                             {activityStats.claims}
                           </p>
                           <p className="text-xs text-slate-500 group-hover:text-amber-600">
@@ -1421,10 +1421,10 @@ export default function ClientProfilePage() {
                         </Link>
                         <Link
                           href="/portal/messages"
-                          className="group rounded-xl border bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md"
+                          className="group rounded-xl border bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-4 text-center transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-emerald-800/50 dark:from-emerald-950/40 dark:to-emerald-900/20"
                         >
                           <MessageCircle className="mx-auto mb-1 h-5 w-5 text-emerald-600" />
-                          <p className="text-2xl font-bold text-emerald-700">
+                          <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400">
                             {activityStats.messages}
                           </p>
                           <p className="text-xs text-slate-500 group-hover:text-emerald-600">
@@ -1446,25 +1446,25 @@ export default function ClientProfilePage() {
                     <CardContent>
                       <div className="grid gap-4 md:grid-cols-3">
                         <Link href="/portal/find-a-pro" className="group">
-                          <div className="rounded-lg border p-4 transition-all hover:border-blue-300 hover:bg-blue-50">
+                          <div className="rounded-lg border p-4 transition-all hover:border-blue-300 hover:bg-blue-50 dark:hover:border-blue-700 dark:hover:bg-blue-950/30">
                             <Users className="mb-2 h-6 w-6 text-blue-600" />
-                            <h4 className="font-semibold">Find Contractors</h4>
+                            <h4 className="font-semibold dark:text-white">Find Contractors</h4>
                             <p className="text-sm text-slate-500">
                               Browse verified pros in your area
                             </p>
                           </div>
                         </Link>
                         <Link href="/portal/projects/new" className="group">
-                          <div className="rounded-lg border p-4 transition-all hover:border-green-300 hover:bg-green-50">
+                          <div className="rounded-lg border p-4 transition-all hover:border-green-300 hover:bg-green-50 dark:hover:border-green-700 dark:hover:bg-green-950/30">
                             <Plus className="mb-2 h-6 w-6 text-green-600" />
-                            <h4 className="font-semibold">Post a Project</h4>
+                            <h4 className="font-semibold dark:text-white">Post a Project</h4>
                             <p className="text-sm text-slate-500">Get bids from contractors</p>
                           </div>
                         </Link>
                         <Link href="/portal/network" className="group">
-                          <div className="rounded-lg border p-4 transition-all hover:border-purple-300 hover:bg-purple-50">
+                          <div className="rounded-lg border p-4 transition-all hover:border-purple-300 hover:bg-purple-50 dark:hover:border-purple-700 dark:hover:bg-purple-950/30">
                             <Globe className="mb-2 h-6 w-6 text-purple-600" />
-                            <h4 className="font-semibold">Community Hub</h4>
+                            <h4 className="font-semibold dark:text-white">Community Hub</h4>
                             <p className="text-sm text-slate-500">Connect with other homeowners</p>
                           </div>
                         </Link>
@@ -1497,32 +1497,42 @@ export default function ClientProfilePage() {
 
                 <TabsContent value="network">
                   {/* Community Hub Preview — links to the full /portal/network page */}
-                  <Card className="border-purple-200/60 bg-gradient-to-br from-purple-50/40 to-indigo-50/30">
+                  <Card className="border-purple-200/60 bg-gradient-to-br from-purple-50/40 to-indigo-50/30 dark:border-purple-800/40 dark:from-purple-950/30 dark:to-indigo-950/20">
                     <CardContent className="p-8 text-center">
                       <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 shadow-lg">
                         <Globe className="h-8 w-8 text-white" />
                       </div>
-                      <h3 className="mb-2 text-xl font-bold text-slate-900">Community Hub</h3>
-                      <p className="mx-auto mb-6 max-w-md text-slate-600">
+                      <h3 className="mb-2 text-xl font-bold text-slate-900 dark:text-white">
+                        Community Hub
+                      </h3>
+                      <p className="mx-auto mb-6 max-w-md text-slate-600 dark:text-slate-400">
                         Connect with other homeowners, share reviews, discover trending contractors,
                         and join community groups — all in one place.
                       </p>
                       <div className="mb-6 grid grid-cols-2 gap-3 md:grid-cols-4">
-                        <div className="rounded-xl bg-white/80 p-3 shadow-sm">
+                        <div className="rounded-xl bg-white/80 p-3 shadow-sm dark:bg-slate-800/80">
                           <MessageCircle className="mx-auto mb-1 h-5 w-5 text-purple-600" />
-                          <p className="text-xs font-medium text-slate-700">Feed &amp; Posts</p>
+                          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                            Feed &amp; Posts
+                          </p>
                         </div>
-                        <div className="rounded-xl bg-white/80 p-3 shadow-sm">
+                        <div className="rounded-xl bg-white/80 p-3 shadow-sm dark:bg-slate-800/80">
                           <TrendingUp className="mx-auto mb-1 h-5 w-5 text-indigo-600" />
-                          <p className="text-xs font-medium text-slate-700">Trending Pros</p>
+                          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                            Trending Pros
+                          </p>
                         </div>
-                        <div className="rounded-xl bg-white/80 p-3 shadow-sm">
+                        <div className="rounded-xl bg-white/80 p-3 shadow-sm dark:bg-slate-800/80">
                           <Users className="mx-auto mb-1 h-5 w-5 text-blue-600" />
-                          <p className="text-xs font-medium text-slate-700">Invitations</p>
+                          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                            Invitations
+                          </p>
                         </div>
-                        <div className="rounded-xl bg-white/80 p-3 shadow-sm">
+                        <div className="rounded-xl bg-white/80 p-3 shadow-sm dark:bg-slate-800/80">
                           <Star className="mx-auto mb-1 h-5 w-5 text-amber-600" />
-                          <p className="text-xs font-medium text-slate-700">Groups</p>
+                          <p className="text-xs font-medium text-slate-700 dark:text-slate-300">
+                            Groups
+                          </p>
                         </div>
                       </div>
                       <Button

@@ -8,13 +8,14 @@
  * - Contractor availability
  */
 
-import { randomUUID } from "crypto";
 import { logger } from "@/lib/logger";
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import prisma from "@/lib/prisma";
+import { dispatchSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 // Define the context type to match what withAiBilling provides
 interface AiBillingContext {
@@ -54,7 +55,14 @@ async function POST_INNER(
     }
 
     const body = await request.json();
-    const { actionType, priority } = body;
+    const validation = validateAIRequest(dispatchSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
+    }
+    const { actionType, priority } = validation.data;
 
     // Get claim data
     const claim = await prisma.claims.findFirst({

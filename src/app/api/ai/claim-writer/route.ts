@@ -1,10 +1,11 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateClaimNarrative } from "@/lib/ai/claimWriter";
 import { aiFail, aiOk } from "@/lib/api/aiResponse";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
+import { claimWriterSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 // Optional: limit function duration on Vercel (in seconds)
 export const maxDuration = 60;
@@ -29,20 +30,21 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-
-    // Basic validation
-    if (!body?.claimId) {
-      return NextResponse.json(aiFail("Missing claimId", "BAD_REQUEST"), { status: 400 });
+    const validation = validateAIRequest(claimWriterSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(aiFail(validation.error, "BAD_REQUEST"), { status: 400 });
     }
+    const { claimId, propertyAddress, claimType, lossSummary, notes, policySummary } =
+      validation.data;
 
     const result = await generateClaimNarrative(
       {
-        id: body.claimId,
-        address: body.propertyAddress,
-        damageType: body.claimType,
-        dateOfLoss: body.lossSummary,
+        id: claimId,
+        address: propertyAddress,
+        damageType: claimType,
+        dateOfLoss: lossSummary,
       },
-      body.notes || body.policySummary || "",
+      notes || policySummary || "",
       []
     );
 

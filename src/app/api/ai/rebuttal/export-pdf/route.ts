@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { requireApiAuth, verifyClaimAccess } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
 import { htmlToPdfBuffer } from "@/lib/reports/pdf-utils";
+import { rebuttalExportPdfSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * POST /api/ai/rebuttal/export-pdf
@@ -20,11 +21,14 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       return NextResponse.json({ error: "Organization required." }, { status: 400 });
     }
     const body = await req.json();
-    const { claimId, rebuttalText } = body;
-
-    if (!claimId || !rebuttalText) {
-      return NextResponse.json({ error: "claimId and rebuttalText are required" }, { status: 400 });
+    const validation = validateAIRequest(rebuttalExportPdfSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
     }
+    const { claimId, rebuttalText } = validation.data;
 
     // Verify claim access
     const accessResult = await verifyClaimAccess(claimId, orgId, userId);

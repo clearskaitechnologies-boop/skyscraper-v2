@@ -3,6 +3,7 @@ import { NextRequest } from "next/server";
 
 import { errors, ok, withErrorHandler } from "@/lib/api/response";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
+import { mockupSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -29,11 +30,11 @@ async function handlePOST(req: NextRequest) {
   }
 
   const body = await req.json();
-  const { imageUrl, address, prompt, material, color } = body;
-
-  if (!imageUrl) {
-    return errors.badRequest("Image URL is required.");
+  const validation = validateAIRequest(mockupSchema, body);
+  if (!validation.success) {
+    return errors.badRequest(validation.error);
   }
+  const { imageUrl, address, prompt, material, color } = validation.data;
 
   // Check if Replicate API is configured
   const isConfigured = !!process.env.REPLICATE_API_TOKEN || !!process.env.STABILITY_API_KEY;

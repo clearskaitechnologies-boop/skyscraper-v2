@@ -141,39 +141,71 @@ export const enhancedReportBuilderSchema = z.object({
 
 // ─── Claim Writer ──────────────────────────────────────────────
 export const claimWriterSchema = z.object({
-  claimId: claimIdField,
-  sections: z.array(z.string()).optional(),
-  tone: z.enum(["professional", "assertive", "empathetic"]).default("professional"),
+  claimId: z.string().min(1, "claimId is required"),
+  propertyAddress: z.string().optional(),
+  claimType: z.string().optional(),
+  lossSummary: z.string().optional(),
+  notes: z.string().optional(),
+  policySummary: z.string().optional(),
 });
 
 // ─── Mockup ────────────────────────────────────────────────────
 export const mockupSchema = z.object({
   imageUrl: z.string().url("Valid image URL required"),
-  style: z.string().optional(),
+  address: z.string().optional(),
+  prompt: z.string().optional(),
   material: z.string().optional(),
   color: z.string().optional(),
 });
 
-// ─── Estimate ──────────────────────────────────────────────────
+// ─── Estimate Value ────────────────────────────────────────────
 export const estimateValueSchema = z.object({
-  address: z.string().min(1, "Address is required"),
-  propertyType: z.string().optional(),
-  squareFootage: z.number().positive().optional(),
   damageType: z.string().optional(),
+  propertyAddress: z.string().optional(),
+  dateOfLoss: z.string().optional(),
+  propertyType: z.string().optional(),
 });
 
 // ─── Video ─────────────────────────────────────────────────────
 export const videoSchema = z.object({
-  claimId: z.string().optional(),
-  images: z.array(z.string().url()).optional(),
-  narration: z.string().optional(),
-  style: z.enum(["professional", "walkthrough", "summary"]).default("professional"),
+  action: z
+    .enum([
+      "analyze",
+      "detectMotion",
+      "classifyScenes",
+      "trackObjects",
+      "extractKeyframes",
+      "generateSummary",
+    ])
+    .default("analyze"),
+  payload: z
+    .object({
+      url: z.string().min(1, "Video URL is required"),
+    })
+    .passthrough(),
 });
 
 // ─── Domain / Router ───────────────────────────────────────────
 export const domainSchema = z.object({
-  domain: z.string().min(1),
-  action: z.enum(["analyze", "suggest", "verify"]).optional(),
+  action: z
+    .enum([
+      "align",
+      "transfer",
+      "adaptFeatures",
+      "measureShift",
+      "findMapping",
+      "validateAdaptation",
+    ])
+    .default("align"),
+  payload: z
+    .object({
+      source: z.unknown().optional(),
+      target: z.unknown().optional(),
+    })
+    .passthrough()
+    .refine((d) => d.source || d.target, {
+      message: "Either source or target domain data is required",
+    }),
 });
 
 export const routerSchema = z.object({
@@ -182,15 +214,15 @@ export const routerSchema = z.object({
 });
 
 export const runSchema = z.object({
-  agentId: z.string().optional(),
-  task: z.string().min(1, "Task description is required"),
+  reportId: z.string().min(1, "reportId is required"),
+  engine: z.string().optional(),
+  sectionKey: z.string().optional(),
   context: z.record(z.unknown()).optional(),
 });
 
 // ─── Suggest Status ────────────────────────────────────────────
 export const suggestStatusSchema = z.object({
-  claimId: claimIdField,
-  currentStatus: z.string().optional(),
+  claimId: z.string().min(1, "claimId is required"),
 });
 
 // ─── Recommendations ──────────────────────────────────────────
@@ -198,6 +230,35 @@ export const recommendationsRefreshSchema = z.object({
   claimId: z.string().optional(),
   orgId: z.string().optional(),
   force: z.boolean().default(false),
+});
+
+// ─── Dispatch ──────────────────────────────────────────────────
+export const dispatchSchema = z.object({
+  actionType: z.string().optional(),
+  priority: z.string().optional(),
+});
+
+// ─── Supplement (claimId) ──────────────────────────────────────
+export const supplementClaimSchema = z.object({
+  pushbackType: z.string().optional(),
+  carrierNotes: z.string().optional(),
+});
+
+// ─── Depreciation Export PDF ───────────────────────────────────
+export const depreciationExportPdfSchema = z.object({
+  claimId: z.string().min(1, "claimId is required"),
+  rcv: z.number({ required_error: "rcv is required" }),
+  age: z.number().optional(),
+  lifespan: z.number().optional(),
+  depreciationType: z.string().optional(),
+  acv: z.number().optional(),
+  depreciation: z.number().optional(),
+});
+
+// ─── Rebuttal Export PDF ───────────────────────────────────────
+export const rebuttalExportPdfSchema = z.object({
+  claimId: z.string().min(1, "claimId is required"),
+  rebuttalText: z.string().min(1, "rebuttalText is required"),
 });
 
 // ─── 3D ────────────────────────────────────────────────────────

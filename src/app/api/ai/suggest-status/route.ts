@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
+import { suggestStatusSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * AI-powered status suggestion endpoint
@@ -15,11 +16,15 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { claimId } = await req.json();
-    
-    if (!claimId) {
-      return NextResponse.json({ error: "claimId required" }, { status: 400 });
+    const body = await req.json();
+    const validation = validateAIRequest(suggestStatusSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 400 }
+      );
     }
+    const { claimId } = validation.data;
 
     // Fetch claim
     const claim = await prisma.claims.findUnique({
@@ -40,7 +45,7 @@ export async function POST(req: NextRequest) {
     const hasDocuments = false;
     const hasDamageAssessment = false;
     const recentActivityCount = 0;
-    const daysSinceLoss = claim.dateOfLoss 
+    const daysSinceLoss = claim.dateOfLoss
       ? Math.floor((Date.now() - new Date(claim.dateOfLoss).getTime()) / (1000 * 60 * 60 * 24))
       : 0;
 
@@ -94,9 +99,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     logger.error("[AI Suggest Status] Error:", error);
-    return NextResponse.json(
-      { error: "Failed to generate status suggestion" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to generate status suggestion" }, { status: 500 });
   }
 }

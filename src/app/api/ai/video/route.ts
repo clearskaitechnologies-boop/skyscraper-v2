@@ -10,32 +10,32 @@
  * - Temporal analysis
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import { AICoreRouter } from "@/lib/ai/router";
+import { validateAIRequest, videoSchema } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: string | null }) {
   try {
     const { userId } = ctx;
 
     const body = await request.json();
-    const { action = "analyze", payload } = body;
-
-    // Validate payload
-    if (!payload || !payload.url) {
+    const validation = validateAIRequest(videoSchema, body);
+    if (!validation.success) {
       return NextResponse.json(
         {
           success: false,
-          error: "Missing video URL or file data in payload.",
-          required: { url: "string | file buffer" },
+          error: validation.error,
+          details: validation.details,
         },
         { status: 400 }
       );
     }
+    const { action, payload } = validation.data;
 
     // Route to appropriate video task
     const task = `video.${action}`;
