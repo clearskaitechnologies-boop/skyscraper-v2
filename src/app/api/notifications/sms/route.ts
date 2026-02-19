@@ -1,20 +1,19 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // ITEM 18: SMS notification API endpoint (Twilio integration)
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    // SECURITY: Derive orgId server-side and verify membership
-    const { orgId } = await ensureUserOrgContext(userId);
-    if (!orgId) {
-      return NextResponse.json({ error: "No organization context" }, { status: 403 });
+    const rl = await checkRateLimit(userId, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();
@@ -80,4 +79,4 @@ export async function POST(req: NextRequest) {
     logger.error("SMS notification error:", error);
     return NextResponse.json({ error: "Failed to send SMS" }, { status: 500 });
   }
-}
+});

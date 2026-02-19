@@ -4,21 +4,23 @@
  */
 
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { ensureUserOrgContext } from "@/lib/auth/ensureUserOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { notifyConnectionRequest } from "@/lib/services/tradesNotifications";
 
 // POST /api/connections/connect - Create connection
-export async function POST(req: Request) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    // CRITICAL FIX: Use unified org context (auto-creates if needed)
-    const { orgId } = await ensureUserOrgContext(userId);
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
 
     const body = await req.json();
     const { clientId } = body;
@@ -102,4 +104,4 @@ export async function POST(req: Request) {
     logger.error("[POST /api/connections/connect] Error:", error);
     return NextResponse.json({ error: "Failed to create connection" }, { status: 500 });
   }
-}
+});

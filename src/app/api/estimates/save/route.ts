@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
 type SaveEstimateRequest = {
@@ -15,11 +15,8 @@ type SaveEstimateRequest = {
   meta?: any;
 };
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
     const body = (await req.json()) as SaveEstimateRequest;
 
     if (!body.mode) {
@@ -44,7 +41,7 @@ export async function POST(req: NextRequest) {
 
     const estimates = await prisma.estimates.create({
       data: {
-        orgId: orgId || "default",
+        orgId,
         projectId: "default", // Required field
         authorId: userId,
         claim_id: body.claimId || undefined,
@@ -75,4 +72,4 @@ export async function POST(req: NextRequest) {
     logger.error("Error in /api/estimates/save:", err);
     return NextResponse.json({ error: "Failed to save estimates." }, { status: 500 });
   }
-}
+});

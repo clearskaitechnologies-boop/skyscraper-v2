@@ -1,12 +1,12 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const createMessageSchema = z.object({
-  orgId: z.string().min(1),
   contactId: z.string().min(1),
   claimId: z.string().optional(),
   subject: z.string().optional(),
@@ -19,11 +19,14 @@ const createMessageSchema = z.object({
  * Creates a new message thread and first message
  * Links to contact and optionally to a claim
  */
-export async function POST(req: Request) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const body = await req.json();
@@ -34,12 +37,12 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
-    const { orgId, contactId, claimId, subject, body: messageBody } = parsed.data;
+    const { contactId, claimId, subject, body: messageBody } = parsed.data;
 
     // Validate required fields
-    if (!orgId || !contactId || !messageBody) {
+    if (!contactId || !messageBody) {
       return NextResponse.json(
-        { error: "Missing required fields: orgId, contactId, body" },
+        { error: "Missing required fields: contactId, body" },
         { status: 400 }
       );
     }
@@ -155,4 +158,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+});

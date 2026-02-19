@@ -4,12 +4,13 @@
  */
 
 import { logger } from "@/lib/logger";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createForbiddenResponse, requirePermission } from "@/lib/auth/rbac";
-import { getTenant } from "@/lib/auth/tenant";
+import { withAuth } from "@/lib/auth/withAuth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const invitationSchema = z.object({
   email: z.string().email("A valid email is required"),
@@ -18,8 +19,16 @@ const invitationSchema = z.object({
 
 // Send team invitation email via Clerk
 // 🛡️ MASTER PROMPT #66: RBAC Protection - requires "team:invite" permission
-export async function POST(request: Request) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     // 🛡️ RBAC: Check permission to invite team members
     try {
       await requirePermission("team:invite");
@@ -33,14 +42,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { userId } = await auth();
-    const orgId = await getTenant();
-
-    if (!orgId || !userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const body = await request.json();
+    const body = await req.json();
     const parsed = invitationSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json(
@@ -89,14 +91,17 @@ export async function POST(request: Request) {
     logger.error("Failed to send invitation:", error);
     return NextResponse.json({ error: "Failed to send invitation" }, { status: 500 });
   }
-}
+});
 
 // Get all pending invitations for the org via Clerk
-export async function GET() {
+export const GET = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const orgId = await getTenant();
-    if (!orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const client = await clerkClient();
@@ -119,4 +124,4 @@ export async function GET() {
     logger.error("Failed to fetch invitations:", error);
     return NextResponse.json({ error: "Failed to fetch invitations" }, { status: 500 });
   }
-}
+});

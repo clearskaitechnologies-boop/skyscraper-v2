@@ -1,25 +1,28 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { notifyConnectionAccepted } from "@/lib/services/tradesNotifications";
 
 const acceptSchema = z.object({
   connectionId: z.string(),
 });
 
-export async function POST(request: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
-    const body = await request.json();
+    const body = await req.json();
     const validation = acceptSchema.safeParse(body);
 
     if (!validation.success) {
@@ -143,4 +146,4 @@ export async function POST(request: NextRequest) {
     logger.error("POST /api/connections/accept error:", error);
     return NextResponse.json({ ok: false, error: "Internal server error" }, { status: 500 });
   }
-}
+});

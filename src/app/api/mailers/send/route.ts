@@ -9,10 +9,11 @@
  */
 
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { LOB_ENABLED } from "@/lib/lob/client";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
@@ -24,11 +25,14 @@ interface SendMailersRequest {
   template?: "postcard" | "letter";
 }
 
-export async function POST(req: Request) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const session = await auth();
-    if (!session.userId || !session.orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     if (!LOB_ENABLED) {
@@ -69,4 +73,4 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
-}
+});

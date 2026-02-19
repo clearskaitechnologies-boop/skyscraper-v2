@@ -7,32 +7,33 @@
  */
 
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-import { withSentryApi } from "@/lib/monitoring/sentryApi";
-import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
-export const GET = withSentryApi(
-  async (req: Request, { params }: { params: { memberId: string } }) => {
+export const GET = withAuth(
+  async (
+    req: NextRequest,
+    { userId, orgId, role: authRole },
+    params: { params: { memberId: string } }
+  ) => {
     try {
-      const { userId } = await auth();
-      if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-
-      const orgCtx = await getActiveOrgContext({ required: true });
-      if (!orgCtx.ok) {
-        return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      const rl = await checkRateLimit(userId, "API");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "rate_limit_exceeded", message: "Too many requests" },
+          { status: 429 }
+        );
       }
 
       let member: Record<string, unknown> | null = null;
       try {
         member = await prisma.users.findFirst({
           where: {
-            id: params.memberId,
-            orgId: orgCtx.orgId,
+            id: params.params.memberId,
+            orgId: orgId,
           },
           select: {
             id: true,
@@ -51,7 +52,7 @@ export const GET = withSentryApi(
         ) {
           logger.warn("[GET team member] headshot_url column missing - retrying without select");
           member = await prisma.users.findFirst({
-            where: { id: params.memberId, orgId: orgCtx.orgId },
+            where: { id: params.params.memberId, orgId: orgId },
             select: {
               id: true,
               name: true,
@@ -76,17 +77,19 @@ export const GET = withSentryApi(
   }
 );
 
-export const PATCH = withSentryApi(
-  async (req: Request, { params }: { params: { memberId: string } }) => {
+export const PATCH = withAuth(
+  async (
+    req: NextRequest,
+    { userId, orgId, role: authRole },
+    params: { params: { memberId: string } }
+  ) => {
     try {
-      const { userId } = await auth();
-      if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-
-      const orgCtx = await getActiveOrgContext({ required: true });
-      if (!orgCtx.ok) {
-        return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      const rl = await checkRateLimit(userId, "API");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "rate_limit_exceeded", message: "Too many requests" },
+          { status: 429 }
+        );
       }
 
       const body = await req.json();
@@ -95,8 +98,8 @@ export const PATCH = withSentryApi(
       // Verify member belongs to organization
       const member = await prisma.users.findFirst({
         where: {
-          id: params.memberId,
-          orgId: orgCtx.orgId,
+          id: params.params.memberId,
+          orgId: orgId,
         },
         select: { id: true, clerkUserId: true },
       });
@@ -106,7 +109,7 @@ export const PATCH = withSentryApi(
       }
 
       const isSelf = member.clerkUserId === userId;
-      const role = typeof orgCtx.role === "string" ? orgCtx.role.toLowerCase() : "";
+      const role = typeof authRole === "string" ? authRole.toLowerCase() : "";
       const isOrgAdmin = role === "owner" || role === "admin";
       if (!isSelf && !isOrgAdmin) {
         return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -116,7 +119,7 @@ export const PATCH = withSentryApi(
       let updated: Record<string, unknown> | null = null;
       try {
         updated = await prisma.users.update({
-          where: { id: params.memberId },
+          where: { id: params.params.memberId },
           data: {
             ...(headshot_url !== undefined && { headshot_url }),
             ...(name !== undefined && { name }),
@@ -133,7 +136,7 @@ export const PATCH = withSentryApi(
         if (typeof e?.message === "string" && e.message.includes("headshot_url")) {
           logger.warn("[PATCH team member] headshot_url column missing - retrying without it");
           updated = await prisma.users.update({
-            where: { id: params.memberId },
+            where: { id: params.params.memberId },
             data: {
               ...(name !== undefined && { name }),
             },
@@ -159,21 +162,23 @@ export const PATCH = withSentryApi(
 /**
  * PUT: Update member role
  */
-export const PUT = withSentryApi(
-  async (req: Request, { params }: { params: { memberId: string } }) => {
+export const PUT = withAuth(
+  async (
+    req: NextRequest,
+    { userId, orgId, role: authRole },
+    params: { params: { memberId: string } }
+  ) => {
     try {
-      const { userId } = await auth();
-      if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-
-      const orgCtx = await getActiveOrgContext({ required: true });
-      if (!orgCtx.ok) {
-        return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      const rl = await checkRateLimit(userId, "API");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "rate_limit_exceeded", message: "Too many requests" },
+          { status: 429 }
+        );
       }
 
       // Only admins/owners can change roles
-      const role = typeof orgCtx.role === "string" ? orgCtx.role.toLowerCase() : "";
+      const role = typeof authRole === "string" ? authRole.toLowerCase() : "";
       const isOrgAdmin = role === "owner" || role === "admin";
       if (!isOrgAdmin) {
         return NextResponse.json({ error: "Only admins can change member roles" }, { status: 403 });
@@ -194,8 +199,8 @@ export const PUT = withSentryApi(
       // Verify member belongs to organization
       const member = await prisma.users.findFirst({
         where: {
-          id: params.memberId,
-          orgId: orgCtx.orgId,
+          id: params.params.memberId,
+          orgId: orgId,
         },
         select: { id: true, clerkUserId: true },
       });
@@ -211,7 +216,7 @@ export const PUT = withSentryApi(
 
       // Update role
       const updated = await prisma.users.update({
-        where: { id: params.memberId },
+        where: { id: params.params.memberId },
         data: { role: newRole.toUpperCase() },
         select: { id: true, role: true },
       });
@@ -227,21 +232,23 @@ export const PUT = withSentryApi(
 /**
  * DELETE: Remove member from organization
  */
-export const DELETE = withSentryApi(
-  async (req: Request, { params }: { params: { memberId: string } }) => {
+export const DELETE = withAuth(
+  async (
+    req: NextRequest,
+    { userId, orgId, role: authRole },
+    params: { params: { memberId: string } }
+  ) => {
     try {
-      const { userId } = await auth();
-      if (!userId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
-
-      const orgCtx = await getActiveOrgContext({ required: true });
-      if (!orgCtx.ok) {
-        return NextResponse.json({ error: "Organization not found" }, { status: 404 });
+      const rl = await checkRateLimit(userId, "API");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "rate_limit_exceeded", message: "Too many requests" },
+          { status: 429 }
+        );
       }
 
       // Only admins/owners can remove members
-      const role = typeof orgCtx.role === "string" ? orgCtx.role.toLowerCase() : "";
+      const role = typeof authRole === "string" ? authRole.toLowerCase() : "";
       const isOrgAdmin = role === "owner" || role === "admin";
       if (!isOrgAdmin) {
         return NextResponse.json({ error: "Only admins can remove team members" }, { status: 403 });
@@ -250,8 +257,8 @@ export const DELETE = withSentryApi(
       // Verify member belongs to organization
       const member = await prisma.users.findFirst({
         where: {
-          id: params.memberId,
-          orgId: orgCtx.orgId,
+          id: params.params.memberId,
+          orgId: orgId,
         },
         select: { id: true, clerkUserId: true, email: true },
       });
@@ -270,7 +277,7 @@ export const DELETE = withSentryApi(
 
       // Delete the user from the organization
       await prisma.users.delete({
-        where: { id: params.memberId },
+        where: { id: params.params.memberId },
       });
 
       return NextResponse.json({

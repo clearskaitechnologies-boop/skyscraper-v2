@@ -1,10 +1,12 @@
 import { logger } from "@/lib/logger";
-import { auth, clerkClient } from "@clerk/nextjs/server";
-import { NextResponse } from "next/server";
+import { clerkClient } from "@clerk/nextjs/server";
+import { NextRequest, NextResponse } from "next/server";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import { prismaMaybeModel } from "@/lib/db/prismaModel";
 import { sendWelcomeEmail } from "@/lib/email/invitations";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // Use prismaMaybeModel for optional tables that may not be in schema
 const Activity = prismaMaybeModel("claim_activities");
@@ -42,14 +44,17 @@ interface PrismaWithTeamTables {
 
 const db = prisma as unknown as typeof prisma & PrismaWithTeamTables;
 
-export async function POST(request: Request) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
-    const body = await request.json();
+    const body = await req.json();
     const { token } = body;
 
     if (!token) {
@@ -162,4 +167,4 @@ export async function POST(request: Request) {
     logger.error("Failed to accept invitation:", error);
     return NextResponse.json({ error: "Failed to accept invitation" }, { status: 500 });
   }
-}
+});

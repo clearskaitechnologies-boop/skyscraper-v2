@@ -36,7 +36,7 @@ import { z } from "zod";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
 import { canInviteClients } from "@/lib/auth/permissions";
-import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { withAuth } from "@/lib/auth/withAuth";
 import { sendEmail, TEMPLATES } from "@/lib/email/resend";
 import prisma from "@/lib/prisma";
 import { verifyProClaimAccess } from "@/lib/security";
@@ -139,68 +139,69 @@ type ActionPayload = z.infer<typeof actionSchema>;
 // MAIN HANDLER
 // ─────────────────────────────────────────────────────────────────────────────
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ claimId: string }> }) {
-  try {
-    // Auth
-    const auth = await requireAuth();
-    if (isAuthError(auth)) return auth;
-    const { orgId, userId } = auth;
+export const POST = withAuth(
+  async (
+    req: NextRequest,
+    { orgId, userId },
+    routeParams: { params: Promise<{ claimId: string }> }
+  ) => {
+    try {
+      const { claimId } = await routeParams.params;
 
-    const { claimId } = await params;
+      // Verify claim belongs to org
+      const claim = await getOrgClaimOrThrow(orgId, claimId);
 
-    // Verify claim belongs to org
-    const claim = await getOrgClaimOrThrow(orgId, claimId);
+      // Parse and validate body
+      const body = await req.json();
+      const parsed = actionSchema.safeParse(body);
 
-    // Parse and validate body
-    const body = await req.json();
-    const parsed = actionSchema.safeParse(body);
+      if (!parsed.success) {
+        return NextResponse.json(
+          { error: "Invalid request", details: parsed.error.flatten() },
+          { status: 400 }
+        );
+      }
 
-    if (!parsed.success) {
-      return NextResponse.json(
-        { error: "Invalid request", details: parsed.error.flatten() },
-        { status: 400 }
-      );
+      const payload = parsed.data;
+
+      // Route to action handler
+      switch (payload.action) {
+        case "update":
+          return handleUpdate(claimId, orgId, payload);
+
+        case "update_status":
+          return handleUpdateStatus(claimId, orgId, payload);
+
+        case "toggle_visibility":
+          return handleToggleVisibility(claimId, payload);
+
+        case "invite":
+          return handleInvite(claimId, orgId, userId, payload);
+
+        case "invite_client":
+          return handleInviteClient(claimId, userId, payload);
+
+        case "attach_contact":
+          return handleAttachContact(claimId, orgId, payload);
+
+        case "add_note":
+          return handleAddNote(claimId, orgId, userId, payload);
+
+        case "add_timeline_event":
+          return handleAddTimelineEvent(claimId, orgId, userId, payload);
+
+        default:
+          return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+      }
+    } catch (error) {
+      if (error instanceof OrgScopeError) {
+        return NextResponse.json({ error: "Claim not found" }, { status: 404 });
+      }
+      logger.error("[Claim Mutate] Error:", error);
+      return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
     }
-
-    const payload = parsed.data;
-
-    // Route to action handler
-    switch (payload.action) {
-      case "update":
-        return handleUpdate(claimId, orgId, payload);
-
-      case "update_status":
-        return handleUpdateStatus(claimId, orgId, payload);
-
-      case "toggle_visibility":
-        return handleToggleVisibility(claimId, payload);
-
-      case "invite":
-        return handleInvite(claimId, orgId, userId, payload);
-
-      case "invite_client":
-        return handleInviteClient(claimId, userId, payload);
-
-      case "attach_contact":
-        return handleAttachContact(claimId, orgId, payload);
-
-      case "add_note":
-        return handleAddNote(claimId, orgId, userId, payload);
-
-      case "add_timeline_event":
-        return handleAddTimelineEvent(claimId, orgId, userId, payload);
-
-      default:
-        return NextResponse.json({ error: "Unknown action" }, { status: 400 });
-    }
-  } catch (error) {
-    if (error instanceof OrgScopeError) {
-      return NextResponse.json({ error: "Claim not found" }, { status: 404 });
-    }
-    logger.error("[Claim Mutate] Error:", error);
-    return NextResponse.json({ error: error.message || "Internal error" }, { status: 500 });
   }
-}
+);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ACTION HANDLERS

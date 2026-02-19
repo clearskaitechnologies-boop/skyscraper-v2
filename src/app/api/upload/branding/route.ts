@@ -5,28 +5,29 @@
  */
 
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { getTenant } from "@/lib/auth/tenant";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { createSupabaseAdminClient } from "@/lib/supabase-server";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/svg+xml"];
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "UPLOAD");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const formData = await req.formData();
     const file = formData.get("file") as File;
     const type = (formData.get("type") as string) || "logo";
-    // SECURITY: Always derive orgId server-side — never trust client-supplied orgId
-    const orgId = (await getTenant()) || userId;
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
@@ -97,4 +98,4 @@ export async function POST(req: NextRequest) {
     logger.error("[Branding Upload] Error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
-}
+});

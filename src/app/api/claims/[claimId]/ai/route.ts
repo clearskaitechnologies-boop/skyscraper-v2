@@ -10,9 +10,11 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
+import { withAuth } from "@/lib/auth/withAuth";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import { getClaimAIAnalysis, triggerManualAnalysis } from "@/lib/claims/aiHooks";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // Force Node.js runtime for OpenAI SDK
 export const runtime = "nodejs";
@@ -21,12 +23,12 @@ export const runtime = "nodejs";
  * POST - AI Assistant Chat OR Manual Analysis Trigger
  */
 export async function POST(request: NextRequest, { params }: { params: { claimId: string } }) {
-  try {
-    const { userId } = await auth();
-    const { claimId } = params;
+  const { claimId } = params;
 
-    // Public demo: allow unauthenticated requests for claimId "test" with safe handling
-    if (!userId && claimId === "test") {
+  // Public demo: allow unauthenticated requests for claimId "test" with safe handling
+  if (claimId === "test") {
+    const { userId } = await auth();
+    if (!userId) {
       const body = await request.json().catch(() => ({}));
       const message: string | undefined = body?.message;
 
@@ -73,102 +75,99 @@ export async function POST(request: NextRequest, { params }: { params: { claimId
         { status: 200 }
       );
     }
+  }
 
-    // Auth required for non-demo claims
-    if (!userId) {
-      return NextResponse.json(
-        { ok: false, error: { code: "UNAUTHORIZED", message: "Authentication required" } },
-        { status: 401 }
-      );
-    }
+  // Authenticated path — delegate to withAuth handler
+  return _authenticatedPOST(request, { params });
+}
 
-    const body = await request.json();
-    const { analysisType, message, claimContext } = body;
+const _authenticatedPOST = withAuth(
+  async (request: NextRequest, { userId, orgId }, routeParams: { params: { claimId: string } }) => {
+    try {
+      const { claimId } = routeParams.params;
 
-    // Validate claim exists and user has access — org-scoped to prevent IDOR
-    const authCtx = await auth();
-    const resolvedOrgId = await (async () => {
-      if (!authCtx.userId) return null;
-      const m = await prisma.user_organizations.findFirst({
-        where: { userId: authCtx.userId },
-        select: { organizationId: true },
-        orderBy: { createdAt: "asc" },
+      const body = await request.json();
+      const { analysisType, message, claimContext: _clientCtx } = body;
+
+      // Rate limit AI calls
+      const rl = await checkRateLimit(userId, "AI");
+      if (!rl.success) {
+        return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+      }
+
+      // Verify claim exists and belongs to this org
+      const claim = await prisma.claims.findFirst({
+        where: { id: claimId, orgId },
+        select: {
+          id: true,
+          orgId: true,
+          claimNumber: true,
+          title: true,
+          status: true,
+          carrier: true,
+          dateOfLoss: true,
+          damageType: true,
+        },
       });
-      return m?.organizationId ?? null;
-    })();
 
-    const claim = await prisma.claims.findFirst({
-      where: { id: claimId, ...(resolvedOrgId ? { orgId: resolvedOrgId } : {}) },
-      select: {
-        id: true,
-        orgId: true,
-        claimNumber: true,
-        title: true,
-        status: true,
-        carrier: true,
-        dateOfLoss: true,
-        damageType: true,
-      },
-    });
-
-    if (!claim) {
-      return NextResponse.json(
-        { ok: false, error: { code: "NOT_FOUND", message: "Claim not found" } },
-        { status: 404 }
-      );
-    }
-
-    // Handle AI Assistant Chat
-    if (message) {
-      logger.debug("[CLAIM_AI_REQUEST] Starting for claim:", claimId);
-
-      // Check if OpenAI is configured
-      if (!process.env.OPENAI_API_KEY) {
-        logger.error("[CLAIM_AI_ERROR] OPENAI_API_KEY missing");
+      if (!claim) {
         return NextResponse.json(
-          {
-            ok: false,
-            error: "AI_NOT_CONFIGURED",
-            reply:
-              "AI Assistant is not configured. Please add OPENAI_API_KEY to your environment variables.",
-          },
-          { status: 200 }
+          { ok: false, error: { code: "NOT_FOUND", message: "Claim not found" } },
+          { status: 404 }
         );
       }
 
-      // Build full claim context using canonical builder
-      logger.debug("[CLAIM_AI] Building context...");
-      let claimContext;
-      try {
-        claimContext = await buildClaimContext(claimId);
-      } catch (error) {
-        logger.error("[CLAIM_AI_ERROR] Context build failed:", error);
-        return NextResponse.json(
-          {
-            ok: false,
-            error: "CONTEXT_BUILD_FAILED",
-            reply:
-              "I'm having trouble loading this claim's data. Please refresh the page and try again.",
-          },
-          { status: 200 }
-        );
-      }
+      // Handle AI Assistant Chat
+      if (message) {
+        logger.debug("[CLAIM_AI_REQUEST] Starting for claim:", claimId);
 
-      if (!claimContext || !claimContext.claim) {
-        return NextResponse.json(
-          {
-            ok: false,
-            error: "CLAIM_NOT_FOUND",
-            reply: "I couldn't find this claim. Please check the claim ID and try again.",
-          },
-          { status: 200 }
-        );
-      }
+        // Check if OpenAI is configured
+        if (!process.env.OPENAI_API_KEY) {
+          logger.error("[CLAIM_AI_ERROR] OPENAI_API_KEY missing");
+          return NextResponse.json(
+            {
+              ok: false,
+              error: "AI_NOT_CONFIGURED",
+              reply:
+                "AI Assistant is not configured. Please add OPENAI_API_KEY to your environment variables.",
+            },
+            { status: 200 }
+          );
+        }
 
-      logger.debug("[CLAIM_AI_CONTEXT_OK] Context built successfully");
+        // Build full claim context using canonical builder
+        logger.debug("[CLAIM_AI] Building context...");
+        let claimContext;
+        try {
+          claimContext = await buildClaimContext(claimId);
+        } catch (error) {
+          logger.error("[CLAIM_AI_ERROR] Context build failed:", error);
+          return NextResponse.json(
+            {
+              ok: false,
+              error: "CONTEXT_BUILD_FAILED",
+              reply:
+                "I'm having trouble loading this claim's data. Please refresh the page and try again.",
+            },
+            { status: 200 }
+          );
+        }
 
-      // Build rich system prompt with full context
-      const contextSummary = `
+        if (!claimContext || !claimContext.claim) {
+          return NextResponse.json(
+            {
+              ok: false,
+              error: "CLAIM_NOT_FOUND",
+              reply: "I couldn't find this claim. Please check the claim ID and try again.",
+            },
+            { status: 200 }
+          );
+        }
+
+        logger.debug("[CLAIM_AI_CONTEXT_OK] Context built successfully");
+
+        // Build rich system prompt with full context
+        const contextSummary = `
 CLAIM CONTEXT:
 Claim Number: ${claimContext.claim.claimNumber || "N/A"}
 Insured: ${claimContext.claim.insured_name || "N/A"}
@@ -184,7 +183,7 @@ Findings: ${claimContext.findings?.length || 0} documented
 Weather Data: ${claimContext.weather ? "Available" : "Not available"}
 `;
 
-      const systemPrompt = `You are an expert insurance claims assistant for SkaiScraper.
+        const systemPrompt = `You are an expert insurance claims assistant for SkaiScraper.
 
 CRITICAL RULES:
 1. Use ONLY the data provided in the claim context
@@ -196,152 +195,140 @@ CRITICAL RULES:
 
 Your goal: Help adjusters maximize accurate claim value while maintaining professional integrity.`;
 
-      try {
-        const openai = getOpenAI();
+        try {
+          const openai = getOpenAI();
 
-        logger.debug("[CLAIM_AI] Calling OpenAI...");
+          logger.debug("[CLAIM_AI] Calling OpenAI...");
 
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "system", content: contextSummary },
-            { role: "user", content: message },
-          ],
-          temperature: 0.3,
-          max_tokens: 1000,
-        });
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o",
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "system", content: contextSummary },
+              { role: "user", content: message },
+            ],
+            temperature: 0.3,
+            max_tokens: 1000,
+          });
 
-        const response =
-          completion.choices[0]?.message?.content ||
-          "I couldn't generate a response. Please try again.";
+          const response =
+            completion.choices[0]?.message?.content ||
+            "I couldn't generate a response. Please try again.";
 
-        logger.debug("[CLAIM_AI_SUCCESS] Generated reply:", response.substring(0, 100) + "...");
+          logger.debug("[CLAIM_AI_SUCCESS] Generated reply:", response.substring(0, 100) + "...");
+
+          return NextResponse.json({
+            ok: true,
+            reply: response,
+            response, // backward compatibility
+            tokensUsed: completion.usage?.total_tokens || 0,
+          });
+        } catch (aiError) {
+          logger.error("[CLAIM_AI_FAIL] OpenAI Error:", aiError);
+          return NextResponse.json(
+            {
+              ok: false,
+              error: {
+                code: "AI_SERVICE_ERROR",
+                message:
+                  aiError.message ||
+                  "I'm having trouble connecting to the AI service right now. Please try again in a moment.",
+              },
+            },
+            { status: 500 }
+          );
+        }
+      }
+
+      // Handle Manual Analysis Trigger (legacy)
+      if (analysisType) {
+        // Validate analysis type
+        const validTypes = ["triage", "damage", "video", "blueprint", "policy"];
+        if (!validTypes.includes(analysisType)) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: `Invalid analysis type. Must be one of: ${validTypes.join(", ")}`,
+            },
+            { status: 400 }
+          );
+        }
+
+        // Trigger analysis
+        const result = await triggerManualAnalysis(claimId, analysisType);
+
+        if (!result) {
+          return NextResponse.json(
+            {
+              success: false,
+              error: "Analysis failed or no data available for this analysis type",
+            },
+            { status: 400 }
+          );
+        }
 
         return NextResponse.json({
-          ok: true,
-          reply: response,
-          response, // backward compatibility
-          tokensUsed: completion.usage?.total_tokens || 0,
+          success: true,
+          analysisType,
+          result,
         });
-      } catch (aiError) {
-        logger.error("[CLAIM_AI_FAIL] OpenAI Error:", aiError);
-        return NextResponse.json(
-          {
-            ok: false,
-            error: {
-              code: "AI_SERVICE_ERROR",
-              message:
-                aiError.message ||
-                "I'm having trouble connecting to the AI service right now. Please try again in a moment.",
-            },
-          },
-          { status: 500 }
-        );
       }
+
+      return NextResponse.json(
+        { success: false, error: "Either 'message' or 'analysisType' is required" },
+        { status: 400 }
+      );
+    } catch (error) {
+      logger.error("[AI Analysis] Error:", error);
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-
-    // Handle Manual Analysis Trigger (legacy)
-    if (analysisType) {
-      // Validate analysis type
-      const validTypes = ["triage", "damage", "video", "blueprint", "policy"];
-      if (!validTypes.includes(analysisType)) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: `Invalid analysis type. Must be one of: ${validTypes.join(", ")}`,
-          },
-          { status: 400 }
-        );
-      }
-
-      // Trigger analysis
-      const result = await triggerManualAnalysis(claimId, analysisType);
-
-      if (!result) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "Analysis failed or no data available for this analysis type",
-          },
-          { status: 400 }
-        );
-      }
-
-      return NextResponse.json({
-        success: true,
-        analysisType,
-        result,
-      });
-    }
-
-    return NextResponse.json(
-      { success: false, error: "Either 'message' or 'analysisType' is required" },
-      { status: 400 }
-    );
-  } catch (error) {
-    logger.error("[AI Analysis] Error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+);
 
 /**
  * GET - Retrieve AI analysis results
  */
-export async function GET(request: NextRequest, { params }: { params: { claimId: string } }) {
-  try {
-    const { userId } = await auth();
+export const GET = withAuth(
+  async (request: NextRequest, { userId, orgId }, routeParams: { params: { claimId: string } }) => {
+    try {
+      const { claimId } = routeParams.params;
 
-    if (!userId) {
-      return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { claimId } = params;
-
-    // Validate claim exists and user has access — org-scoped to prevent IDOR
-    const resolvedOrgId = await (async () => {
-      const m = await prisma.user_organizations.findFirst({
-        where: { userId },
-        select: { organizationId: true },
-        orderBy: { createdAt: "asc" },
+      // Verify claim exists and belongs to org
+      const claim = await prisma.claims.findFirst({
+        where: { id: claimId, orgId },
+        select: { orgId: true },
       });
-      return m?.organizationId ?? null;
-    })();
 
-    const claim = await prisma.claims.findFirst({
-      where: { id: claimId, ...(resolvedOrgId ? { orgId: resolvedOrgId } : {}) },
-      select: { orgId: true },
-    });
+      if (!claim) {
+        return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
+      }
 
-    if (!claim) {
-      return NextResponse.json({ success: false, error: "Claim not found" }, { status: 404 });
-    }
+      // Get AI analysis results
+      const analysis = await getClaimAIAnalysis(claimId);
 
-    // Get AI analysis results
-    const analysis = await getClaimAIAnalysis(claimId);
+      if (!analysis) {
+        return NextResponse.json({
+          success: true,
+          message: "No AI analysis available yet",
+          analysis: null,
+        });
+      }
 
-    if (!analysis) {
       return NextResponse.json({
         success: true,
-        message: "No AI analysis available yet",
-        analysis: null,
+        analysis,
+        summary: {
+          totalAnalyses: analysis.history?.length || 0,
+          hasTriage: !!analysis.triage,
+          hasDamageAssessment: !!analysis.damageAssessment,
+          hasVideoAnalysis: !!analysis.videoAnalysis,
+          hasBlueprintAnalysis: !!analysis.blueprintAnalysis,
+          hasPolicyOptimization: !!analysis.policyOptimization,
+        },
       });
+    } catch (error) {
+      logger.error("[AI Analysis] Error:", error);
+      return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
-
-    return NextResponse.json({
-      success: true,
-      analysis,
-      summary: {
-        totalAnalyses: analysis.history?.length || 0,
-        hasTriage: !!analysis.triage,
-        hasDamageAssessment: !!analysis.damageAssessment,
-        hasVideoAnalysis: !!analysis.videoAnalysis,
-        hasBlueprintAnalysis: !!analysis.blueprintAnalysis,
-        hasPolicyOptimization: !!analysis.policyOptimization,
-      },
-    });
-  } catch (error) {
-    logger.error("[AI Analysis] Error:", error);
-    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+);

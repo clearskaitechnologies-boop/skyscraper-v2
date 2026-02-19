@@ -4,18 +4,23 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOrgClaimOrThrow } from "@/lib/auth/orgScope";
-import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { withAuth } from "@/lib/auth/withAuth";
 import { notifySignatureRequested } from "@/lib/notifications/sendNotification";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { isTestMode } from "@/lib/testMode";
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const auth = await requireAuth();
-    if (isAuthError(auth)) return auth;
-    const { orgId, userId } = auth;
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
 
     const body = await req.json();
     const { claimId, documentId, signerName, signerEmail, message } = body;
@@ -99,4 +104,4 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

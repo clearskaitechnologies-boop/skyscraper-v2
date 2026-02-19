@@ -1,8 +1,8 @@
 import { logger } from "@/lib/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
 const CreateEstimateSchema = z.object({
@@ -66,13 +66,8 @@ const CreateEstimateSchema = z.object({
  * POST /api/estimates
  * Create a new estimates from structured data
  */
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const body = await req.json();
     const data = CreateEstimateSchema.parse(body);
 
@@ -171,19 +166,14 @@ export async function POST(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});
 
 /**
  * GET /api/estimates
  * List all estimates for the organization
  */
-export async function GET(req: NextRequest) {
+export const GET = withAuth(async (req: NextRequest, { userId, orgId }) => {
   try {
-    const { userId, orgId } = await auth();
-    if (!userId || !orgId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const claimId = searchParams.get("claimId");
     const projectId = searchParams.get("projectId");
@@ -235,4 +225,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-}
+});

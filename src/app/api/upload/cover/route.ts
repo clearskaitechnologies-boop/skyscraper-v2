@@ -1,17 +1,22 @@
 import { logger } from "@/lib/observability/logger";
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
+import { withAuth } from "@/lib/auth/withAuth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB for cover photos
 const ALLOWED_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
-export async function POST(req: NextRequest) {
+export const POST = withAuth(async (req: NextRequest, { userId }) => {
   try {
-    const { userId } = await auth();
-    if (!userId) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const rl = await checkRateLimit(userId, "UPLOAD");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const formData = await req.formData();
@@ -115,4 +120,4 @@ export async function POST(req: NextRequest) {
     logger.error("Cover upload error:", error);
     return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
-}
+});

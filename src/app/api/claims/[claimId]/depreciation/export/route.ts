@@ -1,180 +1,178 @@
 import { logger } from "@/lib/logger";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import PDFDocument from "pdfkit";
 
-import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: Request, { params }: { params: { claimId: string } }) {
-  const auth = await requireAuth();
-  if (isAuthError(auth)) return auth;
-  const { orgId, userId } = auth;
+export const POST = withAuth(
+  async (req: NextRequest, { orgId, userId }, routeParams: { params: { claimId: string } }) => {
+    try {
+      const { format = "pdf" } = await req.json();
+      const claimId = routeParams.params.claimId;
 
-  try {
-    const { format = "pdf" } = await req.json();
-    const claimId = params.claimId;
-
-    // Fetch claim with materials — org-scoped
-    const claim = await prisma.claims.findFirst({
-      where: { id: claimId, orgId },
-      include: {
-        ClaimMaterial: {
-          include: {
-            VendorProduct: true,
-          },
-        },
-        properties: {
-          select: {
-            street: true,
-            city: true,
-            state: true,
-            zipCode: true,
-          },
-        },
-      },
-    });
-
-    if (!claim) {
-      return NextResponse.json({ error: "Claim not found" }, { status: 404 });
-    }
-
-    // Calculate depreciation for each material
-    const currentYear = new Date().getFullYear();
-    const lossYear = new Date(claim.dateOfLoss).getFullYear();
-    const age = currentYear - lossYear;
-
-    const depreciationItems = claim.ClaimMaterial.map((material) => {
-      const rcv = material.unitPrice ? Number(material.unitPrice) * material.quantity : 0;
-      // Standard depreciation: 10% per year, max 50%
-      const depRate = Math.min(age * 0.1, 0.5);
-      const depAmount = rcv * depRate;
-      const acv = rcv - depAmount;
-
-      return {
-        item: material.VendorProduct?.name || "Unknown Item",
-        quantity: material.quantity,
-        rcv,
-        age,
-        depreciationRate: depRate,
-        depreciationAmount: depAmount,
-        acv,
-      };
-    });
-
-    const totalRCV = depreciationItems.reduce((sum, item) => sum + item.rcv, 0);
-    const totalDep = depreciationItems.reduce((sum, item) => sum + item.depreciationAmount, 0);
-    const totalACV = depreciationItems.reduce((sum, item) => sum + item.acv, 0);
-
-    if (format === "pdf") {
-      // Generate PDF
-      const doc = new PDFDocument({ size: "LETTER", margin: 50 });
-      const chunks: Buffer[] = [];
-
-      doc.on("data", (chunk) => chunks.push(chunk));
-      doc.on("end", () => {
-        const pdfBuffer = Buffer.concat(chunks);
-
-        // Create activity log
-        prisma.claim_activities
-          .create({
-            data: {
-              id: crypto.randomUUID(),
-              claim_id: claimId,
-              user_id: userId,
-              type: "NOTE",
-              message: `PDF depreciation invoice generated for claim ${claim.claimNumber}`,
-              metadata: { format: "pdf", itemCount: depreciationItems.length },
+      // Fetch claim with materials — org-scoped
+      const claim = await prisma.claims.findFirst({
+        where: { id: claimId, orgId },
+        include: {
+          ClaimMaterial: {
+            include: {
+              VendorProduct: true,
             },
-          })
-          .catch(logger.error);
-
-        return new NextResponse(pdfBuffer, {
-          headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="depreciation-${claim.claimNumber}.pdf"`,
           },
-        });
-      });
-
-      // PDF Header
-      doc.fontSize(24).text("Depreciation Invoice", { align: "center" });
-      doc.moveDown();
-
-      doc.fontSize(12);
-      doc.text(`Claim Number: ${claim.claimNumber}`);
-      doc.text(
-        `Property: ${claim.properties?.street || ""}, ${claim.properties?.city || ""}, ${claim.properties?.state || ""} ${claim.properties?.zipCode || ""}`
-      );
-      doc.text(`Date of Loss: ${new Date(claim.dateOfLoss).toLocaleDateString()}`);
-      doc.text(`Carrier: ${claim.carrier || "N/A"}`);
-      doc.moveDown();
-
-      // Table Header
-      doc.fontSize(10).font("Helvetica-Bold");
-      const tableTop = doc.y;
-      doc.text("Item", 50, tableTop, { width: 150 });
-      doc.text("Qty", 200, tableTop, { width: 40 });
-      doc.text("RCV", 240, tableTop, { width: 80, align: "right" });
-      doc.text("Dep %", 320, tableTop, { width: 60, align: "right" });
-      doc.text("Dep Amt", 380, tableTop, { width: 80, align: "right" });
-      doc.text("ACV", 460, tableTop, { width: 80, align: "right" });
-
-      doc
-        .moveTo(50, tableTop + 15)
-        .lineTo(550, tableTop + 15)
-        .stroke();
-      doc.moveDown();
-
-      // Table Rows
-      doc.font("Helvetica");
-      depreciationItems.forEach((item) => {
-        const y = doc.y;
-        doc.text(item.item, 50, y, { width: 150 });
-        doc.text(item.quantity.toString(), 200, y, { width: 40 });
-        doc.text(`$${item.rcv.toFixed(2)}`, 240, y, { width: 80, align: "right" });
-        doc.text(`${(item.depreciationRate * 100).toFixed(0)}%`, 320, y, {
-          width: 60,
-          align: "right",
-        });
-        doc.text(`$${item.depreciationAmount.toFixed(2)}`, 380, y, { width: 80, align: "right" });
-        doc.text(`$${item.acv.toFixed(2)}`, 460, y, { width: 80, align: "right" });
-        doc.moveDown(0.5);
-      });
-
-      doc.moveDown();
-      doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
-      doc.moveDown();
-
-      // Totals
-      doc.font("Helvetica-Bold");
-      const totalsY = doc.y;
-      doc.text("TOTALS:", 50, totalsY);
-      doc.text(`$${totalRCV.toFixed(2)}`, 240, totalsY, { width: 80, align: "right" });
-      doc.text(`$${totalDep.toFixed(2)}`, 380, totalsY, { width: 80, align: "right" });
-      doc.text(`$${totalACV.toFixed(2)}`, 460, totalsY, { width: 80, align: "right" });
-
-      doc.moveDown(2);
-      doc.fontSize(10).font("Helvetica");
-      doc.text("Depreciation calculated at 10% per year from date of loss.", { align: "center" });
-      doc.text("Generated by SkaiScraper", { align: "center" });
-
-      doc.end();
-
-      // Return will happen in the 'end' event handler above
-      return new Promise(() => {}); // Promise never resolves, handled by event
-    } else {
-      return NextResponse.json(
-        {
-          error: "DOCX format not yet implemented. Use format=pdf",
+          properties: {
+            select: {
+              street: true,
+              city: true,
+              state: true,
+              zipCode: true,
+            },
+          },
         },
-        { status: 400 }
+      });
+
+      if (!claim) {
+        return NextResponse.json({ error: "Claim not found" }, { status: 404 });
+      }
+
+      // Calculate depreciation for each material
+      const currentYear = new Date().getFullYear();
+      const lossYear = new Date(claim.dateOfLoss).getFullYear();
+      const age = currentYear - lossYear;
+
+      const depreciationItems = claim.ClaimMaterial.map((material) => {
+        const rcv = material.unitPrice ? Number(material.unitPrice) * material.quantity : 0;
+        // Standard depreciation: 10% per year, max 50%
+        const depRate = Math.min(age * 0.1, 0.5);
+        const depAmount = rcv * depRate;
+        const acv = rcv - depAmount;
+
+        return {
+          item: material.VendorProduct?.name || "Unknown Item",
+          quantity: material.quantity,
+          rcv,
+          age,
+          depreciationRate: depRate,
+          depreciationAmount: depAmount,
+          acv,
+        };
+      });
+
+      const totalRCV = depreciationItems.reduce((sum, item) => sum + item.rcv, 0);
+      const totalDep = depreciationItems.reduce((sum, item) => sum + item.depreciationAmount, 0);
+      const totalACV = depreciationItems.reduce((sum, item) => sum + item.acv, 0);
+
+      if (format === "pdf") {
+        // Generate PDF
+        const doc = new PDFDocument({ size: "LETTER", margin: 50 });
+        const chunks: Buffer[] = [];
+
+        doc.on("data", (chunk) => chunks.push(chunk));
+        doc.on("end", () => {
+          const pdfBuffer = Buffer.concat(chunks);
+
+          // Create activity log
+          prisma.claim_activities
+            .create({
+              data: {
+                id: crypto.randomUUID(),
+                claim_id: claimId,
+                user_id: userId,
+                type: "NOTE",
+                message: `PDF depreciation invoice generated for claim ${claim.claimNumber}`,
+                metadata: { format: "pdf", itemCount: depreciationItems.length },
+              },
+            })
+            .catch(logger.error);
+
+          return new NextResponse(pdfBuffer, {
+            headers: {
+              "Content-Type": "application/pdf",
+              "Content-Disposition": `attachment; filename="depreciation-${claim.claimNumber}.pdf"`,
+            },
+          });
+        });
+
+        // PDF Header
+        doc.fontSize(24).text("Depreciation Invoice", { align: "center" });
+        doc.moveDown();
+
+        doc.fontSize(12);
+        doc.text(`Claim Number: ${claim.claimNumber}`);
+        doc.text(
+          `Property: ${claim.properties?.street || ""}, ${claim.properties?.city || ""}, ${claim.properties?.state || ""} ${claim.properties?.zipCode || ""}`
+        );
+        doc.text(`Date of Loss: ${new Date(claim.dateOfLoss).toLocaleDateString()}`);
+        doc.text(`Carrier: ${claim.carrier || "N/A"}`);
+        doc.moveDown();
+
+        // Table Header
+        doc.fontSize(10).font("Helvetica-Bold");
+        const tableTop = doc.y;
+        doc.text("Item", 50, tableTop, { width: 150 });
+        doc.text("Qty", 200, tableTop, { width: 40 });
+        doc.text("RCV", 240, tableTop, { width: 80, align: "right" });
+        doc.text("Dep %", 320, tableTop, { width: 60, align: "right" });
+        doc.text("Dep Amt", 380, tableTop, { width: 80, align: "right" });
+        doc.text("ACV", 460, tableTop, { width: 80, align: "right" });
+
+        doc
+          .moveTo(50, tableTop + 15)
+          .lineTo(550, tableTop + 15)
+          .stroke();
+        doc.moveDown();
+
+        // Table Rows
+        doc.font("Helvetica");
+        depreciationItems.forEach((item) => {
+          const y = doc.y;
+          doc.text(item.item, 50, y, { width: 150 });
+          doc.text(item.quantity.toString(), 200, y, { width: 40 });
+          doc.text(`$${item.rcv.toFixed(2)}`, 240, y, { width: 80, align: "right" });
+          doc.text(`${(item.depreciationRate * 100).toFixed(0)}%`, 320, y, {
+            width: 60,
+            align: "right",
+          });
+          doc.text(`$${item.depreciationAmount.toFixed(2)}`, 380, y, { width: 80, align: "right" });
+          doc.text(`$${item.acv.toFixed(2)}`, 460, y, { width: 80, align: "right" });
+          doc.moveDown(0.5);
+        });
+
+        doc.moveDown();
+        doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+        doc.moveDown();
+
+        // Totals
+        doc.font("Helvetica-Bold");
+        const totalsY = doc.y;
+        doc.text("TOTALS:", 50, totalsY);
+        doc.text(`$${totalRCV.toFixed(2)}`, 240, totalsY, { width: 80, align: "right" });
+        doc.text(`$${totalDep.toFixed(2)}`, 380, totalsY, { width: 80, align: "right" });
+        doc.text(`$${totalACV.toFixed(2)}`, 460, totalsY, { width: 80, align: "right" });
+
+        doc.moveDown(2);
+        doc.fontSize(10).font("Helvetica");
+        doc.text("Depreciation calculated at 10% per year from date of loss.", { align: "center" });
+        doc.text("Generated by SkaiScraper", { align: "center" });
+
+        doc.end();
+
+        // Return will happen in the 'end' event handler above
+        return new Promise(() => {}); // Promise never resolves, handled by event
+      } else {
+        return NextResponse.json(
+          {
+            error: "DOCX format not yet implemented. Use format=pdf",
+          },
+          { status: 400 }
+        );
+      }
+    } catch (error) {
+      logger.error("[Depreciation Export] Error:", error);
+      return NextResponse.json(
+        { error: "Failed to generate depreciation invoice", details: error.message },
+        { status: 500 }
       );
     }
-  } catch (error) {
-    logger.error("[Depreciation Export] Error:", error);
-    return NextResponse.json(
-      { error: "Failed to generate depreciation invoice", details: error.message },
-      { status: 500 }
-    );
   }
-}
+);

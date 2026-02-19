@@ -1,14 +1,10 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
-import { isAuthError, requireAuth } from "@/lib/auth/requireAuth";
+import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 
-export async function GET(req: Request) {
-  const auth = await requireAuth();
-  if (isAuthError(auth)) return auth;
-  const { orgId } = auth;
-
+export const GET = withAuth(async (req: NextRequest, { orgId }) => {
   const claimId = new URL(req.url).searchParams.get("claimId");
   if (!claimId) return new NextResponse("Missing claimId", { status: 400 });
 
@@ -28,13 +24,9 @@ export async function GET(req: Request) {
     }
     return NextResponse.json({ error: e.message || "Failed" }, { status: 500 });
   }
-}
+});
 
-export async function POST(req: Request) {
-  const auth = await requireAuth();
-  if (isAuthError(auth)) return auth;
-  const { orgId } = auth;
-
+export const POST = withAuth(async (req: NextRequest, { orgId }) => {
   const { claimId, productId, vendorId, spec, warranty, color, unitPrice, quantity } =
     await req.json();
   if (!claimId || !productId)
@@ -63,4 +55,4 @@ export async function POST(req: Request) {
     }
     return NextResponse.json({ error: e.message || "Failed" }, { status: 500 });
   }
-}
+});
