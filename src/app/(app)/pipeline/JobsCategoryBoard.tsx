@@ -278,13 +278,12 @@ export function JobsCategoryBoard({ initialJobs }: JobsCategoryBoardProps) {
     setJobs((p) => p.map((j) => (j.id === job.id ? { ...j, stage: to } : j)));
 
     try {
-      // Claims use their own update endpoint, leads use /api/leads
+      // Use the unified pipeline/move endpoint — handles stage→status mapping for claims
       const isClaim = job.jobCategory === "claim";
-      const url = isClaim ? `/api/claims/${job.id}` : `/api/leads/${job.id}`;
-      const body = { stage: to };
+      const body = isClaim ? { claimId: job.id, stage: to } : { leadId: job.id, stage: to };
 
-      const r = await fetch(url, {
-        method: "PATCH",
+      const r = await fetch("/api/pipeline/move", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
