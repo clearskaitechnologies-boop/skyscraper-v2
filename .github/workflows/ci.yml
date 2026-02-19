@@ -33,6 +33,9 @@ jobs:
       - name: Generate Prisma Client
         run: pnpm prisma:generate
 
+      - name: Prisma Schema Lint
+        run: npx prisma validate
+
       - name: Schema Validation
         run: pnpm validate:schema
 
