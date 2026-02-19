@@ -2,7 +2,7 @@ import { logger } from "@/lib/logger";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
-import { withAuth, withManager } from "@/lib/auth/withAuth";
+import { withManager } from "@/lib/auth/withAuth";
 import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";

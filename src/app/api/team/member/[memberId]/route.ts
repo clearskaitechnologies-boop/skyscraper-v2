@@ -9,7 +9,7 @@
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { withAuth, withAdmin } from "@/lib/auth/withAuth";
+import { withAdmin, withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 

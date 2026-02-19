@@ -36,7 +36,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { withAuth, withManager } from "@/lib/auth/withAuth";
+import { withManager } from "@/lib/auth/withAuth";
 
 // ── Validation ────────────────────────────────────────────────────────────
 const VALID_ROLES = ["member", "admin", "org:member", "org:admin"] as const;
@@ -110,138 +110,136 @@ function normalizeRole(role?: string): "org:admin" | "org:member" {
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────
-export const POST = withManager(
-  async (req: NextRequest, { orgId, userId }) => {
-    try {
-      let rows: Array<{ email: string; role?: string; name?: string }> = [];
+export const POST = withManager(async (req: NextRequest, { orgId, userId }) => {
+  try {
+    let rows: Array<{ email: string; role?: string; name?: string }> = [];
 
-      // Support both JSON and CSV content types
-      const contentType = req.headers.get("content-type") || "";
+    // Support both JSON and CSV content types
+    const contentType = req.headers.get("content-type") || "";
 
-      if (contentType.includes("text/csv") || contentType.includes("text/plain")) {
-        const text = await req.text();
-        rows = parseCSV(text);
+    if (contentType.includes("text/csv") || contentType.includes("text/plain")) {
+      const text = await req.text();
+      rows = parseCSV(text);
+    } else {
+      const body = await req.json();
+
+      // If body has a `csv` string field, parse it
+      if (typeof body.csv === "string") {
+        rows = parseCSV(body.csv);
       } else {
-        const body = await req.json();
-
-        // If body has a `csv` string field, parse it
-        if (typeof body.csv === "string") {
-          rows = parseCSV(body.csv);
-        } else {
-          const parsed = ImportBodySchema.safeParse(body);
-          if (!parsed.success) {
-            return NextResponse.json(
-              {
-                error: "Validation failed",
-                details: parsed.error.flatten().fieldErrors,
-              },
-              { status: 400 }
-            );
-          }
-          rows = parsed.data.rows;
+        const parsed = ImportBodySchema.safeParse(body);
+        if (!parsed.success) {
+          return NextResponse.json(
+            {
+              error: "Validation failed",
+              details: parsed.error.flatten().fieldErrors,
+            },
+            { status: 400 }
+          );
         }
+        rows = parsed.data.rows;
       }
+    }
 
-      if (rows.length === 0) {
-        return NextResponse.json({ error: "No valid rows found in import data" }, { status: 400 });
-      }
+    if (rows.length === 0) {
+      return NextResponse.json({ error: "No valid rows found in import data" }, { status: 400 });
+    }
 
-      if (rows.length > 500) {
-        return NextResponse.json(
-          { error: "Maximum 500 invitations per batch. Split into multiple imports." },
-          { status: 400 }
-        );
-      }
-
-      // ── De-duplicate by email ─────────────────────────────────────
-      const seen = new Set<string>();
-      const uniqueRows = rows.filter((row) => {
-        const email = row.email.toLowerCase().trim();
-        if (seen.has(email)) return false;
-        seen.add(email);
-        return true;
-      });
-
-      // ── Process invitations ───────────────────────────────────────
-      const client = await clerkClient();
-      const results: Array<{ email: string; role: string; status: string }> = [];
-      const errors: Array<{ email: string; reason: string }> = [];
-      let imported = 0;
-      let skipped = 0;
-
-      // Process in batches of 10 to avoid rate limits
-      const BATCH_SIZE = 10;
-      for (let i = 0; i < uniqueRows.length; i += BATCH_SIZE) {
-        const batch = uniqueRows.slice(i, i + BATCH_SIZE);
-
-        const batchPromises = batch.map(async (row) => {
-          const email = row.email.toLowerCase().trim();
-
-          // Basic email validation
-          if (!email || !email.includes("@") || !email.includes(".")) {
-            errors.push({ email: email || "(empty)", reason: "Invalid email format" });
-            skipped++;
-            return;
-          }
-
-          const clerkRole = normalizeRole(row.role);
-
-          try {
-            const invitation = await client.organizations.createOrganizationInvitation({
-              organizationId: orgId,
-              emailAddress: email,
-              role: clerkRole,
-              inviterUserId: userId,
-            });
-
-            results.push({
-              email,
-              role: clerkRole,
-              status: invitation.status || "pending",
-            });
-            imported++;
-          } catch (err) {
-            if (err.errors?.[0]?.code === "duplicate_record") {
-              errors.push({ email, reason: "Already invited" });
-              skipped++;
-            } else if (err.errors?.[0]?.code === "already_a_member_of_organization") {
-              errors.push({ email, reason: "Already a member" });
-              skipped++;
-            } else {
-              errors.push({
-                email,
-                reason: err.errors?.[0]?.message || err.message || "Invitation failed",
-              });
-              skipped++;
-            }
-          }
-        });
-
-        await Promise.all(batchPromises);
-
-        // Small delay between batches to respect rate limits
-        if (i + BATCH_SIZE < uniqueRows.length) {
-          await new Promise((resolve) => setTimeout(resolve, 200));
-        }
-      }
-
-      logger.debug(
-        `[team/import-csv] org=${orgId} imported=${imported} skipped=${skipped} errors=${errors.length}`
-      );
-
-      return NextResponse.json({
-        imported,
-        skipped,
-        total: uniqueRows.length,
-        errors: errors.length > 0 ? errors : undefined,
-        invitations: results,
-      });
-    } catch (error) {
-      logger.error("[team/import-csv] Error:", error);
+    if (rows.length > 500) {
       return NextResponse.json(
-        { error: error?.message || "Failed to import team members" },
-        { status: 500 }
+        { error: "Maximum 500 invitations per batch. Split into multiple imports." },
+        { status: 400 }
       );
     }
+
+    // ── De-duplicate by email ─────────────────────────────────────
+    const seen = new Set<string>();
+    const uniqueRows = rows.filter((row) => {
+      const email = row.email.toLowerCase().trim();
+      if (seen.has(email)) return false;
+      seen.add(email);
+      return true;
+    });
+
+    // ── Process invitations ───────────────────────────────────────
+    const client = await clerkClient();
+    const results: Array<{ email: string; role: string; status: string }> = [];
+    const errors: Array<{ email: string; reason: string }> = [];
+    let imported = 0;
+    let skipped = 0;
+
+    // Process in batches of 10 to avoid rate limits
+    const BATCH_SIZE = 10;
+    for (let i = 0; i < uniqueRows.length; i += BATCH_SIZE) {
+      const batch = uniqueRows.slice(i, i + BATCH_SIZE);
+
+      const batchPromises = batch.map(async (row) => {
+        const email = row.email.toLowerCase().trim();
+
+        // Basic email validation
+        if (!email || !email.includes("@") || !email.includes(".")) {
+          errors.push({ email: email || "(empty)", reason: "Invalid email format" });
+          skipped++;
+          return;
+        }
+
+        const clerkRole = normalizeRole(row.role);
+
+        try {
+          const invitation = await client.organizations.createOrganizationInvitation({
+            organizationId: orgId,
+            emailAddress: email,
+            role: clerkRole,
+            inviterUserId: userId,
+          });
+
+          results.push({
+            email,
+            role: clerkRole,
+            status: invitation.status || "pending",
+          });
+          imported++;
+        } catch (err) {
+          if (err.errors?.[0]?.code === "duplicate_record") {
+            errors.push({ email, reason: "Already invited" });
+            skipped++;
+          } else if (err.errors?.[0]?.code === "already_a_member_of_organization") {
+            errors.push({ email, reason: "Already a member" });
+            skipped++;
+          } else {
+            errors.push({
+              email,
+              reason: err.errors?.[0]?.message || err.message || "Invitation failed",
+            });
+            skipped++;
+          }
+        }
+      });
+
+      await Promise.all(batchPromises);
+
+      // Small delay between batches to respect rate limits
+      if (i + BATCH_SIZE < uniqueRows.length) {
+        await new Promise((resolve) => setTimeout(resolve, 200));
+      }
+    }
+
+    logger.debug(
+      `[team/import-csv] org=${orgId} imported=${imported} skipped=${skipped} errors=${errors.length}`
+    );
+
+    return NextResponse.json({
+      imported,
+      skipped,
+      total: uniqueRows.length,
+      errors: errors.length > 0 ? errors : undefined,
+      invitations: results,
+    });
+  } catch (error) {
+    logger.error("[team/import-csv] Error:", error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to import team members" },
+      { status: 500 }
+    );
   }
-);
+});

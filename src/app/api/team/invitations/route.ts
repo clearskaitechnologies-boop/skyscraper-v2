@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createForbiddenResponse, requirePermission } from "@/lib/auth/rbac";
-import { withAuth, withManager } from "@/lib/auth/withAuth";
+import { withManager } from "@/lib/auth/withAuth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const invitationSchema = z.object({
