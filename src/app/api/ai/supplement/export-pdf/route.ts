@@ -9,6 +9,7 @@ import {
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { htmlToPdfBuffer } from "@/lib/reports/pdf-utils";
+import { supplementExportPdfSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * POST /api/ai/supplement/export-pdf
@@ -54,11 +55,17 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { claimId, items, total } = body;
 
-    if (!claimId || !items || !Array.isArray(items)) {
-      return NextResponse.json({ error: "claimId and items are required" }, { status: 400 });
+    // ── Zod validation ──
+    const validation = validateAIRequest(supplementExportPdfSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
     }
+
+    const { claimId, items, total } = validation.data;
 
     // Verify claim access
     const accessResult = await verifyClaimAccess(claimId, orgId, userId);

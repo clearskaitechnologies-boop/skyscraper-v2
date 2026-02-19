@@ -8,6 +8,7 @@ import {
   SubscriptionRequiredError,
 } from "@/lib/billing/requireActiveSubscription";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
+import { analyzeDamageFormDataSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 // Retry configuration for AI service calls
 const MAX_RETRIES = 3;
@@ -53,6 +54,17 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const image = formData.get("image") as File;
     const claimId = formData.get("claimId") as string;
+
+    // ── Zod validation for FormData fields ──
+    const validation = validateAIRequest(analyzeDamageFormDataSchema, {
+      claimId: claimId || undefined,
+    });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
 
     if (!image) {
       logger.error("[AI_VISION] ❌ No image provided");

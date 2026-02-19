@@ -12,17 +12,17 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import {
-  requireActiveSubscription,
-  SubscriptionRequiredError,
+    requireActiveSubscription,
+    SubscriptionRequiredError,
 } from "@/lib/billing/requireActiveSubscription";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { skillsQuerySchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 import {
-  AI_SKILLS,
-  type AISkill,
-  getSkillsByRole,
-  getSkillStats,
-  searchSkills,
+    AI_SKILLS,
+    getSkillsByRole,
+    getSkillStats,
+    searchSkills
 } from "@/lib/ai/skills-registry";
 
 async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
@@ -59,13 +59,26 @@ async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: str
     }
 
     const { searchParams } = new URL(request.url);
-    const role = searchParams.get("role") as "Free" | "Pro" | "Admin" | null;
-    const category = searchParams.get("category") as AISkill["category"] | null;
-    const query = searchParams.get("query");
-    const stats = searchParams.get("stats") === "true";
+
+    // ── Zod validation for query params ──
+    const validation = validateAIRequest(skillsQuerySchema, {
+      role: searchParams.get("role") || undefined,
+      category: searchParams.get("category") || undefined,
+      query: searchParams.get("query") || undefined,
+      stats: searchParams.get("stats") || undefined,
+      full: searchParams.get("full") || undefined,
+    });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
+
+    const { role, category, query, stats, full: fullParam } = validation.data;
 
     // Return statistics
-    if (stats) {
+    if (stats === "true") {
       return NextResponse.json({
         success: true,
         stats: getSkillStats(),
@@ -102,7 +115,7 @@ async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: str
         confidence: skill.confidence,
         tags: skill.tags,
         // Optionally include full details
-        ...(searchParams.get("full") === "true" && {
+        ...(fullParam === "true" && {
           detailedDescription: skill.detailedDescription,
           idealInputs: skill.idealInputs,
           requiredInputs: skill.requiredInputs,

@@ -1,6 +1,8 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
+import { damageAssessmentSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -14,6 +16,16 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+
+    // ── Zod validation ──
+    const validation = validateAIRequest(damageAssessmentSchema, body);
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
+
     const {
       propertyAddress,
       propertyType,
@@ -25,17 +37,7 @@ export async function POST(req: NextRequest) {
       affectedAreas,
       estimatedRepairCost,
       estimatedReplacementCost,
-    } = body;
-
-    // Validate required fields
-    if (!propertyAddress || !damageType || !damageDescription) {
-      return NextResponse.json(
-        {
-          error: "Missing required fields: propertyAddress, damageType, damageDescription",
-        },
-        { status: 400 }
-      );
-    }
+    } = validation.data;
 
     // Build AI prompt
     const prompt = `You are an expert property damage assessment specialist. Generate a comprehensive damage assessment report based on the following information:

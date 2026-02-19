@@ -1,5 +1,5 @@
-import { NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest } from "next/server";
 
 import { apiError, apiSuccess, apiUnauthorized } from "@/lib/api/safeResponse";
 import prisma from "@/lib/prisma";
@@ -21,8 +21,17 @@ export async function GET(req: NextRequest) {
     }
 
     const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type") || "all";
-    const limit = parseInt(searchParams.get("limit") || "10");
+
+    // ── Zod validation for query params ──
+    const validation = validateAIRequest(historyQuerySchema, {
+      type: searchParams.get("type") || undefined,
+      limit: searchParams.get("limit") || undefined,
+    });
+    if (!validation.success) {
+      return apiError(validation.error);
+    }
+
+    const { type, limit } = validation.data;
 
     // Query ai_reports table for history
     // Note: Adjust based on your actual schema

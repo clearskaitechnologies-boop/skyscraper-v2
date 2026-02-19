@@ -11,13 +11,14 @@
  * - Negotiation suggestions (if carrier set)
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import { orchestrateClaim } from "@/lib/ai/orchestrator/orchestrateClaim";
 import prisma from "@/lib/prisma";
+import { orchestrateQuerySchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function GET_INNER(
   request: NextRequest,
@@ -51,17 +52,25 @@ async function GET_INNER(
 
     // Get request type from query params
     const searchParams = request.nextUrl.searchParams;
-    const requestType = searchParams.get("type") as
-      | "next_actions"
-      | "full_intelligence"
-      | "negotiate"
-      | null;
+
+    // ── Zod validation for query params ──
+    const validation = validateAIRequest(orchestrateQuerySchema, {
+      type: searchParams.get("type") || undefined,
+    });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
+
+    const requestType = validation.data.type;
 
     // Run orchestrator
     const result = await orchestrateClaim({
       claimId,
       orgId,
-      requestType: requestType || "full_intelligence",
+      requestType: requestType,
     });
 
     // Transform to match UI expectations

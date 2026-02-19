@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { analyzeImage } from "@/lib/ai/openai-vision";
@@ -14,6 +14,17 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const imageFile = formData.get("image") as File;
     const context = (formData.get("context") as string) || "";
+
+    // ── Zod validation for FormData fields ──
+    const validation = validateAIRequest(analyzePhotoFormDataSchema, {
+      context: context || undefined,
+    });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
 
     if (!imageFile) {
       return NextResponse.json({ error: "Missing image file" }, { status: 400 });

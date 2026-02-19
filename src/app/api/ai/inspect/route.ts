@@ -9,8 +9,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import {
-  requireActiveSubscription,
-  SubscriptionRequiredError,
+    requireActiveSubscription,
+    SubscriptionRequiredError,
 } from "@/lib/billing/requireActiveSubscription";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
@@ -59,6 +59,15 @@ export async function POST(request: NextRequest) {
     const formData = await request.formData();
     const image = formData.get("image") as File;
     const propertyId = formData.get("propertyId") as string;
+
+    // ── Zod validation for FormData fields ──
+    const validation = validateAIRequest(inspectFormDataSchema, { propertyId: propertyId || undefined });
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: validation.error, details: validation.details },
+        { status: 422 }
+      );
+    }
 
     if (!image) {
       return NextResponse.json({ error: "Image is required" }, { status: 400 });

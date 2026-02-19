@@ -323,6 +323,70 @@ export const inspectSchema = z
     message: "Either imageUrl or imageBase64 is required",
   });
 
+// ─── Inspect (FormData variant) ────────────────────────────────
+export const inspectFormDataSchema = z.object({
+  propertyId: z.string().optional(),
+});
+
+// ─── Analyze Damage (FormData variant) ─────────────────────────
+export const analyzeDamageFormDataSchema = z.object({
+  claimId: z.string().optional(),
+});
+
+// ─── Analyze Photo (FormData variant) ──────────────────────────
+export const analyzePhotoFormDataSchema = z.object({
+  context: z.string().max(5000).optional(),
+});
+
+// ─── Damage Assessment (JSON body) ─────────────────────────────
+export const damageAssessmentSchema = z.object({
+  propertyAddress: z.string().min(1, "propertyAddress is required"),
+  propertyType: z.string().optional(),
+  yearBuilt: z.string().optional(),
+  squareFootage: z.string().optional(),
+  dateOfLoss: z.string().optional(),
+  damageType: z.string().min(1, "damageType is required"),
+  damageDescription: z.string().min(1, "damageDescription is required"),
+  affectedAreas: z.array(z.string()).optional(),
+  estimatedRepairCost: z.union([z.string(), z.number()]).optional(),
+  estimatedReplacementCost: z.union([z.string(), z.number()]).optional(),
+});
+
+// ─── Supplement Export PDF ─────────────────────────────────────
+export const supplementExportPdfSchema = z.object({
+  claimId: z.string().min(1, "claimId is required"),
+  items: z
+    .array(
+      z.object({
+        description: z.string().min(1, "item description is required"),
+        quantity: z.number({ required_error: "quantity is required" }),
+        unitPrice: z.number({ required_error: "unitPrice is required" }),
+      })
+    )
+    .min(1, "At least one item is required"),
+  total: z.number().optional(),
+});
+
+// ─── History (query params) ────────────────────────────────────
+export const historyQuerySchema = z.object({
+  type: z.enum(["weather", "rebuttal", "supplement", "damage", "mockup", "all"]).default("all"),
+  limit: z.coerce.number().int().min(1).max(100).default(10),
+});
+
+// ─── Orchestrate (query params) ────────────────────────────────
+export const orchestrateQuerySchema = z.object({
+  type: z.enum(["next_actions", "full_intelligence", "negotiate"]).default("full_intelligence"),
+});
+
+// ─── Skills (query params) ─────────────────────────────────────
+export const skillsQuerySchema = z.object({
+  role: z.enum(["Free", "Pro", "Admin"]).optional(),
+  category: z.enum(["damage", "workflow", "communication", "analysis", "estimation"]).optional(),
+  query: z.string().max(200).optional(),
+  stats: z.enum(["true", "false"]).optional(),
+  full: z.enum(["true", "false"]).optional(),
+});
+
 /**
  * Utility: validate a request body against a Zod schema.
  * Returns { success: true, data } or { success: false, response } (a NextResponse).
