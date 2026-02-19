@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { withOrgScope } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const updateContactSchema = z.object({
   firstName: z.string().min(1).optional(),
@@ -66,8 +67,16 @@ export const GET = withOrgScope(
  * PATCH /api/contacts/[contactId] - Update contact details
  */
 export const PATCH = withOrgScope(
-  async (req, { orgId }, { params }: { params: { contactId: string } }) => {
+  async (req, { orgId, userId }, { params }: { params: { contactId: string } }) => {
     try {
+      const rl = await checkRateLimit(userId, "API");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "rate_limit_exceeded", message: "Too many requests" },
+          { status: 429 }
+        );
+      }
+
       const body = await req.json();
       const parsed = updateContactSchema.safeParse(body);
       if (!parsed.success) {

@@ -12,11 +12,12 @@
  * - When userType changes
  */
 
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { getUserIdentity } from "@/lib/identity/userIdentity";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,14 @@ export async function POST() {
 
     if (!user?.id) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+    }
+
+    const rl = await checkRateLimit(user.id, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     // Get identity from user_registry (source of truth)

@@ -6,11 +6,12 @@
  * Creates the template if it doesn't exist in the database
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
@@ -34,6 +35,14 @@ export async function POST() {
     const ctx = await safeOrgContext();
     if (ctx.status !== "ok" || !ctx.userId) {
       return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = await checkRateLimit(ctx.userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     // Get or create the mandatory template

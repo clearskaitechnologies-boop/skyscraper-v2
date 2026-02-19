@@ -1,8 +1,9 @@
-import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * FIX MY IDENTITY - Syncs user type to Clerk based on org membership
@@ -20,6 +21,14 @@ export async function POST() {
 
     if (!user?.id) {
       return NextResponse.json({ ok: false, error: "Not authenticated" }, { status: 401 });
+    }
+
+    const rl = await checkRateLimit(user.id, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     // Check org membership

@@ -1,9 +1,10 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/onboarding/create-sample
@@ -17,6 +18,14 @@ export async function POST() {
   const { orgId, userId } = authResult;
   if (!orgId) {
     return NextResponse.json({ error: "Organization required." }, { status: 400 });
+  }
+
+  const rl = await checkRateLimit(userId, "AUTH");
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "rate_limit_exceeded", message: "Too many requests" },
+      { status: 429 }
+    );
   }
 
   try {

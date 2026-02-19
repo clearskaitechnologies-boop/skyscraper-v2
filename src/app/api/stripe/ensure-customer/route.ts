@@ -7,10 +7,19 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { withAuth } from "@/lib/auth/withAuth";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripeCustomerIdForUser } from "@/lib/stripe/customer";
 
 export const POST = withAuth(async (_req, { userId }) => {
   try {
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     const user = await currentUser();
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

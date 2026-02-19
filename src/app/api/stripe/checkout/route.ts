@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "@/lib/auth/withAuth";
 import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripeClient } from "@/lib/stripe";
 
 const stripe = getStripeClient();
@@ -15,6 +16,14 @@ export const dynamic = "force-dynamic";
 
 const handleCheckout = withAuth(async (request: NextRequest, { userId, orgId }) => {
   try {
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     if (isBetaMode()) {
       return NextResponse.json(
         {

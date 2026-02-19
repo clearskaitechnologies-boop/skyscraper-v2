@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { safeSendEmail } from "@/lib/mail";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -12,6 +13,15 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const { userId } = await auth();
+
+    const rlIdentifier = userId || req.headers.get("x-forwarded-for") || "anonymous";
+    const rl = await checkRateLimit(rlIdentifier, "PUBLIC");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
     const body = await req.json();
     const { message, email, name, category, task, issue, confusion, timestamp, userAgent, url } =
       body;

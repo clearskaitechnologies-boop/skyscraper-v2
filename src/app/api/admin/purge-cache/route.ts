@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 import { log } from "@/lib/logger";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
@@ -19,6 +20,14 @@ export async function POST() {
       return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
     }
     const { userId } = ctx;
+
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
 
     // Verify admin role from Clerk metadata
     const clerkUser = await clerkClient().users.getUser(userId);

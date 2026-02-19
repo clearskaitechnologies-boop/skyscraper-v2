@@ -8,11 +8,20 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 
-export const POST = withAuth(async (req: NextRequest, { orgId: userOrgId }) => {
+export const POST = withAuth(async (req: NextRequest, { orgId: userOrgId, userId }) => {
   try {
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     const body = await req.json();
     const { claimId, leadId, stage } = body;
 

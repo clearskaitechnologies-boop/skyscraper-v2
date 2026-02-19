@@ -1,8 +1,9 @@
-import { clerkClient } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { clerkClient } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
+import { checkRateLimit } from "@/lib/rate-limit";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
@@ -20,6 +21,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: ctx.reason || "Unauthorized" }, { status: 401 });
     }
     const { userId } = ctx;
+
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
 
     // Verify admin role from Clerk metadata
     const clerkUser = await clerkClient().users.getUser(userId);

@@ -1,17 +1,26 @@
 // src/app/api/contacts/search/route.ts
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { withOrgScope } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
 /**
  * GET /api/contacts/search?q=query - Search contacts by name, email, or phone
  */
-export const GET = withOrgScope(async (req, { orgId }) => {
+export const GET = withOrgScope(async (req, { orgId, userId }) => {
   try {
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     const searchParams = new URL(req.url).searchParams;
     const query = searchParams.get("q") || "";
 

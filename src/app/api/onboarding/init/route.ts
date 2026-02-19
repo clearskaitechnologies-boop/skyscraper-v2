@@ -68,6 +68,7 @@ import { NextResponse } from "next/server";
 
 import { classifyError } from "@/agents/baseAgent";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { ensureWorkspaceForOrg } from "@/lib/workspace/ensureWorkspaceForOrg";
 
 // Prisma singleton imported from @/lib/db/prisma
@@ -79,6 +80,14 @@ export async function POST() {
     if (!userId) {
       logger.error("[onboarding/init] ❌ Unauthorized - no userId");
       return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = await checkRateLimit(userId, "AUTH");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     logger.debug(`[onboarding/init] 🚀 Starting onboard for user ${userId}`);

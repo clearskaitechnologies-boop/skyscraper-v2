@@ -1,10 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getDelegate } from "@/lib/db/modelAliases";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const UpdateTaskSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "DONE", "CANCELLED"]).optional(),
@@ -23,6 +24,14 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ task
     const { userId, orgId } = await auth();
     if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
     }
 
     const { taskId } = await params;

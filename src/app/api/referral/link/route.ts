@@ -7,19 +7,28 @@ export const revalidate = 0;
  * Returns the user's unique referral link
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { env } from "@/env";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { REFERRAL } from "@/lib/referrals/config";
 import { ensureOrgReferralCode } from "@/lib/referrals/utils";
 
 export async function GET() {
-  const { orgId } = await auth();
+  const { orgId, userId } = await auth();
 
   if (!orgId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const rl = await checkRateLimit(userId || orgId, "API");
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: "rate_limit_exceeded", message: "Too many requests" },
+      { status: 429 }
+    );
   }
 
   try {

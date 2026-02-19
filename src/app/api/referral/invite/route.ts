@@ -14,6 +14,7 @@ import { Resend } from "resend";
 import { env } from "@/env";
 import { withAuth } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { REFERRAL } from "@/lib/referrals/config";
 import { ensureOrgReferralCode } from "@/lib/referrals/utils";
 
@@ -22,6 +23,14 @@ const FROM = process.env.EMAIL_FROM || "SkaiScraper <no-reply@skaiscrape.com>";
 
 export const POST = withAuth(async (req: NextRequest, { orgId }) => {
   try {
+    const rl = await checkRateLimit(orgId, "API");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests" },
+        { status: 429 }
+      );
+    }
+
     const { email } = (await req.json()) as { email: string };
 
     if (!email || !email.includes("@")) {
