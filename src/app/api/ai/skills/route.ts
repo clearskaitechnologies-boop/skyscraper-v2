@@ -7,8 +7,8 @@
  * and present them in UI as sellable features.
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
@@ -87,7 +87,4 @@ async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: str
   }
 }
 
-export const GET = withAiBilling(
-  createAiConfig("ai_skills", { costPerRequest: 10 }),
-  GET_INNER as any
-);
+export const GET = withAiBilling(createAiConfig("ai_skills", { costPerRequest: 10 }), GET_INNER);

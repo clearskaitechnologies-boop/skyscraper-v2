@@ -93,7 +93,4 @@ export async function GET() {
   }
 }
 
-export const POST = withAiBilling(
-  createAiConfig("ai_agents", { costPerRequest: 20 }),
-  POST_INNER as any
-);
+export const POST = withAiBilling(createAiConfig("ai_agents", { costPerRequest: 20 }), POST_INNER);

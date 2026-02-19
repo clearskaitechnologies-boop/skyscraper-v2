@@ -45,7 +45,7 @@ export async function POST() {
     // Also purge layout
     revalidatePath("/", "layout");
 
-    (log as any)("admin/purge-cache", "Cache purged successfully", { userId, routes });
+    log.info("admin/purge-cache", "Cache purged successfully", { userId, routes });
 
     return NextResponse.json({
       ok: true,
@@ -54,7 +54,7 @@ export async function POST() {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    (log as any)("admin/purge-cache", "Cache purge failed", { error: error.message });
+    log.error("admin/purge-cache", "Cache purge failed", { error: error.message });
     return NextResponse.json(
       {
         ok: false,

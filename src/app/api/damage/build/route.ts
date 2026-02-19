@@ -83,7 +83,7 @@ export async function POST(req: NextRequest) {
         metadata: {
           ...aiResult.meta,
           hoverData: aiResult.hoverData ?? body.hoverData ?? null,
-        } as any,
+        } as Record<string, unknown>,
       },
     });
 

@@ -73,9 +73,13 @@ export default async function NetworkOverviewPage() {
       prisma.tradesCompanyMember?.count?.bind(prisma.tradesCompanyMember) as CountFn,
       { where: { isActive: true } }
     ),
-    safeCount("vendorLocation", prisma.vendorLocation?.count?.bind(prisma.vendorLocation) as CountFn, {
-      where: { isActive: true },
-    }),
+    safeCount(
+      "vendorLocation",
+      prisma.vendorLocation?.count?.bind(prisma.vendorLocation) as CountFn,
+      {
+        where: { isActive: true },
+      }
+    ),
     safeCount("vendorContact", prisma.vendorContact?.count?.bind(prisma.vendorContact) as CountFn, {
       where: { isActive: true },
     }),

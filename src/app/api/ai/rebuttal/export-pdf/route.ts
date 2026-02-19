@@ -227,7 +227,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const pdfBuffer = await htmlToPdfBuffer(html, { format: "Letter" });
 
     // Return PDF as download
-    return new NextResponse(pdfBuffer as any, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

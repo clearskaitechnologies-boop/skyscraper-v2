@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
           lineItems: body.lineItems,
           opEnabled: body.opEnabled,
           ...body.meta,
-        } as any,
-      } as any,
+        } as Record<string, unknown>,
+      },
     });
 
     return NextResponse.json({ estimateId: estimates.id, estimates });

@@ -198,14 +198,11 @@ export async function POST(req: Request) {
 
     // Enqueue damage analysis job
     const { enqueue } = await import("@/lib/queue");
-    const jobId = await enqueue(
-      "damage-analyze",
-      {
-        proposalId,
-        orgId,
-        photoIds: uploadedPhotos.map((p) => p.id),
-      }
-    );
+    const jobId = await enqueue("damage-analyze", {
+      proposalId,
+      orgId,
+      photoIds: uploadedPhotos.map((p) => p.id),
+    });
 
     // Return success response
     return NextResponse.json({

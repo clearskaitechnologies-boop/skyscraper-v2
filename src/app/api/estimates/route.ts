@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -149,7 +149,7 @@ export async function POST(req: NextRequest) {
         estimate_line_items: {
           create: items,
         },
-      } as any,
+      },
       include: {
         estimate_line_items: true,
       },

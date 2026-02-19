@@ -93,5 +93,5 @@ export async function GET() {
 
 export const POST = withAiBilling(
   createAiConfig("domain_analysis", { costPerRequest: 10 }),
-  POST_INNER as any
+  POST_INNER
 );

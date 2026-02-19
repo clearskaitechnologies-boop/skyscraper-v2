@@ -17,7 +17,7 @@ export async function GET() {
       id: user?.id ?? null,
       publicMetadata: user?.publicMetadata ?? null,
       publicMetadataType: typeof user?.publicMetadata,
-      userTypeFromMeta: (user?.publicMetadata as any)?.userType ?? "NOT_SET",
+      userTypeFromMeta: (user?.publicMetadata as Record<string, unknown>)?.userType ?? "NOT_SET",
       orgMemberships: user?.organizationMemberships?.length ?? 0,
       firstName: user?.firstName,
     };

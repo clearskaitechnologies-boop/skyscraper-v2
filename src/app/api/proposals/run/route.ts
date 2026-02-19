@@ -26,8 +26,8 @@ export const revalidate = 0;
  * }
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { enqueue } from "@/lib/queue";
 
@@ -37,16 +37,13 @@ export async function POST(req: Request) {
     const { leadId, orgId, userId, title, sections } = body;
 
     // Enqueue proposal generation job
-    const jobId = await enqueue(
-      "proposal-generate",
-      {
-        leadId,
-        orgId,
-        userId,
-        title: title || "New Proposal",
-        sections: sections || [],
-      }
-    );
+    const jobId = await enqueue("proposal-generate", {
+      leadId,
+      orgId,
+      userId,
+      title: title || "New Proposal",
+      sections: sections || [],
+    });
 
     logger.debug(`Proposal generation job enqueued: ${jobId}`);
 

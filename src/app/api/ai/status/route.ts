@@ -8,8 +8,8 @@ export const revalidate = 0;
 // GET /api/ai/status?jobId=xxx
 // Returns: { id, status, reportId, engine, createdAt, completedAt?, error?, result? }
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { getStatus } from "@/modules/ai/jobs/queue";
@@ -35,7 +35,4 @@ async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string 
   }
 }
 
-export const GET = withAiBilling(
-  createAiConfig("ai_status", { costPerRequest: 0 }),
-  GET_INNER as any
-);
+export const GET = withAiBilling(createAiConfig("ai_status", { costPerRequest: 0 }), GET_INNER);

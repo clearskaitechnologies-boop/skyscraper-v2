@@ -1,6 +1,6 @@
 // src/app/api/contacts/[contactId]/route.ts
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { withOrgScope } from "@/lib/auth/tenant";

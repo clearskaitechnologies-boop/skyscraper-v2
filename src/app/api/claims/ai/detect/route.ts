@@ -1,10 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-import { AIModels,callOpenAI } from "@/lib/ai/client";
+import { AIModels, callOpenAI } from "@/lib/ai/client";
 import { withSentryApi } from "@/lib/monitoring/sentryApi";
 import { requirePermission } from "@/lib/permissions";
-import prisma from "@/lib/prisma";
 import { checkRateLimit, getClientIdentifier } from "@/lib/security/ratelimit";
 
 export const POST = withSentryApi(async function POST(req: Request) {
@@ -19,16 +18,22 @@ export const POST = withSentryApi(async function POST(req: Request) {
     if (!rl.success) {
       return NextResponse.json({ ok: false, error: "Rate limit exceeded" }, { status: 429 });
     }
-    await requirePermission("use_ai_features" as any);
+    await requirePermission("use_ai_features" as string);
     const form = await req.formData();
     const files = form.getAll("photos") as File[];
     const claimId = form.get("claimId") as string | null;
 
     if (!files.length) {
-      return NextResponse.json({ ok: false, error: "No photos provided (multipart form 'photos')" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "No photos provided (multipart form 'photos')" },
+        { status: 400 }
+      );
     }
     if (!claimId) {
-      return NextResponse.json({ ok: false, error: "claimId required in form data" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "claimId required in form data" },
+        { status: 400 }
+      );
     }
 
     const results: Array<{
@@ -44,7 +49,8 @@ export const POST = withSentryApi(async function POST(req: Request) {
       const result = await callOpenAI<string[]>({
         tag: "damage_detection",
         model: AIModels.VISION,
-        system: "You are an expert HAAG-trained roof inspector. Detect damage types in images. Return a JSON array of detected damage types. Examples: hail bruising, wind-lift, missing shingles, soft-metal dents, pipe boot damage, flashing issues, exposed nails, granule loss, creased shingles.",
+        system:
+          "You are an expert HAAG-trained roof inspector. Detect damage types in images. Return a JSON array of detected damage types. Examples: hail bruising, wind-lift, missing shingles, soft-metal dents, pipe boot damage, flashing issues, exposed nails, granule loss, creased shingles.",
         messages: [
           {
             role: "user",
@@ -59,7 +65,7 @@ export const POST = withSentryApi(async function POST(req: Request) {
                   url: `data:image/jpeg;base64,${base64}`,
                 },
               },
-            ] as any,
+            ] as unknown[],
           },
         ],
         parseJson: true,
@@ -68,7 +74,7 @@ export const POST = withSentryApi(async function POST(req: Request) {
       });
 
       let damageTypes: string[] = [];
-      const response = result.success ? (result.raw || "[]") : "[]";
+      const response = result.success ? result.raw || "[]" : "[]";
 
       if (result.success && Array.isArray(result.data)) {
         damageTypes = result.data;
@@ -91,6 +97,9 @@ export const POST = withSentryApi(async function POST(req: Request) {
     return NextResponse.json({ ok: true, results });
   } catch (error) {
     // Sentry captured via wrapper; still return structured error
-    return NextResponse.json({ ok: false, error: error.message ?? "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { ok: false, error: error.message ?? "Unknown error" },
+      { status: 500 }
+    );
   }
 });

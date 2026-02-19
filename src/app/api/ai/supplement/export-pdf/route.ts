@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiOrg, verifyClaimAccess } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -220,7 +220,7 @@ export async function POST(req: NextRequest) {
     const pdfBuffer = await htmlToPdfBuffer(html, { format: "Letter" });
 
     // Return PDF as download
-    return new NextResponse(pdfBuffer as any, {
+    return new NextResponse(pdfBuffer as unknown as BodyInit, {
       status: 200,
       headers: {
         "Content-Type": "application/pdf",

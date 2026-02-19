@@ -20,8 +20,8 @@ export const revalidate = 0;
  * - depreciation: ACV calculations (+0.5 token)
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { aiFail, aiOk } from "@/lib/api/aiResponse";
@@ -118,25 +118,22 @@ export async function POST(req: Request) {
 
     // Record event
     await prisma.$executeRaw`INSERT INTO proposal_events (proposal_id, event_type, message, metadata)
-       VALUES (${proposalId}, ${"queued"}, ${`Proposal queued for generation: ${template} template with ${addOns.length} add-on${addOns.length !== 1 ? "s" : ""}`}, ${JSON.stringify({ template, addOns,  userId })}::jsonb)`;
+       VALUES (${proposalId}, ${"queued"}, ${`Proposal queued for generation: ${template} template with ${addOns.length} add-on${addOns.length !== 1 ? "s" : ""}`}, ${JSON.stringify({ template, addOns, userId })}::jsonb)`;
 
     // Log activity event
     await prisma.$executeRaw`INSERT INTO activity_events (org_id, userId, event_type, event_data)
-       VALUES (${orgId}, ${userId}, ${"proposal_queued"}, ${JSON.stringify({ proposalId, template, addOns,  })}::jsonb)`;
+       VALUES (${orgId}, ${userId}, ${"proposal_queued"}, ${JSON.stringify({ proposalId, template, addOns })}::jsonb)`;
 
     // Enqueue worker job
     const { enqueue } = await import("@/lib/queue");
-    const jobId = await enqueue(
-      "proposal-generate",
-      {
-        proposalId,
-        orgId,
-        userId,
-        template,
-        addOns,
-        input,
-      }
-    );
+    const jobId = await enqueue("proposal-generate", {
+      proposalId,
+      orgId,
+      userId,
+      template,
+      addOns,
+      input,
+    });
 
     logger.debug(`Proposal ${proposalId} queued for generation (job: ${jobId})`);
 

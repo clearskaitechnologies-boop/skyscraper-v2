@@ -143,7 +143,7 @@ export const POST = withAuth(
       });
 
       // ── Return client secret for payment ────────────────────────────
-      const invoice = subscription.latest_invoice as any;
+      const invoice = subscription.latest_invoice as Record<string, unknown> | null;
       const clientSecret = invoice?.payment_intent?.client_secret || null;
 
       return NextResponse.json({

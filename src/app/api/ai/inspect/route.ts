@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 // src/app/api/ai/inspect/route.ts
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
@@ -116,7 +116,7 @@ Format your response as a structured analysis with clear sections. Be specific a
               conditions: "Clear",
               note: "AI Analysis - No weather data available",
             },
-          } as any,
+          },
         });
         inspectionId = inspectionRecord.id;
       } catch (error) {

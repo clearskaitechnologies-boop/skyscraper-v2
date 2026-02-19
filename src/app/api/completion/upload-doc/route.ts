@@ -81,7 +81,7 @@ export async function POST(req: Request) {
           claim_id: claimId,
           org_id: orgId,
           completion_form_uploaded: true,
-        } as any,
+        },
         update: {
           completion_form_uploaded: true,
         },

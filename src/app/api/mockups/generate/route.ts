@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     logger.debug("🎨 MOCKUP_GENERATE_START:", { claimId, photoId });
 
     // Get claim context
-    const context = (await buildClaimContext(claimId)) as any;
+    const context = await buildClaimContext(claimId);
 
     if (!context.claim) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });

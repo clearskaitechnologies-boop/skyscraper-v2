@@ -151,5 +151,5 @@ Keep responses concise and actionable. Current user: ${userId}`,
 
 export const POST = withAiBilling(
   createAiConfig("ai_assistant", { costPerRequest: 10 }),
-  POST_INNER as any
+  POST_INNER
 );

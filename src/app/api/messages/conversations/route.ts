@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -47,7 +47,7 @@ export async function GET(req: Request) {
         return {
           ...thread,
           unreadCount,
-          lastMessage: (thread as any).Message?.[0] || null,
+          lastMessage: (thread as Record<string, unknown>).Message?.[0] || null,
         };
       })
     );

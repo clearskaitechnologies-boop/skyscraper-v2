@@ -8,8 +8,8 @@ export const revalidate = 0;
 // GET /api/ai/usage
 // Returns: { mockup: { used, limit }, dol: { used, limit }, weather: { used, limit } }
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { getUsageSummary } from "@/modules/ai/core/tokens";
@@ -27,7 +27,4 @@ async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string 
   }
 }
 
-export const GET = withAiBilling(
-  createAiConfig("ai_usage", { costPerRequest: 0 }),
-  GET_INNER as any
-);
+export const GET = withAiBilling(createAiConfig("ai_usage", { costPerRequest: 0 }), GET_INNER);

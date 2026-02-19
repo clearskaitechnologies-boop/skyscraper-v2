@@ -146,8 +146,8 @@ export async function POST(request: NextRequest) {
         carrierName: carrierDetection.carrierName,
         detectedFrom: carrierDetection.detectedFrom,
         confidence: carrierDetection.confidence,
-        guidelinesJson: carrierDetection.rules as any,
-      } as any,
+        guidelinesJson: carrierDetection.rules as unknown as Record<string, unknown>,
+      },
     });
 
     // 12. Track analytics

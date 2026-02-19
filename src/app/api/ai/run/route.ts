@@ -17,7 +17,7 @@ import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { runSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 import { validateQuota } from "@/modules/ai/core/tokens";
 import { enqueue } from "@/modules/ai/jobs/queue";
-import type { AITokenBucket } from "@/modules/ai/types";
+import type { AISectionKey, AITokenBucket } from "@/modules/ai/types";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
@@ -56,7 +56,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
         const jobId = await enqueue({
           reportId,
           engine: eng,
-          sectionKey: eng as any, // NOTE: Mapping handled by caller
+          sectionKey: eng as AISectionKey, // NOTE: Mapping handled by caller
           context,
         });
         jobIds.push(jobId);
@@ -88,7 +88,4 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
   }
 }
 
-export const POST = withAiBilling(
-  createAiConfig("ai_run", { costPerRequest: 20 }),
-  POST_INNER as any
-);
+export const POST = withAiBilling(createAiConfig("ai_run", { costPerRequest: 20 }), POST_INNER);

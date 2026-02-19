@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -63,7 +63,7 @@ export async function GET() {
         let totalBilled = 0;
         let totalCollected = 0;
         for (const inv of invoices) {
-          const t = inv.totals as any;
+          const t = inv.totals as Record<string, number>;
           totalBilled += t?.total ?? 0;
           totalCollected += t?.paidAmount ?? 0;
         }
@@ -95,7 +95,7 @@ export async function GET() {
 
     // Build commission summary
     const commissionSummary: Record<string, { total: number; count: number }> = {};
-    for (const group of commissions as any[]) {
+    for (const group of commissions as Record<string, unknown>[]) {
       commissionSummary[group.status] = {
         total: Number(group._sum?.commission_amount ?? 0),
         count: group._count ?? 0,

@@ -43,7 +43,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId: userOrgId
             estimatedValue: lead.value,
             createdAt: new Date(),
             updatedAt: new Date(),
-          } as any,
+          },
         });
 
         // Link the lead to the claim

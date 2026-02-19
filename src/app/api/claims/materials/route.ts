@@ -54,7 +54,7 @@ export async function POST(req: Request) {
         color,
         unitPrice,
         quantity: quantity ?? 1,
-      } as any,
+      },
     });
     return NextResponse.json(created, { status: 201 });
   } catch (e) {

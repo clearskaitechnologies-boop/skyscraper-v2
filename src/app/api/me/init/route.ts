@@ -56,7 +56,7 @@ export async function POST(request: Request) {
             clerkOrgId: userId,
             createdAt: new Date(),
             updatedAt: new Date(),
-          } as any,
+          },
         });
         targetOrgId = userId;
         createdOrg = true;
@@ -98,7 +98,7 @@ export async function POST(request: Request) {
             clerkOrgId: orgId!,
             createdAt: new Date(),
             updatedAt: new Date(),
-          } as any,
+          },
         });
         createdOrg = true;
 
@@ -144,7 +144,7 @@ export async function POST(request: Request) {
           name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || null,
           role: "ADMIN", // First user in Org becomes admin
           orgId: dbOrg.id,
-        } as any,
+        },
       });
       createdUser = true;
     } else {

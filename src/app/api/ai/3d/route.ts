@@ -10,8 +10,8 @@
  * - Point cloud processing
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";
@@ -90,5 +90,5 @@ export async function GET() {
 
 export const POST = withAiBilling(
   createAiConfig("3d_reconstruction", { costPerRequest: 50, planRequired: "pro" }),
-  POST_INNER as any
+  POST_INNER
 );

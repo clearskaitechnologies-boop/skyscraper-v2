@@ -1,8 +1,8 @@
 // app/api/intel/material-forensics/route.ts
 // 🧬 MATERIAL FORENSICS API — Generate engineering-grade material failure analysis
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -111,7 +111,7 @@ export async function POST(req: Request) {
         createdById: userId,
         materialType,
         propertyAge,
-        payload: forensicData as any, // JSON type
+        payload: forensicData as unknown as Record<string, unknown>, // JSON type
         overallFailureScore: overallScore,
         primaryFailureMode: primaryMode.mode,
         replacementJustified: overallScore >= 60, // 60%+ threshold

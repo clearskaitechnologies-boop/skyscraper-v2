@@ -1663,8 +1663,7 @@ export default function TradesSocialProfile({
                                     <Lock className="h-3 w-3" /> Company Only
                                   </span>
                                 )}
-                                {(post.visibility === "public" ||
-                                  !post.visibility) && (
+                                {(post.visibility === "public" || !post.visibility) && (
                                   <span className="flex items-center gap-0.5 text-green-600">
                                     <Globe className="h-3 w-3" /> Public
                                   </span>
@@ -1774,20 +1773,18 @@ export default function TradesSocialProfile({
               <TabsContent value="reviews" className="space-y-6">
                 <EnhancedReviewsTab
                   userId={member.userId || member.id}
-                  reviews={
-                    reviews.map((review) => ({
-                      id: review.id,
-                      authorName: review.authorName,
-                      authorAvatar: undefined,
-                      rating: review.rating,
-                      title: review.title || undefined,
-                      content: review.content || undefined,
-                      photos: [],
-                      isVerified: review.isVerified,
-                      helpful: 0,
-                      createdAt: String(review.createdAt),
-                    }))
-                  }
+                  reviews={reviews.map((review) => ({
+                    id: review.id,
+                    authorName: review.authorName,
+                    authorAvatar: undefined,
+                    rating: review.rating,
+                    title: review.title || undefined,
+                    content: review.content || undefined,
+                    photos: [],
+                    isVerified: review.isVerified,
+                    helpful: 0,
+                    createdAt: String(review.createdAt),
+                  }))}
                   averageRating={averageRating}
                   isOwnProfile={isOwnProfile}
                 />

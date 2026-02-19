@@ -27,7 +27,7 @@ function getSupabase() {
 
     if (!url || !key) {
       // During build, return null placeholder
-      return null as any;
+      return null!;
     }
 
     _supabase = createClient(url, key);

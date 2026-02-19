@@ -7,8 +7,8 @@ import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
 import { withAuth } from "@/lib/auth/withAuth";
-import type { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 // ---------------------------------------------------------------------------
 // GET  /api/invoices — List invoices for the org

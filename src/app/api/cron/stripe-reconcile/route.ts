@@ -88,7 +88,7 @@ export async function GET(req: Request) {
             create: {
               orgId: Org.id,
               balance: expectedTokens,
-            } as any,
+            },
             update: {
               balance: expectedTokens,
             },

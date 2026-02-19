@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { VENDORS } from "@/data/vendors";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
@@ -61,5 +61,5 @@ async function GET_INNER(_req: unknown, ctx: { userId: string; orgId: string }) 
 
 export const GET = withAiBilling(
   createAiConfig("product_context", { costPerRequest: 10 }),
-  GET_INNER as any
+  GET_INNER
 );

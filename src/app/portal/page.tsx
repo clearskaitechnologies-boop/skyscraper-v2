@@ -260,7 +260,8 @@ export default async function ClientPortalPage() {
   // Fetch real local contractors from the DB
   try {
     const clientCity = client && "city" in client ? (client as { city: string | null }).city : null;
-    const clientState = client && "state" in client ? (client as { state: string | null }).state : null;
+    const clientState =
+      client && "state" in client ? (client as { state: string | null }).state : null;
 
     // Try to find contractors near the client, fall back to any active contractors
     const whereClause: any = { isActive: true };

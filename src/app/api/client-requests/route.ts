@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -28,7 +28,7 @@ export async function POST(request: Request) {
         type: "CLIENT_REQUEST",
         orgId: clientId || "unknown", // Will need proper org linking
         notes: `Client request submitted via portal`,
-      } as any,
+      },
     });
 
     return NextResponse.json({

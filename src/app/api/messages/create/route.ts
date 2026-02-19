@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -77,7 +77,7 @@ export async function POST(req: Request) {
           firstName: clientRecord.name?.split(" ")[0] || clientRecord.name || "Client",
           lastName: clientRecord.name?.split(" ").slice(1).join(" ") || "",
           email: clientRecord.email,
-        } as any;
+        } as Record<string, unknown>;
       }
     }
 

@@ -98,5 +98,5 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
 export const POST = withAiBilling(
   createAiConfig("estimate_value", { costPerRequest: 15 }),
-  POST_INNER as any
+  POST_INNER
 );

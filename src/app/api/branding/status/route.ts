@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
     let effectiveUserId = userId;
-    let user = null as any;
+    let user: Record<string, unknown> | null = null;
 
     if (!effectiveUserId) {
       // Dev-only fallback to facilitate local status checks without Clerk session
