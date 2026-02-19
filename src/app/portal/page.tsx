@@ -34,6 +34,7 @@ import { ClientPortalWrapper } from "@/components/onboarding/ClientPortalWrapper
 import DemoModeToggle from "@/components/portal/DemoModeToggle";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getUserIdentity } from "@/lib/identity";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { calculateClientStrength } from "@/lib/profile-strength";
 
@@ -58,7 +59,7 @@ export default async function ClientPortalPage() {
   // Pro users should be redirected before this page even loads.
   // This is a safety fallback only.
   if (identity?.userType === "pro") {
-    console.warn("[PORTAL] Pro user reached portal page - middleware should have caught this");
+    logger.warn("[PORTAL] Pro user reached portal page - middleware should have caught this");
     redirect("/dashboard");
   }
 
@@ -68,7 +69,7 @@ export default async function ClientPortalPage() {
   // If Clerk knows this is a pro user but they have no identity, redirect to dashboard
   // This prevents accidental client registration of pro users
   if (clerkUserType === "pro") {
-    console.warn("[PORTAL] Pro user (via Clerk metadata) at portal - redirecting to dashboard");
+    logger.warn("[PORTAL] Pro user (via Clerk metadata) at portal - redirecting to dashboard");
     redirect("/dashboard");
   }
 
@@ -81,13 +82,13 @@ export default async function ClientPortalPage() {
     });
 
     if (orgMembership) {
-      console.log(
+      logger.debug(
         "[PORTAL] User has org membership - this is a PRO user, redirecting to dashboard"
       );
       redirect("/dashboard");
     }
   } catch (orgError) {
-    console.error("[PORTAL] Error checking org membership:", orgError);
+    logger.error("[PORTAL] Error checking org membership:", orgError);
     // Continue - non-fatal, will fall through to other checks
   }
 
@@ -135,7 +136,7 @@ export default async function ClientPortalPage() {
             },
           });
         } catch (syncError) {
-          console.error("[PORTAL] Failed to sync to Clerk:", syncError);
+          logger.error("[PORTAL] Failed to sync to Clerk:", syncError);
           // Non-fatal - cookie fallback will work
         }
       } catch (e) {
@@ -177,7 +178,7 @@ export default async function ClientPortalPage() {
       });
     }
   } catch (clientError) {
-    console.error("[PORTAL] Error fetching client:", clientError);
+    logger.error("[PORTAL] Error fetching client:", clientError);
     // Continue without client - page will show empty state
   }
 
@@ -209,7 +210,7 @@ export default async function ClientPortalPage() {
       claimsCount = activeClaims.length;
     }
   } catch (e) {
-    console.error("[PORTAL] Error fetching claims:", e);
+    logger.error("[PORTAL] Error fetching claims:", e);
   }
 
   // ── Real counts for portal stats ──────────────────────────────────
@@ -253,7 +254,7 @@ export default async function ClientPortalPage() {
       }
     }
   } catch (e) {
-    console.error("[PORTAL] Error fetching portal stats:", e);
+    logger.error("[PORTAL] Error fetching portal stats:", e);
   }
 
   // Fetch real local contractors from the DB
@@ -304,7 +305,7 @@ export default async function ClientPortalPage() {
       });
     }
   } catch (e) {
-    console.error("[PORTAL] Error fetching local contractors:", e);
+    logger.error("[PORTAL] Error fetching local contractors:", e);
   }
 
   const displayName = identity?.displayName || client?.firstName || "Homeowner";

@@ -32,12 +32,11 @@ export const GET = withSentryApi(async (req: Request, { params }: { params: { ke
     }
     const enabled = await evaluateFlag(params.key, orgId, userId || null);
     return NextResponse.json({ key: params.key, enabled, userScoped: true });
-  } catch (err: any) {
-    console.error("Flag GET error", { key: params.key, err: err?.message, stack: err?.stack });
-    return NextResponse.json(
-      { error: "Internal server error", detail: err?.message || "unknown" },
-      { status: 500 }
-    );
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : String(err);
+    const errStack = err instanceof Error ? err.stack : undefined;
+    console.error("Flag GET error", { key: params.key, err: errMsg, stack: errStack });
+    return NextResponse.json({ error: "Internal server error", detail: errMsg }, { status: 500 });
   }
 }) as any;
 
@@ -71,8 +70,9 @@ export const POST = withSentryApi(
     const targeting = body.targeting || null;
     try {
       await setFlag(params.key, enabled, effectiveOrgId, rolloutPercent, targeting);
-    } catch (err: any) {
-      return NextResponse.json({ error: err?.message || "Invalid targeting" }, { status: 400 });
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : "Invalid targeting";
+      return NextResponse.json({ error: errMsg }, { status: 400 });
     }
     return NextResponse.json({ key: params.key, enabled, rolloutPercent, targeting });
   }) as any
@@ -92,8 +92,9 @@ export const DELETE = withSentryApi(
     try {
       const { orgId: adminOrgId } = await requireAdmin();
       orgId = adminOrgId;
-    } catch (err: any) {
-      return NextResponse.json({ error: err?.message || "Unauthorized" }, { status: 401 });
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : "Unauthorized";
+      return NextResponse.json({ error: errMsg }, { status: 401 });
     }
     await deleteFlag(params.key, orgId);
     return NextResponse.json({ key: params.key, deleted: true });

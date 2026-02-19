@@ -43,6 +43,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { TRADE_CATEGORIES, TRADE_TYPES, TradeCategory } from "@/lib/config/trade-types";
 
+import { logger } from "@/lib/logger";
 import ConnectButton from "./ConnectButton";
 import ConnectionsWidget from "./ConnectionsWidget";
 import CoverPhotoEditor from "./CoverPhotoEditor";
@@ -135,7 +136,7 @@ function ConnectionsTab({ isOwnProfile, memberId }: { isOwnProfile: boolean; mem
           );
         }
       } catch (error) {
-        console.error("Failed to fetch connections:", error);
+        logger.error("Failed to fetch connections:", error);
       } finally {
         setLoading(false);
       }
@@ -225,7 +226,7 @@ function ConnectionsTab({ isOwnProfile, memberId }: { isOwnProfile: boolean; mem
                             toast.error(err.error || "Failed to accept connection");
                           }
                         } catch (error) {
-                          console.error("Failed to accept connection:", error);
+                          logger.error("Failed to accept connection:", error);
                           toast.error("Failed to accept connection");
                         }
                       }}
@@ -375,7 +376,7 @@ function ActivityNotificationsWidget() {
           setActivities((prev) => [...requests, ...prev]);
         }
       } catch (error) {
-        console.error("Failed to fetch activities:", error);
+        logger.error("Failed to fetch activities:", error);
       } finally {
         setLoading(false);
       }
@@ -392,7 +393,7 @@ function ActivityNotificationsWidget() {
         setActivities((prev) => prev.filter((a) => a.metadata?.requestId !== requestId));
       }
     } catch (error) {
-      console.error("Failed to accept connection:", error);
+      logger.error("Failed to accept connection:", error);
     }
   };
 
@@ -405,7 +406,7 @@ function ActivityNotificationsWidget() {
         setActivities((prev) => prev.filter((a) => a.metadata?.requestId !== requestId));
       }
     } catch (error) {
-      console.error("Failed to decline connection:", error);
+      logger.error("Failed to decline connection:", error);
     }
   };
 
@@ -603,7 +604,7 @@ export default function TradesSocialProfile({
       setShowPostComposer(false);
       toast.success("Post shared successfully!");
     } catch (error) {
-      console.error("Create post error:", error);
+      logger.error("Create post error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to create post");
     } finally {
       setPostingInProgress(false);
@@ -685,7 +686,7 @@ export default function TradesSocialProfile({
 
       toast.success("Profile photo updated!");
     } catch (error) {
-      console.error("Avatar upload error:", error);
+      logger.error("Avatar upload error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to upload photo");
     } finally {
       setUploading(null);
@@ -737,7 +738,7 @@ export default function TradesSocialProfile({
 
       toast.success("Cover photo updated!");
     } catch (error) {
-      console.error("Cover upload error:", error);
+      logger.error("Cover upload error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to upload cover photo");
     } finally {
       setUploading(null);
@@ -791,7 +792,7 @@ export default function TradesSocialProfile({
           setReviews(reviewsData.reviews || []);
         }
       } catch (error) {
-        console.error("Failed to fetch profile data:", error);
+        logger.error("Failed to fetch profile data:", error);
       } finally {
         setLoading(false);
       }
@@ -1245,7 +1246,7 @@ export default function TradesSocialProfile({
                         toast.success("Profile link copied to clipboard!");
                       }
                     } catch (err) {
-                      console.error("Failed to copy:", err);
+                      logger.error("Failed to copy:", err);
                       window.prompt("Copy this link:", url);
                     }
                   }}

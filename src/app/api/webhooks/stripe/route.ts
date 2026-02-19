@@ -60,7 +60,7 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(raw, sig, process.env.STRIPE_WEBHOOK_SECRET!);
   } catch (err: any) {
-    console.error("Stripe signature verify failed", err?.message);
+    logger.error("Stripe signature verify failed", err?.message);
     Sentry.captureException(err, {
       tags: { component: "stripe-webhook" },
       extra: { eventType: "signature_verification_failed" },
@@ -92,7 +92,7 @@ export async function POST(req: Request) {
         if (invoice.subscription && invoice.status === "draft") {
           // Fail-safe: Log missing customer email for ops
           if (!invoice.customer_email) {
-            console.error(`[EMAIL:MISSING_EMAIL] invoice.upcoming without customer_email`, {
+            logger.error(`[EMAIL:MISSING_EMAIL] invoice.upcoming without customer_email`, {
               invoiceId: invoice.id,
               customerId: invoice.customer,
               subscriptionId: invoice.subscription,
@@ -161,7 +161,7 @@ export async function POST(req: Request) {
 
           logger.debug(`[EMAIL:TRIAL_ENDING] Sent to ${email} (backup)`);
         } else {
-          console.error(`[EMAIL:MISSING_EMAIL] trial_will_end without email`, {
+          logger.error(`[EMAIL:MISSING_EMAIL] trial_will_end without email`, {
             subscriptionId: sub.id,
             customerId: sub.customer,
           });
@@ -188,7 +188,7 @@ export async function POST(req: Request) {
           // TODO: Send receipt email to customer via Resend
           // Include: amount paid, plan name, next billing date, invoice PDF link
         } else {
-          console.error(`[EMAIL:MISSING_EMAIL] checkout.session.completed without email`, {
+          logger.error(`[EMAIL:MISSING_EMAIL] checkout.session.completed without email`, {
             sessionId: cs.id,
             customerId: cs.customer,
           });
@@ -268,7 +268,7 @@ export async function POST(req: Request) {
             },
           });
 
-          console.log(
+          logger.debug(
             `[SUBSCRIPTION:${event.type}] Updated Org ${Org.id}: status=${subscriptionStatus}, sub=${sub.id}, seats=${quantity}`
           );
 
@@ -314,7 +314,7 @@ export async function POST(req: Request) {
                     proration_behavior: "none",
                   });
 
-                  console.log(
+                  logger.debug(
                     `[REFERRAL:MONTH] Extended subscription for Org ${referral.org_id} by 30 days`
                   );
                 }
@@ -350,7 +350,7 @@ export async function POST(req: Request) {
                 updated_at = NOW()
             `;
 
-            console.log(
+            logger.debug(
               `[FULL_ACCESS] ${event.type} - User ${faUserId}: ${isActive ? "ACTIVE" : "INACTIVE"} until ${expiresAt}`
             );
           } catch (error) {
@@ -434,7 +434,7 @@ export async function POST(req: Request) {
                 updatedAt: new Date(),
               },
             });
-            console.log(
+            logger.debug(
               `[SEAT-BILLING] Renewed sub ${subId}, seats=${stripeSub.items.data[0]?.quantity}`
             );
           }

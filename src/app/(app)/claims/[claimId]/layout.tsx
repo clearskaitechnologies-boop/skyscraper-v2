@@ -26,7 +26,9 @@ export default async function ClaimLayout({ children, params }: ClaimLayoutProps
   try {
     const result = await resolveClaim(claimId);
     if (result.ok && result.canonicalId !== claimId) {
-      logger.debug("[ClaimLayout] Redirecting to canonical ID", { canonicalId: result.canonicalId });
+      logger.debug("[ClaimLayout] Redirecting to canonical ID", {
+        canonicalId: result.canonicalId,
+      });
       // Get the current path segment after [claimId]
       // Since we're in layout, we don't have the full path, so just redirect to overview
       redirect(`/claims/${result.canonicalId}/overview`);

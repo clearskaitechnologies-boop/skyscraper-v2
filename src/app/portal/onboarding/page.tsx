@@ -278,7 +278,9 @@ export default function ClientOnboardingPage() {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-emerald-600 shadow-lg shadow-green-500/20">
             <Home className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 sm:text-3xl">Welcome to SkaiScraper</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white sm:text-3xl">
+            Welcome to SkaiScraper
+          </h1>
           <p className="mt-2 text-slate-600">Let&apos;s set up your profile in just a few steps</p>
         </div>
 
@@ -312,12 +314,14 @@ export default function ClientOnboardingPage() {
         </div>
 
         {/* Form Card */}
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-xl dark:border-slate-700 dark:bg-slate-900 sm:p-8">
           {/* Step 1: Basic Info */}
           {step === 1 && (
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-slate-900">Tell us about yourself</h2>
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                  Tell us about yourself
+                </h2>
                 <p className="mt-1 text-sm text-slate-500">
                   This helps us personalize your experience
                 </p>
@@ -381,7 +385,7 @@ export default function ClientOnboardingPage() {
                         <Home className="h-4 w-4" />
                       </div>
                       <div>
-                        <p className="font-medium text-slate-900">{cat.label}</p>
+                        <p className="font-medium text-slate-900 dark:text-white">{cat.label}</p>
                         <p className="text-xs text-slate-500">{cat.description}</p>
                       </div>
                     </button>
@@ -395,7 +399,9 @@ export default function ClientOnboardingPage() {
           {step === 2 && (
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-slate-900">Where are you located?</h2>
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                  Where are you located?
+                </h2>
                 <p className="mt-1 text-sm text-slate-500">
                   This helps us connect you with local pros
                 </p>
@@ -454,7 +460,7 @@ export default function ClientOnboardingPage() {
                 />
               </div>
 
-              <div className="rounded-xl bg-blue-50 p-4">
+              <div className="rounded-xl bg-blue-50 p-4 dark:bg-blue-950/30">
                 <div className="flex items-start gap-3">
                   <MapPin className="mt-0.5 h-5 w-5 text-blue-600" />
                   <div>
@@ -473,7 +479,9 @@ export default function ClientOnboardingPage() {
           {step === 3 && (
             <div className="space-y-6">
               <div className="text-center">
-                <h2 className="text-xl font-semibold text-slate-900">Complete your profile</h2>
+                <h2 className="text-xl font-semibold text-slate-900 dark:text-white">
+                  Complete your profile
+                </h2>
                 <p className="mt-1 text-sm text-slate-500">
                   Add a photo and bio to help contractors know you
                 </p>
@@ -527,7 +535,7 @@ export default function ClientOnboardingPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="font-medium text-slate-900">Profile Photo</p>
+                  <p className="font-medium text-slate-900 dark:text-white">Profile Photo</p>
                   <p className="text-sm text-slate-500">Click to upload a photo of yourself</p>
                   <button
                     onClick={() => avatarInputRef.current?.click()}

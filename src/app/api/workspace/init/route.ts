@@ -1,5 +1,5 @@
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { ensureDemoDataForOrg } from "@/lib/demoSeed";
@@ -30,7 +30,7 @@ export async function POST() {
     });
 
     if (existingMembership?.organizationId) {
-      console.info("[workspace/init]", {
+      logger.info("[workspace/init]", {
         userId,
         created: false,
         orgId: existingMembership.organizationId,
@@ -66,7 +66,7 @@ export async function POST() {
       },
     });
 
-    console.log("[workspace/init] Created org:", {
+    logger.debug("[workspace/init] Created org:", {
       orgId: newOrg.id,
       name: newOrg.name,
       userId,
@@ -82,7 +82,7 @@ export async function POST() {
       },
     });
 
-    console.log("[workspace/init] Created membership:", {
+    logger.debug("[workspace/init] Created membership:", {
       userId,
       orgId: newOrg.id,
       role: "ADMIN",
@@ -96,7 +96,7 @@ export async function POST() {
       });
       logger.debug("[workspace/init] Demo data seeded:", seedResult);
     } catch (seedError) {
-      console.error("[workspace/init] Demo seed failed (non-fatal):", seedError);
+      logger.error("[workspace/init] Demo seed failed (non-fatal):", seedError);
       // Continue anyway - org is created, demo data is optional
     }
 
@@ -110,11 +110,11 @@ export async function POST() {
       });
       logger.debug("[workspace/init] Updated Clerk metadata");
     } catch (metadataError) {
-      console.error("[workspace/init] Clerk metadata update failed (non-fatal):", metadataError);
+      logger.error("[workspace/init] Clerk metadata update failed (non-fatal):", metadataError);
       // Non-fatal - org is created, Clerk metadata is optional
     }
 
-    console.info("[workspace/init]", {
+    logger.info("[workspace/init]", {
       userId,
       created: true,
       orgId: newOrg.id,

@@ -49,6 +49,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -121,7 +122,7 @@ export default function InvitationsPage() {
       const data = await response.json();
       setInvitations(data.invitations || []);
     } catch (error) {
-      console.error("Error loading invitations:", error);
+      logger.error("Error loading invitations:", error);
     } finally {
       setLoading(false);
     }
@@ -134,7 +135,7 @@ export default function InvitationsPage() {
       const data = await response.json();
       setReceived(data.received || []);
     } catch (error) {
-      console.error("Error loading received connections:", error);
+      logger.error("Error loading received connections:", error);
     } finally {
       setLoadingReceived(false);
     }
@@ -160,7 +161,7 @@ export default function InvitationsPage() {
       toast.success("Connection accepted!");
       await loadReceived();
     } catch (err: any) {
-      console.error("Accept error:", err);
+      logger.error("Accept error:", err);
       toast.error(err.message || "Failed to accept connection");
     } finally {
       setActionLoading(null);
@@ -180,7 +181,7 @@ export default function InvitationsPage() {
       toast.success("Connection declined");
       await loadReceived();
     } catch (err: any) {
-      console.error("Decline error:", err);
+      logger.error("Decline error:", err);
       toast.error(err.message || "Failed to decline connection");
     } finally {
       setActionLoading(null);
@@ -213,7 +214,7 @@ export default function InvitationsPage() {
       setMessage("");
       loadInvitations();
     } catch (error) {
-      console.error("Error sending invitation:", error);
+      logger.error("Error sending invitation:", error);
       toast.error("Failed to send invitation");
     }
   };
@@ -248,7 +249,7 @@ export default function InvitationsPage() {
       setBulkMessage("");
       loadInvitations();
     } catch (error) {
-      console.error("Error sending bulk invitations:", error);
+      logger.error("Error sending bulk invitations:", error);
       toast.error("Failed to send invitations");
     }
   };
@@ -262,7 +263,7 @@ export default function InvitationsPage() {
       toast.success("Invitation resent successfully!");
       loadInvitations();
     } catch (error) {
-      console.error("Error resending invitation:", error);
+      logger.error("Error resending invitation:", error);
       toast.error("Failed to resend invitation");
     }
   };

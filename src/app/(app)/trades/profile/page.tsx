@@ -10,6 +10,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import ProfileStrengthBanner from "@/components/ProfileStrengthBanner";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { calculateProStrength } from "@/lib/profile-strength";
 
@@ -48,7 +49,7 @@ export default async function MyNetworkPage() {
       },
     })
     .catch((err: Error) => {
-      console.error("[Trades Profile] Query ERROR for", user.id, ":", err.message);
+      logger.error("[Trades Profile] Query ERROR for", user.id, ":", err.message);
       return null;
     });
 
@@ -57,11 +58,11 @@ export default async function MyNetworkPage() {
   // Also heals members that exist but have no company linked.
   if (!member || !member.company) {
     if (!member) {
-      console.warn(
+      logger.warn(
         `[Trades Profile] ⚠️ No tradesCompanyMember for userId=${user.id} (${user.firstName} ${user.lastName}) — auto-creating...`
       );
     } else {
-      console.warn(
+      logger.warn(
         `[Trades Profile] ⚠️ Member ${member.id} exists but has no company linked — healing...`
       );
     }
@@ -85,7 +86,7 @@ export default async function MyNetworkPage() {
           .catch(() => null)
       : null;
 
-    console.log(
+    logger.debug(
       `[Trades Profile] 🔍 Company lookup by orgId=${orgId}: ${existingCompany?.name || "NOT FOUND"}`
     );
 
@@ -134,7 +135,7 @@ export default async function MyNetworkPage() {
           .catch(() => null);
       }
 
-      console.log(
+      logger.debug(
         `[Trades Profile] 🔍 Company lookup by name="${resolvedCompanyName}": ${existingCompany?.name || "NOT FOUND"}`
       );
     }
@@ -148,7 +149,7 @@ export default async function MyNetworkPage() {
         })
         .catch(() => null);
 
-      console.log(
+      logger.debug(
         `[Trades Profile] 🔍 Company lookup by member.companyName="${member.companyName}": ${existingCompany?.name || "NOT FOUND"}`
       );
     }
@@ -206,7 +207,7 @@ export default async function MyNetworkPage() {
         },
         include: { company: true },
       });
-      console.log(
+      logger.debug(
         `[Trades Profile] ✅ Healed member ${member.id} for ${user.firstName} ${user.lastName} (company: ${member.company?.name || "none"}, companyId: ${member.companyId || "null"})`
       );
 
@@ -247,13 +248,13 @@ export default async function MyNetworkPage() {
             active: true,
           },
         });
-        console.log(`[Trades Profile] ✅ Synced legacy TradesProfile for ${user.id}`);
+        logger.debug(`[Trades Profile] ✅ Synced legacy TradesProfile for ${user.id}`);
       } catch (syncErr) {
         // Non-fatal — member profile still works without legacy sync
-        console.warn("[Trades Profile] ⚠️ Legacy TradesProfile sync failed:", syncErr);
+        logger.warn("[Trades Profile] ⚠️ Legacy TradesProfile sync failed:", syncErr);
       }
     } catch (createErr) {
-      console.error("[Trades Profile] ❌ Auto-create/heal failed:", createErr);
+      logger.error("[Trades Profile] ❌ Auto-create/heal failed:", createErr);
       // If upsert failed but we had a pre-existing member, keep it
       // so the page can still render (without company link)
       if (!member) {

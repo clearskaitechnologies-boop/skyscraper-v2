@@ -9,6 +9,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 import { isTestMode } from "@/lib/testMode";
@@ -39,7 +40,7 @@ export default async function CompanyContactsPage() {
   try {
     return await renderContactsPage();
   } catch (error: any) {
-    console.error("[CompanyContacts] FATAL PAGE ERROR:", {
+    logger.error("[CompanyContacts] FATAL PAGE ERROR:", {
       message: error?.message,
       stack: error?.stack,
       name: error?.name,
@@ -78,7 +79,7 @@ async function renderContactsPage() {
   try {
     orgCtx = await safeOrgContext();
   } catch (error) {
-    console.error("[CompanyContacts] safeOrgContext failed:", error);
+    logger.error("[CompanyContacts] safeOrgContext failed:", error);
     // Return unauthenticated view on error
     return (
       <PageContainer>
@@ -133,7 +134,7 @@ async function renderContactsPage() {
 
   // Handle error state from safeOrgContext
   if (orgCtx.status === "error" || orgCtx.status === "noMembership") {
-    console.error("[CompanyContacts] Org context error:", orgCtx.error || orgCtx.reason);
+    logger.error("[CompanyContacts] Org context error:", orgCtx.error || orgCtx.reason);
     return (
       <PageContainer>
         <PageHero
@@ -311,7 +312,7 @@ async function renderContactsPage() {
           }
         }
       } catch (portalErr) {
-        console.error("[CompanyContacts] Portal clients query failed:", portalErr);
+        logger.error("[CompanyContacts] Portal clients query failed:", portalErr);
       }
 
       // ── Fetch trade connections (vendors, subs, contractors) via accepted user connections ──
@@ -374,7 +375,7 @@ async function renderContactsPage() {
             });
         }
       } catch (e) {
-        console.error("[CompanyContacts] Trade connections query failed:", e);
+        logger.error("[CompanyContacts] Trade connections query failed:", e);
         connections = [];
       }
 
@@ -413,11 +414,11 @@ async function renderContactsPage() {
           teamMembers = members.filter((m) => !isDemoContact(m));
         }
       } catch (teamErr) {
-        console.error("[CompanyContacts] Team members query failed:", teamErr);
+        logger.error("[CompanyContacts] Team members query failed:", teamErr);
         teamMembers = [];
       }
     } catch (error: any) {
-      console.error("[CONTACTS_API_ERROR]", {
+      logger.error("[CONTACTS_API_ERROR]", {
         error: error?.message,
         code: error?.code,
         organizationId,
@@ -425,7 +426,7 @@ async function renderContactsPage() {
       });
 
       // Treat errors as empty state - friendly UI instead of scary error
-      console.log("[ClientContactsPage] Treating DB error as empty state");
+      logger.debug("[ClientContactsPage] Treating DB error as empty state");
       contacts = [];
     }
   }

@@ -1,7 +1,7 @@
 "use client";
 
-import { Loader2, Upload, X } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { Loader2, Upload, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -172,7 +172,9 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
       <div className="relative w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-slate-900">
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">Submit Work Request</h2>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">
+            Submit Work Request
+          </h2>
           <button
             onClick={onClose}
             className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-800"
@@ -200,7 +202,9 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
                   onChange={() => setDestination("job-board")}
                   className="sr-only"
                 />
-                <span className="text-sm">Job Board (All Pros)</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">
+                  Job Board (All Pros)
+                </span>
               </label>
               <label
                 className={`flex cursor-pointer items-center gap-2 rounded-lg border px-4 py-2 transition-colors ${destination === "specific" ? "border-primary bg-primary/10" : "border-slate-200 hover:border-slate-300 dark:border-slate-700"}`}
@@ -213,7 +217,7 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
                   onChange={() => setDestination("specific")}
                   className="sr-only"
                 />
-                <span className="text-sm">Specific Pro</span>
+                <span className="text-sm text-slate-700 dark:text-slate-200">Specific Pro</span>
               </label>
             </div>
 
@@ -286,8 +290,12 @@ export function SubmitWorkRequestModal({ isOpen, onClose, slug }: SubmitWorkRequ
                       onChange={(e) => setFormData({ ...formData, jobCategory: e.target.value })}
                       className="sr-only"
                     />
-                    <span className="text-sm font-medium">{cat.label}</span>
-                    <span className="ml-auto text-xs text-slate-400">{cat.hint}</span>
+                    <span className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                      {cat.label}
+                    </span>
+                    <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">
+                      {cat.hint}
+                    </span>
                   </label>
                 ))}
               </div>

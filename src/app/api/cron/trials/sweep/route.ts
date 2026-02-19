@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (err: any) {
-      console.error(
+      logger.error(
         "[CRON:TRIALS_SWEEP] Skipping expiredTrials step due to DB schema issue:",
         err?.message || err
       );
@@ -100,12 +100,7 @@ export async function GET(request: NextRequest) {
         }
       } catch (error) {
         const msg = `Failed to process expired trial for Org ${Org.id}: ${error}`;
-        console.error(msg);
-        results.errors.push(msg);
-      }
-    }
-
-    // 2. Send T-24h reminders (23-25 hour window)
+        logger.error(msg);
     const t24hStart = new Date(now.getTime() + 23 * 60 * 60 * 1000);
     const t24hEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
@@ -134,7 +129,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (err: any) {
-      console.error(
+      logger.error(
         "[CRON:TRIALS_SWEEP] Skipping T-24 step due to DB schema issue:",
         err?.message || err
       );
@@ -167,7 +162,7 @@ export async function GET(request: NextRequest) {
         }
       } catch (error) {
         const msg = `Failed to send T-24h email for Org ${Org.id}: ${error}`;
-        console.error(msg);
+        logger.error(msg);
         results.errors.push(msg);
       }
     }
@@ -201,7 +196,7 @@ export async function GET(request: NextRequest) {
         },
       });
     } catch (err: any) {
-      console.error(
+      logger.error(
         "[CRON:TRIALS_SWEEP] Skipping T-1 step due to DB schema issue:",
         err?.message || err
       );
@@ -234,12 +229,7 @@ export async function GET(request: NextRequest) {
         }
       } catch (error) {
         const msg = `Failed to send T-1h email for Org ${Org.id}: ${error}`;
-        console.error(msg);
-        results.errors.push(msg);
-      }
-    }
-
-    return NextResponse.json({
+        logger.error(msg);
       success: true,
       timestamp: now.toISOString(),
       results,

@@ -66,6 +66,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { logger } from "@/lib/logger";
 
 // Trade types from config
 const TRADE_OPTIONS = [
@@ -209,11 +210,11 @@ export default function FindAProPage() {
         } else {
           // Log the actual error for debugging
           const errorText = await res.text().catch(() => "unknown");
-          console.error(`[find-a-pro] API returned ${res.status}:`, errorText);
+          logger.error(`[find-a-pro] API returned ${res.status}:`, errorText);
 
           // On auth error, retry once after a short delay (Clerk cookie race)
           if (res.status === 401 && reset) {
-            console.warn("[find-a-pro] Auth failed, retrying in 1s...");
+            logger.warn("[find-a-pro] Auth failed, retrying in 1s...");
             await new Promise((r) => setTimeout(r, 1000));
             const retry = await fetch(`/api/portal/find-pro?${params}`);
             if (retry.ok) {
@@ -228,7 +229,7 @@ export default function FindAProPage() {
           setHasMore(false);
         }
       } catch (error) {
-        console.error("Failed to fetch pros:", error);
+        logger.error("Failed to fetch pros:", error);
         setPros([]);
       } finally {
         setLoading(false);
@@ -265,7 +266,7 @@ export default function FindAProPage() {
         setPendingProIds(pending);
       }
     } catch (error) {
-      console.error("Failed to load connection status:", error);
+      logger.error("Failed to load connection status:", error);
     }
   }
 
@@ -294,7 +295,7 @@ export default function FindAProPage() {
         setSavedProIds(data.savedProIds || []);
       }
     } catch (error) {
-      console.error("Failed to load saved status:", error);
+      logger.error("Failed to load saved status:", error);
     }
   }
 
@@ -310,7 +311,7 @@ export default function FindAProPage() {
         );
       }
     } catch (error) {
-      console.error("Failed to load jobs:", error);
+      logger.error("Failed to load jobs:", error);
     }
   }
 
@@ -428,7 +429,7 @@ export default function FindAProPage() {
 
       setShowInviteModal(false);
     } catch (error) {
-      console.error("Invite error:", error);
+      logger.error("Invite error:", error);
       toast.error("Failed to send invitation");
     } finally {
       setSendingInvite(false);

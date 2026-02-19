@@ -11,6 +11,7 @@ import { TemplateIntelligencePanel } from "@/components/templates/TemplateIntell
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { logger } from "@/lib/logger";
 
 interface TemplateData {
   id: string;
@@ -68,7 +69,7 @@ export default function PublicTemplatePreviewPage() {
           }
         }
       } catch (err) {
-        console.error("[TEMPLATE_PREVIEW] Failed to fetch templates list:", err);
+        logger.error("[TEMPLATE_PREVIEW] Failed to fetch templates list:", err);
       }
     }
     fetchAllTemplates();
@@ -78,7 +79,7 @@ export default function PublicTemplatePreviewPage() {
     async function fetchTemplate() {
       try {
         setLoading(true);
-        console.log("[TEMPLATE_PREVIEW] Fetching template:", templateId);
+        logger.debug("[TEMPLATE_PREVIEW] Fetching template:", templateId);
 
         // Fetch from marketplace API by slug
         const res = await fetch(`/api/templates/marketplace/${templateId}`, {
@@ -87,7 +88,7 @@ export default function PublicTemplatePreviewPage() {
         });
 
         if (!res.ok) {
-          console.error("[TEMPLATE_PREVIEW] Slug fetch failed, trying ID fallback");
+          logger.error("[TEMPLATE_PREVIEW] Slug fetch failed, trying ID fallback");
           // Fallback: try as template ID if slug fails
           const idRes = await fetch(`/api/templates/marketplace?id=${templateId}`, {
             credentials: "include",
@@ -95,7 +96,7 @@ export default function PublicTemplatePreviewPage() {
           });
 
           if (!idRes.ok) {
-            console.error("[TEMPLATE_PREVIEW] Both fetch attempts failed");
+            logger.error("[TEMPLATE_PREVIEW] Both fetch attempts failed");
             throw new Error("Failed to load template");
           }
 
@@ -115,7 +116,7 @@ export default function PublicTemplatePreviewPage() {
         }
 
         const data = await res.json();
-        console.log("[TEMPLATE_PREVIEW] Fetched template:", data.template?.title);
+        logger.debug("[TEMPLATE_PREVIEW] Fetched template:", data.template?.title);
 
         if (data.ok && data.template) {
           setTemplate({
@@ -137,7 +138,7 @@ export default function PublicTemplatePreviewPage() {
           throw new Error(data.error || "Template not found");
         }
       } catch (err: any) {
-        console.error("[TEMPLATE_PREVIEW] Error:", err);
+        logger.error("[TEMPLATE_PREVIEW] Error:", err);
         setError(err.message);
       } finally {
         setLoading(false);

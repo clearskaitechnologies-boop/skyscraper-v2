@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import {
   downloadPDF,
   exportClaimSummaryToPDF,
@@ -83,13 +84,13 @@ export default function TimelineNotesSection({
       }
 
       const result = await res.json();
-      console.log("✅ Event added:", result);
+      logger.debug("Event added:", result);
 
       setNewEvent({ title: "", description: "", eventType: "update", visibleToClient: false });
       setIsAddingEvent(false);
       router.refresh();
     } catch (error) {
-      console.error("❌ Error adding event:", error);
+      logger.error("Error adding event:", error);
       alert(error instanceof Error ? error.message : "Failed to add event. Please try again.");
     } finally {
       setIsSavingEvent(false);
@@ -118,13 +119,13 @@ export default function TimelineNotesSection({
       }
 
       const result = await res.json();
-      console.log("✅ Note added:", result);
+      logger.debug("Note added:", result);
 
       setNewNote({ body: "", noteType: "internal", isPinned: false, visibleToClient: false });
       setIsAddingNote(false);
       router.refresh();
     } catch (error) {
-      console.error("❌ Error adding note:", error);
+      logger.error("Error adding note:", error);
       alert(error instanceof Error ? error.message : "Failed to add note. Please try again.");
     } finally {
       setIsSavingNote(false);
@@ -152,7 +153,7 @@ export default function TimelineNotesSection({
       const blob = await exportTimelineToPDF(claimData, timelineForPdf, notes);
       downloadPDF(blob, `claim-${claimId}-timeline.pdf`);
     } catch (error) {
-      console.error("Failed to export timeline:", error);
+      logger.error("Failed to export timeline:", error);
       alert("Failed to export timeline. Please try again.");
     }
   };
@@ -178,7 +179,7 @@ export default function TimelineNotesSection({
       const blob = await exportClaimSummaryToPDF(claimData, timelineForPdf);
       downloadPDF(blob, `claim-${claimId}-summary.pdf`);
     } catch (error) {
-      console.error("Failed to export summary:", error);
+      logger.error("Failed to export summary:", error);
       alert("Failed to export summary. Please try again.");
     }
   };

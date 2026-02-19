@@ -69,6 +69,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface ContractorProfile {
   id: string;
@@ -179,32 +180,32 @@ export default function ContractorProfilePage() {
 
   async function loadProfile(retries = 2) {
     try {
-      console.log(`[Profile] Loading profile for ID: ${companyId}`);
+      logger.debug(`[Profile] Loading profile for ID: ${companyId}`);
       const res = await fetch(`/api/trades/profile/${companyId}/public`);
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        console.error(`[Profile] API error:`, res.status, errorData);
+        logger.error(`[Profile] API error:`, res.status, errorData);
         // Retry on server errors (5xx) or rate limits (429)
         if (retries > 0 && (res.status >= 500 || res.status === 429)) {
-          console.log(`[Profile] Retrying... (${retries} left)`);
+          logger.debug(`[Profile] Retrying... (${retries} left)`);
           await new Promise((r) => setTimeout(r, 500));
           return loadProfile(retries - 1);
         }
         throw new Error(errorData.error || "Contractor not found");
       }
       const data = await res.json();
-      console.log(`[Profile] Loaded profile:`, data.profile?.id);
+      logger.debug(`[Profile] Loaded profile:`, data.profile?.id);
       setProfile(data.profile);
       setError(null);
     } catch (err: unknown) {
       // Retry on network errors
       if (retries > 0 && err instanceof TypeError) {
-        console.log(`[Profile] Network error, retrying... (${retries} left)`);
+        logger.debug(`[Profile] Network error, retrying... (${retries} left)`);
         await new Promise((r) => setTimeout(r, 500));
         return loadProfile(retries - 1);
       }
       const errMsg = err instanceof Error ? err.message : "Failed to load contractor profile";
-      console.error(`[Profile] Load error:`, errMsg);
+      logger.error(`[Profile] Load error:`, errMsg);
       setError(errMsg);
       toast.error(errMsg);
     } finally {
@@ -229,7 +230,7 @@ export default function ContractorProfilePage() {
         }
       }
     } catch (error) {
-      console.error("Failed to load connection status:", error);
+      logger.error("Failed to load connection status:", error);
     }
   }
 
@@ -241,7 +242,7 @@ export default function ContractorProfilePage() {
         setIsSaved((data.savedProIds || []).includes(companyId));
       }
     } catch (error) {
-      console.error("Failed to load saved status:", error);
+      logger.error("Failed to load saved status:", error);
     }
   }
 
@@ -257,7 +258,7 @@ export default function ContractorProfilePage() {
         );
       }
     } catch (error) {
-      console.error("Failed to load jobs:", error);
+      logger.error("Failed to load jobs:", error);
     }
   }
 
@@ -397,7 +398,7 @@ export default function ContractorProfilePage() {
       setNewProjectDescription("");
       setSelectedJobId("");
     } catch (error) {
-      console.error("Invite error:", error);
+      logger.error("Invite error:", error);
       toast.error("Failed to send invitation");
     } finally {
       setSendingInvite(false);

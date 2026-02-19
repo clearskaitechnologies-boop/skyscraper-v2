@@ -49,6 +49,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /*  Visibility options                                                 */
@@ -304,7 +305,7 @@ export default function CommunityHubPage() {
         setPendingInvitations(data.invitations || []);
       }
     } catch (error) {
-      console.error("Failed to fetch invitations:", error);
+      logger.error("Failed to fetch invitations:", error);
     } finally {
       setLoadingInvitations(false);
     }
@@ -323,7 +324,7 @@ export default function CommunityHubPage() {
         setPosts(data.posts || []);
       }
     } catch (error) {
-      console.error("Failed to fetch posts:", error);
+      logger.error("Failed to fetch posts:", error);
     } finally {
       setLoadingPosts(false);
     }
@@ -341,7 +342,7 @@ export default function CommunityHubPage() {
         setTrendingPros(data.pros || []);
       }
     } catch (error) {
-      console.error("Failed to fetch trending pros:", error);
+      logger.error("Failed to fetch trending pros:", error);
     }
   }, [tradeFilter]);
 
@@ -353,7 +354,7 @@ export default function CommunityHubPage() {
         setGroups(data.groups || []);
       }
     } catch (error) {
-      console.error("Failed to fetch groups:", error);
+      logger.error("Failed to fetch groups:", error);
     }
   }, []);
 
@@ -480,7 +481,7 @@ export default function CommunityHubPage() {
         toast.error("Failed to create post");
       }
     } catch (error) {
-      console.error("Post creation error:", error);
+      logger.error("Post creation error:", error);
       toast.error("Failed to create post");
     } finally {
       setSubmitting(false);

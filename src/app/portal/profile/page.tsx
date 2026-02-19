@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 import { calculateClientStrength } from "@/lib/profile-strength";
 
 const CLIENT_CATEGORIES = [
@@ -108,7 +109,7 @@ function PropertyPhotoGallery() {
         setFolders(data.folders || {});
       }
     } catch (err) {
-      console.error("Failed to load photos:", err);
+      logger.error("Failed to load photos:", err);
     } finally {
       setLoading(false);
     }
@@ -332,7 +333,7 @@ function PropertyPhotoGallery() {
             onClick={() => setLightboxPhoto(null)}
           >
             <div
-              className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl"
+              className="relative max-h-[90vh] max-w-4xl overflow-hidden rounded-2xl bg-white shadow-2xl dark:bg-slate-900"
               onClick={(e) => e.stopPropagation()}
             >
               <button
@@ -351,10 +352,12 @@ function PropertyPhotoGallery() {
               </div>
               {lightboxPhoto.caption && (
                 <div className="border-t p-4">
-                  <p className="text-sm text-slate-700">{lightboxPhoto.caption}</p>
+                  <p className="text-sm text-slate-700 dark:text-slate-300">
+                    {lightboxPhoto.caption}
+                  </p>
                 </div>
               )}
-              <div className="flex items-center justify-between border-t bg-slate-50 px-4 py-3">
+              <div className="flex items-center justify-between border-t bg-slate-50 px-4 py-3 dark:border-slate-700 dark:bg-slate-800">
                 <Badge variant="outline">
                   {PHOTO_FOLDERS.find((f) => f.value === lightboxPhoto.folder)?.icon}{" "}
                   {PHOTO_FOLDERS.find((f) => f.value === lightboxPhoto.folder)?.label ||
@@ -405,7 +408,7 @@ function ConnectionsSection() {
         setPendingConnections(all.filter((c: any) => c.connectionStatus === "pending"));
       }
     } catch (error) {
-      console.error("Failed to load connections:", error);
+      logger.error("Failed to load connections:", error);
     } finally {
       setLoading(false);
     }
@@ -441,7 +444,7 @@ function ConnectionsSection() {
               {pendingConnections.map((conn: any) => (
                 <div
                   key={conn.id}
-                  className="flex items-center gap-4 rounded-lg border bg-white p-4"
+                  className="flex items-center gap-4 rounded-lg border bg-white p-4 dark:border-slate-700 dark:bg-slate-800"
                 >
                   <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 font-bold text-white">
                     {conn.name?.[0] || "P"}
@@ -647,7 +650,7 @@ export default function ClientProfilePage() {
           }));
         }
       } catch (error) {
-        console.error("Failed to load profile:", error);
+        logger.error("Failed to load profile:", error);
       } finally {
         setLoading(false);
       }
@@ -751,7 +754,7 @@ export default function ClientProfilePage() {
       setIsEditing(false);
       toast.success("Profile saved successfully!");
     } catch (error: any) {
-      console.error("Failed to save profile:", error);
+      logger.error("Failed to save profile:", error);
       toast.error(error.message || "Failed to save profile");
     } finally {
       setSaving(false);
@@ -790,7 +793,7 @@ export default function ClientProfilePage() {
 
       toast.success(`${type === "avatar" ? "Profile" : "Cover"} photo uploaded!`);
     } catch (error) {
-      console.error("Upload failed:", error);
+      logger.error("Upload failed:", error);
       toast.error("Failed to upload photo");
     } finally {
       setUploading(false);

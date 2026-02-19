@@ -112,7 +112,7 @@ export default function ThreadDetailPage() {
         </Link>
 
         {/* Loading State */}
-        <div className="rounded-2xl border border-slate-200 bg-white shadow-lg">
+        <div className="rounded-2xl border border-slate-200 bg-white shadow-lg dark:border-slate-700 dark:bg-slate-900">
           <div className="border-b border-slate-100 p-4">
             <Skeleton className="h-6 w-48" />
             <Skeleton className="mt-2 h-4 w-32" />

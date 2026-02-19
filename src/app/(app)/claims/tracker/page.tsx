@@ -26,8 +26,19 @@ type ClaimStage =
   | "COMPLETED"
   | "DEPRECIATION";
 
+interface PipelineClaim {
+  id: string;
+  claimNumber: string;
+  status: string;
+  estimatedValue: number | null;
+  properties: {
+    street: string | null;
+    contacts: { firstName: string | null; lastName: string | null }[];
+  };
+}
+
 async function getClaimsForPipeline(orgId: string) {
-  let claims: any[] = [];
+  let claims: PipelineClaim[] = [];
   try {
     claims = await prisma.claims.findMany({
       where: { orgId },
@@ -50,8 +61,9 @@ async function getClaimsForPipeline(orgId: string) {
       },
       orderBy: { createdAt: "desc" },
     });
-  } catch (err: any) {
-    if (err?.code === "P2022") {
+  } catch (err: unknown) {
+    const prismaErr = err as { code?: string };
+    if (prismaErr?.code === "P2022") {
       console.warn("[ClaimsTracker] Missing column – pipeline empty");
     } else {
       console.warn("[ClaimsTracker] Unexpected claims query error", err);
@@ -61,7 +73,7 @@ async function getClaimsForPipeline(orgId: string) {
 
   return claims.map((claim) => {
     let lifecycleStage: ClaimStage = "FILED";
-    const status = (claim as any).status?.toLowerCase();
+    const status = claim.status?.toLowerCase();
     if (status === "new" || status === "filed") lifecycleStage = "FILED";
     else if (status === "in_progress" || status === "review") lifecycleStage = "ADJUSTER_REVIEW";
     else if (status === "approved") lifecycleStage = "APPROVED";
@@ -71,7 +83,7 @@ async function getClaimsForPipeline(orgId: string) {
     else if (status === "completed") lifecycleStage = "COMPLETED";
 
     // Derive insured name from property contact
-    const contact = (claim as any).properties?.contacts;
+    const contact = claim.properties?.contacts;
     const insured_name = contact
       ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim()
       : null;
@@ -81,8 +93,8 @@ async function getClaimsForPipeline(orgId: string) {
       claimNumber: claim.claimNumber,
       lifecycleStage,
       insured_name,
-      exposureCents: (claim as any).estimatedValue,
-      property: (claim as any).properties,
+      exposureCents: claim.estimatedValue,
+      property: claim.properties,
     };
   });
 }

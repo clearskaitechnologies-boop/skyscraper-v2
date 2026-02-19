@@ -1,5 +1,5 @@
-import { nanoid } from "nanoid";
 import { logger } from "@/lib/logger";
+import { nanoid } from "nanoid";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -43,22 +43,18 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "no-user-id" }, { status: 401 });
     }
 
-    // Load client profile from new Client table
-    const client = await prisma.client.findUnique({
-      where: { userId: ctx.userId },
-    });
+    // Load client profile and user registry in parallel
+    const [client, registry] = await Promise.all([
+      prisma.client.findUnique({
+        where: { userId: ctx.userId },
+      }),
+      prisma.user_registry.findUnique({
+        where: { clerkUserId: ctx.userId },
+      }),
+    ]);
 
-    // Look up user email from users table
-    const userRecord = await prisma.users.findFirst({
-      where: { clerkUserId: ctx.userId! },
-      select: { email: true },
-    });
-    const userEmail = userRecord?.email || null;
-
-    // Also check user_registry for onboarding status
-    const registry = await prisma.user_registry.findUnique({
-      where: { clerkUserId: ctx.userId },
-    });
+    // Get email from registry (universal table — works for both client & pro users)
+    const userEmail = registry?.primaryEmail || registry?.email || null;
 
     // Determine if onboarding is complete based on:
     // 1. user_registry.onboardingComplete flag
@@ -136,12 +132,12 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const validated = profileSchema.parse(body);
 
-    // Look up user email from users table
-    const userRecord = await prisma.users.findFirst({
-      where: { clerkUserId: ctx.userId! },
-      select: { email: true },
+    // Get email from user_registry (universal table — works for both client & pro users)
+    const registryRecord = await prisma.user_registry.findUnique({
+      where: { clerkUserId: ctx.userId },
+      select: { primaryEmail: true, email: true },
     });
-    const userEmail = userRecord?.email || null;
+    const userEmail = registryRecord?.primaryEmail || registryRecord?.email || null;
 
     // Build the name from first + last
     const fullName = [validated.firstName, validated.lastName].filter(Boolean).join(" ") || null;

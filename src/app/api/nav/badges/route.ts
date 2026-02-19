@@ -17,6 +17,20 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    // Client/portal users have no orgId — return empty badge counts
+    // This prevents Prisma errors from querying pro-only tables
+    if (!ctx.orgId) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          unreadMessages: 0,
+          upcomingAppointments: 0,
+          unreadNotifications: 0,
+          pendingInvitations: 0,
+        },
+      });
+    }
+
     // Build thread query conditions for this user
     const membership = await prisma.tradesCompanyMember
       .findUnique({

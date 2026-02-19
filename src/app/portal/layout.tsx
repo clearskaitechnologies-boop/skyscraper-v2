@@ -13,6 +13,7 @@ import { PortalErrorBoundary } from "@/components/portal/PortalErrorBoundary";
 import ThemeToggle from "@/components/portal/ThemeToggle";
 import { getBrandingForOrg } from "@/lib/branding/fetchBranding";
 import { getPendingLegalForUser } from "@/lib/legal/getPendingLegal";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -46,7 +47,7 @@ export default async function PortalLayout({ children }: { children: React.React
     // If a pro user somehow hits this, send them back to dashboard
     // NOTE: Middleware should have already handled this - this is a safety fallback
     if (userId && role && role !== "client") {
-      console.warn("[Portal Layout] Pro user reached portal - middleware should have caught this");
+      logger.warn("[Portal Layout] Pro user reached portal - middleware should have caught this");
       redirect("/dashboard");
     }
 
@@ -57,7 +58,7 @@ export default async function PortalLayout({ children }: { children: React.React
     try {
       branding = orgId ? await getBrandingForOrg(orgId) : null;
     } catch (brandError) {
-      console.error("[Portal Layout] Branding fetch failed:", brandError);
+      logger.error("[Portal Layout] Branding fetch failed:", brandError);
       // Continue without branding
     }
 
@@ -68,9 +69,9 @@ export default async function PortalLayout({ children }: { children: React.React
           userId: user.id,
           audience: "homeowner", // Clients only see client-relevant docs
         });
-        console.log("[Portal Layout] Pending legal documents:", pendingLegal.length);
+        logger.debug("[Portal Layout] Pending legal documents:", pendingLegal.length);
       } catch (legalError: any) {
-        console.error("[Portal Layout] Failed to check legal compliance:", legalError);
+        logger.error("[Portal Layout] Failed to check legal compliance:", legalError);
         // Don't block - just log the error
       }
     }
@@ -79,7 +80,7 @@ export default async function PortalLayout({ children }: { children: React.React
     if (isRedirectError(authError)) {
       throw authError;
     }
-    console.error("[Portal Layout] Auth error:", authError);
+    logger.error("[Portal Layout] Auth error:", authError);
     // Continue with null values - page will handle auth state
   }
 

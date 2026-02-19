@@ -394,7 +394,7 @@
 
 - [x] 7-2a — Remove `console.log` from `ProfileStrengthBanner.tsx` (~line 47) ✅ Already clean
 - [x] 7-2b — Remove `console.log` from Quick DOL API route (~line 130) ✅ Already clean
-- [x] 7-2c — Run `grep -rn "console.log" src/ | wc -l` and track reduction ✅ Cleaned 23 in after-sign-in, 5 in report pages, 13 in AI routes
+- [x] 7-2c — Run `grep -rn "console.log" src/ | wc -l` and track reduction ✅ Cleaned 23 in after-sign-in, 5 in report pages, 13 in AI routes, 27 in claims module (ClaimWorkspaceShell, loader, layout). BrandingForm as-any fix via z.ZodError instanceof check.
 
 ### 7-3 `withAuth` Migration
 
@@ -476,7 +476,7 @@
 | 8 — Cross-Browser/A11y | 3 areas, 12 tasks    | 2 tasks ✅  | **In progress** |
 | 9 — Design System      | 2 areas, 10 tasks    | —           | **Pre-launch**  |
 
-**Total: ~120+ discrete tasks across 10 phases — ~82 completed across 3 sprints**
+**Total: ~120+ discrete tasks across 10 phases — ~86 completed across 4 sprints**
 
 ---
 

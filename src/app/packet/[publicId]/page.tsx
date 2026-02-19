@@ -258,17 +258,16 @@ export default async function AdjusterPacketPage({ params }: { params: { publicI
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {lead?.aiFlags &&
-              Array.isArray(lead.aiFlags) &&
-              (lead.aiFlags as any[]).length > 0 ? (
+              {lead?.aiFlags && Array.isArray(lead.aiFlags) && lead.aiFlags.length > 0 ? (
                 <ul className="space-y-2">
-                  {(lead.aiFlags as any[]).map((flag: any, idx: number) => (
+                  {lead.aiFlags.map((flag, idx) => (
                     <li key={idx} className="flex items-start gap-2">
                       <AlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-orange-600" />
                       <span className="text-sm text-gray-900 dark:text-gray-100">
                         {typeof flag === "string"
                           ? flag
-                          : flag.description || "Safety concern noted"}
+                          : (flag as Record<string, unknown>)?.description ||
+                            "Safety concern noted"}
                       </span>
                     </li>
                   ))}
@@ -280,18 +279,21 @@ export default async function AdjusterPacketPage({ params }: { params: { publicI
               )}
               {lead?.aiNextActions &&
                 Array.isArray(lead.aiNextActions) &&
-                (lead.aiNextActions as any[]).length > 0 && (
+                lead.aiNextActions.length > 0 && (
                   <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-700">
                     <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                       Recommended Actions
                     </p>
                     <ul className="space-y-1">
-                      {(lead.aiNextActions as any[]).slice(0, 3).map((action: any, idx: number) => (
+                      {lead.aiNextActions.slice(0, 3).map((action, idx) => (
                         <li
                           key={idx}
                           className="text-sm text-gray-600 dark:text-gray-400 dark:text-gray-600"
                         >
-                          • {typeof action === "string" ? action : action.description || action}
+                          •{" "}
+                          {typeof action === "string"
+                            ? action
+                            : (action as Record<string, unknown>)?.description || String(action)}
                         </li>
                       ))}
                     </ul>

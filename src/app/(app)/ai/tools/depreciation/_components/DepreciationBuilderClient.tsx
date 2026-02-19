@@ -71,6 +71,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 
+import { logger } from "@/lib/logger";
 import { CertificateOfCompletion } from "./CertificateOfCompletion";
 import { FinalInvoice } from "./FinalInvoice";
 
@@ -332,7 +333,7 @@ export function DepreciationBuilderClient({
           }
         }
       } catch (error) {
-        console.error("Failed to fetch payout data:", error);
+        logger.error("Failed to fetch payout data:", error);
         // Set defaults on error
         setLineItems([
           {
@@ -426,7 +427,7 @@ export function DepreciationBuilderClient({
       setPayoutStatus("invoice_generated");
       toast.success("Final payout packet generated successfully!");
     } catch (error: any) {
-      console.error("Generate packet error:", error);
+      logger.error("Generate packet error:", error);
       toast.error(error.message || "Failed to generate invoice");
     } finally {
       setIsGeneratingInvoice(false);
@@ -452,7 +453,7 @@ export function DepreciationBuilderClient({
 
       toast.success("Certificate signed successfully!");
     } catch (error) {
-      console.error("Failed to save signature:", error);
+      logger.error("Failed to save signature:", error);
       toast.error("Failed to save signature");
     }
   };
@@ -473,7 +474,7 @@ export function DepreciationBuilderClient({
       const data = await res.json();
       toast.success(data.message || "Certificate sent to client!");
     } catch (error: any) {
-      console.error("Failed to send to client:", error);
+      logger.error("Failed to send to client:", error);
       toast.error(error.message || "Failed to send certificate");
     }
   };
@@ -496,7 +497,7 @@ export function DepreciationBuilderClient({
 
       toast.success("Certificate saved to claim!");
     } catch (error) {
-      console.error("Failed to save certificate:", error);
+      logger.error("Failed to save certificate:", error);
       // Still allow download even if save fails
       window.print();
     }
@@ -533,7 +534,7 @@ export function DepreciationBuilderClient({
         `Submitted to carrier successfully!${data.emailSent ? " Email notification sent." : ""}`
       );
     } catch (error: any) {
-      console.error("Submit error:", error);
+      logger.error("Submit error:", error);
       toast.error(error.message || "Failed to submit to carrier");
     } finally {
       setIsSubmitting(false);
