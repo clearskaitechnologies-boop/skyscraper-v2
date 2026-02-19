@@ -171,37 +171,35 @@ export async function POST(req: Request) {
       );
     }
 
-    // PHASE 2: Queue System Integration
-    // Planned: Implement BullMQ or pg-boss for background job processing
-    // Benefits: Retry logic, job status tracking, worker scaling
-    // For now: Using proposal_events table to track upload requests
-    // Implementation: Create @/lib/queue adapter with .enqueue() and worker consumer
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO proposal_events (proposal_id, event_type, message, metadata)
-       VALUES ($1, $2, $3, $4::jsonb)`,
-      proposalId,
-      "photos_uploaded",
-      `${uploadedPhotos.length} photo${uploadedPhotos.length > 1 ? "s" : ""} uploaded for damage analysis`,
-      JSON.stringify({
-        photoIds: uploadedPhotos.map((p) => p.id),
-        photoCount: uploadedPhotos.length,
-
-        userId,
-      })
-    );
-
-    // Log activity event
-    await prisma.$executeRawUnsafe(
-      `INSERT INTO activity_events (org_id, userId, event_type, event_data)
-       VALUES ($1, $2, $3, $4::jsonb)`,
-      orgId,
-      userId,
-      "damage_analysis_uploaded",
-      JSON.stringify({
+    // Non-critical logging — don't crash upload if audit tables missing
+    try {
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO proposal_events (proposal_id, event_type, message, metadata)
+         VALUES ($1, $2, $3, $4::jsonb)`,
         proposalId,
-        photoCount: uploadedPhotos.length,
-      })
-    );
+        "photos_uploaded",
+        `${uploadedPhotos.length} photo${uploadedPhotos.length > 1 ? "s" : ""} uploaded for damage analysis`,
+        JSON.stringify({
+          photoIds: uploadedPhotos.map((p) => p.id),
+          photoCount: uploadedPhotos.length,
+          userId,
+        })
+      );
+    } catch { /* proposal_events table may not exist — non-fatal */ }
+
+    try {
+      await prisma.$executeRawUnsafe(
+        `INSERT INTO activity_events (org_id, userId, event_type, event_data)
+         VALUES ($1, $2, $3, $4::jsonb)`,
+        orgId,
+        userId,
+        "damage_analysis_uploaded",
+        JSON.stringify({
+          proposalId,
+          photoCount: uploadedPhotos.length,
+        })
+      );
+    } catch { /* activity_events table may not exist — non-fatal */ }
 
     // Enqueue damage analysis job
     const { enqueue } = await import("@/lib/queue");

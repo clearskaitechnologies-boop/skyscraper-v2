@@ -163,38 +163,39 @@ export async function POST(req: Request) {
         // Normalize to standard format
         const normalized = normalizeWeatherData(weatherData, date, location);
 
-        // Save to database (if we have weather_reports table)
-        // NOTE: weather_reports table exists in migration, use it for storage
-        // For now, save to proposal_events if proposalId provided
-        if (proposalId) {
+        // Save to database — non-critical logging, don't crash if tables missing
+        try {
+          if (proposalId) {
+            await prisma.$executeRawUnsafe(
+              `INSERT INTO proposal_events (proposal_id, event_type, message, metadata)
+               VALUES ($1, $2, $3, $4::jsonb)`,
+              proposalId,
+              "weather_fetched",
+              `Weather data fetched for ${date}`,
+              JSON.stringify({
+                date,
+                location,
+                weather: normalized,
+                userId,
+              })
+            );
+          }
+        } catch { /* proposal_events table may not exist — non-fatal */ }
+
+        try {
           await prisma.$executeRawUnsafe(
-            `INSERT INTO proposal_events (proposal_id, event_type, message, metadata)
+            `INSERT INTO activity_events (org_id, userId, event_type, event_data)
              VALUES ($1, $2, $3, $4::jsonb)`,
-            proposalId,
-            "weather_fetched",
-            `Weather data fetched for ${date}`,
+            orgId,
+            userId,
+            "weather_report_generated",
             JSON.stringify({
+              proposalId,
               date,
-              location,
-              weather: normalized,
-              userId,
+              location: location.address || `${location.lat},${location.lng}`,
             })
           );
-        }
-
-        // Log activity event
-        await prisma.$executeRawUnsafe(
-          `INSERT INTO activity_events (org_id, userId, event_type, event_data)
-           VALUES ($1, $2, $3, $4::jsonb)`,
-          orgId,
-          userId,
-          "weather_report_generated",
-          JSON.stringify({
-            proposalId,
-            date,
-            location: location.address || `${location.lat},${location.lng}`,
-          })
-        );
+        } catch { /* activity_events table may not exist — non-fatal */ }
 
         return normalized;
       },

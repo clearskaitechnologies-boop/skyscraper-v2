@@ -96,18 +96,23 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
     }
   }
 
-  // Store user message
-  await prisma.$executeRaw`
-    INSERT INTO ai_messages (session_id, role, content, is_voice)
-    VALUES (${session.id}, 'user', ${message}, ${voiceEnabled || false})
-  `;
+  // Store user message — non-fatal if ai_messages table missing
+  try {
+    await prisma.$executeRaw`
+      INSERT INTO ai_messages (session_id, role, content, is_voice)
+      VALUES (${session.id}, 'user', ${message}, ${voiceEnabled || false})
+    `;
+  } catch { /* ai_messages table may not exist */ }
 
-  // Build conversation history
-  const history = await prisma.$queryRaw<any[]>`
-    SELECT role, content FROM ai_messages
-    WHERE session_id = ${session.id}
-    ORDER BY created_at ASC
-  `;
+  // Build conversation history — graceful fallback to empty
+  let history: any[] = [];
+  try {
+    history = await prisma.$queryRaw<any[]>`
+      SELECT role, content FROM ai_messages
+      WHERE session_id = ${session.id}
+      ORDER BY created_at ASC
+    `;
+  } catch { /* ai_messages table may not exist */ }
 
   const messages: Message[] = [
     {
@@ -156,11 +161,13 @@ Keep responses concise and actionable. Current user: ${userId}`,
           }
         }
 
-        // Store assistant response
-        await prisma.$executeRaw`
-          INSERT INTO ai_messages (session_id, role, content)
-          VALUES (${session.id}, 'assistant', ${fullResponse})
-        `;
+        // Store assistant response — non-fatal if table missing
+        try {
+          await prisma.$executeRaw`
+            INSERT INTO ai_messages (session_id, role, content)
+            VALUES (${session.id}, 'assistant', ${fullResponse})
+          `;
+        } catch { /* ai_messages table may not exist */ }
 
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
         controller.close();
