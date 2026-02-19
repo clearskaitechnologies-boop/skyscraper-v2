@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { verifyCronSecret } from "@/lib/cron/verifyCronSecret";
 import {
@@ -101,6 +101,11 @@ export async function GET(request: NextRequest) {
       } catch (error) {
         const msg = `Failed to process expired trial for Org ${Org.id}: ${error}`;
         logger.error(msg);
+        results.errors.push(msg);
+      }
+    }
+
+    // 2. Send T-24h reminders (23-25 hour window)
     const t24hStart = new Date(now.getTime() + 23 * 60 * 60 * 1000);
     const t24hEnd = new Date(now.getTime() + 25 * 60 * 60 * 1000);
 
