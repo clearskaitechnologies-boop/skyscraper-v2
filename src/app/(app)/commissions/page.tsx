@@ -15,6 +15,7 @@ import { StatCard } from "@/components/ui/MetricCard";
 import { guarded } from "@/lib/buildPhase";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 
 import CommissionActions from "./CommissionActions";
 
@@ -55,7 +56,7 @@ export default async function CommissionsPage() {
           closeRate: Number(r.closeRate),
         }));
       } catch (err) {
-        console.error("[commissions] DB query failed:", err);
+        logger.error("[commissions] DB query failed:", err);
         return [];
       }
     },

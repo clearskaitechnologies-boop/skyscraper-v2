@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface Claim {
   id: string;
@@ -117,7 +118,7 @@ export default function NewAppointmentForm({ claims, leads }: NewAppointmentForm
       router.push("/appointments");
       router.refresh();
     } catch (error: any) {
-      console.error("Failed to create appointment:", error);
+      logger.error("Failed to create appointment:", error);
       toast.error(error.message || "Failed to create appointment");
     } finally {
       setSaving(false);

@@ -1,5 +1,6 @@
 import SupplementWorkspace from "@/components/supplement/SupplementWorkspace";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
@@ -54,7 +55,7 @@ async function initSupplement(claimId: string) {
       },
     });
   } catch (e) {
-    console.error("Failed to init supplement", e);
+    logger.error("Failed to init supplement", e);
     return null;
   }
 }

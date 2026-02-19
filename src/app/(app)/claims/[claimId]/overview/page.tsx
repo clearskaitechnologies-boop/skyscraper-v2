@@ -13,6 +13,7 @@ import { TabErrorBoundary } from "@/components/errors/TabErrorBoundary";
 import { ClaimWorkspaceSkeleton } from "@/components/loading/LoadingStates";
 
 import { ClientConnectSection } from "../_components/ClientConnectSection";
+import { logger } from "@/lib/logger";
 import { GenerateReportButton } from "../_components/GenerateReportButton";
 import MetricPill from "../_components/MetricPill";
 import SectionCard from "../_components/SectionCard";
@@ -263,7 +264,7 @@ export default function OverviewPage() {
         }
       }
     } catch (error) {
-      console.error("Failed to fetch workspace data:", error);
+      logger.error("Failed to fetch workspace data:", error);
       setError("NETWORK_ERROR");
     } finally {
       setLoading(false);

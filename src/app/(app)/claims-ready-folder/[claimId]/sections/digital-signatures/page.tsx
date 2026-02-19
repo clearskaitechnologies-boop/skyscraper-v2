@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /* Types                                                               */
@@ -182,7 +183,7 @@ export default function DigitalSignaturesPage() {
         setSignatures(data.signatures || []);
       }
     } catch (err) {
-      console.error("Failed to fetch signatures:", err);
+      logger.error("Failed to fetch signatures:", err);
     } finally {
       setLoading(false);
     }

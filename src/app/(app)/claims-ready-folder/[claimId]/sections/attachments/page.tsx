@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface Attachment {
   id: string;
@@ -84,7 +85,7 @@ export default function AttachmentsPage() {
         setAttachments(json.attachments || []);
       }
     } catch (err) {
-      console.error("Failed to fetch attachments:", err);
+      logger.error("Failed to fetch attachments:", err);
     } finally {
       setLoading(false);
     }

@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { SECTION_METADATA, type FolderSectionKey } from "@/lib/claims-folder/folderSchema";
+import { logger } from "@/lib/logger";
 
 const SECTION_ORDER: FolderSectionKey[] = [
   "cover-sheet",
@@ -65,7 +66,7 @@ export default function TableOfContentsPage() {
         setStatuses(sectionStatuses);
       }
     } catch (err) {
-      console.error("Failed to fetch TOC:", err);
+      logger.error("Failed to fetch TOC:", err);
     } finally {
       setLoading(false);
     }

@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { logger } from "@/lib/logger";
 
 interface LineItem {
   id: string;
@@ -211,7 +212,7 @@ export default function ScopePage() {
           setLineItems(data.lineItems || []);
         }
       } catch (err) {
-        console.error("Failed to fetch scope:", err);
+        logger.error("Failed to fetch scope:", err);
         // Fall back to demo data
         setLineItems(DEMO_SCOPE);
       } finally {

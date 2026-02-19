@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { getUiTheme } from "@/config/uiTheme";
+import { logger } from "@/lib/logger";
 import { cn } from "@/lib/utils";
 
 // Feature flags — control visibility of unreleased features
@@ -173,7 +174,7 @@ export function AppSidebar() {
           setBadges(data.data);
         }
       } catch (error) {
-        console.error("Failed to fetch badge counts:", error);
+        logger.error("Failed to fetch badge counts:", error);
       }
     };
 

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { ClaimGenerateSchema, formatZodError } from "@/lib/validation/schemas";
+import { logger } from "@/lib/logger";
 
 export default function ClaimsGeneratePage() {
   const router = useRouter();
@@ -78,7 +79,7 @@ export default function ClaimsGeneratePage() {
       toast.success("Claim created successfully! 🎉");
       router.push(`/claims/${claim.id}`);
     } catch (error) {
-      console.error("Error creating claim:", error);
+      logger.error("Error creating claim:", error);
       // Handle Zod validation errors
       if (error && typeof error === "object" && "errors" in error) {
         toast.error(formatZodError(error as any));

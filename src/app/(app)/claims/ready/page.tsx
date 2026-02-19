@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/db/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -82,7 +83,7 @@ export default async function ClaimsReadyPage() {
       dateOfLoss: claim.dateOfLoss?.toISOString() || null,
     }));
   } catch (err: any) {
-    console.error("[ClaimsReadyPage] Query failed:", err?.message);
+    logger.error("[ClaimsReadyPage] Query failed:", err?.message);
     fetchError = err?.message || "Failed to load ready claims";
   }
 

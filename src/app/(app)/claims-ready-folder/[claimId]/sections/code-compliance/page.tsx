@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface CodeItem {
   code: string;
@@ -60,7 +61,7 @@ export default function CodeCompliancePage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch code compliance data:", err);
+      logger.error("Failed to fetch code compliance data:", err);
     } finally {
       setLoading(false);
     }

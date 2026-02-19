@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 const PROJECT_TYPES = [
   "Roofing",
@@ -120,7 +121,7 @@ export default function MockupClient() {
       setAfterImage(result.afterImageUrl);
       toast.success("Project mockup generated!");
     } catch (error) {
-      console.error("Generation error:", error);
+      logger.error("Generation error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to generate mockup");
     } finally {
       setIsGenerating(false);

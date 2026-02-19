@@ -9,6 +9,7 @@ import { AlertCircle, CheckCircle, Upload, X } from "lucide-react";
 import { useCallback, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface EvidenceUploadProps {
   claimId: string;
@@ -96,7 +97,7 @@ export function EvidenceUpload({ claimId, sectionKey, onUploadComplete }: Eviden
         onUploadComplete(result.asset.id);
       }
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       setFiles((prev) =>
         prev.map((f) =>
           f.id === uploadFile.id

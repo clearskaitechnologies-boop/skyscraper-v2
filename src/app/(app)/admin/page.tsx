@@ -30,6 +30,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { checkRole } from "@/lib/auth/rbac";
 import prisma from "@/lib/db/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -128,7 +129,7 @@ export default async function AdminDashboardPage() {
       })),
     };
   } catch (err: any) {
-    console.error("[AdminDashboard] Stats query failed:", err?.message);
+    logger.error("[AdminDashboard] Stats query failed:", err?.message);
   }
 
   const statCards = [

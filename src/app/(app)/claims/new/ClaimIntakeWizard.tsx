@@ -28,6 +28,7 @@ import { useCallback, useState } from "react";
 import { QuickDOLFinder } from "@/components/weather/QuickDOLFinder";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { logger } from "@/lib/logger";
 
 type Props = {
   orgId: string;
@@ -300,7 +301,7 @@ export function ClaimIntakeWizard({ orgId }: Props) {
         completed++;
         setUploadProgress(Math.round((completed / photos.length) * 100));
       } catch (err) {
-        console.error("Photo upload error:", err);
+        logger.error("Photo upload error:", err);
       }
     }
     return uploadedUrls;

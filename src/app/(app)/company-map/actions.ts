@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type PropertyLocation = {
   id: string;
@@ -77,7 +78,7 @@ export const getCompanyLocations = cache(async (): Promise<PropertyLocation[]> =
 
     return locations.filter((loc) => loc.lat !== null && loc.lng !== null);
   } catch (error) {
-    console.error("Error fetching company locations:", error);
+    logger.error("Error fetching company locations:", error);
     return [];
   }
 });

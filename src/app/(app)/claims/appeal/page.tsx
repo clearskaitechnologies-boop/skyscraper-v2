@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { logger } from "@/lib/logger";
 
 interface AppealHistoryItem {
   id: string;
@@ -72,7 +73,7 @@ export default function ClaimsAppealPage() {
         setAppealHistory(data.appeals || []);
       }
     } catch (err) {
-      console.error("Failed to fetch appeal history:", err);
+      logger.error("Failed to fetch appeal history:", err);
     } finally {
       setLoadingHistory(false);
     }

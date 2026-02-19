@@ -12,6 +12,7 @@ import { DominusRecommendations } from "@/components/automation/DominusRecommend
 import { DominusTaskBoard } from "@/components/automation/DominusTaskBoard";
 import { DominusGodModeButton } from "@/components/automation/DominusGodModeButton";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 interface AutomationPageProps {
   params: { claimId: string };
@@ -28,7 +29,7 @@ export default function ClaimAutomationPage({ params }: AutomationPageProps) {
       const data = await res.json();
       setIntelligence(data);
     } catch (error) {
-      console.error("Failed to fetch intelligence:", error);
+      logger.error("Failed to fetch intelligence:", error);
       toast.error("Failed to load automation data");
     } finally {
       setLoading(false);

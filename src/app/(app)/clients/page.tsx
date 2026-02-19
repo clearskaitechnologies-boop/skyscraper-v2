@@ -7,6 +7,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -44,7 +45,7 @@ export default async function ClientsPage({ searchParams }: PageProps) {
       orderBy: { createdAt: "desc" },
     });
   } catch (error) {
-    console.error("[ClientsPage] Error loading clients:", error);
+    logger.error("[ClientsPage] Error loading clients:", error);
     hasError = true;
   }
 

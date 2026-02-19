@@ -21,6 +21,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import prisma from "@/lib/db/prisma";
 import { PUBLIC_DEMO_ORG_ID } from "@/lib/demo/constants";
 import { getOrg } from "@/lib/org/getOrg";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -179,7 +180,7 @@ export default async function ClaimsPage({ searchParams }: { searchParams: Claim
     }));
     total = fetchedTotal;
   } catch (error: any) {
-    console.error("[ClaimsPage] Prisma query failed", {
+    logger.error("[ClaimsPage] Prisma query failed", {
       error: error?.message || error,
       organizationId,
       userId,

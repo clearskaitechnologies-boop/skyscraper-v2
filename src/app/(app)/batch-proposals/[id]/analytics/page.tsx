@@ -9,6 +9,7 @@ import { ConversionFunnel } from "@/components/analytics/ConversionFunnel";
 import { QrStatsCard } from "@/components/analytics/QrStatsCard";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 export default function AnalyticsPage() {
   const params = useParams();
@@ -33,7 +34,7 @@ export default function AnalyticsPage() {
         setAnalytics(data);
       }
     } catch (error) {
-      console.error("Error fetching analytics:", error);
+      logger.error("Error fetching analytics:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -239,7 +240,7 @@ export default async function ContactDetailPage({ params }: Props) {
       }
     }
   } catch (error) {
-    console.error("[ContactDetailPage] Prisma query failed", { error, organizationId, userId });
+    logger.error("[ContactDetailPage] Prisma query failed", { error, organizationId, userId });
     queryFailed = true;
   }
 

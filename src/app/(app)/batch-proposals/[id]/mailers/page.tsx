@@ -9,6 +9,7 @@ import { MailerJobsList } from "@/components/mailers/MailerJobsList";
 import { MailerStatusCard } from "@/components/mailers/MailerStatusCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface MailerBatch {
   id: string;
@@ -56,7 +57,7 @@ export default function MailerDetailPage() {
         setBatches(data.batches || []);
       }
     } catch (error) {
-      console.error("Error fetching mailer batches:", error);
+      logger.error("Error fetching mailer batches:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);

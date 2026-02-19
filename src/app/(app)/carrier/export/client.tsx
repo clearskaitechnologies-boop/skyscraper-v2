@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 const CARRIERS = [
   { id: "state-farm", name: "State Farm" },
@@ -77,7 +78,7 @@ export default function CarrierExportClient() {
           }),
         });
       } catch (err) {
-        console.error("Telemetry error:", err);
+        logger.error("Telemetry error:", err);
       }
     } catch (error) {
       setResult({ error: String(error) });

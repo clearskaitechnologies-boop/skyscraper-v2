@@ -24,6 +24,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface SmartAction {
   id: string;
@@ -111,7 +112,7 @@ export default function SmartActionsPage() {
         setSummary(data.data.summary);
       }
     } catch (e) {
-      console.error("Smart actions fetch failed:", e);
+      logger.error("Smart actions fetch failed:", e);
     } finally {
       setLoading(false);
     }

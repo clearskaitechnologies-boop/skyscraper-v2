@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface ChecklistItem {
   id: string;
@@ -41,7 +42,7 @@ export default function ClaimChecklistPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch checklist:", err);
+      logger.error("Failed to fetch checklist:", err);
     } finally {
       setLoading(false);
     }

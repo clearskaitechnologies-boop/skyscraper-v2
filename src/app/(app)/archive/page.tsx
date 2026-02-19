@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface ArchivedItem {
   id: string;
@@ -47,7 +48,7 @@ export default function ArchivePage() {
       const json = await res.json();
       setData(json);
     } catch (err) {
-      console.error("Archive fetch error:", err);
+      logger.error("Archive fetch error:", err);
       toast.error("Failed to load archived items");
     } finally {
       setLoading(false);

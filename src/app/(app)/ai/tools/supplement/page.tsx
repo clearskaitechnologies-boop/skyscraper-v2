@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useClaims } from "@/hooks/useClaims";
+import { logger } from "@/lib/logger";
 
 interface LineItem {
   id: string;
@@ -126,7 +127,7 @@ export default function SupplementBuilderPage() {
 
       toast.success("Supplement saved to claim!");
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to save supplement");
     } finally {
       setIsSaving(false);

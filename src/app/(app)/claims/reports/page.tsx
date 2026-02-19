@@ -7,6 +7,7 @@ import { Download, ExternalLink, FileText } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { logger } from "@/lib/logger";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
@@ -66,7 +67,7 @@ async function getClaimsWithMaterials(orgId: string) {
       materialCount: claim._count.reports,
     }));
   } catch (err: any) {
-    console.warn("[ClaimsReports] Claims query error", err);
+    logger.warn("[ClaimsReports] Claims query error", err);
     return [];
   }
 }

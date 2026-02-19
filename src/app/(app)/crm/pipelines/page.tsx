@@ -10,6 +10,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 // Deprecated: Skai Assistant removed (11/22/2025). Use AskDominusWidget (global) instead.
 // import { openSkaiAssistant } from "@/components/SKaiAssistant";
 
@@ -65,7 +66,7 @@ export default function PipelinesPage() {
         setSummary(data);
       }
     } catch (error) {
-      console.error("Error fetching pipeline summary:", error);
+      logger.error("Error fetching pipeline summary:", error);
     } finally {
       setLoading(false);
     }

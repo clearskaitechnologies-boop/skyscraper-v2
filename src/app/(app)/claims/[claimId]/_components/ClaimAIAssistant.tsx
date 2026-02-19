@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { clientFetch } from "@/lib/http/clientFetch";
+import { logger } from "@/lib/logger";
 
 interface ClaimAIAssistantProps {
   claimId: string;
@@ -80,7 +81,7 @@ What would you like help with?`,
 
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error: any) {
-      console.error("[AI_ASSISTANT] Error:", {
+      logger.error("[AI_ASSISTANT] Error:", {
         status: error.status,
         message: error.message,
         claimId,

@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface TimelineEvent {
   id: string;
@@ -56,7 +57,7 @@ export default function TimelinePage() {
         setEvents(eventsData);
       }
     } catch (err) {
-      console.error("Failed to fetch timeline:", err);
+      logger.error("Failed to fetch timeline:", err);
     } finally {
       setLoading(false);
     }

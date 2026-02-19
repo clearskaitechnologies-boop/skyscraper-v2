@@ -4,6 +4,8 @@ import { AlertCircle, FileVideo, Loader2, Play, Sparkles, Upload, Video, X } fro
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 interface VideoItem {
   id: string;
   file: File;
@@ -42,7 +44,7 @@ export default function VideoReportsClient() {
           setClaims(data.claims || data || []);
         }
       } catch (err) {
-        console.error("Failed to load claims:", err);
+        logger.error("Failed to load claims:", err);
       } finally {
         setLoadingClaims(false);
       }

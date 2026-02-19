@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 import {
   Table,
   TableBody,
@@ -61,7 +62,7 @@ export default function ScopePricingPage() {
         setData(json.data);
       }
     } catch (err) {
-      console.error("Failed to fetch scope data:", err);
+      logger.error("Failed to fetch scope data:", err);
     } finally {
       setLoading(false);
     }

@@ -9,6 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 type ImportSource = "adjuster" | "contractor";
 
@@ -102,7 +103,7 @@ export default function ImportPage() {
         }, 1500);
       }
     } catch (error) {
-      console.error("Import error:", error);
+      logger.error("Import error:", error);
       toast.error(error instanceof Error ? error.message : "An error occurred during import.");
     } finally {
       setUploading(false);

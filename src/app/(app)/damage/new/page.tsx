@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Wizard, WizardStep } from "@/components/common/Wizard";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 type DamageBuildApiResponse = {
   damageAssessmentId: string;
@@ -112,7 +113,7 @@ export default function DamageNewPage() {
       const data = (await res.json()) as DamageBuildApiResponse;
       setResult(data);
     } catch (err: any) {
-      console.error("Error running damage builder:", err);
+      logger.error("Error running damage builder:", err);
       setError(err.message || "Failed to run damage builder.");
     } finally {
       setIsRunning(false);

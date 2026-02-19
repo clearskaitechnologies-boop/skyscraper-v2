@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -128,7 +129,7 @@ export default async function CompanyConnectionsPage() {
         where: { orgId },
       });
     } catch (error) {
-      console.error("[CompanyConnections] Error fetching data:", error);
+      logger.error("[CompanyConnections] Error fetching data:", error);
     }
   }
 

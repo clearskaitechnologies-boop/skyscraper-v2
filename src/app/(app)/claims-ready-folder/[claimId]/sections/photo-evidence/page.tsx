@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logger } from "@/lib/logger";
 
 interface Photo {
   id: string;
@@ -54,7 +55,7 @@ export default function PhotoEvidencePage() {
         setPhotos(json.data?.photos || json.photos || []);
       }
     } catch (err) {
-      console.error("Failed to fetch photos:", err);
+      logger.error("Failed to fetch photos:", err);
     } finally {
       setLoading(false);
     }

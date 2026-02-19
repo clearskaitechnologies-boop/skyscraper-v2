@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 // Types
 interface MyBid {
@@ -211,7 +212,7 @@ export default function ProMyBidsPage() {
           setBids([]);
         }
       } catch (error) {
-        console.error("Failed to load bids:", error);
+        logger.error("Failed to load bids:", error);
         setBids([]);
       }
       setIsLoading(false);
