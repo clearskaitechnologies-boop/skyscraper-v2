@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SkaiScraper Pro — Titan Enterprise Readiness</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slide {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    padding: 60px 80px;
+    animation: fadeIn 0.4s ease;
+    position: relative;
+  }
+
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── Top Bar ── */
+  .top-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+  }
+
+  /* ── Branding ── */
+  .brand {
+    position: absolute;
+    top: 28px; left: 40px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .slide-counter {
+    position: absolute;
+    top: 28px; right: 40px;
+    font-size: 14px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.3);
+  }
+
+  /* ── Title Slide ── */
+  .title-main {
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1.1;
+    text-align: center;
+    background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+
+  .title-sub {
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .title-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #10b981;
+  }
+
+  .title-badge .dot {
+    width: 8px; height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* ── Section Headers ── */
+  .section-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-size: 42px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  .section-subtitle {
+    font-size: 18px;
+    color: rgba(255,255,255,0.45);
+    text-align: center;
+    margin-bottom: 48px;
+    max-width: 600px;
+  }
+
+  /* ── Metric Cards ── */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  .metric-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+
+  .metric-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255,255,255,0.15);
+  }
+
+  .metric-label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 10px;
+  }
+
+  .metric-value {
+    font-size: 36px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .metric-value.green { color: #10b981; }
+  .metric-value.blue  { color: #3b82f6; }
+  .metric-value.cyan  { color: #06b6d4; }
+
+  .metric-detail {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    line-height: 1.4;
+  }
+
+  /* ── Table Styles ── */
+  .data-table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+
+  .data-table th {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    padding: 12px 20px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .data-table td {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.85);
+  }
+
+  .data-table tr:last-child td { border-bottom: none; }
+
+  .data-table .pass {
+    color: #10b981;
+    font-weight: 700;
+  }
+
+  .data-table .highlight {
+    color: #3b82f6;
+    font-weight: 700;
+  }
+
+  /* ── Check List ── */
+  .check-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 40px;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.75);
+  }
+
+  .check-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .check-icon.green {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  /* ── Comparison Table ── */
+  .comparison-table {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+  }
+
+  .comparison-table th {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 14px 20px;
+    text-align: center;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.5);
+  }
+
+  .comparison-table th:first-child { text-align: left; }
+  .comparison-table th:last-child { color: #3b82f6; }
+
+  .comparison-table td {
+    font-size: 15px;
+    padding: 14px 20px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: rgba(255,255,255,0.6);
+  }
+
+  .comparison-table td:first-child {
+    text-align: left;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .comparison-table .yes { color: #10b981; font-weight: 700; }
+  .comparison-table .no  { color: rgba(255,255,255,0.2); }
+
+  /* ── Quote ── */
+  .quote-block {
+    max-width: 800px;
+    background: rgba(59, 130, 246, 0.06);
+    border-left: 3px solid #3b82f6;
+    border-radius: 0 12px 12px 0;
+    padding: 24px 32px;
+    margin-top: 32px;
+  }
+
+  .quote-text {
+    font-size: 16px;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .quote-attr {
+    font-size: 13px;
+    color: rgba(255,255,255,0.35);
+    margin-top: 8px;
+  }
+
+  /* ── Bottom CTA ── */
+  .bottom-cta {
+    position: absolute;
+    bottom: 40px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.25);
+    letter-spacing: 1px;
+  }
+
+  /* ── Navigation Hint ── */
+  .nav-hint {
+    position: fixed;
+    bottom: 20px;
+    right: 40px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.2);
+    z-index: 999;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+    .check-grid { grid-template-columns: 1fr; }
+    .title-main { font-size: 42px; }
+    .section-title { font-size: 32px; }
+    .slide { padding: 40px 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SLIDE 1: TITLE                                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="slide active" id="slide-1">
+  <div class="top-bar"></div>
+  <div class="slide-counter">1 / 5</div>
+
+  <div class="section-icon">⚡</div>
+  <div class="title-main">SkaiScraper Pro</div>
+  <div class="title-sub">Enterprise Readiness Report — February 2026</div>
+  <div class="title-badge">
+    <span class="dot"></span>
+    Production Live — skaiscrape.com
+  </div>
+
+  <div class="bottom-cta">CLEARSKAI TECHNOLOGIES — CONFIDENTIAL</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SLIDE 2: K6 LOAD TEST RESULTS                      -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="slide" id="slide-2">
+  <div class="top-bar"></div>
+  <div class="brand">ClearSkai Technologies</div>
+  <div class="slide-counter">2 / 5</div>
+
+  <div class="section-icon">📊</div>
+  <div class="section-title">Load Test Results</div>
+  <div class="section-subtitle">k6 tests executed against live production — February 17, 2026</div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Test</th>
+        <th>Virtual Users</th>
+        <th>Duration</th>
+        <th>p95 Latency</th>
+        <th>Pass Rate</th>
+        <th>Result</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Smoke</td>
+        <td>5 VU</td>
+        <td>2 min</td>
+        <td class="highlight">278 ms</td>
+        <td>100%</td>
+        <td class="pass">✅ PASS</td>
+      </tr>
+      <tr>
+        <td>Soak</td>
+        <td>200 VU</td>
+        <td>30 min</td>
+        <td class="highlight">615 ms</td>
+        <td>99.96%</td>
+        <td class="pass">✅ PASS</td>
+      </tr>
+      <tr>
+        <td>Spike</td>
+        <td>0 → 500 in 30s</td>
+        <td>8 min</td>
+        <td class="highlight">266 ms</td>
+        <td>100%</td>
+        <td class="pass">✅ PASS</td>
+      </tr>
+      <tr>
+        <td>Stress</td>
+        <td>100 → 500 VU</td>
+        <td>18 min</td>
+        <td class="highlight">855 ms</td>
+        <td>99.56%</td>
+        <td class="pass">✅ PASS</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quote-block">
+    <div class="quote-text">
+      "500 concurrent users against production for 18 minutes. At your 180-person peak load,
+      p95 is 615ms sustained. Zero crashes. Zero pool failures. We have the raw k6 output
+      if your IT team wants it."
+    </div>
+    <div class="quote-attr">— Talking point for Titan IT review</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SLIDE 3: TENANT ISOLATION                          -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="slide" id="slide-3">
+  <div class="top-bar"></div>
+  <div class="brand">ClearSkai Technologies</div>
+  <div class="slide-counter">3 / 5</div>
+
+  <div class="section-icon">🔒</div>
+  <div class="section-title">Tenant Isolation — Verified</div>
+  <div class="section-subtitle">22 automated checks run against production API. Every auth-gated route rejects cross-tenant access.</div>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Auth Coverage</div>
+      <div class="metric-value green">92.4%</div>
+      <div class="metric-detail">620 of 671 routes protected</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Rate Limited</div>
+      <div class="metric-value blue">115</div>
+      <div class="metric-detail">Routes with Upstash Redis</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">AI Zod Validated</div>
+      <div class="metric-value cyan">41/41</div>
+      <div class="metric-detail">All AI routes schema-checked</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Isolation Checks</div>
+      <div class="metric-value green">22/22</div>
+      <div class="metric-detail">Cross-tenant proof passed</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 36px;">
+    <div class="check-grid">
+      <div class="check-item"><span class="check-icon green">✓</span> Every DB query scoped by orgId</div>
+      <div class="check-item"><span class="check-icon green">✓</span> Storage keys namespaced per org</div>
+      <div class="check-item"><span class="check-icon green">✓</span> 32 auth patterns enforced</div>
+      <div class="check-item"><span class="check-icon green">✓</span> Webhook signatures verified (HMAC)</div>
+      <div class="check-item"><span class="check-icon green">✓</span> AES-256-GCM encryption at rest</div>
+      <div class="check-item"><span class="check-icon green">✓</span> Sentry PII scrubbing enabled</div>
+      <div class="check-item"><span class="check-icon green">✓</span> 296 unit tests — all green</div>
+      <div class="check-item"><span class="check-icon green">✓</span> 67 E2E tests — all green</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SLIDE 4: AI + COMPETITIVE EDGE                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="slide" id="slide-4">
+  <div class="top-bar"></div>
+  <div class="brand">ClearSkai Technologies</div>
+  <div class="slide-counter">4 / 5</div>
+
+  <div class="section-icon">🤖</div>
+  <div class="section-title">AI-First Platform</div>
+  <div class="section-subtitle">SkaiScraper vs. legacy tools — built for storm restoration, not adapted from generic construction software.</div>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Capability</th>
+        <th>AccuLynx</th>
+        <th>JobNimbus</th>
+        <th>SkaiScraper Pro</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>AI Damage Detection (photo)</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">✅ 47 points in 8 sec</td>
+      </tr>
+      <tr>
+        <td>Automated Weather Verification</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">✅ DOL auto-pull</td>
+      </tr>
+      <tr>
+        <td>Carrier Strategy Engine</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">✅ Predictive AI</td>
+      </tr>
+      <tr>
+        <td>Claim Velocity Analytics</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">✅ Real-time dashboard</td>
+      </tr>
+      <tr>
+        <td>Depreciation Auto-Calc</td>
+        <td class="no">—</td>
+        <td class="no">—</td>
+        <td class="yes">✅ Instant</td>
+      </tr>
+      <tr>
+        <td>Multi-Tenant Isolation</td>
+        <td class="no">Shared DB</td>
+        <td class="no">Shared DB</td>
+        <td class="yes">✅ Org-scoped + verified</td>
+      </tr>
+      <tr>
+        <td>Load Tested at 500 VU</td>
+        <td class="no">Unknown</td>
+        <td class="no">Unknown</td>
+        <td class="yes">✅ k6 proven Feb 2026</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="quote-block">
+    <div class="quote-text">
+      "AccuLynx charges $149/user/month for generic project tracking. We deliver AI-powered
+      storm restoration at $139.99/month — unlimited users. One claim processed pays for the year."
+    </div>
+    <div class="quote-attr">— ROI: First claim = payback</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- SLIDE 5: CLOSE                                     -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="slide" id="slide-5">
+  <div class="top-bar"></div>
+  <div class="brand">ClearSkai Technologies</div>
+  <div class="slide-counter">5 / 5</div>
+
+  <div class="section-icon">🚀</div>
+  <div class="title-main">Ready to Deploy</div>
+  <div class="title-sub">5-phase rollout — 3 reps → 10 users → 25 → 60 → 180 full org</div>
+
+  <div class="metrics-grid" style="max-width: 800px; grid-template-columns: repeat(3, 1fr); margin-bottom: 40px;">
+    <div class="metric-card">
+      <div class="metric-label">Uptime Target</div>
+      <div class="metric-value green">99.5%</div>
+      <div class="metric-detail">SLA documented</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Onboarding</div>
+      <div class="metric-value blue">Day 1</div>
+      <div class="metric-detail">CSV import + SSO ready</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Support</div>
+      <div class="metric-value cyan">24h SLA</div>
+      <div class="metric-detail">Dedicated channel</div>
+    </div>
+  </div>
+
+  <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+    <div class="title-badge">
+      <span class="dot"></span>
+      Live at skaiscrape.com
+    </div>
+    <div class="title-badge" style="border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.1); color: #3b82f6;">
+      <span class="dot" style="background: #3b82f6;"></span>
+      Legal Suite Ready (TOS, DPA, SLA, AUP)
+    </div>
+  </div>
+
+  <div class="bottom-cta" style="font-size: 16px; color: rgba(255,255,255,0.5); font-weight: 600;">
+    clearskaitechnologies.com &nbsp;·&nbsp; skaiscrape.com
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<!-- NAVIGATION                                         -->
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="nav-hint">← → arrow keys to navigate &nbsp;|&nbsp; F for fullscreen</div>
+
+<script>
+  let current = 1;
+  const total = 5;
+
+  function go(n) {
+    if (n < 1 || n > total) return;
+    document.getElementById('slide-' + current).classList.remove('active');
+    current = n;
+    document.getElementById('slide-' + current).classList.add('active');
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ')  { e.preventDefault(); go(current + 1); }
+    if (e.key === 'ArrowLeft')                     { go(current - 1); }
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    // Number keys jump to slides
+    const num = parseInt(e.key);
+    if (num >= 1 && num <= total) go(num);
+  });
+
+  // Touch support
+  let touchStartX = 0;
+  document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; });
+  document.addEventListener('touchend', e => {
+    const diff = touchStartX - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 60) { diff > 0 ? go(current + 1) : go(current - 1); }
+  });
+</script>
+
+</body>
+</html>
