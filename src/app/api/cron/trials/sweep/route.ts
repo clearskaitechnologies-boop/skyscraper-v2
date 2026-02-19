@@ -230,6 +230,11 @@ export async function GET(request: NextRequest) {
       } catch (error) {
         const msg = `Failed to send T-1h email for Org ${Org.id}: ${error}`;
         logger.error(msg);
+        results.errors.push(msg);
+      }
+    }
+
+    return NextResponse.json({
       success: true,
       timestamp: now.toISOString(),
       results,

@@ -8,8 +8,8 @@
  * 4. Returns claim ID for confirmation
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { generateClaimNumber } from "@/lib/claims/generateClaimNumber";
@@ -117,12 +117,12 @@ export async function POST(req: Request) {
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
           };
 
-          console.log(
+          logger.info(
             `[work-request] Created job invitation: ${invitationId} for pro: ${targetProId}`
           );
         }
 
-        console.log(
+        logger.info(
           `[work-request] Created client job: ${jobId} (${postToJobBoard ? "public" : "private"})`
         );
 
@@ -199,7 +199,7 @@ export async function POST(req: Request) {
         });
       }
     } catch (propError) {
-      console.error("[PortalWorkRequest] Property creation error:", propError);
+      logger.error("[PortalWorkRequest] Property creation error:", propError);
       return NextResponse.json(
         {
           success: false,
@@ -234,7 +234,7 @@ export async function POST(req: Request) {
         },
       });
     } catch (claimError) {
-      console.error("[PortalWorkRequest] Claim creation error:", claimError);
+      logger.error("[PortalWorkRequest] Claim creation error:", claimError);
       return NextResponse.json(
         { success: false, error: "Unable to create claim. Please try again." },
         { status: 500 }
@@ -263,7 +263,7 @@ export async function POST(req: Request) {
       });
     } catch (activityError) {
       // Non-fatal: log but don't fail the request
-      console.error("[PortalWorkRequest] Activity log error:", activityError);
+      logger.error("[PortalWorkRequest] Activity log error:", activityError);
     }
 
     // 6. PHASE 4: Send notification to org admins

@@ -1,5 +1,5 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -183,7 +183,7 @@ export async function POST(req: Request) {
     orgId = (await ensureUserOrgContext(userId)).orgId;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[trades/profile POST] ❌ Failed to resolve orgId", message);
+    logger.error("[trades/profile POST] ❌ Failed to resolve orgId", message);
     return NextResponse.json({ error: "Organization context missing" }, { status: 403 });
   }
 
@@ -265,7 +265,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ profile }, { status: 201 });
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error("Unknown error");
-    console.error("[trades/profile POST] ❌ Error creating profile:", {
+    logger.error("[trades/profile POST] ❌ Error creating profile:", {
       message: err.message,
       stack: err.stack?.split("\n")[0],
     });
@@ -292,7 +292,7 @@ export async function PATCH(req: Request) {
     orgId = (await ensureUserOrgContext(userId)).orgId;
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Unknown error";
-    console.error("[trades/profile PATCH] ❌ Failed to resolve orgId", message);
+    logger.error("[trades/profile PATCH] ❌ Failed to resolve orgId", message);
     return NextResponse.json({ error: "Organization context required" }, { status: 403 });
   }
 
@@ -350,7 +350,7 @@ export async function PATCH(req: Request) {
     return NextResponse.json({ profile });
   } catch (error: unknown) {
     const err = error instanceof Error ? error : new Error("Unknown error");
-    console.error("[trades/profile PATCH] ❌ Error updating profile:", {
+    logger.error("[trades/profile PATCH] ❌ Error updating profile:", {
       message: err.message,
       stack: err.stack?.split("\n")[0],
     });

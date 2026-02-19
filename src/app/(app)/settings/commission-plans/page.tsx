@@ -73,7 +73,7 @@ export default function CommissionPlansPage() {
       const data = await res.json();
       if (data.success) setPlans(data.data);
     } catch (e) {
-      console.error("Failed to fetch plans:", e);
+      logger.error("Failed to fetch plans:", e);
     } finally {
       setLoading(false);
     }
@@ -107,7 +107,7 @@ export default function CommissionPlansPage() {
         fetchPlans();
       }
     } catch (e) {
-      console.error("Failed to create plan:", e);
+      logger.error("Failed to create plan:", e);
     } finally {
       setSaving(false);
     }
@@ -122,7 +122,7 @@ export default function CommissionPlansPage() {
       });
       fetchPlans();
     } catch (e) {
-      console.error("Failed to toggle plan:", e);
+      logger.error("Failed to toggle plan:", e);
     }
   };
 
@@ -135,7 +135,7 @@ export default function CommissionPlansPage() {
       });
       fetchPlans();
     } catch (e) {
-      console.error("Failed to set default:", e);
+      logger.error("Failed to set default:", e);
     }
   };
 
@@ -145,7 +145,7 @@ export default function CommissionPlansPage() {
       await fetch(`/api/finance/commission-plans/${planId}`, { method: "DELETE" });
       fetchPlans();
     } catch (e) {
-      console.error("Failed to delete plan:", e);
+      logger.error("Failed to delete plan:", e);
     }
   };
 

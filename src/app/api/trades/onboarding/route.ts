@@ -10,8 +10,8 @@
  * 4. Enable admin to create company page
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -200,10 +200,7 @@ export async function POST(req: NextRequest) {
       try {
         orgId = await getResolvedOrgId();
       } catch (error) {
-        console.error(
-          "[Trades Onboarding] getResolvedOrgId failed, falling back to userId:",
-          error
-        );
+        logger.error("[Trades Onboarding] getResolvedOrgId failed, falling back to userId:", error);
         orgId = userId;
       }
 
@@ -232,7 +229,7 @@ export async function POST(req: NextRequest) {
           ? workHistory
           : null;
 
-      console.log("[Trades Onboarding] About to save profile with data:", {
+      logger.info("[Trades Onboarding] About to save profile with data:", {
         userId,
         firstName,
         lastName,
@@ -302,7 +299,7 @@ export async function POST(req: NextRequest) {
               },
             });
       } catch (prismaError: any) {
-        console.error("[Trades Onboarding] Prisma error:", prismaError);
+        logger.error("[Trades Onboarding] Prisma error:", prismaError);
         return NextResponse.json(
           {
             error: "Database error while saving profile",
@@ -315,7 +312,7 @@ export async function POST(req: NextRequest) {
 
       // Profile created successfully - return the result
       // Note: tradesCompanyMember is the canonical profile model
-      console.log("[Trades Onboarding] ✅ Profile saved successfully:", {
+      logger.info("[Trades Onboarding] ✅ Profile saved successfully:", {
         id: profile.id,
         userId: profile.userId,
         firstName: profile.firstName,

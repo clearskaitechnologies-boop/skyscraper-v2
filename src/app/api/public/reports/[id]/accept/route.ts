@@ -9,8 +9,8 @@ export const revalidate = 0;
 // Client acceptance endpoint (no auth required, uses token)
 // =====================================================
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { supabase } from "@/integrations/supabase/client";
 import { sendAcceptanceReceiptEmail } from "@/lib/mailer";
@@ -68,7 +68,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         });
 
       if (uploadError) {
-        console.error("Receipt upload failed:", uploadError);
+        logger.error("Receipt upload failed:", uploadError);
       } else {
         // Get signed URL (valid 30 days)
         const { data: urlData } = await supabase.storage
@@ -80,7 +80,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         }
       }
     } catch (pdfError) {
-      console.error("PDF generation failed:", pdfError);
+      logger.error("PDF generation failed:", pdfError);
       // Continue without PDF - acceptance is more important
     }
 
@@ -97,7 +97,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
         )
       `;
     } catch (eventError) {
-      console.error("Event logging failed:", eventError);
+      logger.error("Event logging failed:", eventError);
       // Continue - logging is secondary
     }
 
@@ -121,7 +121,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
           acceptedAt,
         });
       } catch (emailError) {
-        console.error("Acceptance receipt email failed:", emailError);
+        logger.error("Acceptance receipt email failed:", emailError);
         // Don't fail the acceptance if email fails
       }
     }

@@ -28,6 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface ThreadParticipant {
   id: string;
@@ -172,7 +173,7 @@ export default function TradesMessagesPage() {
         setConnectedClients(data.clients || []);
       }
     } catch (error) {
-      console.error("Failed to fetch connected clients:", error);
+      logger.error("Failed to fetch connected clients:", error);
     }
   };
 
@@ -234,7 +235,7 @@ export default function TradesMessagesPage() {
 
       setThreads(allThreads);
     } catch (error) {
-      if (!silent) console.error("Failed to fetch threads:", error);
+      if (!silent) logger.error("Failed to fetch threads:", error);
     } finally {
       if (!silent) setLoading(false);
     }
@@ -269,7 +270,7 @@ export default function TradesMessagesPage() {
             );
           }
         } catch (error) {
-          console.error("Failed to fetch portal thread messages:", error);
+          logger.error("Failed to fetch portal thread messages:", error);
         }
       } else {
         // Legacy TradesMessage — single message per record
@@ -337,7 +338,7 @@ export default function TradesMessagesPage() {
       }
     } catch (error: any) {
       const msg = error?.message || "Network error — please try again";
-      console.error("Failed to send message:", error);
+      logger.error("Failed to send message:", error);
       setSendError(msg);
       toast.error(msg);
     } finally {
@@ -445,7 +446,7 @@ export default function TradesMessagesPage() {
         }
       }
     } catch (error) {
-      console.error("Failed to send message:", error);
+      logger.error("Failed to send message:", error);
     }
   };
 

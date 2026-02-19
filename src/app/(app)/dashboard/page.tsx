@@ -12,6 +12,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { getUserIdentity } from "@/lib/identity";
+import { logger } from "@/lib/logger";
 import { getOrgLocation } from "@/lib/org/getOrgLocation";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 import { getDashboardWeather } from "@/lib/weather/weatherstack";
@@ -73,7 +74,7 @@ export default async function DashboardPage() {
     if (userId) {
       const identity = await getUserIdentity(userId);
       if (identity?.userType === "client") {
-        console.warn(
+        logger.warn(
           "[DASHBOARD] Client user reached Pro dashboard - middleware should have caught this"
         );
         redirect("/portal");
@@ -84,7 +85,7 @@ export default async function DashboardPage() {
 
     // If org resolution failed but user is authenticated, show error
     if (!orgId) {
-      console.error("[DASHBOARD] CRITICAL: Org resolution failed:", orgCtx.status);
+      logger.error("[DASHBOARD] CRITICAL: Org resolution failed:", orgCtx.status);
       return (
         <div className="flex min-h-screen items-center justify-center p-8">
           <div className="max-w-md space-y-4 rounded-lg border border-red-500 bg-red-50 p-6">
@@ -122,7 +123,7 @@ export default async function DashboardPage() {
     try {
       location = await getOrgLocation(orgId);
     } catch (e) {
-      console.warn("[DASHBOARD] Location fetch failed (non-critical):", e);
+      logger.warn("[DASHBOARD] Location fetch failed (non-critical):", e);
     }
 
     let weather: any = null;
@@ -131,7 +132,7 @@ export default async function DashboardPage() {
 
       weather = await getDashboardWeather(locationString);
     } catch (e) {
-      console.warn("[DASHBOARD] Weather fetch failed (non-critical):", e);
+      logger.warn("[DASHBOARD] Weather fetch failed (non-critical):", e);
     }
 
     return (
@@ -226,7 +227,7 @@ export default async function DashboardPage() {
       </PageContainer>
     );
   } catch (error: any) {
-    console.error("[DASHBOARD_FATAL]", {
+    logger.error("[DASHBOARD_FATAL]", {
       message: error?.message,
       name: error?.name,
       stack: error?.stack,

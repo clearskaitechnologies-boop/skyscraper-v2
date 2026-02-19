@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -262,7 +262,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
             },
           });
         } catch (notifErr) {
-          console.error("[messages] TradeNotification create failed:", notifErr);
+          logger.error("[messages] TradeNotification create failed:", notifErr);
         }
 
         // Get participant email and send notification
@@ -276,7 +276,7 @@ export async function POST(req: NextRequest, context: RouteContext) {
             "Team Member", // Sender name
             content.substring(0, 150),
             threadId
-          ).catch((err: Error) => console.error("Failed to send message email:", err));
+          ).catch((err: Error) => logger.error("Failed to send message email:", err));
         }
       }
     } catch (error) {
@@ -426,7 +426,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
       } catch (dbErr: any) {
         // Column may not exist yet if migration hasn't been applied
         if (dbErr.message?.includes("archivedAt") || dbErr.code === "P2009") {
-          console.warn(
+          logger.warn(
             "[messages] archivedAt column missing — run migration 20260211_message_thread_archived.sql"
           );
           return NextResponse.json(
@@ -445,7 +445,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
         });
       } catch (dbErr: any) {
         if (dbErr.message?.includes("archivedAt") || dbErr.code === "P2009") {
-          console.warn(
+          logger.warn(
             "[messages] archivedAt column missing — run migration 20260211_message_thread_archived.sql"
           );
           return NextResponse.json(
