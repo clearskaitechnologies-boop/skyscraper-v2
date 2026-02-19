@@ -340,8 +340,8 @@
 
 - [ ] 5-A — Fix Damage Report AI parse failure (see 1-1 above)
 - [ ] 5-B — Improve Mockup Generator: validate input image relevance, add disclaimers about AI limitations
-- [x] 5-C — Add input validation to ALL AI tools: require prerequisites, show loading states, handle errors gracefully ✅ Wired Zod schemas into 8 critical routes (chat, assistant, claim-assistant, dashboard-assistant, damage-export, damage-builder, rebuttal, report-builder, enhanced-report-builder)
-- [x] 5-D — Add Zod response schemas for every AI endpoint to catch format changes ✅ Created `src/lib/validation/aiSchemas.ts` with 30+ schemas + validateAIRequest utility. Updated schemas to match actual route signatures.
+- [x] 5-C — Add input validation to ALL AI tools: require prerequisites, show loading states, handle errors gracefully ✅ Wired Zod schemas into 20 routes total (Sprint 3: 9 routes, Sprint 6: +11 routes). Routes: chat, assistant, claim-assistant, dashboard-assistant, damage-export, damage-builder, rebuttal, report-builder, enhanced-report-builder, estimate-value, claim-writer, mockup, suggest-status, video, depreciation/export-pdf, rebuttal/export-pdf, dispatch/[claimId], supplement/[claimId], domain, run
+- [x] 5-D — Add Zod response schemas for every AI endpoint to catch format changes ✅ Created `src/lib/validation/aiSchemas.ts` with 40+ schemas + validateAIRequest utility. Updated schemas to match actual route signatures. Added dispatchSchema, supplementClaimSchema, depreciationExportPdfSchema, rebuttalExportPdfSchema.
 - [ ] 5-E — Create test fixtures (sample images, claims, carrier responses) for repeatable AI QA
 - [ ] 5-F — Document AI limitations and expected input requirements in UI tooltips / help text
 - [ ] 5-G — QA pass on untested AI tools (5-6 through 5-10)
@@ -394,7 +394,7 @@
 
 - [x] 7-2a — Remove `console.log` from `ProfileStrengthBanner.tsx` (~line 47) ✅ Already clean
 - [x] 7-2b — Remove `console.log` from Quick DOL API route (~line 130) ✅ Already clean
-- [x] 7-2c — Run `grep -rn "console.log" src/ | wc -l` and track reduction ✅ Cleaned 23 in after-sign-in, 5 in report pages, 13 in AI routes, 27 in claims module (ClaimWorkspaceShell, loader, layout). BrandingForm as-any fix via z.ZodError instanceof check.
+- [x] 7-2c — Run `grep -rn "console.log" src/ | wc -l` and track reduction ✅ Sprint 4: 27 calls in claims module. Sprint 5: 94 calls in 16 files (portal, trades, contacts, invitations, webhooks, cron, reports, AI tools). Total console calls: 800+ -> 590 (-210+). Sprint 5 also fixed 15 as-any casts across 12 files.
 
 ### 7-3 `withAuth` Migration
 
@@ -470,13 +470,13 @@
 | 2 — Validation & UX    | 5 areas, 20 tasks    | 6 tasks ✅  | **In progress** |
 | 3 — Error Boundaries   | 17 sections, 4 tasks | 21 done ✅  | **Done**        |
 | 4 — Untested Modules   | 20 modules, 4 tasks  | —           | **Next sprint** |
-| 5 — AI Quality         | 10 features, 7 tasks | 6 tasks ✅  | **In progress** |
+| 5 — AI Quality         | 10 features, 7 tasks | 7 tasks ✅  | **In progress** |
 | 6 — Test Automation    | 3 areas, 17 tests    | —           | **Ongoing**     |
-| 7 — Code Quality       | 5 areas, 12 tasks    | 11 tasks ✅ | **In progress** |
+| 7 — Code Quality       | 5 areas, 12 tasks    | 12 tasks ✅ | **In progress** |
 | 8 — Cross-Browser/A11y | 3 areas, 12 tasks    | 2 tasks ✅  | **In progress** |
 | 9 — Design System      | 2 areas, 10 tasks    | —           | **Pre-launch**  |
 
-**Total: ~120+ discrete tasks across 10 phases — ~86 completed across 4 sprints**
+**Total: ~120+ discrete tasks across 10 phases — ~95 completed across 6 sprints**
 
 ---
 
