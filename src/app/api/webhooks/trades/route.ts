@@ -3,12 +3,28 @@
  * Receives events from trades microservice to sync with Core CRM
  */
 
+import crypto from "crypto";
+
 import { logger } from "@/lib/logger";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { generateContactSlug } from "@/lib/generateContactSlug";
 import prisma from "@/lib/prisma";
+
+/**
+ * Timing-safe comparison of webhook secret to prevent timing attacks
+ */
+function verifyWebhookSecret(received: string, expected: string): boolean {
+  try {
+    const a = Buffer.from(received);
+    const b = Buffer.from(expected);
+    if (a.length !== b.length) return false;
+    return crypto.timingSafeEqual(a, b);
+  } catch {
+    return false;
+  }
+}
 
 // Webhook event types
 type TradesWebhookEvent =
@@ -36,11 +52,12 @@ interface WebhookPayload {
 
 export async function POST(req: NextRequest) {
   try {
-    // Verify webhook signature (simple secret-based auth for now)
+    // Verify webhook signature (timing-safe comparison)
     const headersList = headers();
     const webhookSecret = headersList.get("x-webhook-secret");
+    const expectedSecret = process.env.TRADES_WEBHOOK_SECRET;
 
-    if (webhookSecret !== process.env.TRADES_WEBHOOK_SECRET) {
+    if (!webhookSecret || !expectedSecret || !verifyWebhookSecret(webhookSecret, expectedSecret)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 

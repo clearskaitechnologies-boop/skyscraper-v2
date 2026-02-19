@@ -1,10 +1,45 @@
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+import crypto from "crypto";
+
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
+
+// ---------------------------------------------------------------------------
+// Twilio signature validation (HMAC-SHA1)
+// https://www.twilio.com/docs/usage/security#validating-requests
+// ---------------------------------------------------------------------------
+function validateTwilioSignature(
+  authToken: string,
+  signature: string,
+  url: string,
+  params: Record<string, string>
+): boolean {
+  // Sort params alphabetically by key and concatenate key+value
+  const data =
+    url +
+    Object.keys(params)
+      .sort()
+      .reduce((acc, key) => acc + key + params[key], "");
+
+  const expectedSignature = crypto
+    .createHmac("sha1", authToken)
+    .update(data)
+    .digest("base64");
+
+  // Timing-safe comparison
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  } catch {
+    return false;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // POST /api/webhooks/twilio — Twilio inbound SMS webhook
@@ -13,7 +48,7 @@ import prisma from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
-    // SECURITY: Validate Twilio request signature
+    // SECURITY: Validate Twilio request signature (HMAC-SHA1)
     const twilioSignature = req.headers.get("x-twilio-signature");
     const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN;
     if (!twilioSignature || !twilioAuthToken) {
@@ -29,19 +64,35 @@ export async function POST(req: NextRequest) {
     let to = "";
     let body = "";
     let messageSid = "";
+    let formParams: Record<string, string> = {};
 
     if (contentType.includes("application/x-www-form-urlencoded")) {
       const formData = await req.formData();
-      from = formData.get("From")?.toString() || "";
-      to = formData.get("To")?.toString() || "";
-      body = formData.get("Body")?.toString() || "";
-      messageSid = formData.get("MessageSid")?.toString() || "";
+      // Collect all form params for signature validation
+      formData.forEach((value, key) => {
+        formParams[key] = value.toString();
+      });
+      from = formParams["From"] || "";
+      to = formParams["To"] || "";
+      body = formParams["Body"] || "";
+      messageSid = formParams["MessageSid"] || "";
     } else {
       const json = await req.json().catch(() => ({}));
       from = json.From || json.from || "";
       to = json.To || json.to || "";
       body = json.Body || json.body || "";
       messageSid = json.MessageSid || json.messageSid || "";
+      formParams = json;
+    }
+
+    // Validate HMAC signature using Twilio's algorithm
+    const webhookUrl = process.env.TWILIO_WEBHOOK_URL || req.url;
+    if (!validateTwilioSignature(twilioAuthToken, twilioSignature, webhookUrl, formParams)) {
+      logger.warn("[twilio-webhook] Invalid Twilio signature — rejecting request");
+      return new NextResponse('<?xml version="1.0" encoding="UTF-8"?><Response></Response>', {
+        status: 403,
+        headers: { "Content-Type": "text/xml" },
+      });
     }
 
     if (!from || !body) {
