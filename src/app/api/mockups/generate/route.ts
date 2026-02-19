@@ -4,8 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 import puppeteer from "puppeteer";
 
 import { getOpenAI } from "@/lib/ai/client";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import { buildClaimContext } from "@/lib/claim/buildClaimContext";
 import { createExportRecord } from "@/lib/exportRegistry";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getStorageClient } from "@/lib/storage/client";
 
 export const runtime = "nodejs";
@@ -25,6 +30,35 @@ export async function POST(request: NextRequest) {
 
     if (!userId || !orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(orgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(userId, "UPLOAD");
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many requests. Please try again later.",
+          retryAfter: rl.reset,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
     }
 
     const openai = getOpenAI();

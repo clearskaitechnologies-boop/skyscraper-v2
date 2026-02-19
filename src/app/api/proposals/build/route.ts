@@ -11,6 +11,7 @@ import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
+import { requireActiveSubscription, SubscriptionRequiredError } from "@/lib/billing/requireActiveSubscription";
 import prisma from "@/lib/prisma";
 import { draftProposalSections } from "@/lib/proposals/ai";
 import {
@@ -21,6 +22,7 @@ import type {
     ProposalBuildRequest,
     ProposalBuildResponse,
 } from "@/lib/proposals/types";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // Token consumption - will be implemented when token system is integrated
 const TOKENS_REQUIRED = 2;
@@ -51,6 +53,28 @@ export async function POST(request: Request) {
     }
     if (!effectiveUserId || !effectiveOrgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(effectiveOrgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(effectiveUserId, "AI");
+    if (!rl.success) {
+      return NextResponse.json(
+        { error: "rate_limit_exceeded", message: "Too many requests. Please try again later.", retryAfter: rl.reset },
+        { status: 429, headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
+      );
     }
 
     // Parse request body

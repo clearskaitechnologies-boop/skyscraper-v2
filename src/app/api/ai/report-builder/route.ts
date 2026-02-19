@@ -13,13 +13,50 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import { runStormIntakePipeline } from "@/lib/ai/pipelines/stormIntake";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import { generatePDFBuffer } from "@/lib/pdf/reportBuilder";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { reportBuilderSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string | null }) {
   try {
     const { userId } = ctx;
+    const orgId = ctx.orgId;
+
+    // ── Billing guard ──
+    if (orgId) {
+      try {
+        await requireActiveSubscription(orgId);
+      } catch (error) {
+        if (error instanceof SubscriptionRequiredError) {
+          return NextResponse.json(
+            { error: "subscription_required", message: "Active subscription required" },
+            { status: 402 }
+          );
+        }
+        throw error;
+      }
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(userId, "AI");
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many requests. Please try again later.",
+          retryAfter: rl.reset,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
+    }
 
     const body = await req.json();
     const validated = validateAIRequest(reportBuilderSchema, body);
@@ -48,7 +85,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     }
 
     // Get org context
-    const orgId = claim.orgId || "unknown";
+    const claimOrgId = claim.orgId || "unknown";
 
     // Validate images are valid URLs or data URIs
     const validImages = images.filter((img: string) => {
@@ -81,7 +118,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const pipelineResult = await runStormIntakePipeline({
       images: validImages,
       claimId,
-      orgId,
+      orgId: claimOrgId,
       propertyAddress: property?.address,
       lossDate: claim.dateOfLoss || undefined,
       damageType: claim.damageType || undefined,

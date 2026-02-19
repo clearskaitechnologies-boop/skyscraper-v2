@@ -2,8 +2,13 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import { generateRecommendations } from "@/lib/ml/recommendations/engine";
 import { upsertRecommendations } from "@/lib/ml/recommendations/persist";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * POST /api/ai/recommendations/refresh
@@ -16,6 +21,35 @@ async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
 
     // Use org context (may be null) - default to userId if no org
     const orgId = ctxOrgId || userId;
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(orgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(userId, "AI");
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many requests. Please try again later.",
+          retryAfter: rl.reset,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
+    }
 
     // Get claimId from request body
     const body = await req.json().catch(() => ({}));

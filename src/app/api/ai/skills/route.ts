@@ -11,6 +11,11 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 import {
   AI_SKILLS,
@@ -22,7 +27,36 @@ import {
 
 async function GET_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
-    const { userId } = ctx;
+    const { userId, orgId } = ctx;
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(orgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(userId, "AI");
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many requests. Please try again later.",
+          retryAfter: rl.reset,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
+    }
 
     const { searchParams } = new URL(request.url);
     const role = searchParams.get("role") as "Free" | "Pro" | "Admin" | null;

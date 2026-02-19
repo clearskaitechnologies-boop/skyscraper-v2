@@ -3,6 +3,10 @@ import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
 
 // Retry configuration for AI service calls
@@ -19,6 +23,19 @@ export async function POST(request: NextRequest) {
     if (!orgId) {
       logger.error("[AI_VISION] ❌ Unauthorized - no orgId");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(orgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
     }
 
     // Rate limiting check (10 requests per minute for AI endpoints)

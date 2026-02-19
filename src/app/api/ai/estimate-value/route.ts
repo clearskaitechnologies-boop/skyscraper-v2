@@ -2,6 +2,10 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
 import { estimateValueSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
@@ -13,6 +17,19 @@ import { estimateValueSchema, validateAIRequest } from "@/lib/validation/aiSchem
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
     const { userId, orgId } = ctx;
+
+    // ── Billing guard ──
+    try {
+      await requireActiveSubscription(orgId);
+    } catch (error) {
+      if (error instanceof SubscriptionRequiredError) {
+        return NextResponse.json(
+          { error: "subscription_required", message: "Active subscription required" },
+          { status: 402 }
+        );
+      }
+      throw error;
+    }
 
     // Rate limiting check
     const identifier = orgId || userId;

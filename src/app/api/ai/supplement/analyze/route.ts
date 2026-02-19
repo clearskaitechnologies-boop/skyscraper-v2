@@ -10,6 +10,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const openai = getOpenAI();
 
@@ -91,6 +96,32 @@ const COMMON_MISSING_BY_CATEGORY = {
 export async function POST(request: NextRequest) {
   const auth = await requireAuth();
   if (auth instanceof NextResponse) return auth;
+
+  // ── Billing guard ──
+  try {
+    await requireActiveSubscription(auth.orgId);
+  } catch (error) {
+    if (error instanceof SubscriptionRequiredError) {
+      return NextResponse.json(
+        { error: "subscription_required", message: "Active subscription required" },
+        { status: 402 }
+      );
+    }
+    throw error;
+  }
+
+  // ── Rate limit ──
+  const rl = await checkRateLimit(auth.userId, "AI");
+  if (!rl.success) {
+    return NextResponse.json(
+      {
+        error: "rate_limit_exceeded",
+        message: "Too many requests. Please try again later.",
+        retryAfter: rl.reset,
+      },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
+    );
+  }
 
   try {
     const formData = await request.formData();

@@ -4,7 +4,12 @@ import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { runWeatherReport, WeatherReportInput } from "@/lib/ai/weather";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { htmlToPdfBuffer } from "@/lib/reports/pdf-utils";
 import { saveAiPdfToStorage } from "@/lib/reports/saveAiPdfToStorage";
 
@@ -51,6 +56,37 @@ export async function POST(req: NextRequest) {
   try {
     const { userId, orgId } = await auth();
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    // ── Billing guard ──
+    if (orgId) {
+      try {
+        await requireActiveSubscription(orgId);
+      } catch (error) {
+        if (error instanceof SubscriptionRequiredError) {
+          return NextResponse.json(
+            { error: "subscription_required", message: "Active subscription required" },
+            { status: 402 }
+          );
+        }
+        throw error;
+      }
+    }
+
+    // ── Rate limit ──
+    const rl = await checkRateLimit(userId, "AI");
+    if (!rl.success) {
+      return NextResponse.json(
+        {
+          error: "rate_limit_exceeded",
+          message: "Too many requests. Please try again later.",
+          retryAfter: rl.reset,
+        },
+        {
+          status: 429,
+          headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) },
+        }
+      );
+    }
 
     const body = (await req.json()) as WeatherReportInput & {
       claim_id?: string | null;

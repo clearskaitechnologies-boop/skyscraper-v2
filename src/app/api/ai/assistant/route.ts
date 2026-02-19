@@ -1,11 +1,16 @@
 import { logger } from "@/lib/logger";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { safeAI } from "@/lib/aiGuard";
 import { aiFail } from "@/lib/api/aiResponse";
+import {
+  requireActiveSubscription,
+  SubscriptionRequiredError,
+} from "@/lib/billing/requireActiveSubscription";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { assistantSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 const openai = getOpenAI();
@@ -27,7 +32,33 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
     );
   }
 
-  const { userId } = ctx;
+  const { userId, orgId } = ctx;
+
+  // ── Billing guard ──
+  try {
+    await requireActiveSubscription(orgId);
+  } catch (error) {
+    if (error instanceof SubscriptionRequiredError) {
+      return NextResponse.json(
+        { error: "subscription_required", message: "Active subscription required" },
+        { status: 402 }
+      );
+    }
+    throw error;
+  }
+
+  // ── Rate limit ──
+  const rl = await checkRateLimit(userId, "AI");
+  if (!rl.success) {
+    return NextResponse.json(
+      {
+        error: "rate_limit_exceeded",
+        message: "Too many requests. Please try again later.",
+        retryAfter: rl.reset,
+      },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.reset - Date.now()) / 1000)) } }
+    );
+  }
 
   const body = await req.json();
   const validated = validateAIRequest(assistantSchema, body);
