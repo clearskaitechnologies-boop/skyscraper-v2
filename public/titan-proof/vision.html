@@ -7,10 +7,18 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
 
-      * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
       body {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
         background: #0a0a0a;
         color: #fff;
         overflow: hidden;
@@ -30,39 +38,54 @@
         position: relative;
       }
 
-      .slide.active { display: flex; }
+      .slide.active {
+        display: flex;
+      }
 
       @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(12px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
       }
 
       .top-bar {
         position: absolute;
-        top: 0; left: 0; right: 0;
+        top: 0;
+        left: 0;
+        right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #FFC838, #117CFF, #10b981);
+        background: linear-gradient(90deg, #ffc838, #117cff, #10b981);
       }
 
       .brand {
         position: absolute;
-        top: 28px; left: 40px;
+        top: 28px;
+        left: 40px;
         font-size: 14px;
         font-weight: 600;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
+        color: rgba(255, 255, 255, 0.4);
       }
 
       .slide-counter {
         position: absolute;
-        top: 28px; right: 40px;
+        top: 28px;
+        right: 40px;
         font-size: 14px;
         font-weight: 500;
-        color: rgba(255,255,255,0.3);
+        color: rgba(255, 255, 255, 0.3);
       }
 
-      .section-icon { font-size: 48px; margin-bottom: 16px; }
+      .section-icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
 
       .title-main {
         font-size: 58px;
@@ -78,7 +101,7 @@
       .title-sub {
         font-size: 20px;
         font-weight: 400;
-        color: rgba(255,255,255,0.5);
+        color: rgba(255, 255, 255, 0.5);
         text-align: center;
         margin-bottom: 48px;
         max-width: 700px;
@@ -93,7 +116,7 @@
 
       .section-subtitle {
         font-size: 17px;
-        color: rgba(255,255,255,0.45);
+        color: rgba(255, 255, 255, 0.45);
         text-align: center;
         margin-bottom: 44px;
         max-width: 650px;
@@ -104,25 +127,31 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(255,200,56,0.12);
-        border: 1px solid rgba(255,200,56,0.3);
+        background: rgba(255, 200, 56, 0.12);
+        border: 1px solid rgba(255, 200, 56, 0.3);
         border-radius: 999px;
         padding: 10px 24px;
         font-size: 15px;
         font-weight: 600;
-        color: #FFC838;
+        color: #ffc838;
       }
 
       .title-badge .dot {
-        width: 8px; height: 8px;
-        background: #FFC838;
+        width: 8px;
+        height: 8px;
+        background: #ffc838;
         border-radius: 50%;
         animation: pulse 2s infinite;
       }
 
       @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
       }
 
       /* ── Metric Cards ── */
@@ -132,21 +161,29 @@
         width: 100%;
         max-width: 1100px;
       }
-      .metrics-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-      .metrics-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
-      .metrics-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+      .metrics-grid.cols-4 {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .metrics-grid.cols-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .metrics-grid.cols-2 {
+        grid-template-columns: repeat(2, 1fr);
+      }
 
       .metric-card {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 26px 22px;
         text-align: center;
-        transition: transform 0.2s, border-color 0.2s;
+        transition:
+          transform 0.2s,
+          border-color 0.2s;
       }
       .metric-card:hover {
         transform: translateY(-2px);
-        border-color: rgba(255,255,255,0.15);
+        border-color: rgba(255, 255, 255, 0.15);
       }
 
       .metric-label {
@@ -154,7 +191,7 @@
         font-weight: 600;
         letter-spacing: 1.5px;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.4);
+        color: rgba(255, 255, 255, 0.4);
         margin-bottom: 8px;
       }
 
@@ -163,16 +200,28 @@
         font-weight: 800;
         margin-bottom: 4px;
       }
-      .metric-value.gold { color: #FFC838; }
-      .metric-value.green { color: #10b981; }
-      .metric-value.blue { color: #3b82f6; }
-      .metric-value.cyan { color: #06b6d4; }
-      .metric-value.red { color: #ef4444; }
-      .metric-value.white { color: #fff; }
+      .metric-value.gold {
+        color: #ffc838;
+      }
+      .metric-value.green {
+        color: #10b981;
+      }
+      .metric-value.blue {
+        color: #3b82f6;
+      }
+      .metric-value.cyan {
+        color: #06b6d4;
+      }
+      .metric-value.red {
+        color: #ef4444;
+      }
+      .metric-value.white {
+        color: #fff;
+      }
 
       .metric-detail {
         font-size: 12px;
-        color: rgba(255,255,255,0.35);
+        color: rgba(255, 255, 255, 0.35);
         line-height: 1.4;
       }
 
@@ -190,13 +239,13 @@
         font-size: 14px;
         font-weight: 600;
         text-align: right;
-        color: rgba(255,255,255,0.7);
+        color: rgba(255, 255, 255, 0.7);
         flex-shrink: 0;
       }
       .opp-bar-bg {
         flex: 1;
         height: 36px;
-        background: rgba(255,255,255,0.05);
+        background: rgba(255, 255, 255, 0.05);
         border-radius: 8px;
         overflow: hidden;
         position: relative;
@@ -213,7 +262,9 @@
         animation: growBar 1s ease forwards;
       }
       @keyframes growBar {
-        from { width: 0%; }
+        from {
+          width: 0%;
+        }
       }
 
       /* ── State Map Grid ── */
@@ -225,8 +276,8 @@
         width: 100%;
       }
       .state-card {
-        background: rgba(255,255,255,0.04);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         padding: 16px 12px;
         text-align: center;
@@ -234,16 +285,26 @@
       }
       .state-card:hover {
         transform: translateY(-2px);
-        border-color: rgba(255,200,56,0.4);
-        background: rgba(255,200,56,0.06);
+        border-color: rgba(255, 200, 56, 0.4);
+        background: rgba(255, 200, 56, 0.06);
       }
       .state-card.active {
-        border-color: rgba(16,185,129,0.5);
-        background: rgba(16,185,129,0.08);
+        border-color: rgba(16, 185, 129, 0.5);
+        background: rgba(16, 185, 129, 0.08);
       }
-      .state-emoji { font-size: 28px; margin-bottom: 6px; }
-      .state-name { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
-      .state-detail { font-size: 11px; color: rgba(255,255,255,0.4); }
+      .state-emoji {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+      .state-name {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 2px;
+      }
+      .state-detail {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.4);
+      }
       .state-tag {
         display: inline-block;
         margin-top: 6px;
@@ -254,14 +315,23 @@
         padding: 2px 8px;
         border-radius: 4px;
       }
-      .state-tag.now { background: rgba(16,185,129,0.2); color: #10b981; }
-      .state-tag.next { background: rgba(59,130,246,0.2); color: #3b82f6; }
-      .state-tag.future { background: rgba(255,200,56,0.15); color: #FFC838; }
+      .state-tag.now {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+      }
+      .state-tag.next {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+      }
+      .state-tag.future {
+        background: rgba(255, 200, 56, 0.15);
+        color: #ffc838;
+      }
 
       /* ── Competitor Disruption ── */
       .disruption-card {
-        background: rgba(239,68,68,0.06);
-        border: 1px solid rgba(239,68,68,0.15);
+        background: rgba(239, 68, 68, 0.06);
+        border: 1px solid rgba(239, 68, 68, 0.15);
         border-radius: 16px;
         padding: 28px 32px;
         max-width: 900px;
@@ -276,11 +346,11 @@
       }
       .disruption-body {
         font-size: 15px;
-        color: rgba(255,255,255,0.6);
+        color: rgba(255, 255, 255, 0.6);
         line-height: 1.7;
       }
       .disruption-body strong {
-        color: rgba(255,255,255,0.85);
+        color: rgba(255, 255, 255, 0.85);
       }
 
       /* ── Check Grid ── */
@@ -295,7 +365,7 @@
         align-items: center;
         gap: 10px;
         font-size: 14px;
-        color: rgba(255,255,255,0.65);
+        color: rgba(255, 255, 255, 0.65);
         padding: 6px 0;
       }
       .advantage-icon {
@@ -314,18 +384,27 @@
       .quote-text {
         font-size: 16px;
         font-style: italic;
-        color: rgba(255,255,255,0.55);
+        color: rgba(255, 255, 255, 0.55);
         line-height: 1.7;
         position: relative;
         padding: 0 24px;
       }
-      .quote-text::before { content: """; font-size: 36px; color: rgba(255,200,56,0.3); position: absolute; left: 0; top: -8px; }
-      .quote-text::after { content: """; font-size: 36px; color: rgba(255,200,56,0.3); position: absolute; right: 0; bottom: -16px; }
+      .quote-text::before {
+        content: ""
+          "; font-size: 36px; color: rgba(255,200,56,0.3); position: absolute; left: 0; top: -8px; }
+      .quote-text::after { content: "
+          "";
+        font-size: 36px;
+        color: rgba(255, 200, 56, 0.3);
+        position: absolute;
+        right: 0;
+        bottom: -16px;
+      }
       .quote-attr {
         margin-top: 12px;
         font-size: 13px;
         font-weight: 600;
-        color: rgba(255,200,56,0.6);
+        color: rgba(255, 200, 56, 0.6);
       }
 
       /* ── Nav ── */
@@ -335,7 +414,7 @@
         left: 50%;
         transform: translateX(-50%);
         font-size: 12px;
-        color: rgba(255,255,255,0.2);
+        color: rgba(255, 255, 255, 0.2);
         z-index: 100;
       }
 
@@ -345,7 +424,7 @@
         font-size: 13px;
         letter-spacing: 2px;
         text-transform: uppercase;
-        color: rgba(255,255,255,0.2);
+        color: rgba(255, 255, 255, 0.2);
         font-weight: 600;
       }
 
@@ -358,8 +437,8 @@
         width: 100%;
       }
       .pillar-card {
-        background: rgba(255,255,255,0.03);
-        border: 1px solid rgba(255,255,255,0.08);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 28px 24px;
         text-align: center;
@@ -367,15 +446,26 @@
       }
       .pillar-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(255,200,56,0.3);
+        border-color: rgba(255, 200, 56, 0.3);
       }
-      .pillar-icon { font-size: 36px; margin-bottom: 14px; }
-      .pillar-title { font-size: 17px; font-weight: 800; margin-bottom: 8px; color: #fff; }
-      .pillar-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+      .pillar-icon {
+        font-size: 36px;
+        margin-bottom: 14px;
+      }
+      .pillar-title {
+        font-size: 17px;
+        font-weight: 800;
+        margin-bottom: 8px;
+        color: #fff;
+      }
+      .pillar-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.45);
+        line-height: 1.6;
+      }
     </style>
   </head>
   <body>
-
     <!-- ═══════════════════════════════════════════════════ -->
     <!-- SLIDE 1: TITLE — THE OPPORTUNITY                   -->
     <!-- ═══════════════════════════════════════════════════ -->
@@ -386,8 +476,8 @@
       <div class="section-icon">🎯</div>
       <div class="title-main">The Opportunity</div>
       <div class="title-sub">
-        A $4.2B roofing software market is being disrupted. 
-        Contractors are looking for a new home — and SkaiScraper is built to be it.
+        A $4.2B roofing software market is being disrupted. Contractors are looking for a new home —
+        and SkaiScraper is built to be it.
       </div>
 
       <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center">
@@ -395,8 +485,15 @@
           <span class="dot"></span>
           Live in Production — skaiscrape.com
         </div>
-        <div class="title-badge" style="border-color: rgba(59,130,246,0.3); background: rgba(59,130,246,0.1); color: #3b82f6;">
-          <span class="dot" style="background: #3b82f6;"></span>
+        <div
+          class="title-badge"
+          style="
+            border-color: rgba(59, 130, 246, 0.3);
+            background: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+          "
+        >
+          <span class="dot" style="background: #3b82f6"></span>
           Arizona Launch — Feb 2026
         </div>
       </div>
@@ -415,17 +512,18 @@
       <div class="section-icon">💥</div>
       <div class="section-title">The Market Is Moving</div>
       <div class="section-subtitle">
-        AccuLynx was acquired. Contractors don't trust their data is safe anymore.
-        They're actively looking — and the alternatives don't deliver everything a modern restoration company needs.
+        AccuLynx was acquired. Contractors don't trust their data is safe anymore. They're actively
+        looking — and the alternatives don't deliver everything a modern restoration company needs.
       </div>
 
       <div class="disruption-card">
         <div class="disruption-headline">⚠️ AccuLynx Acquisition — Trust Erosion</div>
         <div class="disruption-body">
-          When AccuLynx was acquired, thousands of contractors watched their data move to new ownership overnight.
+          When AccuLynx was acquired, thousands of contractors watched their data move to new
+          ownership overnight.
           <strong>Roofing companies are asking: "Who really controls my business data?"</strong>
-          They're evaluating alternatives — but most CRMs are generic construction tools bolted onto the restoration workflow.
-          None are purpose-built for the full claims lifecycle.
+          They're evaluating alternatives — but most CRMs are generic construction tools bolted onto
+          the restoration workflow. None are purpose-built for the full claims lifecycle.
         </div>
       </div>
 
@@ -442,8 +540,8 @@
         </div>
         <div class="metric-card">
           <div class="metric-label">SkaiScraper Pro</div>
-          <div class="metric-value gold">$139</div>
-          <div class="metric-detail">Flat rate. Unlimited users. AI included.</div>
+          <div class="metric-value gold">$80</div>
+          <div class="metric-detail">Per seat/month. Every feature included.</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">AI Capabilities</div>
@@ -464,29 +562,54 @@
       <div class="section-icon">⚡</div>
       <div class="section-title">Built to Win</div>
       <div class="section-subtitle">
-        Not a generic CRM with a roofing skin. SkaiScraper was architected from day one
-        for the full storm restoration lifecycle — every feature exists because a contractor needed it.
+        Not a generic CRM with a roofing skin. SkaiScraper was architected from day one for the full
+        storm restoration lifecycle — every feature exists because a contractor needed it.
       </div>
 
-      <div class="advantage-grid" style="margin-bottom: 32px;">
-        <div class="advantage-item"><span class="advantage-icon">🤖</span> AI damage detection — 47 points in 8 seconds</div>
-        <div class="advantage-item"><span class="advantage-icon">🌩️</span> Automated weather verification at property level</div>
-        <div class="advantage-item"><span class="advantage-icon">📊</span> Carrier strategy engine with predictive AI</div>
-        <div class="advantage-item"><span class="advantage-icon">📋</span> Full claim lifecycle from intake to final packet</div>
-        <div class="advantage-item"><span class="advantage-icon">🔒</span> Org-scoped tenant isolation — verified by 22 tests</div>
-        <div class="advantage-item"><span class="advantage-icon">📱</span> Homeowner portal — real-time claim transparency</div>
-        <div class="advantage-item"><span class="advantage-icon">🏗️</span> Trades network — find subs, share reviews, collaborate</div>
-        <div class="advantage-item"><span class="advantage-icon">💰</span> Depreciation auto-calc + supplement intelligence</div>
-        <div class="advantage-item"><span class="advantage-icon">📄</span> AI proposal generation with branded PDFs</div>
-        <div class="advantage-item"><span class="advantage-icon">🧠</span> AI assistant — claims advice on demand</div>
-        <div class="advantage-item"><span class="advantage-icon">⚖️</span> Bad faith detection and compliance scoring</div>
-        <div class="advantage-item"><span class="advantage-icon">🚀</span> 500 VU load tested — enterprise scale proven</div>
+      <div class="advantage-grid" style="margin-bottom: 32px">
+        <div class="advantage-item">
+          <span class="advantage-icon">🤖</span> AI damage detection — 47 points in 8 seconds
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">🌩️</span> Automated weather verification at property level
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">📊</span> Carrier strategy engine with predictive AI
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">📋</span> Full claim lifecycle from intake to final packet
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">🔒</span> Org-scoped tenant isolation — verified by 22 tests
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">📱</span> Homeowner portal — real-time claim transparency
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">🏗️</span> Trades network — find subs, share reviews,
+          collaborate
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">💰</span> Depreciation auto-calc + supplement intelligence
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">📄</span> AI proposal generation with branded PDFs
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">🧠</span> AI assistant — claims advice on demand
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">⚖️</span> Bad faith detection and compliance scoring
+        </div>
+        <div class="advantage-item">
+          <span class="advantage-icon">🚀</span> 500 VU load tested — enterprise scale proven
+        </div>
       </div>
 
-      <div class="quote-block" style="margin-top: 8px;">
+      <div class="quote-block" style="margin-top: 8px">
         <div class="quote-text">
-          Other platforms make you choose: CRM, estimating, weather, AI, or networking.
-          SkaiScraper is the first platform that delivers all five in one login — at a flat rate.
+          Other platforms make you choose: CRM, estimating, weather, AI, or networking. SkaiScraper
+          is the first platform that delivers all five in one login — at $80/seat.
         </div>
         <div class="quote-attr">— The all-in-one advantage</div>
       </div>
@@ -503,8 +626,8 @@
       <div class="section-icon">🗺️</div>
       <div class="section-title">Scale Plan</div>
       <div class="section-subtitle">
-        Lock down Arizona. Then expand into the highest-volume insurance and storm states — 
-        where contractors need this platform most.
+        Lock down Arizona. Then expand into the highest-volume insurance and storm states — where
+        contractors need this platform most.
       </div>
 
       <div class="state-grid">
@@ -570,10 +693,10 @@
         </div>
       </div>
 
-      <div class="quote-block" style="margin-top: 28px;">
+      <div class="quote-block" style="margin-top: 28px">
         <div class="quote-text">
-          Arizona proves the model. Texas proves the scale. Florida proves the moat.
-          By 2027, SkaiScraper will be the platform of choice in the top 10 storm restoration states.
+          Arizona proves the model. Texas proves the scale. Florida proves the moat. By 2027,
+          SkaiScraper will be the platform of choice in the top 10 storm restoration states.
         </div>
         <div class="quote-attr">— Expansion strategy</div>
       </div>
@@ -590,20 +713,20 @@
       <div class="section-icon">📈</div>
       <div class="section-title">Growth Trajectory</div>
       <div class="section-subtitle">
-        Conservative projections based on $139.99/mo flat rate. Enterprise tiers at $249/mo and $599/mo.
-        One Titan-size deal (180 users) = ~$108K ARR on a single contract.
+        Conservative projections based on $80/seat/month. Every seat gets full platform access.
+        One Titan-size deal (180 seats) = $172K ARR on a single contract.
       </div>
 
-      <div class="metrics-grid cols-4" style="margin-bottom: 28px;">
+      <div class="metrics-grid cols-4" style="margin-bottom: 28px">
         <div class="metric-card">
           <div class="metric-label">Titan Deal Value</div>
-          <div class="metric-value gold">$108K</div>
-          <div class="metric-detail">ARR from single 180-user org</div>
+          <div class="metric-value gold">$172K</div>
+          <div class="metric-detail">ARR from single 180-seat org</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">AZ Target (Y1)</div>
           <div class="metric-value blue">50</div>
-          <div class="metric-detail">Companies × $139/mo = $84K ARR</div>
+          <div class="metric-detail">Companies × avg 5 seats × $80 = $240K</div>
         </div>
         <div class="metric-card">
           <div class="metric-label">TX + FL (Y2)</div>
@@ -617,37 +740,57 @@
         </div>
       </div>
 
-      <div style="width: 100%; max-width: 900px;">
+      <div style="width: 100%; max-width: 900px">
         <div class="opp-row">
           <div class="opp-label">Year 1 — Arizona</div>
           <div class="opp-bar-bg">
-            <div class="opp-bar" style="width: 12%; background: linear-gradient(90deg, #10b981, #059669);">$192K</div>
+            <div
+              class="opp-bar"
+              style="width: 12%; background: linear-gradient(90deg, #10b981, #059669)"
+            >
+              $240K
+            </div>
           </div>
         </div>
         <div class="opp-row">
           <div class="opp-label">Year 2 — TX, FL, AZ</div>
           <div class="opp-bar-bg">
-            <div class="opp-bar" style="width: 35%; background: linear-gradient(90deg, #3b82f6, #2563eb);">$1.4M</div>
+            <div
+              class="opp-bar"
+              style="width: 35%; background: linear-gradient(90deg, #3b82f6, #2563eb)"
+            >
+              $2.4M
+            </div>
           </div>
         </div>
         <div class="opp-row">
           <div class="opp-label">Year 3 — 10 States</div>
           <div class="opp-bar-bg">
-            <div class="opp-bar" style="width: 70%; background: linear-gradient(90deg, #FFC838, #f59e0b);">$5M+</div>
+            <div
+              class="opp-bar"
+              style="width: 70%; background: linear-gradient(90deg, #ffc838, #f59e0b)"
+            >
+              $7M+
+            </div>
           </div>
         </div>
         <div class="opp-row">
           <div class="opp-label">Year 4 — National</div>
           <div class="opp-bar-bg">
-            <div class="opp-bar" style="width: 100%; background: linear-gradient(90deg, #8b5cf6, #7c3aed);">$12M+ ARR</div>
+            <div
+              class="opp-bar"
+              style="width: 100%; background: linear-gradient(90deg, #8b5cf6, #7c3aed)"
+            >
+              $18M+ ARR
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="quote-block" style="margin-top: 16px;">
+      <div class="quote-block" style="margin-top: 16px">
         <div class="quote-text">
-          Every storm season is a customer acquisition event. When hail hits Texas, 
-          contractors scramble for tools that work. We'll already be there.
+          Every storm season is a customer acquisition event. When hail hits Texas, contractors
+          scramble for tools that work. We'll already be there.
         </div>
         <div class="quote-attr">— Natural growth engine</div>
       </div>
@@ -662,42 +805,68 @@
       <div class="slide-counter">6 / 6</div>
 
       <div class="section-icon">🌟</div>
-      <div class="title-main" style="font-size: 48px;">The Vision</div>
-      <div class="title-sub" style="margin-bottom: 36px;">
+      <div class="title-main" style="font-size: 48px">The Vision</div>
+      <div class="title-sub" style="margin-bottom: 36px">
         SkaiScraper isn't just software — it's the operating system for storm restoration.
         Purpose-built. AI-native. Designed to become the industry standard.
       </div>
 
-      <div class="pillar-grid" style="margin-bottom: 36px;">
+      <div class="pillar-grid" style="margin-bottom: 36px">
         <div class="pillar-card">
           <div class="pillar-icon">🏗️</div>
           <div class="pillar-title">Built by Contractors</div>
-          <div class="pillar-desc">Founded by a restoration professional who lived the pain. Every feature solves a real problem.</div>
+          <div class="pillar-desc">
+            Founded by a restoration professional who lived the pain. Every feature solves a real
+            problem.
+          </div>
         </div>
         <div class="pillar-card">
           <div class="pillar-icon">🤖</div>
           <div class="pillar-title">AI-Native Architecture</div>
-          <div class="pillar-desc">Not AI bolted on. AI is the foundation — damage detection, carrier strategy, proposal generation.</div>
+          <div class="pillar-desc">
+            Not AI bolted on. AI is the foundation — damage detection, carrier strategy, proposal
+            generation.
+          </div>
         </div>
         <div class="pillar-card">
           <div class="pillar-icon">🌪️</div>
           <div class="pillar-title">Storm-State Dominance</div>
-          <div class="pillar-desc">Arizona first, then the top 10 storm states. Every hail season is a growth event.</div>
+          <div class="pillar-desc">
+            Arizona first, then the top 10 storm states. Every hail season is a growth event.
+          </div>
         </div>
       </div>
 
-      <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px;">
+      <div
+        style="
+          display: flex;
+          gap: 16px;
+          flex-wrap: wrap;
+          justify-content: center;
+          margin-bottom: 16px;
+        "
+      >
         <div class="title-badge">
           <span class="dot"></span>
           Production Live — skaiscrape.com
         </div>
-        <div class="title-badge" style="border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1); color: #10b981;">
-          <span class="dot" style="background: #10b981;"></span>
+        <div
+          class="title-badge"
+          style="
+            border-color: rgba(16, 185, 129, 0.3);
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+          "
+        >
+          <span class="dot" style="background: #10b981"></span>
           Enterprise-Ready — Load Tested at 500 VU
         </div>
       </div>
 
-      <div class="bottom-cta" style="font-size: 15px; color: rgba(255,255,255,0.45); font-weight: 600;">
+      <div
+        class="bottom-cta"
+        style="font-size: 15px; color: rgba(255, 255, 255, 0.45); font-weight: 600"
+      >
         clearskaitechnologies.com &nbsp;·&nbsp; skaiscrape.com &nbsp;·&nbsp; damien@skaiscrape.com
       </div>
     </div>
@@ -719,8 +888,13 @@
       }
 
       document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); go(current + 1); }
-        if (e.key === "ArrowLeft") { go(current - 1); }
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          go(current + 1);
+        }
+        if (e.key === "ArrowLeft") {
+          go(current - 1);
+        }
         if (e.key === "f" || e.key === "F") {
           if (!document.fullscreenElement) document.documentElement.requestFullscreen();
           else document.exitFullscreen();
@@ -730,10 +904,14 @@
       });
 
       let touchStartX = 0;
-      document.addEventListener("touchstart", (e) => { touchStartX = e.touches[0].clientX; });
+      document.addEventListener("touchstart", (e) => {
+        touchStartX = e.touches[0].clientX;
+      });
       document.addEventListener("touchend", (e) => {
         const diff = touchStartX - e.changedTouches[0].clientX;
-        if (Math.abs(diff) > 60) { diff > 0 ? go(current + 1) : go(current - 1); }
+        if (Math.abs(diff) > 60) {
+          diff > 0 ? go(current + 1) : go(current - 1);
+        }
       });
     </script>
   </body>

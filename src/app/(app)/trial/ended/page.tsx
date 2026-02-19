@@ -62,7 +62,7 @@ export default function TrialEndedPage() {
 
               <div className="flex justify-between border-t border-[color:var(--border)] pt-3">
                 <span className="font-medium">Business</span>
-                <span>$139.99/month</span>
+                <span>$80/seat/month</span>
               </div>
               <div className="pl-4 text-xs text-slate-700 dark:text-slate-300">
                 10 mockups • 10 DOL reports • 7 weather reports
@@ -70,7 +70,7 @@ export default function TrialEndedPage() {
 
               <div className="flex justify-between border-t border-[color:var(--border)] pt-3">
                 <span className="font-medium">Enterprise</span>
-                <span>$399/month</span>
+                <span>$80/seat/month</span>
               </div>
               <div className="pl-4 text-xs text-slate-700 dark:text-slate-300">
                 25 mockups • 25 DOL reports • 15 weather reports

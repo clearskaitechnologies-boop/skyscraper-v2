@@ -11,8 +11,8 @@ const MIN_MEMBERS_FOR_COMPANY_PAGE = 1;
 
 // Plans that unlock company page regardless of member count
 // Solo: 1 seat ($29.99) - needs upgrade or 3+ members
-// Business: 10 seats ($139.99) - unlocked
-// Enterprise: 25 seats ($399.99) - unlocked
+// Business: 10 seats ($80/seat) - unlocked
+// Enterprise: 25 seats ($80/seat) - unlocked
 const COMPANY_PAGE_PLANS = [
   "free", // Free tier — always show company page
   "solo", // Solo plan — your company page is yours

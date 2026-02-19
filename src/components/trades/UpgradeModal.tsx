@@ -79,11 +79,11 @@ export function UpgradeModal({
             },
             {
               icon: <Users className="h-5 w-5" />,
-              text: "Business: 10 seats — $139.99/mo",
+              text: "Business: 10 seats — $80/seat/mo",
             },
             {
               icon: <Building2 className="h-5 w-5" />,
-              text: "Enterprise: 25 seats — $399.99/mo",
+              text: "Enterprise: 25 seats — $80/seat/mo",
             },
           ],
           primaryAction:
