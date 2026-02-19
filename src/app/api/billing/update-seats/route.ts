@@ -12,13 +12,13 @@ export const dynamic = "force-dynamic";
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { withAuth } from "@/lib/auth/withAuth";
+import { withAuth, withManager } from "@/lib/auth/withAuth";
 import { PRICE_PER_SEAT_CENTS, validateSeatCount } from "@/lib/billing/seat-pricing";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripeClient } from "@/lib/stripe";
 
-export const POST = withAuth(
+export const POST = withManager(
   async (req: NextRequest, { orgId, userId }) => {
     try {
       const rl = await checkRateLimit(userId, "API");
@@ -93,8 +93,7 @@ export const POST = withAuth(
         { status: 500 }
       );
     }
-  },
-  { roles: ["ADMIN", "OWNER", "MANAGER"] }
+  }
 );
 
 /**
@@ -102,7 +101,7 @@ export const POST = withAuth(
  *
  * Returns current seat information (any authenticated user can view)
  */
-export const GET = withAuth(async (_req: NextRequest, { orgId }) => {
+export const GET = withManager(async (_req: NextRequest, { orgId }) => {
   try {
     const sub = await prisma.subscription.findUnique({
       where: { orgId },

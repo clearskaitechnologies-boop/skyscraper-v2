@@ -9,7 +9,7 @@
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { withAuth } from "@/lib/auth/withAuth";
+import { withAuth, withAdmin } from "@/lib/auth/withAuth";
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 
@@ -162,7 +162,7 @@ export const PATCH = withAuth(
 /**
  * PUT: Update member role
  */
-export const PUT = withAuth(
+export const PUT = withAdmin(
   async (
     req: NextRequest,
     { userId, orgId, role: authRole },
@@ -232,7 +232,7 @@ export const PUT = withAuth(
 /**
  * DELETE: Remove member from organization
  */
-export const DELETE = withAuth(
+export const DELETE = withAdmin(
   async (
     req: NextRequest,
     { userId, orgId, role: authRole },

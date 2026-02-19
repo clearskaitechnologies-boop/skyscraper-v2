@@ -9,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createForbiddenResponse, requirePermission } from "@/lib/auth/rbac";
-import { withAuth } from "@/lib/auth/withAuth";
+import { withAuth, withManager } from "@/lib/auth/withAuth";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const invitationSchema = z.object({
@@ -19,7 +19,7 @@ const invitationSchema = z.object({
 
 // Send team invitation email via Clerk
 // 🛡️ MASTER PROMPT #66: RBAC Protection - requires "team:invite" permission
-export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
+export const POST = withManager(async (req: NextRequest, { userId, orgId }) => {
   try {
     const rl = await checkRateLimit(userId, "API");
     if (!rl.success) {
@@ -94,7 +94,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
 });
 
 // Get all pending invitations for the org via Clerk
-export const GET = withAuth(async (req: NextRequest, { userId, orgId }) => {
+export const GET = withManager(async (req: NextRequest, { userId, orgId }) => {
   try {
     const rl = await checkRateLimit(userId, "API");
     if (!rl.success) {

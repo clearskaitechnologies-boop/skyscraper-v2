@@ -6,11 +6,11 @@ import { logger } from "@/lib/logger";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-import { withAuth } from "@/lib/auth/withAuth";
+import { withAuth, withManager } from "@/lib/auth/withAuth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripeCustomerIdForUser } from "@/lib/stripe/customer";
 
-export const POST = withAuth(async (_req, { userId }) => {
+export const POST = withManager(async (_req, { userId }) => {
   try {
     const rl = await checkRateLimit(userId, "API");
     if (!rl.success) {

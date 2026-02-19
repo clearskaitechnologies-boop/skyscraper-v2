@@ -25,17 +25,11 @@ function validateTwilioSignature(
       .sort()
       .reduce((acc, key) => acc + key + params[key], "");
 
-  const expectedSignature = crypto
-    .createHmac("sha1", authToken)
-    .update(data)
-    .digest("base64");
+  const expectedSignature = crypto.createHmac("sha1", authToken).update(data).digest("base64");
 
   // Timing-safe comparison
   try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch {
     return false;
   }

@@ -36,7 +36,7 @@ import { clerkClient } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
-import { withAuth } from "@/lib/auth/withAuth";
+import { withAuth, withManager } from "@/lib/auth/withAuth";
 
 // ── Validation ────────────────────────────────────────────────────────────
 const VALID_ROLES = ["member", "admin", "org:member", "org:admin"] as const;
@@ -110,7 +110,7 @@ function normalizeRole(role?: string): "org:admin" | "org:member" {
 }
 
 // ── Handler ───────────────────────────────────────────────────────────────
-export const POST = withAuth(
+export const POST = withManager(
   async (req: NextRequest, { orgId, userId }) => {
     try {
       let rows: Array<{ email: string; role?: string; name?: string }> = [];
@@ -243,6 +243,5 @@ export const POST = withAuth(
         { status: 500 }
       );
     }
-  },
-  { roles: ["ADMIN", "OWNER"] }
+  }
 );
