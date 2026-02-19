@@ -1,6 +1,7 @@
 // src/app/(app)/claims/[claimId]/_components/ClientConnectSection.tsx
 "use client";
 
+import { logger } from "@/lib/logger";
 import { CheckCircle2, Copy, Loader2, Search, Send, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -46,7 +47,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
         setAttachedClient(data.contact);
       }
     } catch (error) {
-      console.error("Failed to fetch attached client:", error);
+      logger.error("Failed to fetch attached client:", error);
     }
   };
 
@@ -62,7 +63,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
       const data = await res.json();
       setContacts(data.contacts || []);
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("Search failed:", error);
     } finally {
       setLoading(false);
     }
@@ -87,7 +88,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
       setContacts([]);
       toast.success("Client attached successfully!");
     } catch (error: any) {
-      console.error("Attach client failed:", error);
+      logger.error("Attach client failed:", error);
       toast.error(error.message || "Failed to attach client. Please try again.");
     }
   };
@@ -126,7 +127,7 @@ export function ClientConnectSection({ claimId, currentClientId }: ClientConnect
       setInviteEmail("");
       setInviteName("");
     } catch (error: any) {
-      console.error("Send invite failed:", error);
+      logger.error("Send invite failed:", error);
       toast.error(error.message || "Failed to send invite. Please try again.");
     } finally {
       setInviting(false);

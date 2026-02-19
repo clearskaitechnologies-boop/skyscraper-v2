@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { safeSendEmail } from "@/lib/mail";
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
     // Log feedback for tracking (no DB storage to reduce dependencies)
     if (userId) {
-      console.log("[FEEDBACK_SUBMITTED]", {
+      logger.info("[FEEDBACK_SUBMITTED]", {
         userId,
         category: category || feedbackTask,
         task: feedbackTask,
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Log feedback
-    console.log("Feedback received:", {
+    logger.info("Feedback received:", {
       name,
       email,
       category,
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
           logger.debug(`Added 10 bonus AI tokens to org ${user.Org.name} for beta feedback`);
 
           // Log for admin dashboard
-          console.log("Feedback bonus awarded:", {
+          logger.info("Feedback bonus awarded:", {
             timestamp: new Date().toISOString(),
             email: user.email,
             tokensAdded: 10,
@@ -167,7 +167,7 @@ export async function POST(req: NextRequest) {
           });
         }
       } catch (tokenError) {
-        console.error("Token bonus failed (non-blocking):", tokenError);
+        logger.error("Token bonus failed (non-blocking):", tokenError);
         // Continue without failing the feedback submission
       }
     }

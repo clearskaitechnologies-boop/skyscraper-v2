@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface AppointmentsClientProps {
   currentUserId: string;
@@ -45,7 +46,7 @@ export function AppointmentsClient({ currentUserId, orgId }: AppointmentsClientP
       const res = await fetch(`/api/appointments/my?${params.toString()}`);
       if (!res.ok) {
         // Treat 404 or errors as "no data yet" instead of hard error
-        console.warn("No appointments found or API unavailable");
+        logger.warn("No appointments found or API unavailable");
         setAppointments([]);
         return;
       }
@@ -55,11 +56,11 @@ export function AppointmentsClient({ currentUserId, orgId }: AppointmentsClientP
         setAppointments(data.data || []);
       } else {
         // Soft fail - show empty state
-        console.warn("API returned error:", data.error);
+        logger.warn("API returned error:", data.error);
         setAppointments([]);
       }
     } catch (error) {
-      console.error("Failed to fetch appointments:", error);
+      logger.error("Failed to fetch appointments:", error);
       // Soft fail - show empty state instead of error banner
       setAppointments([]);
     } finally {
@@ -87,7 +88,7 @@ export function AppointmentsClient({ currentUserId, orgId }: AppointmentsClientP
       toast.success("Appointment cancelled");
       fetchAppointments();
     } catch (error) {
-      console.error("Failed to cancel appointment:", error);
+      logger.error("Failed to cancel appointment:", error);
       toast.error("Failed to cancel appointment");
     }
   };
@@ -105,7 +106,7 @@ export function AppointmentsClient({ currentUserId, orgId }: AppointmentsClientP
       toast.success("Appointment marked as complete");
       fetchAppointments();
     } catch (error) {
-      console.error("Failed to complete appointment:", error);
+      logger.error("Failed to complete appointment:", error);
       toast.error("Failed to complete appointment");
     }
   };

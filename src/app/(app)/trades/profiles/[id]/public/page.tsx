@@ -28,6 +28,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 import ShareButton from "./_components/ShareButton";
@@ -185,16 +186,16 @@ export default async function PublicTradeProfilePage({ params }: PublicProfilePa
       }
     }
 
-    console.log("[Public Profile] Resolved member:", member?.id, "hasCompany:", !!member?.company);
+    logger.info("[Public Profile] Resolved member:", member?.id, "hasCompany:", !!member?.company);
   } catch (error) {
-    console.error("[Public Profile] Error fetching member:", error);
+    logger.error("[Public Profile] Error fetching member:", error);
     throw new Error(
       `Failed to load profile: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 
   if (!member) {
-    console.log("[Public Profile] No member found for id/slug:", id);
+    logger.info("[Public Profile] No member found for id/slug:", id);
     notFound();
   }
 
@@ -223,7 +224,7 @@ export default async function PublicTradeProfilePage({ params }: PublicProfilePa
       portfolioItems = portfolioData;
       reviews = reviewsData;
     } catch (error) {
-      console.error("[Public Profile] Error fetching portfolio/reviews:", error);
+      logger.error("[Public Profile] Error fetching portfolio/reviews:", error);
       // Continue with empty arrays
     }
   }

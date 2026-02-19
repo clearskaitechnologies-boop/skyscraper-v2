@@ -59,6 +59,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /*  Job Category Definitions                                           */
@@ -247,7 +248,7 @@ export default function TradesJobsPage() {
         setJobPosts(data.jobs || []);
       }
     } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+      logger.error("Failed to fetch jobs:", error);
     } finally {
       setLoading(false);
     }
@@ -332,7 +333,7 @@ export default function TradesJobsPage() {
         });
       setRecentActivity(activities);
     } catch (error) {
-      console.error("Failed to fetch analytics:", error);
+      logger.error("Failed to fetch analytics:", error);
     }
   };
 
@@ -348,7 +349,7 @@ export default function TradesJobsPage() {
         );
       }
     } catch (error) {
-      console.error("Failed to fetch incoming requests:", error);
+      logger.error("Failed to fetch incoming requests:", error);
     }
   };
 
@@ -369,7 +370,7 @@ export default function TradesJobsPage() {
         }
       }
     } catch (error) {
-      console.error(`Failed to ${action} work request:`, error);
+      logger.error(`Failed to ${action} work request:`, error);
     } finally {
       setRespondingTo(null);
     }

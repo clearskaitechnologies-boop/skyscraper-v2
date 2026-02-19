@@ -14,6 +14,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 // Deprecated: Skai Assistant removed (11/22/2025). Use AskDominusWidget (global) instead.
 // import { openSkaiAssistant } from "@/components/SKaiAssistant";
+import { logger } from "@/lib/logger";
 
 interface TeamPost {
   id: string;
@@ -72,7 +73,7 @@ export default function CRMPage() {
         setSummary(data);
       }
     } catch (error) {
-      console.error("Error fetching pipeline summary:", error);
+      logger.error("Error fetching pipeline summary:", error);
     }
   };
   const fetchBranding = async () => {
@@ -83,7 +84,7 @@ export default function CRMPage() {
         setBranding(data);
       }
     } catch (e) {
-      console.warn("[CRM] branding fetch failed", e);
+      logger.warn("[CRM] branding fetch failed", e);
     }
   };
 
@@ -95,7 +96,7 @@ export default function CRMPage() {
         setTeamPosts(data);
       }
     } catch (error) {
-      console.error("Error fetching team posts:", error);
+      logger.error("Error fetching team posts:", error);
     }
   };
 
@@ -114,7 +115,7 @@ export default function CRMPage() {
         fetchTeamPosts();
       }
     } catch (error) {
-      console.error("Error creating post:", error);
+      logger.error("Error creating post:", error);
     }
   };
 

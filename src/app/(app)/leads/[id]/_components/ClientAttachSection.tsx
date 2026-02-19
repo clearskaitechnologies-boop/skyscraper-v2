@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface Contact {
   id: string;
@@ -49,7 +50,7 @@ export function ClientAttachSection({
         setAttachedClient(data.contact);
       }
     } catch (error) {
-      console.error("Failed to fetch attached client:", error);
+      logger.error("Failed to fetch attached client:", error);
     }
   };
 
@@ -65,7 +66,7 @@ export function ClientAttachSection({
       const data = await res.json();
       setContacts(data.contacts || []);
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("Search failed:", error);
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,7 @@ export function ClientAttachSection({
       router.refresh();
       alert("✅ Client attached successfully!");
     } catch (error) {
-      console.error("Attach client failed:", error);
+      logger.error("Attach client failed:", error);
       alert("Failed to attach client. Please try again.");
     }
   };
@@ -113,7 +114,7 @@ export function ClientAttachSection({
       router.refresh();
       alert("✅ Client detached");
     } catch (error) {
-      console.error("Detach client failed:", error);
+      logger.error("Detach client failed:", error);
       alert("Failed to detach client. Please try again.");
     }
   };

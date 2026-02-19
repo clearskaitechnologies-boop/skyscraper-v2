@@ -7,13 +7,14 @@
 
 import { ArrowLeft, CheckCircle, Lock, Send } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback,useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 import { SubmitReportModal } from "@/components/claims/SubmitReportModal";
 import { UniversalReportEditor } from "@/components/reports/UniversalReportEditor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface UniversalReportEditorClientProps {
   claim: {
@@ -97,7 +98,7 @@ export function UniversalReportEditorClient({
         setLastSaved(new Date());
         toast.success("Report saved");
       } catch (error) {
-        console.error("Save error:", error);
+        logger.error("Save error:", error);
         toast.error(error instanceof Error ? error.message : "Failed to save report");
         throw error;
       }
@@ -126,7 +127,7 @@ export function UniversalReportEditorClient({
 
       toast.success("PDF downloaded");
     } catch (error) {
-      console.error("PDF generation error:", error);
+      logger.error("PDF generation error:", error);
       toast.error("Failed to generate PDF");
     }
   }, [claim.id, claim.claimNumber]);
@@ -159,7 +160,7 @@ export function UniversalReportEditorClient({
       toast.success("Report finalized");
       router.refresh();
     } catch (error) {
-      console.error("Finalize error:", error);
+      logger.error("Finalize error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to finalize report");
     } finally {
       setIsProcessing(false);
@@ -193,7 +194,7 @@ export function UniversalReportEditorClient({
       toast.success("Report submitted to carrier");
       router.refresh();
     } catch (error) {
-      console.error("Submit error:", error);
+      logger.error("Submit error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to submit report");
     } finally {
       setIsProcessing(false);
@@ -231,7 +232,7 @@ export function UniversalReportEditorClient({
       toast.success("Report reopened for editing");
       router.refresh();
     } catch (error) {
-      console.error("Reopen error:", error);
+      logger.error("Reopen error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to reopen report");
     } finally {
       setIsProcessing(false);

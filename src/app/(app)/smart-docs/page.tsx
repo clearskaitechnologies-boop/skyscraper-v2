@@ -58,6 +58,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -175,7 +176,7 @@ export default function SmartDocsPage() {
       const data = await res.json();
       if (data.ok) setEnvelopes(data.envelopes ?? []);
     } catch (err) {
-      console.error("[SMART_DOCS] fetch error:", err);
+      logger.error("[SMART_DOCS] fetch error:", err);
     } finally {
       setLoading(false);
     }
@@ -214,7 +215,7 @@ export default function SmartDocsPage() {
         await fetchEnvelopes();
       }
     } catch (err) {
-      console.error("[SMART_DOCS] create error:", err);
+      logger.error("[SMART_DOCS] create error:", err);
     } finally {
       setCreating(false);
     }
@@ -225,7 +226,7 @@ export default function SmartDocsPage() {
       await fetch(`/api/esign/envelopes/${envelopeId}/send`, { method: "POST" });
       await fetchEnvelopes();
     } catch (err) {
-      console.error("[SMART_DOCS] send error:", err);
+      logger.error("[SMART_DOCS] send error:", err);
     }
   }
 
@@ -239,7 +240,7 @@ export default function SmartDocsPage() {
       });
       await fetchEnvelopes();
     } catch (err) {
-      console.error("[SMART_DOCS] void error:", err);
+      logger.error("[SMART_DOCS] void error:", err);
     }
   }
 

@@ -3,6 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export type TeamMember = {
@@ -60,12 +61,16 @@ export const getTeamMembers = cache(async (): Promise<TeamMember[]> => {
       id: dbUser.id,
       name: dbUser.name || "Team Member",
       email: dbUser.email,
-      role: (dbUser.role === "ADMIN" ? "admin" : dbUser.role === "MANAGER" ? "manager" : "rep") as TeamMember["role"],
+      role: (dbUser.role === "ADMIN"
+        ? "admin"
+        : dbUser.role === "MANAGER"
+          ? "manager"
+          : "rep") as TeamMember["role"],
       status: "active" as const,
       joinedAt: dbUser.createdAt,
     }));
   } catch (error) {
-    console.error("Error fetching team members:", error);
+    logger.error("Error fetching team members:", error);
     // Fallback to current users
     return [
       {
@@ -94,7 +99,7 @@ export async function inviteTeamMember(email: string, role: TeamMember["role"]) 
     // 1. Create invitation record in database
     // 2. Send email via Resend/SendGrid
     // 3. Include magic link to accept invite
-    
+
     // For now, simulate success
     return {
       success: true,
@@ -102,7 +107,7 @@ export async function inviteTeamMember(email: string, role: TeamMember["role"]) 
       inviteId: crypto.randomUUID(),
     };
   } catch (error) {
-    console.error("Error inviting team member:", error);
+    logger.error("Error inviting team member:", error);
     throw error;
   }
 }
@@ -120,7 +125,7 @@ export async function updateTeamMemberRole(memberId: string, newRole: TeamMember
     // In production: prisma.teamMember.update({ where: { id: memberId }, data: { role: newRole } })
     return { success: true, message: "Role updated successfully" };
   } catch (error) {
-    console.error("Error updating role:", error);
+    logger.error("Error updating role:", error);
     throw error;
   }
 }
@@ -138,7 +143,7 @@ export async function removeTeamMember(memberId: string) {
     // In production: prisma.teamMember.update({ where: { id: memberId }, data: { status: 'inactive' } })
     return { success: true, message: "Team member removed" };
   } catch (error) {
-    console.error("Error removing team member:", error);
+    logger.error("Error removing team member:", error);
     throw error;
   }
 }

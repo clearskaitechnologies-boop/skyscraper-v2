@@ -27,6 +27,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getResolvedOrgResult } from "@/lib/auth/getResolvedOrgId";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 import { EditableInfoCardsWrapper } from "./EditableInfoCards";
@@ -119,7 +120,7 @@ async function getRetailJob(id: string, orgId: string) {
       },
     });
   } catch (err) {
-    console.error("[getRetailJob] Error finding lead:", err);
+    logger.error("[getRetailJob] Error finding lead:", err);
     return null;
   }
 
@@ -142,7 +143,7 @@ async function getRetailJob(id: string, orgId: string) {
       },
     });
   } catch (err) {
-    console.error("[getRetailJob] Error finding contact:", err);
+    logger.error("[getRetailJob] Error finding contact:", err);
     // Continue without contact data
   }
 
@@ -295,7 +296,7 @@ export default async function RetailJobWorkspacePage({
   // Guard: ensure we have a valid org before proceeding
   if (!orgResult.ok) {
     // This shouldn't happen with "required" mode, but guard just in case
-    console.error("[RetailJobWorkspace] Failed to resolve org:", orgResult);
+    logger.error("[RetailJobWorkspace] Failed to resolve org:", orgResult);
     redirect("/onboarding");
   }
 
@@ -303,7 +304,7 @@ export default async function RetailJobWorkspacePage({
   try {
     result = await getRetailJob(id, orgResult.orgId);
   } catch (err) {
-    console.error("[RetailJobWorkspace] Database error:", err);
+    logger.error("[RetailJobWorkspace] Database error:", err);
     throw new Error(
       `Failed to load retail job: ${err instanceof Error ? err.message : "Unknown error"}`
     );

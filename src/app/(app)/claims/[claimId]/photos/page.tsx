@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ClaimPhotoUpload } from "@/components/uploads";
+import { logger } from "@/lib/logger";
 
 import SectionCard from "../_components/SectionCard";
 
@@ -75,7 +76,7 @@ export default function PhotosPage() {
         setPhotos(data.photos);
       }
     } catch (error) {
-      console.error("Failed to fetch photos:", error);
+      logger.error("Failed to fetch photos:", error);
     } finally {
       setLoading(false);
     }
@@ -107,7 +108,7 @@ export default function PhotosPage() {
         setPhotos((prev) => prev.filter((p) => p.id !== deleteTarget.id));
       }
     } catch (error) {
-      console.error("Delete error:", error);
+      logger.error("Delete error:", error);
     }
   };
 
@@ -130,7 +131,7 @@ export default function PhotosPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        console.error("AI analysis error:", data.error);
+        logger.error("AI analysis error:", data.error);
         alert(data.error || "AI analysis failed");
         setAnalyzing(null);
         return;
@@ -151,7 +152,7 @@ export default function PhotosPage() {
         )
       );
     } catch (error) {
-      console.error("Analyze error:", error);
+      logger.error("Analyze error:", error);
       alert("Failed to run AI analysis. Please try again.");
     }
 

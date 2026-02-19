@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 // Job types configuration
 const JOB_TYPES = [
@@ -236,7 +237,7 @@ export function JobScheduleClient({ orgId, userId, prefillData }: JobScheduleCli
         setRetailJobs(jobsData.jobs || []);
       }
     } catch (error) {
-      console.error("Failed to load dropdown data:", error);
+      logger.error("Failed to load dropdown data:", error);
     } finally {
       setLoadingDropdowns(false);
     }
@@ -292,7 +293,7 @@ export function JobScheduleClient({ orgId, userId, prefillData }: JobScheduleCli
         setJobs(getDemoJobs());
       }
     } catch (error) {
-      console.error("Failed to fetch jobs:", error);
+      logger.error("Failed to fetch jobs:", error);
       setJobs(getDemoJobs());
     } finally {
       setLoading(false);
@@ -411,7 +412,7 @@ export function JobScheduleClient({ orgId, userId, prefillData }: JobScheduleCli
         toast.error(error.error || "Failed to schedule job");
       }
     } catch (error) {
-      console.error("Failed to create job:", error);
+      logger.error("Failed to create job:", error);
       toast.error("Failed to schedule job");
     }
   };
@@ -424,7 +425,7 @@ export function JobScheduleClient({ orgId, userId, prefillData }: JobScheduleCli
         body: JSON.stringify({ jobId, notificationType: type }),
       });
     } catch (error) {
-      console.error("Failed to send client notification:", error);
+      logger.error("Failed to send client notification:", error);
     }
   };
 
@@ -436,7 +437,7 @@ export function JobScheduleClient({ orgId, userId, prefillData }: JobScheduleCli
         body: JSON.stringify({ jobId, memberIds }),
       });
     } catch (error) {
-      console.error("Failed to notify team members:", error);
+      logger.error("Failed to notify team members:", error);
     }
   };
 

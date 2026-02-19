@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { logger } from "@/lib/logger";
 import { TemplateCard } from "./TemplateCard";
 import { TemplatePreviewCard } from "./TemplatePreviewCard";
 import { TemplatePreviewModal } from "./TemplatePreviewModal";
@@ -47,7 +48,7 @@ export function TemplateList({ initialTemplates, orgId }: TemplateListProps) {
         setTemplates(Array.isArray(data) ? data : data.templates || []);
       }
     } catch (error) {
-      console.error("Failed to refresh templates:", error);
+      logger.error("Failed to refresh templates:", error);
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +64,7 @@ export function TemplateList({ initialTemplates, orgId }: TemplateListProps) {
         await handleRefresh();
       }
     } catch (error) {
-      console.error("Failed to set default:", error);
+      logger.error("Failed to set default:", error);
     }
   };
 
@@ -77,7 +78,7 @@ export function TemplateList({ initialTemplates, orgId }: TemplateListProps) {
         await handleRefresh();
       }
     } catch (error) {
-      console.error("Failed to duplicate:", error);
+      logger.error("Failed to duplicate:", error);
     }
   };
 
@@ -93,7 +94,7 @@ export function TemplateList({ initialTemplates, orgId }: TemplateListProps) {
         await handleRefresh();
       }
     } catch (error) {
-      console.error("Failed to delete:", error);
+      logger.error("Failed to delete:", error);
     }
   };
 

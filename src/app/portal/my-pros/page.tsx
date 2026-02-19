@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface Pro {
   id: string;
@@ -71,7 +72,7 @@ export default function MyProsPage() {
         setConnectedPros(connectedData.connections || []);
       }
     } catch (error) {
-      console.error("Failed to fetch pros:", error);
+      logger.error("Failed to fetch pros:", error);
       toast.error("Failed to load your professionals");
     } finally {
       setLoading(false);
@@ -91,7 +92,7 @@ export default function MyProsPage() {
         toast.success("Removed from saved");
       }
     } catch (error) {
-      console.error("Failed to unsave pro:", error);
+      logger.error("Failed to unsave pro:", error);
       toast.error("Failed to remove from saved");
     }
   };
@@ -109,7 +110,7 @@ export default function MyProsPage() {
         fetchPros(); // Refresh lists
       }
     } catch (error) {
-      console.error("Failed to connect:", error);
+      logger.error("Failed to connect:", error);
       toast.error("Failed to send connection request");
     }
   };
@@ -127,7 +128,7 @@ export default function MyProsPage() {
         window.location.href = `/portal/messages?thread=${data.threadId}`;
       }
     } catch (error) {
-      console.error("Failed to create thread:", error);
+      logger.error("Failed to create thread:", error);
       toast.error("Failed to start conversation");
     }
   };

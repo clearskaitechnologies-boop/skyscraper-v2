@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StandardButton } from "@/components/ui/StandardButton";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 import { TRADE_TYPES } from "@/lib/trades/constants";
 
 /* ─── Grouped trades from canonical source (matches profile edit) ─── */
@@ -189,7 +190,7 @@ export default function CompanyEditPage() {
           router.push("/trades/profile");
         }
       } catch (error) {
-        console.error("[CompanyEdit] Failed to load company:", error);
+        logger.error("[CompanyEdit] Failed to load company:", error);
         toast.error("Failed to load company");
       } finally {
         setInitialLoading(false);
@@ -232,7 +233,7 @@ export default function CompanyEditPage() {
 
       toast.success("Logo updated!");
     } catch (error) {
-      console.error("Logo upload error:", error);
+      logger.error("Logo upload error:", error);
       toast.error("Failed to upload logo");
     } finally {
       setUploading(null);
@@ -272,7 +273,7 @@ export default function CompanyEditPage() {
 
       toast.success("Cover photo updated!");
     } catch (error) {
-      console.error("Cover upload error:", error);
+      logger.error("Cover upload error:", error);
       toast.error("Failed to upload cover photo");
     } finally {
       setUploading(null);
@@ -310,7 +311,7 @@ export default function CompanyEditPage() {
       router.push("/trades/company");
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to save company";
-      console.error("[CompanyEdit] Error:", error);
+      logger.error("[CompanyEdit] Error:", error);
       toast.error(message);
     } finally {
       setLoading(false);

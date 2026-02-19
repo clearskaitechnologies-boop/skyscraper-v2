@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     try {
       body = await req.json();
     } catch (parseError) {
-      console.error("[POST /api/agents/claims-analysis] JSON parse error:", parseError);
+      logger.error("[POST /api/agents/claims-analysis] JSON parse error:", parseError);
       return NextResponse.json({ error: "Invalid JSON in request body" }, { status: 400 });
     }
 
@@ -46,13 +46,13 @@ export async function POST(req: NextRequest) {
     const validation = requestSchema.safeParse(body);
     if (!validation.success) {
       const errors = validation.error.errors.map((e) => `${e.path.join(".")}: ${e.message}`);
-      console.error("[POST /api/agents/claims-analysis] Validation failed:", errors);
+      logger.error("[POST /api/agents/claims-analysis] Validation failed:", errors);
       return NextResponse.json({ error: "Validation failed", details: errors }, { status: 400 });
     }
 
     const { claimId, modes } = validation.data;
 
-    console.log("[POST /api/agents/claims-analysis] Processing:", {
+    logger.info("[POST /api/agents/claims-analysis] Processing:", {
       claimId,
       modes,
       userId,
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!claim) {
-      console.warn("[POST /api/agents/claims-analysis] Claim not found or access denied:", {
+      logger.warn("[POST /api/agents/claims-analysis] Claim not found or access denied:", {
         claimId,
         orgId,
       });
