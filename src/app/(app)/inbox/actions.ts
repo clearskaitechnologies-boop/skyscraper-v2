@@ -36,7 +36,7 @@ export const getInboxActivities = cache(async (): Promise<ActivityItem[]> => {
 
     return activities.map((activity) => {
       // Parse metadata if it exists
-      const metadata = (activity.metadata as any) || {};
+      const metadata = (activity.metadata as Record<string, unknown>) || {};
 
       // Determine entity ID and type from available relations
       const entityId =
@@ -111,7 +111,7 @@ export async function markAsRead(activityId: string): Promise<{ success: boolean
     if (!activity) return { success: false };
 
     // Update metadata to mark as read
-    const metadata = (activity.metadata as any) || {};
+    const metadata = (activity.metadata as Record<string, unknown>) || {};
     metadata.read = true;
 
     await prisma.activities.update({
@@ -139,7 +139,7 @@ export async function markAllAsRead(): Promise<{ success: boolean; count: number
 
     let count = 0;
     for (const activity of activities) {
-      const metadata = (activity.metadata as any) || {};
+      const metadata = (activity.metadata as Record<string, unknown>) || {};
       if (!metadata.read) {
         metadata.read = true;
         await prisma.activities.update({

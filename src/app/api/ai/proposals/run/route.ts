@@ -127,7 +127,7 @@ export async function POST(req: Request) {
     // Enqueue worker job
     const { enqueue } = await import("@/lib/queue");
     const jobId = await enqueue(
-      "proposal-generate" as any,
+      "proposal-generate",
       {
         proposalId,
         orgId,
@@ -135,7 +135,7 @@ export async function POST(req: Request) {
         template,
         addOns,
         input,
-      } as any
+      }
     );
 
     logger.debug(`Proposal ${proposalId} queued for generation (job: ${jobId})`);

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
 import { createRouteHandler } from "uploadthing/next";
 
@@ -49,7 +49,7 @@ export const GET = async (req: Request) => {
       { status: 503 }
     );
   }
-  return handlers.GET(req as any);
+  return handlers.GET(req as NextRequest);
 };
 
 // Export POST handler
@@ -63,5 +63,5 @@ export const POST = async (req: Request) => {
       { status: 503 }
     );
   }
-  return handlers.POST(req as any);
+  return handlers.POST(req as NextRequest);
 };

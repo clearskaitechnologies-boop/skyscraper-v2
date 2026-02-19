@@ -63,14 +63,14 @@ export async function POST(req: NextRequest) {
     const aiReport = await runWeatherReport({
       ...body,
       // Accept either claimId or claim_id (UI uses claim_id)
-      claimId: (body.claimId ?? body.claim_id ?? null) as any,
+      claimId: (body.claimId ?? body.claim_id ?? null) as string | null,
       orgId: orgId ?? null,
     });
 
     const report = await prisma.weather_reports.create({
       data: {
         id: randomUUID(),
-        claimId: body.claim_id ?? (body.claimId as any) ?? null,
+        claimId: body.claim_id ?? (body.claimId as string | undefined) ?? null,
         createdById: userId,
         updatedAt: new Date(),
         mode: "full_report",

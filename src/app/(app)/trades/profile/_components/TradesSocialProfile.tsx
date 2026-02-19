@@ -68,6 +68,7 @@ interface Post {
   comments: number;
   createdAt: string;
   type: string;
+  visibility?: "public" | "connections" | "private";
 }
 
 interface PortfolioItem {
@@ -1652,18 +1653,18 @@ export default function TradesSocialProfile({
                               <p className="font-semibold text-slate-900">{displayName}</p>
                               <div className="flex items-center gap-2 text-xs text-slate-500">
                                 <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                {(post as any).visibility === "connections" && (
+                                {post.visibility === "connections" && (
                                   <span className="flex items-center gap-0.5 text-blue-600">
                                     <Users2 className="h-3 w-3" /> Connections
                                   </span>
                                 )}
-                                {(post as any).visibility === "private" && (
+                                {post.visibility === "private" && (
                                   <span className="flex items-center gap-0.5 text-amber-600">
                                     <Lock className="h-3 w-3" /> Company Only
                                   </span>
                                 )}
-                                {((post as any).visibility === "public" ||
-                                  !(post as any).visibility) && (
+                                {(post.visibility === "public" ||
+                                  !post.visibility) && (
                                   <span className="flex items-center gap-0.5 text-green-600">
                                     <Globe className="h-3 w-3" /> Public
                                   </span>
@@ -1785,7 +1786,7 @@ export default function TradesSocialProfile({
                       isVerified: review.isVerified,
                       helpful: 0,
                       createdAt: String(review.createdAt),
-                    })) as any
+                    }))
                   }
                   averageRating={averageRating}
                   isOwnProfile={isOwnProfile}

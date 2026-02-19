@@ -52,9 +52,9 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     // Generate PDF document using available fields
     const pdfDoc = generatePdfDocument({
       title: artifact.title,
-      type: artifact.type as any,
+      type: artifact.type as string,
       version: 1, // No version field in schema, default to 1
-      status: artifact.status as any,
+      status: artifact.status as string,
       createdAt: artifact.createdAt,
       contentText: artifact.content,
       contentJson: null,

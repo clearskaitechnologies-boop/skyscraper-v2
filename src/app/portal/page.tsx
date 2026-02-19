@@ -216,7 +216,7 @@ export default async function ClientPortalPage() {
   // ── Real counts for portal stats ──────────────────────────────────
   try {
     if (client && "id" in client) {
-      const clientId = (client as any).id;
+      const clientId = (client as { id: string }).id;
       const [workRequests, threads, connections] = await Promise.all([
         prisma.clientWorkRequest.count({ where: { clientId } }).catch(() => 0),
         prisma.messageThread
@@ -259,8 +259,8 @@ export default async function ClientPortalPage() {
 
   // Fetch real local contractors from the DB
   try {
-    const clientCity = client && "city" in client ? (client as any).city : null;
-    const clientState = client && "state" in client ? (client as any).state : null;
+    const clientCity = client && "city" in client ? (client as { city: string | null }).city : null;
+    const clientState = client && "state" in client ? (client as { state: string | null }).state : null;
 
     // Try to find contractors near the client, fall back to any active contractors
     const whereClause: any = { isActive: true };
@@ -337,7 +337,7 @@ export default async function ClientPortalPage() {
       connectionCount = await prisma.clientProConnection
         .count({
           where: {
-            clientId: (client as any).id,
+            clientId: (client as { id: string }).id,
             status: { in: ["connected", "accepted"] },
           },
         })

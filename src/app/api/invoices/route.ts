@@ -7,6 +7,7 @@ import { z } from "zod";
 
 import { apiError, apiOk } from "@/lib/apiError";
 import { withAuth } from "@/lib/auth/withAuth";
+import type { Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 // ---------------------------------------------------------------------------
@@ -131,7 +132,7 @@ export const POST = withAuth(async (req: NextRequest, { orgId }) => {
         job_id: data.jobId,
         invoice_no: invoiceNo,
         kind: data.kind,
-        items: lineItems as any,
+        items: lineItems as unknown as Prisma.InputJsonValue,
         totals: {
           subtotal,
           taxRate: data.taxRate,
@@ -144,7 +145,7 @@ export const POST = withAuth(async (req: NextRequest, { orgId }) => {
           status: "draft",
           paidAmount: 0,
           balanceDue: total,
-        } as any,
+        } as unknown as Prisma.InputJsonValue,
         updated_at: new Date(),
       },
     });

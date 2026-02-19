@@ -23,6 +23,8 @@ import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+type CountFn = (args?: Record<string, unknown>) => Promise<number>;
+
 export default async function NetworkOverviewPage() {
   const warned = new Set<string>();
   const warnOnce = (label: string, message: string) => {
@@ -53,28 +55,28 @@ export default async function NetworkOverviewPage() {
 
   // Fetch network stats with defensive guards so signed-out/local runs never crash
   const [tradesCompanies, vendors, clients] = await Promise.all([
-    safeCount("tradesCompany", prisma.tradesCompany?.count?.bind(prisma.tradesCompany) as any, {
+    safeCount("tradesCompany", prisma.tradesCompany?.count?.bind(prisma.tradesCompany) as CountFn, {
       where: { isActive: true },
     }),
-    safeCount("vendor", prisma.vendor?.count?.bind(prisma.vendor) as any, {
+    safeCount("vendor", prisma.vendor?.count?.bind(prisma.vendor) as CountFn, {
       where: { isActive: true },
     }),
     safeCount(
       "client_networks",
-      prisma.client_networks?.count?.bind(prisma.client_networks) as any
+      prisma.client_networks?.count?.bind(prisma.client_networks) as CountFn
     ),
   ]);
 
   const [tradesMembers, vendorLocations, vendorContacts] = await Promise.all([
     safeCount(
       "tradesCompanyMember",
-      prisma.tradesCompanyMember?.count?.bind(prisma.tradesCompanyMember) as any,
+      prisma.tradesCompanyMember?.count?.bind(prisma.tradesCompanyMember) as CountFn,
       { where: { isActive: true } }
     ),
-    safeCount("vendorLocation", prisma.vendorLocation?.count?.bind(prisma.vendorLocation) as any, {
+    safeCount("vendorLocation", prisma.vendorLocation?.count?.bind(prisma.vendorLocation) as CountFn, {
       where: { isActive: true },
     }),
-    safeCount("vendorContact", prisma.vendorContact?.count?.bind(prisma.vendorContact) as any, {
+    safeCount("vendorContact", prisma.vendorContact?.count?.bind(prisma.vendorContact) as CountFn, {
       where: { isActive: true },
     }),
   ]);

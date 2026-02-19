@@ -38,14 +38,14 @@ export async function POST(req: Request) {
 
     // Enqueue proposal generation job
     const jobId = await enqueue(
-      "proposal-generate" as any,
+      "proposal-generate",
       {
         leadId,
         orgId,
         userId,
         title: title || "New Proposal",
         sections: sections || [],
-      } as any
+      }
     );
 
     logger.debug(`Proposal generation job enqueued: ${jobId}`);

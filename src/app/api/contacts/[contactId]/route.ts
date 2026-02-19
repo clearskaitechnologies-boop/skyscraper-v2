@@ -93,10 +93,10 @@ export const PATCH = withOrgScope(
       ];
 
       // Filter to only allowed fields
-      const updateData: Record<string, any> = {};
+      const updateData: Record<string, unknown> = {};
       for (const field of allowedFields) {
-        if ((parsed.data as any)[field] !== undefined) {
-          updateData[field] = (parsed.data as any)[field];
+        if ((parsed.data as Record<string, unknown>)[field] !== undefined) {
+          updateData[field] = (parsed.data as Record<string, unknown>)[field];
         }
       }
 

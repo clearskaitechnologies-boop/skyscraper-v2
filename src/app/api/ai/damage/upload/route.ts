@@ -199,12 +199,12 @@ export async function POST(req: Request) {
     // Enqueue damage analysis job
     const { enqueue } = await import("@/lib/queue");
     const jobId = await enqueue(
-      "damage-analyze" as any,
+      "damage-analyze",
       {
         proposalId,
         orgId,
         photoIds: uploadedPhotos.map((p) => p.id),
-      } as any
+      }
     );
 
     // Return success response

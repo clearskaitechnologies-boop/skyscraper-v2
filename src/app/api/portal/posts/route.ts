@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
         WHERE cp.user_id = ${registry.id}
         ORDER BY cp.created_at DESC
         LIMIT ${limit} OFFSET ${offset}
-      `) as any[];
+      `) as Record<string, unknown>[];
 
       // Check if user has liked each post
       const postsWithLikes = await Promise.all(
@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
           like_count as "likeCount",
           comment_count as "commentCount",
           created_at as "createdAt"
-      `) as any[];
+      `) as Record<string, unknown>[];
 
       return NextResponse.json({ post: newPost[0] });
     } catch (error) {
