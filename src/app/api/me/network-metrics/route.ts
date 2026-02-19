@@ -18,21 +18,26 @@ export async function GET() {
   const { userId } = await auth();
   if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const sql = `
-    select
-      coalesce(count(*) filter (where liked), 0)::bigint as likes,
-      coalesce(count(comment_text), 0)::bigint as comments,
-      max(updated_at) as last_activity_at
-    from public."TradesFeedEngagement"
-    where user_id = $1
-  `;
-  const { rows } = await pool.query(sql, [userId]);
-  const row = rows[0] || { likes: 0, comments: 0, last_activity_at: null };
-  return NextResponse.json(
-    toPlainJSON({
-      likes: Number(row.likes || 0),
-      comments: Number(row.comments || 0),
-      lastActivityAt: row.last_activity_at,
-    })
-  );
+  try {
+    const sql = `
+      select
+        coalesce(count(*) filter (where liked), 0)::bigint as likes,
+        coalesce(count(comment_text), 0)::bigint as comments,
+        max(updated_at) as last_activity_at
+      from "trades_feed_engagement"
+      where user_id = $1
+    `;
+    const { rows } = await pool.query(sql, [userId]);
+    const row = rows[0] || { likes: 0, comments: 0, last_activity_at: null };
+    return NextResponse.json(
+      toPlainJSON({
+        likes: Number(row.likes || 0),
+        comments: Number(row.comments || 0),
+        lastActivityAt: row.last_activity_at,
+      })
+    );
+  } catch {
+    // Table may not exist in all environments — return safe defaults
+    return NextResponse.json({ likes: 0, comments: 0, lastActivityAt: null });
+  }
 }
