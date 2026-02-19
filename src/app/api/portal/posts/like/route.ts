@@ -24,26 +24,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Post ID is required" }, { status: 400 });
     }
 
-    // Get user
-    const user = await prisma.users.findUnique({
+    // Get user from user_registry (works for both client & pro users)
+    const registry = await prisma.user_registry.findUnique({
       where: { clerkUserId: userId },
       select: { id: true },
     });
 
-    if (!user) {
+    if (!registry) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     try {
       // Check if already liked
       const existingLike = (await prisma.$queryRaw`
-        SELECT id FROM post_likes WHERE post_id = ${postId} AND user_id = ${user.id}
+        SELECT id FROM post_likes WHERE post_id = ${postId} AND user_id = ${registry.id}
       `) as any[];
 
       if (existingLike.length > 0) {
         // Unlike
         await prisma.$queryRaw`
-          DELETE FROM post_likes WHERE post_id = ${postId} AND user_id = ${user.id}
+          DELETE FROM post_likes WHERE post_id = ${postId} AND user_id = ${registry.id}
         `;
         await prisma.$queryRaw`
           UPDATE client_posts SET like_count = like_count - 1 WHERE id = ${postId}
@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       } else {
         // Like
         await prisma.$queryRaw`
-          INSERT INTO post_likes (post_id, user_id) VALUES (${postId}, ${user.id})
+          INSERT INTO post_likes (post_id, user_id) VALUES (${postId}, ${registry.id})
         `;
         await prisma.$queryRaw`
           UPDATE client_posts SET like_count = like_count + 1 WHERE id = ${postId}
