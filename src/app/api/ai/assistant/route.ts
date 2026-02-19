@@ -102,7 +102,9 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
       INSERT INTO ai_messages (session_id, role, content, is_voice)
       VALUES (${session.id}, 'user', ${message}, ${voiceEnabled || false})
     `;
-  } catch { /* ai_messages table may not exist */ }
+  } catch {
+    /* ai_messages table may not exist */
+  }
 
   // Build conversation history — graceful fallback to empty
   let history: any[] = [];
@@ -112,7 +114,9 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
       WHERE session_id = ${session.id}
       ORDER BY created_at ASC
     `;
-  } catch { /* ai_messages table may not exist */ }
+  } catch {
+    /* ai_messages table may not exist */
+  }
 
   const messages: Message[] = [
     {
@@ -167,7 +171,9 @@ Keep responses concise and actionable. Current user: ${userId}`,
             INSERT INTO ai_messages (session_id, role, content)
             VALUES (${session.id}, 'assistant', ${fullResponse})
           `;
-        } catch { /* ai_messages table may not exist */ }
+        } catch {
+          /* ai_messages table may not exist */
+        }
 
         controller.enqueue(encoder.encode(`data: [DONE]\n\n`));
         controller.close();

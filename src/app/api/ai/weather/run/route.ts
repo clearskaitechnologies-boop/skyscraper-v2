@@ -180,7 +180,9 @@ export async function POST(req: Request) {
               })
             );
           }
-        } catch { /* proposal_events table may not exist — non-fatal */ }
+        } catch {
+          /* proposal_events table may not exist — non-fatal */
+        }
 
         try {
           await prisma.$executeRawUnsafe(
@@ -195,7 +197,9 @@ export async function POST(req: Request) {
               location: location.address || `${location.lat},${location.lng}`,
             })
           );
-        } catch { /* activity_events table may not exist — non-fatal */ }
+        } catch {
+          /* activity_events table may not exist — non-fatal */
+        }
 
         return normalized;
       },
