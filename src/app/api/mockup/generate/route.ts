@@ -83,14 +83,14 @@ export async function POST(request: NextRequest) {
           {
             role: "system",
             content:
-              "You create detailed image generation prompts for COMPLETED property renovation visualizations. CRITICAL RULES: 1) NEVER describe any damage, wear, deterioration, debris, tarps, missing materials, or current disrepair. 2) ONLY describe what the FINISHED, BRAND-NEW, PRISTINE result looks like after professional installation. 3) Describe clean lines, fresh materials, perfect installation, and beautiful curb appeal. 4) The output should make someone want to hire a contractor.",
+              "You write image generation prompts that produce PHOTOREALISTIC results, not cartoons or illustrations. CRITICAL RULES: 1) NEVER describe any damage, wear, deterioration, debris, tarps, or current disrepair. 2) ONLY describe the FINISHED result with brand-new materials. 3) Always specify: 'photograph taken with a DSLR camera, natural daylight, shallow depth of field, 35mm lens'. 4) Describe specific material textures, colors, and architectural details. 5) Include environmental details: sky, trees, driveway, landscaping. 6) Never use words like 'illustration', 'render', 'drawing', 'cartoon', 'digital art', or 'concept'.",
           },
           {
             role: "user",
             content: [
               {
                 type: "text",
-                text: `Look at this property photo for reference on the building's architecture, perspective, and surroundings ONLY. Now create a detailed prompt describing what this property would look like AFTER a completed, professional renovation: ${aiPrompt}. IMPORTANT: Do NOT mention any damage or current condition. Describe ONLY the beautiful finished result with brand-new materials, perfect installation, and pristine condition.`,
+                text: `Study this property photo carefully. Note the exact architecture style, roof shape, siding type, window placement, landscaping, driveway, surrounding environment, and camera angle. Now write a prompt describing a PHOTOGRAPH of this SAME property after a completed, professional renovation: ${aiPrompt}. The prompt MUST begin with 'A professional real estate photograph taken with a DSLR camera in natural daylight of a...' and describe the exact same building from the same angle, but with brand-new pristine materials perfectly installed.`,
               },
               {
                 type: "image_url",
@@ -107,10 +107,11 @@ export async function POST(request: NextRequest) {
       // Generate the "after" image with DALL-E 3
       const imageResponse = await openai.images.generate({
         model: "dall-e-3",
-        prompt: `A stunning, hyper-realistic professional architectural photograph of a beautifully renovated property. Brand new, pristine, freshly installed materials with no damage, no wear, no debris whatsoever: ${enhancedPrompt}. Ultra high quality, photorealistic, natural lighting, sharp details, magazine-worthy real estate photography. The property looks perfect and move-in ready.`,
+        prompt: `A professional real estate photograph taken with a DSLR camera in natural daylight. ${enhancedPrompt}. Shot with a 35mm lens, shallow depth of field, golden hour lighting. The property has brand-new pristine materials with no damage, no wear, no debris. Every surface is freshly installed and perfect. This is NOT an illustration, NOT a render, NOT a drawing — it is an actual photograph of a real building. Realistic textures, natural shadows, real sky with clouds, visible landscaping details.`,
         n: 1,
         size: "1024x1024",
         quality: "hd",
+        style: "natural",
       });
 
       const afterImageUrl = imageResponse.data![0]?.url;
