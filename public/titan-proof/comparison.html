@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SkaiScraper vs AccuLynx — Total Cost Comparison</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap");
+
+      @media print {
+        body {
+          background: #fff !important;
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+        .no-print {
+          display: none !important;
+        }
+        .page {
+          box-shadow: none !important;
+          margin: 0 !important;
+        }
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          BlinkMacSystemFont,
+          sans-serif;
+        background: #0a0a0a;
+        color: #fff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .page {
+        max-width: 1000px;
+        width: 100%;
+      }
+
+      /* ── Header ── */
+      .header {
+        text-align: center;
+        margin-bottom: 48px;
+      }
+      .header .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(239, 68, 68, 0.12);
+        color: #f87171;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 5px 14px;
+        border-radius: 20px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        margin-bottom: 16px;
+      }
+      .header h1 {
+        font-size: 36px;
+        font-weight: 900;
+        letter-spacing: -1px;
+        line-height: 1.15;
+      }
+      .header h1 span {
+        color: #ffc838;
+      }
+      .header p {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 10px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      /* ── Cost Cards ── */
+      .cost-row {
+        display: grid;
+        grid-template-columns: 1fr 80px 1fr;
+        gap: 0;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+      .cost-card {
+        border-radius: 16px;
+        padding: 32px 28px;
+        position: relative;
+      }
+      .cost-card.competitor {
+        background: rgba(239, 68, 68, 0.06);
+        border: 1px solid rgba(239, 68, 68, 0.2);
+      }
+      .cost-card.us {
+        background: rgba(16, 185, 129, 0.06);
+        border: 2px solid rgba(16, 185, 129, 0.3);
+        box-shadow: 0 0 40px rgba(16, 185, 129, 0.08);
+      }
+      .vs-badge {
+        text-align: center;
+        font-size: 20px;
+        font-weight: 900;
+        color: rgba(255, 255, 255, 0.15);
+        letter-spacing: 2px;
+      }
+      .cost-card .card-label {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 6px;
+      }
+      .cost-card.competitor .card-label {
+        color: #f87171;
+      }
+      .cost-card.us .card-label {
+        color: #34d399;
+      }
+      .cost-card .card-name {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 20px;
+      }
+
+      .price-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .price-row:last-child {
+        border-bottom: none;
+      }
+      .price-label {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .price-value {
+        font-size: 14px;
+        font-weight: 700;
+      }
+      .price-value.red {
+        color: #f87171;
+      }
+      .price-value.green {
+        color: #34d399;
+      }
+      .price-value.big {
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      /* ── Savings Banner ── */
+      .savings-banner {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(255, 200, 56, 0.08));
+        border: 1px solid rgba(16, 185, 129, 0.25);
+        border-radius: 16px;
+        padding: 28px 36px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+      }
+      .savings-left h3 {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #34d399;
+        margin-bottom: 4px;
+      }
+      .savings-left p {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.5);
+      }
+      .savings-amount {
+        font-size: 40px;
+        font-weight: 900;
+        color: #34d399;
+      }
+      .savings-amount span {
+        font-size: 16px;
+        font-weight: 600;
+        color: rgba(255, 255, 255, 0.35);
+        margin-left: 4px;
+      }
+
+      /* ── Feature Table ── */
+      .feature-section {
+        margin-bottom: 40px;
+      }
+      .feature-section h2 {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -0.3px;
+      }
+      .feature-table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .feature-table th {
+        text-align: left;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.35);
+        padding: 10px 14px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .feature-table th:nth-child(2),
+      .feature-table th:nth-child(3) {
+        text-align: center;
+      }
+      .feature-table td {
+        padding: 11px 14px;
+        font-size: 13px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        color: rgba(255, 255, 255, 0.7);
+      }
+      .feature-table td:nth-child(2),
+      .feature-table td:nth-child(3) {
+        text-align: center;
+        font-weight: 700;
+        font-size: 15px;
+      }
+      .feature-table .yes {
+        color: #34d399;
+      }
+      .feature-table .no {
+        color: #6b7280;
+      }
+      .feature-table .partial {
+        color: #fbbf24;
+        font-size: 12px;
+      }
+      .feature-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      /* ── Bottom Line ── */
+      .bottom-line {
+        text-align: center;
+        padding: 32px 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .bottom-line p {
+        font-size: 18px;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.6;
+      }
+      .bottom-line p strong {
+        color: #ffc838;
+        font-weight: 800;
+      }
+      .bottom-line .fine {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.2);
+        margin-top: 16px;
+      }
+
+      .print-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #117cff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: inherit;
+        box-shadow: 0 2px 8px rgba(17, 124, 255, 0.3);
+      }
+      .print-btn:hover {
+        transform: translateY(-1px);
+      }
+    </style>
+  </head>
+  <body>
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Print / PDF</button>
+
+    <div class="page">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="tag">⚠️ Your Current Cost</div>
+        <h1>AccuLynx vs <span>SkaiScraper</span></h1>
+        <p>
+          Side-by-side total cost of ownership for a 180-seat restoration company. Real numbers, no
+          hype.
+        </p>
+      </div>
+
+      <!-- COST CARDS -->
+      <div class="cost-row">
+        <div class="cost-card competitor">
+          <div class="card-label">Current Platform</div>
+          <div class="card-name">AccuLynx</div>
+          <div class="price-row">
+            <span class="price-label">Per-user price</span>
+            <span class="price-value red">$149/mo</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Active seats</span>
+            <span class="price-value">180</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Monthly cost</span>
+            <span class="price-value red">$26,820</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Annual cost</span>
+            <span class="price-value red big">$321,840</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">AI features included</span>
+            <span class="price-value red">0</span>
+          </div>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div class="cost-card us">
+          <div class="card-label">Replacement</div>
+          <div class="card-name">SkaiScraper Pro</div>
+          <div class="price-row">
+            <span class="price-label">Per-seat price</span>
+            <span class="price-value green">$80/mo</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Active seats</span>
+            <span class="price-value">180</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Monthly cost</span>
+            <span class="price-value green">$14,400</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">Annual cost</span>
+            <span class="price-value green big">$172,800</span>
+          </div>
+          <div class="price-row">
+            <span class="price-label">AI features included</span>
+            <span class="price-value green">12+ included</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SAVINGS BANNER -->
+      <div class="savings-banner">
+        <div class="savings-left">
+          <h3>Annual Savings with SkaiScraper</h3>
+          <p>Same team size, more features, less spend. Every seat gets full platform access.</p>
+        </div>
+        <div class="savings-amount">$149,040<span>/year</span></div>
+      </div>
+
+      <!-- FEATURE COMPARISON -->
+      <div class="feature-section">
+        <h2>Feature Comparison — What You Actually Get</h2>
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th style="width: 50%">Capability</th>
+              <th style="width: 25%">AccuLynx</th>
+              <th style="width: 25%">SkaiScraper</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Claims management & lifecycle tracking</td>
+              <td class="yes">✓</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td>Lead & pipeline management</td>
+              <td class="yes">✓</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td>Job costing & estimating</td>
+              <td class="yes">✓</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>AI damage detection</strong> — 47 points in 8 seconds</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>Automated weather verification</strong> at property level</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>Carrier strategy engine</strong> with predictive AI</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>AI proposal generation</strong> with branded PDFs</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>AI assistant</strong> — claims advice on demand</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>Depreciation auto-calc</strong> + supplement intelligence</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>Bad faith detection</strong> — AI-powered carrier analysis</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td><strong>Homeowner portal</strong> — real-time claim transparency</td>
+              <td class="partial">Basic</td>
+              <td class="yes">✓ Full</td>
+            </tr>
+            <tr>
+              <td><strong>Trades network</strong> — find subs, share reviews</td>
+              <td class="no">✗</td>
+              <td class="yes">✓</td>
+            </tr>
+            <tr>
+              <td>Org-scoped tenant isolation (verified)</td>
+              <td class="partial">Shared</td>
+              <td class="yes">✓ Isolated</td>
+            </tr>
+            <tr>
+              <td>Load tested to 500 concurrent users</td>
+              <td class="no">Unknown</td>
+              <td class="yes">✓ Proven</td>
+            </tr>
+            <tr>
+              <td>Data ownership — your data stays yours</td>
+              <td class="no" style="font-size: 12px">⚠️ Acquired</td>
+              <td class="yes">✓ Founder-led</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- BOTTOM LINE -->
+      <div class="bottom-line">
+        <p>
+          At 180 seats, AccuLynx costs <strong>$321,840/year</strong> for basic CRM.<br />
+          SkaiScraper delivers the same core <em>plus 12 AI features</em> for
+          <strong>$149,040 less</strong>.
+        </p>
+        <div class="fine">
+          ClearSkai Technologies · CONFIDENTIAL · February 2026 · Enterprise volume pricing
+          available — contact damien@skaiscrape.com
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -220,10 +220,26 @@ export default function AboutPage() {
             Enterprise Readiness ↗
           </a>
           <a
-            href="/titan-proof/vision.html"
+            href="/titan-proof/readiness.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/30 transition-colors hover:text-muted-foreground/60"
+          >
+            Security & Architecture Summary ↗
+          </a>
+          <a
+            href="/titan-proof/comparison.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground/30 transition-colors hover:text-muted-foreground/60"
+          >
+            Cost Comparison ↗
+          </a>
+          <a
+            href="/titan-proof/vision.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-muted-foreground/25 transition-colors hover:text-muted-foreground/50"
           >
             Market Opportunity & Vision ↗
           </a>
