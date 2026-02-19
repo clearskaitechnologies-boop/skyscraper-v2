@@ -3,8 +3,8 @@ export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 // src/app/api/ai/chat/route.ts
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { currentUser } from "@clerk/nextjs/server";
 import type { claims, jobs, Org, Plan, projects, properties } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -13,6 +13,7 @@ import { trackAiUsage } from "@/lib/ai/trackUsage";
 import { aiFail, aiOk, classifyOpenAiError } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
+import { chatSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 // Store user conversation memory (in production, use Redis or database)
 const userMemory = new Map<
@@ -74,15 +75,16 @@ export async function POST(request: NextRequest) {
     try {
       body = await request.json();
     } catch (jsonError) {
-      console.error("[AI_CHAT] ❌ Failed to parse JSON body:", jsonError);
+      logger.error("[AI_CHAT] ❌ Failed to parse JSON body:", jsonError);
       return NextResponse.json(aiFail("Invalid request body", "BAD_REQUEST"), { status: 400 });
     }
 
-    const { message } = body;
-    if (!message) {
-      logger.error("[AI_CHAT] ❌ No message in request");
-      return NextResponse.json(aiFail("Message is required", "BAD_REQUEST"), { status: 400 });
+    const validated = validateAIRequest(chatSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(aiFail(validated.error, "BAD_REQUEST"), { status: 422 });
     }
+
+    const { message } = validated.data;
 
     // Get user's Org ID
     const orgId = (user.publicMetadata?.orgId as string) || user.id;
@@ -215,7 +217,7 @@ Be conversational, helpful, and specific. Reference real data when available. If
         max_tokens: 500,
       });
     } catch (openaiError) {
-      console.error("[AI_CHAT] ❌ OpenAI API call failed:", openaiError);
+      logger.error("[AI_CHAT] OpenAI API call failed", { error: openaiError });
       const { message, code } = classifyOpenAiError(openaiError);
       return NextResponse.json(
         aiFail(

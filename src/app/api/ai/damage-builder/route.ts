@@ -11,6 +11,7 @@ import { log } from "@/lib/logger";
 import { buildDamagePdf } from "@/lib/pdf/damageReport";
 import prisma from "@/lib/prisma";
 import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
+import { damageBuilderSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function handlePOST(
   req: NextRequest,
@@ -37,6 +38,11 @@ async function handlePOST(
 
   // 3) Parse request body
   const body = await req.json();
+  const validated = validateAIRequest(damageBuilderSchema, body);
+  if (!validated.success) {
+    return errors.badRequest(validated.error);
+  }
+
   const {
     claimId,
     address,
@@ -47,11 +53,7 @@ async function handlePOST(
     windSpeed,
     hailSize,
     notes,
-  } = body;
-
-  if (!address || !dateOfLoss) {
-    return errors.badRequest("Address and date of loss are required.");
-  }
+  } = validated.data;
 
   // 4) Build AI prompt
   const prompt = damageBuilderPrompt({
@@ -86,7 +88,7 @@ async function handlePOST(
 
   if (!aiRes.ok) {
     const errorText = await aiRes.text();
-    console.error("[damage-builder] OpenAI API error:", errorText);
+    log.error("[damage-builder] OpenAI API error", { errorText });
     return errors.internal("AI service failed to generate report.");
   }
 
@@ -98,7 +100,7 @@ async function handlePOST(
   try {
     json = JSON.parse(content);
   } catch (parseError) {
-    console.error("[damage-builder] Failed to parse AI response:", content);
+    log.error("[damage-builder] Failed to parse AI response", { content });
     return errors.internal("AI returned invalid response format.");
   }
 

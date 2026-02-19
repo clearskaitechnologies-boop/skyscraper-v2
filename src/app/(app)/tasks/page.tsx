@@ -77,7 +77,7 @@ export default function TasksPage() {
     return <div className="flex h-screen items-center justify-center">Loading...</div>;
   }
 
-  const handleStatusChange = async (taskId: string, newStatus: string) => {
+  const handleStatusChange = async (taskId: string, newStatus: Task["status"]) => {
     try {
       const response = await fetch(`/api/tasks/${taskId}`, {
         method: "PUT",
@@ -90,7 +90,7 @@ export default function TasksPage() {
 
       if (response.ok) {
         setTasks((prev) =>
-          prev.map((task) => (task.id === taskId ? { ...task, status: newStatus as any } : task))
+          prev.map((task) => (task.id === taskId ? { ...task, status: newStatus } : task))
         );
       }
     } catch (error) {

@@ -59,7 +59,7 @@ export default function JobsMapClient({ jobs }: { jobs: JobPin[] }) {
             </h3>
             <select
               value={filter}
-              onChange={(e) => setFilter(e.target.value as any)}
+              onChange={(e) => setFilter(e.target.value as typeof filter)}
               className="rounded-md border border-[color:var(--border)] px-2 py-1 text-sm"
               aria-label="Filter jobs by type"
             >

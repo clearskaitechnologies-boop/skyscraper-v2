@@ -17,34 +17,33 @@ export const base64ImageField = z
 
 // ─── Chat / Assistant ──────────────────────────────────────────
 export const chatSchema = z.object({
-  messages: z
-    .array(
-      z.object({
-        role: z.enum(["user", "assistant", "system"]),
-        content: z.string().min(1),
-      })
-    )
-    .min(1, "At least one message is required"),
-  claimId: z.string().optional(),
-  orgId: z.string().optional(),
-  model: z.string().optional(),
+  message: messageField,
 });
 
 export const assistantSchema = z.object({
   message: messageField,
-  claimId: z.string().optional(),
-  context: z.record(z.unknown()).optional(),
+  sessionId: z.string().optional(),
+  voiceEnabled: z.boolean().optional(),
 });
 
 export const claimAssistantSchema = z.object({
   message: messageField,
-  claimId: claimIdField,
-  context: z.record(z.unknown()).optional(),
+  claimId: z.string().optional(),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string(),
+      })
+    )
+    .optional(),
 });
 
 export const dashboardAssistantSchema = z.object({
-  message: messageField,
-  orgId: z.string().optional(),
+  claimId: z.string().min(1, "claimId is required"),
+  action: z.enum(["supplement", "depreciation", "estimate", "report"]),
+  prompt: promptField,
+  orgId: orgIdField,
 });
 
 export const retailAssistantSchema = z.object({
@@ -67,31 +66,32 @@ export const damageAnalyzeSchema = z
   });
 
 export const damageExportSchema = z.object({
-  findings: z.array(z.record(z.unknown())).min(1, "findings are required"),
-  summary: z.string().optional(),
-  claimId: z.string().optional(),
-  format: z.enum(["pdf", "json", "csv"]).default("pdf"),
+  photos: z.array(z.record(z.unknown())).default([]),
+  findings: z.array(z.record(z.unknown())).default([]),
+  leadId: z.string().optional(),
+  jobId: z.string().optional(),
+  propertyAddress: z.string().optional(),
+  includeCodeCompliance: z.boolean().optional(),
+  includeMaterialSpecs: z.boolean().optional(),
 });
 
 export const damageBuilderSchema = z.object({
-  images: z
-    .array(
-      z.object({
-        url: z.string().url().optional(),
-        base64: z.string().optional(),
-        label: z.string().optional(),
-      })
-    )
-    .min(1, "At least one image is required"),
   claimId: z.string().optional(),
-  propertyType: z.string().optional(),
+  address: z.string().min(1, "Address is required"),
+  dateOfLoss: z.string().min(1, "Date of loss is required"),
+  roofType: z.string().optional(),
+  roofSqft: z.number().optional(),
+  materials: z.string().optional(),
+  windSpeed: z.string().optional(),
+  hailSize: z.string().optional(),
+  notes: z.string().optional(),
 });
 
 // ─── Rebuttal ──────────────────────────────────────────────────
 export const rebuttalSchema = z.object({
-  carrierResponse: z.string().min(1, "Carrier response is required"),
-  claimId: claimIdField,
-  claimContext: z.record(z.unknown()).optional(),
+  claimId: z.string().min(1, "claimId is required"),
+  denialText: z.string().min(20, "Denial text must be at least 20 characters"),
+  tone: z.enum(["professional", "firm", "legal"]).default("professional"),
 });
 
 export const rebuttalExportSchema = z.object({
@@ -115,20 +115,28 @@ export const supplementExportSchema = z.object({
 
 // ─── Report Builder ────────────────────────────────────────────
 export const reportBuilderSchema = z.object({
-  claimId: z.string().optional(),
-  leadId: z.string().optional(),
-  templateId: z.string().optional(),
-  type: z.string().optional(),
-  sections: z.array(z.string()).optional(),
-  prompt: z.string().optional(),
+  claimId: z.string().min(1, "claimId is required"),
+  images: z.array(z.string()).min(1, "At least one image is required"),
+  property: z
+    .object({
+      address: z.string().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      zip: z.string().optional(),
+    })
+    .optional(),
 });
 
 export const enhancedReportBuilderSchema = z.object({
-  claimId: claimIdField,
-  templateId: z.string().optional(),
-  sections: z.array(z.string()).optional(),
-  includePhotos: z.boolean().default(false),
-  includeWeather: z.boolean().default(false),
+  claimId: z.string().min(1, "claimId is required"),
+  options: z
+    .object({
+      includeWeather: z.boolean().optional(),
+      includeAnnotations: z.boolean().optional(),
+      includeCompliance: z.boolean().optional(),
+      includeMaterials: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 // ─── Claim Writer ──────────────────────────────────────────────

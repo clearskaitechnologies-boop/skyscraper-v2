@@ -10,8 +10,8 @@ import {
   Sparkles,
   Wand2,
 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { useTheme } from "next-themes";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { getUiTheme } from "@/config/uiTheme";
@@ -243,10 +243,10 @@ export default function ReportAssemblyClient() {
         <div className="space-y-2">
           <p className={"text-sm font-medium " + t.text.primary}>Output Format</p>
           <div className="grid grid-cols-2 gap-2">
-            {["pdf", "html"].map((f) => (
+            {(["pdf", "html"] as const).map((f) => (
               <button
                 key={f}
-                onClick={() => setFormat(f as any)}
+                onClick={() => setFormat(f)}
                 className={
                   "rounded-md border px-3 py-2 text-sm " +
                   t.border.default +

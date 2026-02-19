@@ -7,38 +7,33 @@
  * Integrates with AI pipeline and PDF generation system.
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
 import { runStormIntakePipeline } from "@/lib/ai/pipelines/stormIntake";
 import { generatePDFBuffer } from "@/lib/pdf/reportBuilder";
 import prisma from "@/lib/prisma";
+import { reportBuilderSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string | null }) {
   try {
     const { userId } = ctx;
 
     const body = await req.json();
-    const { claimId, images, property } = body;
+    const validated = validateAIRequest(reportBuilderSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(
+        { success: false, error: validated.error, details: validated.details },
+        { status: 422 }
+      );
+    }
+
+    const { claimId, images, property } = validated.data;
 
     logger.debug("[Report Builder] Request received for claimId:", claimId);
     logger.debug("[Report Builder] Images count:", images?.length);
-
-    if (!claimId) {
-      return NextResponse.json({ success: false, error: "claimId is required" }, { status: 400 });
-    }
-
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: "At least 1-3 roof damage photos are required to generate a report",
-        },
-        { status: 400 }
-      );
-    }
 
     // Fetch claim details
     const claim = await prisma.claims.findUnique({
@@ -77,13 +72,10 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     }
 
     logger.debug("[Report Builder] Starting analysis for claim:", claimId);
-    console.log(
-      "[Report Builder] Processing",
-      validImages.length,
-      "valid images out of",
-      images.length,
-      "total"
-    );
+    logger.debug("[Report Builder] Processing images", {
+      valid: validImages.length,
+      total: images.length,
+    });
 
     // Run Storm Intake Pipeline
     const pipelineResult = await runStormIntakePipeline({
@@ -96,7 +88,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     });
 
     if (!pipelineResult.success || !pipelineResult.results) {
-      console.error("[Report Builder] Pipeline failed:", pipelineResult.error);
+      logger.error("[Report Builder] Pipeline failed", { error: pipelineResult.error });
       return NextResponse.json(
         {
           success: false,

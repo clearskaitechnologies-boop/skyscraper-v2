@@ -1,11 +1,12 @@
-import { NextRequest } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest } from "next/server";
 
 import { getOpenAI } from "@/lib/ai/client";
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 import { safeAI } from "@/lib/aiGuard";
 import { aiFail } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
+import { assistantSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 const openai = getOpenAI();
 
@@ -29,11 +30,12 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
   const { userId } = ctx;
 
   const body = await req.json();
-  const { message, sessionId, voiceEnabled } = body;
-
-  if (!message || typeof message !== "string") {
-    return new Response(JSON.stringify(aiFail("Message required", "BAD_INPUT")), { status: 400 });
+  const validated = validateAIRequest(assistantSchema, body);
+  if (!validated.success) {
+    return new Response(JSON.stringify(aiFail(validated.error, "BAD_INPUT")), { status: 422 });
   }
+
+  const { message, sessionId, voiceEnabled } = validated.data;
 
   // Get or create session
   let session;
@@ -55,10 +57,9 @@ export async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId:
         SELECT * FROM ai_sessions WHERE "user_id" = ${userId} ORDER BY created_at DESC LIMIT 1
       `.then((r) => r[0]);
     } catch (err: any) {
-      console.warn(
-        "[AI ASSISTANT] ai_sessions table error (table may not exist), continuing without session logging:",
-        err.message
-      );
+      logger.warn("[AI ASSISTANT] ai_sessions table error, continuing without session logging", {
+        error: err.message,
+      });
       // Create a mock session object to continue
       session = { id: `temp_${Date.now()}`, org_id: orgId, user_id: userId };
     }

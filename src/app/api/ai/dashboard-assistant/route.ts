@@ -1,27 +1,29 @@
 // src/app/api/ai/dashboard-assistant/route.ts
-import { randomUUID } from "crypto";
 import { logger } from "@/lib/logger";
+import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
 import prisma from "@/lib/prisma";
+import { dashboardAssistantSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 export const dynamic = "force-dynamic";
-
-interface AIAssistantRequest {
-  claimId: string;
-  action: "supplement" | "depreciation" | "estimate" | "report";
-  prompt: string;
-  orgId: string;
-}
 
 export async function POST(req: NextRequest) {
   try {
     // Verify org access
     const resolvedOrgId = await getResolvedOrgId();
 
-    const body: AIAssistantRequest = await req.json();
-    const { claimId, action, prompt, orgId } = body;
+    const body = await req.json();
+    const validated = validateAIRequest(dashboardAssistantSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error, details: validated.details },
+        { status: 422 }
+      );
+    }
+
+    const { claimId, action, prompt, orgId } = validated.data;
 
     // Security: Verify orgId matches resolved
     if (orgId !== resolvedOrgId) {

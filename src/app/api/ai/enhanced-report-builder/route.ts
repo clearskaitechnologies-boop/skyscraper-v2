@@ -7,8 +7,8 @@
  * Orchestrates: Storm Intake → Weather → Photos → Materials → Compliance → PDF
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { annotatePhotos } from "@/lib/ai/photo-annotator";
 import { runStormIntakePipeline } from "@/lib/ai/pipelines/stormIntake";
@@ -19,17 +19,22 @@ import { getRecommendedProducts } from "@/lib/materials/vendor-catalog";
 import type { EnhancedReportData } from "@/lib/pdf/enhancedReportBuilder";
 import { generateEnhancedPDFReport } from "@/lib/pdf/enhancedReportBuilder";
 import prisma from "@/lib/prisma";
+import { enhancedReportBuilderSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
     const { userId, orgId } = ctx;
 
     const body = await req.json();
-    const { claimId, options } = body;
-
-    if (!claimId) {
-      return NextResponse.json({ error: "claimId is required" }, { status: 400 });
+    const validated = validateAIRequest(enhancedReportBuilderSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error, details: validated.details },
+        { status: 422 }
+      );
     }
+
+    const { claimId, options } = validated.data;
 
     // 1. FETCH CLAIM DETAILS
     const claim = await prisma.claims.findUnique({

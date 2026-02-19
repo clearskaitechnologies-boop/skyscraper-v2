@@ -2,8 +2,9 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { damageExportSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
+import { currentUser } from "@clerk/nextjs/server";
 import { jsPDF } from "jspdf";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -36,15 +37,23 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
+    const validated = validateAIRequest(damageExportSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error, details: validated.details },
+        { status: 422 }
+      );
+    }
+
     const {
-      photos = [],
-      findings = [],
+      photos,
+      findings,
       leadId,
       jobId,
       propertyAddress,
       includeCodeCompliance,
       includeMaterialSpecs,
-    } = body;
+    } = validated.data;
 
     // Generate PDF
     const doc = new jsPDF();

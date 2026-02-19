@@ -145,7 +145,11 @@ export default function NewScopePage() {
         </Button>
       </div>
 
-      <Tabs value={step} onValueChange={(v) => setStep(v as any)} className="w-full">
+      <Tabs
+        value={step}
+        onValueChange={(v) => setStep(v as "input" | "structure" | "cleanup" | "save")}
+        className="w-full"
+      >
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="input">1. Input Source</TabsTrigger>
           <TabsTrigger value="structure" disabled={!scope}>

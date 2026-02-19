@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { RebuttalAgent } from "@/agents/rebuttalAgent";
 import prisma from "@/lib/prisma";
@@ -7,6 +7,7 @@ import { getRateLimitIdentifier, rateLimiters } from "@/lib/rate-limit";
 import { htmlToPdfBuffer } from "@/lib/reports/pdf-utils";
 import { saveAiPdfToStorage } from "@/lib/reports/saveAiPdfToStorage";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { rebuttalSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
  * Rebuttal Letter Generation API Endpoint
@@ -42,30 +43,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "invalid-json" }, { status: 400 });
     }
 
-    const { claimId, denialText, tone = "professional" } = body;
-
-    // Validate required fields
-    if (!claimId || !denialText) {
+    const validated = validateAIRequest(rebuttalSchema, body);
+    if (!validated.success) {
       return NextResponse.json(
         {
           ok: false,
-          error: "missing-fields",
-          message: "claimId and denialText are required",
+          error: "validation-failed",
+          message: validated.error,
+          details: validated.details,
         },
-        { status: 400 }
+        { status: 422 }
       );
     }
 
-    if (denialText.length < 20) {
-      return NextResponse.json(
-        {
-          ok: false,
-          error: "denial-text-too-short",
-          message: "Denial text must be at least 20 characters",
-        },
-        { status: 400 }
-      );
-    }
+    const { claimId, denialText, tone } = validated.data;
 
     // Verify claim exists and belongs to org
     const claim = await prisma.claims.findFirst({
@@ -171,7 +162,7 @@ export async function POST(req: NextRequest) {
       pdfSaved = true;
       logger.debug(`[Rebuttal API] PDF saved for claim ${claimId}`);
     } catch (pdfError) {
-      console.error("[Rebuttal API] PDF generation failed (non-critical):", pdfError);
+      logger.error("[Rebuttal API] PDF generation failed (non-critical)", { error: pdfError });
       // Continue - PDF failure should not break the rebuttal response
     }
 
@@ -194,7 +185,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (artifactErr) {
-      console.error("[Rebuttal API] Artifact save failed:", artifactErr);
+      logger.error("[Rebuttal API] Artifact save failed", { error: artifactErr });
     }
 
     // Also save to ai_reports for Report History visibility
@@ -216,7 +207,7 @@ export async function POST(req: NextRequest) {
         },
       });
     } catch (historyErr) {
-      console.error("[Rebuttal API] Report history save failed:", historyErr);
+      logger.error("[Rebuttal API] Report history save failed", { error: historyErr });
     }
 
     return NextResponse.json({

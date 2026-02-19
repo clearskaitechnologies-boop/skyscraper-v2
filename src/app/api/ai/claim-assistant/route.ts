@@ -9,11 +9,16 @@ export const runtime = "nodejs";
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, claimId, history } = await request.json();
-
-    if (!message) {
-      return NextResponse.json({ error: "Message required" }, { status: 400 });
+    const body = await request.json();
+    const validated = validateAIRequest(claimAssistantSchema, body);
+    if (!validated.success) {
+      return NextResponse.json(
+        { error: validated.error, details: validated.details },
+        { status: 422 }
+      );
     }
+
+    const { message, claimId, history } = validated.data;
 
     // Get auth - but allow demo claims to work
     const { userId } = await auth();
@@ -61,7 +66,7 @@ Provide actionable, specific advice. Use markdown formatting for clarity. Keep r
       timestamp: new Date().toISOString(),
     });
   } catch (error: any) {
-    console.error("[claim-assistant] Error:", error?.message || error);
+    logger.error("[claim-assistant] Error", { error: error?.message || error });
 
     // Return more specific error messages
     if (error?.code === "insufficient_quota") {

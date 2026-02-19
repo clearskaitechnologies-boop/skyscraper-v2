@@ -199,7 +199,7 @@ export default function WeatherReportsPage() {
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="space-y-2">
                     <Label>Peril</Label>
-                    <Select value={peril} onValueChange={(v) => setPeril(v as any)}>
+                    <Select value={peril} onValueChange={(v) => setPeril(v as typeof peril)}>
                       <SelectTrigger className="bg-background text-foreground">
                         <SelectValue placeholder="Select peril" />
                       </SelectTrigger>
