@@ -87,7 +87,7 @@ export async function ensureOrgForUser(): Promise<EnsuredOrg> {
         await prisma.user_organizations.deleteMany({
           where: { id: { in: orphanedIds } },
         });
-        logger.debug("[ensureOrgForUser] Deleted", orphanedIds.length, "orphaned memberships");
+        logger.debug(`[ensureOrgForUser] Deleted ${orphanedIds.length} orphaned memberships`);
 
         // Fall through to create new org below
       } else {

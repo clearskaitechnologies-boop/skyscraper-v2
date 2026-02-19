@@ -7,20 +7,21 @@
 
 ## 🏆 COMPLETION STATUS (Updated Feb 21, 2026)
 
-| Sprint | Status | Summary |
-|--------|--------|---------|
-| **Sprint 20: Billing Enforcement** | ✅ DONE | 27 routes wired with `requireActiveSubscription()` + `checkRateLimit()` |
-| **Sprint 21: Auth + Org Scoping** | ✅ DONE | 24 write routes migrated to `withAuth` wrapper. All critical routes verified secure. |
-| **Sprint 22: Rate Limiting** | ✅ DONE | 28 more routes rate-limited (95 total, up from 28). Admin, billing, auth, onboarding, contacts, feedback, pipeline, photos, tasks, referral, stripe all covered. |
-| **Sprint 23: Build Pipeline GREEN** | ✅ DONE | `next build` succeeds. ESLint/TS errors ignored during build (pre-existing). |
-| **Sprint 24: PDF Generation Audit** | ⏳ Deferred | PDF routes have billing + rate limiting. Full template testing deferred to post-meeting. |
-| **Sprint 25: AI Mockup Quality** | ✅ DONE | DALL-E 3 prompts restructured for photorealistic output (`style: "natural"`, DSLR camera language). |
-| **Sprint 26: E2E Smoke Suite** | ⏳ Deferred | Requires Playwright setup + test accounts. Post-meeting priority. |
-| **Sprint 27: Webhook Hardening** | ✅ DONE | Twilio: HMAC-SHA1 signature validation added. Trades: timing-safe secret comparison. |
-| **Sprint 28: RBAC Enforcement** | ✅ DONE | Billing/Stripe routes → `withManager`. Team member removal → `withAdmin`. Team invitations → `withManager`. |
+| Sprint                              | Status      | Summary                                                                                                                                                          |
+| ----------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sprint 20: Billing Enforcement**  | ✅ DONE     | 27 routes wired with `requireActiveSubscription()` + `checkRateLimit()`                                                                                          |
+| **Sprint 21: Auth + Org Scoping**   | ✅ DONE     | 24 write routes migrated to `withAuth` wrapper. All critical routes verified secure.                                                                             |
+| **Sprint 22: Rate Limiting**        | ✅ DONE     | 28 more routes rate-limited (95 total, up from 28). Admin, billing, auth, onboarding, contacts, feedback, pipeline, photos, tasks, referral, stripe all covered. |
+| **Sprint 23: Build Pipeline GREEN** | ✅ DONE     | `next build` succeeds. ESLint/TS errors ignored during build (pre-existing).                                                                                     |
+| **Sprint 24: PDF Generation Audit** | ⏳ Deferred | PDF routes have billing + rate limiting. Full template testing deferred to post-meeting.                                                                         |
+| **Sprint 25: AI Mockup Quality**    | ✅ DONE     | DALL-E 3 prompts restructured for photorealistic output (`style: "natural"`, DSLR camera language).                                                              |
+| **Sprint 26: E2E Smoke Suite**      | ⏳ Deferred | Requires Playwright setup + test accounts. Post-meeting priority.                                                                                                |
+| **Sprint 27: Webhook Hardening**    | ✅ DONE     | Twilio: HMAC-SHA1 signature validation added. Trades: timing-safe secret comparison.                                                                             |
+| **Sprint 28: RBAC Enforcement**     | ✅ DONE     | Billing/Stripe routes → `withManager`. Team member removal → `withAdmin`. Team invitations → `withManager`.                                                      |
 
 ### Key Metrics After All Sprints:
-- **Routes with billing enforcement:** 0 → **27** 
+
+- **Routes with billing enforcement:** 0 → **27**
 - **Routes with rate limiting:** 28 → **95** (3.4x increase)
 - **Routes with canonical auth (withAuth/withAdmin/withManager):** 28 → **~77** (2.75x increase)
 - **Webhook HMAC validation:** Stripe ✅, Clerk ✅, Twilio ✅ (new), Trades ✅ (hardened)

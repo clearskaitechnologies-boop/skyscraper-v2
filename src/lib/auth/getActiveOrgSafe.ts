@@ -219,7 +219,7 @@ export async function getActiveOrgSafe(opts?: {
       };
     }
 
-    logger.debug("[ORG_SAFE] userId:", userId, "clerkOrgId:", clerkOrgId || "null");
+    logger.debug(`[ORG_SAFE] userId: ${userId} clerkOrgId: ${clerkOrgId || "null"}`);
 
     // STRATEGY 1: If Clerk orgId exists, find/create DB org with that clerkOrgId
     if (clerkOrgId) {

@@ -3,8 +3,8 @@
  * This is the MOST IMPORTANT utility for SaaS data isolation
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 
 import prisma from "@/lib/prisma";
 
@@ -315,7 +315,7 @@ export async function getOrganization() {
     where: { id: orgId },
     include: {
       Plan: true,
-      TokenWallet: true,
+      // TokenWallet: true, // removed — model does not exist in Prisma schema
       Subscription: true,
     },
   });

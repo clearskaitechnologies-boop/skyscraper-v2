@@ -56,7 +56,7 @@ export async function createSSOConfig(
     config: Record<string, any>;
   }
 ): Promise<string> {
-  const { prisma } = await import("@/lib/prisma");
+  const prisma = (await import("@/lib/prisma")).default;
 
   const ssoConfig = await prisma.ssoConfig.create({
     data: {
@@ -80,7 +80,7 @@ export async function updateSSOConfig(
     config?: Record<string, any>;
   }
 ): Promise<void> {
-  const { prisma } = await import("@/lib/prisma");
+  const prisma = (await import("@/lib/prisma")).default;
 
   await prisma.ssoConfig.update({
     where: { id: configId },
@@ -92,7 +92,7 @@ export async function updateSSOConfig(
  * Get SSO configuration
  */
 export async function getSSOConfig(organizationId: string): Promise<SSOConfig | null> {
-  const { prisma } = await import("@/lib/prisma");
+  const prisma = (await import("@/lib/prisma")).default;
 
   const config = await prisma.ssoConfig.findFirst({
     where: { organizationId, enabled: true },
@@ -294,7 +294,7 @@ export async function provisionUserFromSSO(
     attributes: Record<string, any>;
   }
 ): Promise<string> {
-  const { prisma } = await import("@/lib/prisma");
+  const prisma = (await import("@/lib/prisma")).default;
 
   // Check if user exists
   let user = await prisma.users.findUnique({
@@ -340,7 +340,7 @@ export async function testSSOConfig(configId: string): Promise<{
   success: boolean;
   message: string;
 }> {
-  const { prisma } = await import("@/lib/prisma");
+  const prisma = (await import("@/lib/prisma")).default;
 
   const config = await prisma.ssoConfig.findUnique({
     where: { id: configId },

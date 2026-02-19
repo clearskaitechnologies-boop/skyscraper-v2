@@ -15,6 +15,7 @@ export async function createBillingPortalSession(
   stripeCustomerId: string,
   returnUrl?: string
 ): Promise<string> {
+  if (!stripe) throw new Error("Stripe client not initialized");
   const portalReturnUrl =
     returnUrl ||
     process.env.STRIPE_BILLING_PORTAL_RETURN_URL ||
@@ -32,6 +33,7 @@ export async function createBillingPortalSession(
  * Get customer's payment methods
  */
 export async function getCustomerPaymentMethods(stripeCustomerId: string) {
+  if (!stripe) throw new Error("Stripe client not initialized");
   const paymentMethods = await stripe.paymentMethods.list({
     customer: stripeCustomerId,
     type: "card",
@@ -50,6 +52,7 @@ export async function getCustomerPaymentMethods(stripeCustomerId: string) {
  * Get customer's invoices
  */
 export async function getCustomerInvoices(stripeCustomerId: string, limit = 12) {
+  if (!stripe) throw new Error("Stripe client not initialized");
   const invoices = await stripe.invoices.list({
     customer: stripeCustomerId,
     limit,

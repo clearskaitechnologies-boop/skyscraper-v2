@@ -1,11 +1,11 @@
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 export async function seedRoles() {
   const roles = ["ADMIN", "MANAGER", "FIELD", "VIEWER"];
 
   for (const roleName of roles) {
-    await prisma.permissionRole.upsert({
+    await prisma.permission_roles.upsert({
       where: { name: roleName },
       create: { name: roleName },
       update: {},
