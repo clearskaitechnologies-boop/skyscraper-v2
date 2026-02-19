@@ -34,6 +34,7 @@ import { QuickAIActions } from "@/components/claims/QuickAIActions";
 import { ArchiveJobButton } from "@/components/jobs/ArchiveJobButton";
 import { TransferJobDropdown } from "@/components/jobs/TransferJobDropdown";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 import { ClaimAIAssistant } from "./_components/ClaimAIAssistant";
 import ClaimDetailsSection from "./ClaimDetailsSection";
@@ -145,7 +146,7 @@ export function ClaimWorkspaceShell({
 
   // Debug logging on mount
   useEffect(() => {
-    console.log("[ClaimWorkspaceShell] Component mounted with data:", {
+    logger.debug("[ClaimWorkspaceShell] Component mounted", {
       claimId: initialClaim.id,
       claimNumber: initialClaim.claimNumber,
       status: initialClaim.status,
@@ -160,10 +161,10 @@ export function ClaimWorkspaceShell({
     // Catch any client-side initialization errors
     try {
       if (!initialClaim?.id) {
-        console.error("[ClaimWorkspaceShell] ❌ Invalid claim data: missing ID");
+        logger.error("[ClaimWorkspaceShell] Invalid claim data: missing ID");
       }
     } catch (error: any) {
-      console.error("[ClaimWorkspaceShell] ❌ Error during initialization:", {
+      logger.error("[ClaimWorkspaceShell] Error during initialization", {
         message: error?.message,
         name: error?.name,
       });
@@ -194,7 +195,7 @@ export function ClaimWorkspaceShell({
       setSaveMessage("✓ Saved");
       setTimeout(() => setSaveMessage(null), 2000);
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error", { error });
       setSaveMessage("✗ Failed to save");
       setTimeout(() => setSaveMessage(null), 3000);
     } finally {
@@ -970,10 +971,10 @@ function DocumentsSection({
         });
 
         if (!res.ok) {
-          console.error(`Failed to upload ${file.name}`);
+          logger.error("Failed to upload file", { fileName: file.name });
         }
       } catch (err) {
-        console.error(`Error uploading ${file.name}:`, err);
+        logger.error("Error uploading file", { fileName: file.name, error: err });
       }
     }
 
@@ -1003,7 +1004,7 @@ function DocumentsSection({
       // Reload page to refresh data
       window.location.reload();
     } catch (error) {
-      console.error("Error toggling share:", error);
+      logger.error("Error toggling share", { error });
       alert("Failed to update document sharing");
     }
   };
@@ -1222,7 +1223,7 @@ function SignatureRequestModal({
       onClose();
       window.location.reload();
     } catch (error) {
-      console.error("Error sending signature request:", error);
+      logger.error("Error sending signature request", { error });
       alert("Failed to send signature request");
     } finally {
       setLoading(false);
@@ -1320,7 +1321,7 @@ function PhotosSection({ claimId }: { claimId: string }) {
         setPhotos(data.photos || []);
       }
     } catch (err) {
-      console.error("Failed to fetch photos:", err);
+      logger.error("Failed to fetch photos", { error: err });
     }
   }
 
@@ -1356,7 +1357,7 @@ function PhotosSection({ claimId }: { claimId: string }) {
           failedFiles.push(`${file.name}: ${errData.error || res.statusText}`);
         }
       } catch (err) {
-        console.error(`Failed to upload ${file.name}:`, err);
+        logger.error("Failed to upload photo", { fileName: file.name, error: err });
         failedFiles.push(`${file.name}: Network error`);
       }
     }
@@ -1786,7 +1787,7 @@ function TimelineSection({ claimId }: { claimId: string }) {
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load timeline:", err);
+        logger.error("Failed to load timeline", { error: err });
         setLoading(false);
       });
   }, [claimId]);

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { z } from "zod";
 
 import { BrandingUpload } from "@/components/branding/BrandingUpload";
 import { Button } from "@/components/ui/button";
@@ -71,14 +72,12 @@ export default function BrandingForm({ initial, orgId, userId }: BrandingFormPro
         router.refresh(); // Refresh to show new branding
       } else {
         const errorMsg = data.error || "Unknown error";
-        console.error("Error saving branding:", data);
         alert(`❌ Error saving branding: ${errorMsg}`);
       }
     } catch (error) {
-      console.error("Submit error:", error);
       // Handle Zod validation errors
-      if (error && typeof error === "object" && "errors" in error) {
-        alert(`❌ Validation error: ${formatZodError(error as any)}`);
+      if (error instanceof z.ZodError) {
+        alert(`❌ Validation error: ${formatZodError(error)}`);
       } else {
         alert(`❌ Network error: ${error instanceof Error ? error.message : "Unknown error"}`);
       }

@@ -6,6 +6,7 @@ import { ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { resolveClaim } from "@/lib/claims/resolveClaim";
+import { logger } from "@/lib/logger";
 import { getOrg, isDemoRoute } from "@/lib/org/getOrg";
 
 import ClaimTabs from "./_components/ClaimTabs";
@@ -19,19 +20,19 @@ interface ClaimLayoutProps {
 export default async function ClaimLayout({ children, params }: ClaimLayoutProps) {
   const { claimId } = await params;
 
-  console.log(`🔥 [ClaimLayout] Loading claim ${claimId}`);
+  logger.debug("[ClaimLayout] Loading claim", { claimId });
 
   // 🔥 FIX: Canonicalize URL if using claimNumber instead of ID
   try {
     const result = await resolveClaim(claimId);
     if (result.ok && result.canonicalId !== claimId) {
-      console.log(`🔥 [ClaimLayout] Redirecting to canonical ID: ${result.canonicalId}`);
+      logger.debug("[ClaimLayout] Redirecting to canonical ID", { canonicalId: result.canonicalId });
       // Get the current path segment after [claimId]
       // Since we're in layout, we don't have the full path, so just redirect to overview
       redirect(`/claims/${result.canonicalId}/overview`);
     }
   } catch (error) {
-    console.error(`🔥 [ClaimLayout] Canonicalization failed:`, error);
+    logger.error("[ClaimLayout] Canonicalization failed", { error });
     // Continue to normal flow - getClaim will handle the NOT_FOUND
   }
 
@@ -138,22 +139,20 @@ export default async function ClaimLayout({ children, params }: ClaimLayoutProps
 
     // NOT demo and NO_ORG → redirect to onboarding
     // Claims workspace REQUIRES an org
-    console.log(`🔥 [ClaimLayout] NO_ORG for non-demo claim, redirecting to onboarding`);
+    logger.debug("[ClaimLayout] NO_ORG for non-demo claim, redirecting to onboarding");
     redirect("/onboarding");
   }
 
   // Handle claim not found
   if (!result.ok) {
-    console.error(`🔥 [ClaimLayout] Claim load failed: ${result.reason}`);
+    logger.error("[ClaimLayout] Claim load failed", { reason: result.reason });
 
     // STALE DEMO URL REDIRECT: If this looks like ANY demo claim URL,
     // redirect to the universal /claims/test route
     if (claimId.startsWith("demo-claim-")) {
       const orgResult = await getOrg({ mode: "optional" });
       if (orgResult.ok) {
-        console.log(
-          `🔥 [ClaimLayout] Stale demo URL detected! Redirecting: ${claimId} → /claims/test/overview`
-        );
+        logger.debug("[ClaimLayout] Stale demo URL detected, redirecting", { from: claimId });
         redirect(`/claims/test/overview`);
       }
     }
@@ -223,7 +222,7 @@ export default async function ClaimLayout({ children, params }: ClaimLayoutProps
   }
 
   const claim = result.claim;
-  console.log(`🔥 [ClaimLayout] ✅ Loaded claim ${claim.claimNumber}`);
+  logger.debug("[ClaimLayout] Loaded claim", { claimNumber: claim.claimNumber });
 
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-slate-50 dark:bg-slate-950">

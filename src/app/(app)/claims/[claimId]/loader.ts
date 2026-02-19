@@ -1,5 +1,6 @@
 // src/app/(app)/claims/[claimId]/loader.ts
 import { getClaimDetailsByParam } from "@/lib/claims/getClaimByParam";
+import { logger } from "@/lib/logger";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
 
@@ -20,7 +21,7 @@ export type GetClaimResult =
  */
 export async function getClaim(claimId: string, orgId?: string): Promise<GetClaimResult> {
   try {
-    console.log(`🔥🔥🔥 [getClaim] === START === claimId: ${claimId}`);
+    logger.debug("[getClaim] START", { claimId });
 
     // PUBLIC DEMO ALIAS: Return synthetic claim without org context
     if (claimId === "test") {
@@ -66,38 +67,37 @@ export async function getClaim(claimId: string, orgId?: string): Promise<GetClai
       (await (async () => {
         const res = await getOrg({ mode: "optional" });
         if (!res.ok) {
-          console.error(`🔥 [getClaim] Org resolution failed: ${res.reason}`);
+          logger.error("[getClaim] Org resolution failed", { reason: res.reason });
           return null;
         }
         return res.orgId;
       })());
 
     if (!resolvedOrgId) {
-      console.error(`🔥🔥🔥 [getClaim] NO_ORG: Cannot fetch claim without org context`);
+      logger.error("[getClaim] NO_ORG: Cannot fetch claim without org context");
       return { ok: false, reason: "NO_ORG" };
     }
 
-    console.log(`🔥 [getClaim] Got orgId: ${resolvedOrgId}, fetching claim...`);
+    logger.debug("[getClaim] Fetching claim", { orgId: resolvedOrgId });
 
     // ✅ CRITICAL FIX: Use resolver that accepts id OR claimNumber
     const claim = await getClaimDetailsByParam(resolvedOrgId, claimId);
 
     if (!claim) {
-      console.error(`🔥🔥🔥 [getClaim] CLAIM NOT FOUND: ${claimId} for orgId ${resolvedOrgId}`);
+      logger.warn("[getClaim] CLAIM NOT FOUND", { claimId, orgId: resolvedOrgId });
       const availableClaims = await prisma.claims.findMany({
         where: { orgId: resolvedOrgId },
         select: { id: true, claimNumber: true, title: true },
         take: 10,
       });
-      console.log(`🔥 [getClaim] Available claims (${availableClaims.length}):`, availableClaims);
+      logger.debug("[getClaim] Available claims", { count: availableClaims.length });
       return { ok: false, reason: "NOT_FOUND" };
     }
 
-    console.log(`🔥 [getClaim] SUCCESS ✅ - Found claim #${claim.claimNumber}`);
+    logger.debug("[getClaim] SUCCESS", { claimNumber: claim.claimNumber });
     return { ok: true, claim };
   } catch (error: any) {
-    console.error("🔥🔥🔥 [getClaim] DB_ERROR:", error);
-    console.error("🔥 [getClaim] Stack:", error.stack);
+    logger.error("[getClaim] DB_ERROR", { error: error.message, stack: error.stack });
     return {
       ok: false,
       reason: "DB_ERROR",
