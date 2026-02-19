@@ -23,6 +23,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface CreateTemplateModalProps {
   open: boolean;
@@ -68,7 +69,7 @@ export function CreateTemplateModal({
       setDescription("");
       setCopyFromId("scratch");
     } catch (error) {
-      console.error("Failed to create template:", error);
+      logger.error("Failed to create template:", error);
       alert("Failed to create template");
     } finally {
       setLoading(false);

@@ -17,6 +17,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
+import { logger } from "@/lib/logger";
+
 const COMPONENT_TYPES = [
   "Roof",
   "HVAC",
@@ -129,7 +131,7 @@ export default function NewInspectionPage() {
         `Analysis complete — ${data.aggregatedDetections?.length || 0} detections found`
       );
     } catch (error) {
-      console.error("Analysis error:", error);
+      logger.error("Analysis error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to analyze photos");
     } finally {
       setAnalyzing(false);

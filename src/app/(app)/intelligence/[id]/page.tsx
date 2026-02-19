@@ -5,6 +5,8 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 type ReportType = "QUICK" | "CLAIMS_READY" | "RETAIL" | "FORENSIC";
 
 type FeatureToggles = {
@@ -188,7 +190,7 @@ export default function IntelligenceWizardPage({ params }: PageProps) {
       // Redirect to report view
       router.push(`/claims/${claimId}?tab=reports`);
     } catch (err: any) {
-      console.error(err);
+      logger.error(err);
       setError(err.message || "Failed to generate report");
     } finally {
       setGenerating(false);

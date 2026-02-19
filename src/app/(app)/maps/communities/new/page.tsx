@@ -10,6 +10,7 @@ import { CommunityMapDraw } from "@/components/maps/CommunityMapDraw";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 /**
  * Create Community from Map Page
@@ -75,7 +76,7 @@ export default function NewCommunityPage() {
       toast.success("Community created successfully!");
       router.push(`/maps/communities/${data.community.id}`);
     } catch (error: any) {
-      console.error("Error creating community:", error);
+      logger.error("Error creating community:", error);
       toast.error(error.message || "Failed to create community");
     } finally {
       setLoading(false);

@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import { TradesNetworkClient } from "./TradesNetworkClient";
 
@@ -146,7 +147,7 @@ export default async function TradesNetworkPage() {
       clientConnections: [],
     }));
   } catch (error) {
-    console.error("[TradesNetworkPage] Failed to fetch contractors:", error);
+    logger.error("[TradesNetworkPage] Failed to fetch contractors:", error);
   }
 
   // Top rated contractors for sidebar

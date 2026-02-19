@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface PropertyProfileClientProps {
   propertyId: string;
@@ -41,7 +42,7 @@ export default function PropertyProfileClient({
         setHealthScore(data.healthScore);
       }
     } catch (error) {
-      console.error("Failed to calculate health score:", error);
+      logger.error("Failed to calculate health score:", error);
     } finally {
       setCalculating(false);
     }

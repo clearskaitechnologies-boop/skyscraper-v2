@@ -14,8 +14,8 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/db/prisma";
-import { safeOrgContext } from "@/lib/safeOrgContext";
 import { logger } from "@/lib/logger";
+import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

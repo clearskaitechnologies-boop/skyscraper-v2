@@ -16,6 +16,7 @@ import { StatCard } from "@/components/ui/MetricCard";
 import { guarded } from "@/lib/buildPhase";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
+import { logger } from "@/lib/logger";
 
 import MortgageCheckForm from "./MortgageCheckForm";
 
@@ -65,7 +66,7 @@ export default async function MortgageChecksPage() {
           createdAt: c.createdAt.toISOString().split("T")[0],
         }));
       } catch (err) {
-        console.error("[mortgage-checks] DB query failed:", err);
+        logger.error("[mortgage-checks] DB query failed:", err);
         return [];
       }
     },

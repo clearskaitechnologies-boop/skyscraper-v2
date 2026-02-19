@@ -13,6 +13,8 @@ import GlassPanel from "@/components/trades/GlassPanel";
 
 import AcceptDeclineButtons from "./AcceptDeclineButtons";
 
+import { logger } from "@/lib/logger";
+
 interface ConnectionRequest {
   id: string;
   clientName: string;
@@ -60,7 +62,7 @@ export default function ConnectionRequestCard() {
         throw new Error(data.error || "Failed to load requests");
       }
     } catch (error: any) {
-      console.error("Failed to load requests:", error);
+      logger.error("Failed to load requests:", error);
       toast.error(error.message || "Failed to load connection requests");
     } finally {
       setLoading(false);

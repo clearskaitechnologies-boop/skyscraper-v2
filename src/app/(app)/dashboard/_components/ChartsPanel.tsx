@@ -14,6 +14,8 @@ import {
   YAxis,
 } from "recharts";
 
+import { logger } from "@/lib/logger";
+
 interface ClaimsStatusDatum {
   status: string;
   count: number;
@@ -56,7 +58,7 @@ export default function ChartsPanel() {
           leadsBySource: json.data.leadsBySource || [],
         });
       } catch (e: any) {
-        console.warn("[ChartsPanel] Falling back to empty charts:", e);
+        logger.warn("[ChartsPanel] Falling back to empty charts:", e);
         setData({
           claimsByStatus: [],
           claimsOverTime: [],

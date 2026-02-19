@@ -13,6 +13,7 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 interface SearchResult {
   id: string;
@@ -83,7 +84,7 @@ function AddClientPage() {
         setSearchResults(data.results || []);
       }
     } catch (error) {
-      console.error("Search failed:", error);
+      logger.error("Search failed:", error);
     } finally {
       setSearching(false);
     }

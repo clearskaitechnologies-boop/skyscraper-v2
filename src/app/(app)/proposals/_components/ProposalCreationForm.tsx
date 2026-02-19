@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface ProposalCreationFormProps {
   templates: report_templates[];
@@ -71,7 +72,7 @@ export function ProposalCreationForm({ templates, orgId }: ProposalCreationFormP
       // Navigate to proposal status page
       router.push(`/proposals/${data.proposalId}`);
     } catch (error: any) {
-      console.error("Failed to create proposal:", error);
+      logger.error("Failed to create proposal:", error);
       alert(`Failed to create proposal: ${error.message}`);
     } finally {
       setGenerating(false);

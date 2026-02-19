@@ -42,6 +42,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const metadata: Metadata = {
   title: "Clients Network",
@@ -396,7 +397,7 @@ export default async function ClientsNetworkPage() {
 
     countById = new Map(contactCounts.map((c) => [c.clientNetworkId, c._count._all] as const));
   } catch (error) {
-    console.error("[ClientsNetwork] Failed to load networks:", error);
+    logger.error("[ClientsNetwork] Failed to load networks:", error);
     hasError = true;
   }
 

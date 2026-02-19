@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface ConvertToClaimButtonProps {
   leadId: string;
@@ -110,7 +111,7 @@ export function ConvertToClaimButton({
       router.push(`/claims/${data.claim.id}`);
       router.refresh();
     } catch (error) {
-      console.error("[ConvertToClaimButton] Error:", error);
+      logger.error("[ConvertToClaimButton] Error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to convert lead");
     } finally {
       setIsLoading(false);

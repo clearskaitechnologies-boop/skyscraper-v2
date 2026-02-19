@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface FeedbackFormProps {
   userId: string;
@@ -67,7 +68,7 @@ export default function FeedbackForm({ userId, userEmail }: FeedbackFormProps) {
       setIssue("");
       setConfusion("");
     } catch (error) {
-      console.error("Feedback submission error:", error);
+      logger.error("Feedback submission error:", error);
       toast.error("Failed to submit feedback. Please try again.");
     } finally {
       setSubmitting(false);

@@ -12,8 +12,8 @@ import { ClaimNotFoundError, NetworkError } from "@/components/errors/ErrorState
 import { TabErrorBoundary } from "@/components/errors/TabErrorBoundary";
 import { ClaimWorkspaceSkeleton } from "@/components/loading/LoadingStates";
 
-import { ClientConnectSection } from "../_components/ClientConnectSection";
 import { logger } from "@/lib/logger";
+import { ClientConnectSection } from "../_components/ClientConnectSection";
 import { GenerateReportButton } from "../_components/GenerateReportButton";
 import MetricPill from "../_components/MetricPill";
 import SectionCard from "../_components/SectionCard";

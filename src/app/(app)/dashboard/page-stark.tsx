@@ -8,6 +8,7 @@ import RecentActivity from "@/components/RecentActivity";
 import MotionSection from "@/components/ui/MotionSection";
 import { getRecentActivity } from "@/lib/activity";
 import { getDashboardMetrics } from "@/lib/metrics";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -29,7 +30,7 @@ export default async function DashboardPage() {
         getRecentActivity(resolvedOrgId, 6),
       ]);
     } catch (error) {
-      console.error("[dashboard] Error fetching data:", error);
+      logger.error("[dashboard] Error fetching data:", error);
     }
   }
 

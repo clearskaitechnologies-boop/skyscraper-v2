@@ -19,6 +19,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,7 @@ export default async function NetworkOverviewPage() {
   const warnOnce = (label: string, message: string) => {
     if (warned.has(label)) return;
     warned.add(label);
-    console.warn(`[NetworkOverview] ${label}: ${message}`);
+    logger.warn(`[NetworkOverview] ${label}: ${message}`);
   };
 
   // Safety wrapper to avoid runtime 500s when a table/column is missing locally

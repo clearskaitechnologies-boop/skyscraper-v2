@@ -11,6 +11,7 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Button } from "@/components/ui/button";
 import EmptyState from "@/components/ui/EmptyState";
 import { StandardButton } from "@/components/ui/StandardButton";
+import { logger } from "@/lib/logger";
 
 interface UploadedFile {
   name: string;
@@ -91,7 +92,7 @@ export default function EvidencePage() {
       setUploadedFiles((prev) => [...newUploads, ...prev]);
       setFiles([]);
     } catch (error) {
-      console.error("Upload failed:", error);
+      logger.error("Upload failed:", error);
       setUploadErrors((prev) => [
         ...prev,
         error instanceof Error ? error.message : "Upload failed",

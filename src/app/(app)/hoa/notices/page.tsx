@@ -19,6 +19,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { logger } from "@/lib/logger";
+
 interface NoticePack {
   id: string;
   community: string;
@@ -49,7 +51,7 @@ export default function HoaNoticesPage() {
         setNotices(data.notices || []);
       }
     } catch (error) {
-      console.error("Error fetching notices:", error);
+      logger.error("Error fetching notices:", error);
     } finally {
       setLoading(false);
     }

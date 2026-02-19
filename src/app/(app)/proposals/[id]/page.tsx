@@ -9,6 +9,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface ProposalStatusPageProps {
   params: {
@@ -45,7 +46,7 @@ export default function ProposalStatusPage({ params }: ProposalStatusPageProps) 
       setProposal(data);
       setLoading(false);
     } catch (err: any) {
-      console.error("Failed to fetch proposal:", err);
+      logger.error("Failed to fetch proposal:", err);
       setError(err.message);
       setLoading(false);
     }

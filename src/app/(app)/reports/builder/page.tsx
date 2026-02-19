@@ -17,6 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 type ServiceType = "roofing" | "siding" | "gutters" | "windows" | "painting" | "repairs" | "other";
 type PricingTier = "good" | "better" | "best";
@@ -146,7 +147,7 @@ export default function RetailProposalBuilderPage() {
         alert(`Error: ${error}`);
       }
     } catch (err) {
-      console.error("Generate PDF error:", err);
+      logger.error("Generate PDF error:", err);
       alert("Failed to generate PDF. Please try again.");
     } finally {
       setGeneratingPDF(false);

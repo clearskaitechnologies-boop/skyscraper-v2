@@ -6,6 +6,7 @@ import { useEffect,useState } from "react";
 
 import { PdfPreviewModal } from "@/components/reports/PdfPreviewModal";
 import { PresetSelector } from "@/components/reports/PresetSelector";
+import { logger } from "@/lib/logger";
 
 interface Claim {
   id: string;
@@ -57,7 +58,7 @@ export default function NewReportPage() {
           setClaims(data.claims || []);
         }
       } catch (err) {
-        console.error("Failed to fetch claims:", err);
+        logger.error("Failed to fetch claims:", err);
       } finally {
         setLoadingClaims(false);
       }

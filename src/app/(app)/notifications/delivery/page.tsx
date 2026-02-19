@@ -26,6 +26,7 @@ import { StatCard } from "@/components/ui/MetricCard";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface DeliveryNotification {
   id: string;
@@ -102,7 +103,7 @@ export default function ClientDeliveryNotificationsPage() {
       const data = await res.json();
       if (data.success) setNotifications(data.notifications || []);
     } catch (e) {
-      console.error("Failed to load notifications:", e);
+      logger.error("Failed to load notifications:", e);
     } finally {
       setLoading(false);
     }

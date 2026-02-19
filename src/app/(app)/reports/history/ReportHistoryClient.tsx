@@ -20,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { logger } from "@/lib/logger";
 
 interface Report {
   id: string;
@@ -77,7 +78,7 @@ export function ReportHistoryClient({ reports, orgId }: ReportHistoryClientProps
 
       alert("Rebuild feature coming soon!");
     } catch (error) {
-      console.error("Rebuild error:", error);
+      logger.error("Rebuild error:", error);
       alert("Failed to rebuild report");
     } finally {
       setRebuilding(null);

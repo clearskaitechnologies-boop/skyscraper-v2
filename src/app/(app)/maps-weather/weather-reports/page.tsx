@@ -36,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 interface WeatherReport {
   id: string;
@@ -69,7 +70,7 @@ export default function WeatherReportsPage() {
         setReports(data.reports || []);
       }
     } catch (err) {
-      console.error("Failed to fetch reports:", err);
+      logger.error("Failed to fetch reports:", err);
     } finally {
       setLoading(false);
     }

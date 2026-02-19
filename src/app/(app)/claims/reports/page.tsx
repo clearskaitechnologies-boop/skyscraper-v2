@@ -2,12 +2,12 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/db/prisma";
+import { logger } from "@/lib/logger";
 import { auth } from "@clerk/nextjs/server";
 import { Download, ExternalLink, FileText } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { logger } from "@/lib/logger";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 

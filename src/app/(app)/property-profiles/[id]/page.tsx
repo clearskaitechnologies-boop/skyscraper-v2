@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 import PropertyProfileClient from "./PropertyProfileClient";
 
@@ -60,7 +61,7 @@ async function getPropertyData(id: string) {
 
     return { property: null, healthScore: null, digitalTwins: [], inspections: [] };
   } catch (error) {
-    console.error("[Property Profile] Data fetch error:", error);
+    logger.error("[Property Profile] Data fetch error:", error);
     return { property: null, healthScore: null, digitalTwins: [], inspections: [] };
   }
 }

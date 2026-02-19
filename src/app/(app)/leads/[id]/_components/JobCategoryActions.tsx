@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface JobCategoryActionsProps {
   leadId: string;
@@ -90,7 +91,7 @@ export function JobCategoryActions({
 
       router.refresh();
     } catch (error) {
-      console.error("Failed to update category:", error);
+      logger.error("Failed to update category:", error);
       alert("Failed to update job category");
     } finally {
       setUpdating(false);

@@ -26,6 +26,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -79,7 +80,7 @@ async function getRetailJobs(orgId: string): Promise<RetailJob[]> {
 
     return jobs as RetailJob[];
   } catch (error) {
-    console.error("[getRetailJobs] Error:", error);
+    logger.error("[getRetailJobs] Error:", error);
     return [];
   }
 }

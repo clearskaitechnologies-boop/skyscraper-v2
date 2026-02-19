@@ -3,6 +3,7 @@ import { Book, CheckCircle, Code, Copy, Key, Webhook } from "lucide-react";
 import { useState } from "react";
 
 import { PageHero } from "@/components/layout/PageHero";
+import { logger } from "@/lib/logger";
 
 export default function ApiDocsPage() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -175,7 +176,7 @@ export default function ApiDocsPage() {
 });
 
 const job = await response.json();
-console.log(job);`}</pre>
+logger.info(job);`}</pre>
                 </div>
               </div>
             </div>

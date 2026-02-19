@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -50,7 +51,7 @@ export default function DepreciationPage() {
           setClaims(data.claims);
         }
       })
-      .catch((err) => console.error("Failed to load claims:", err));
+      .catch((err) => logger.error("Failed to load claims:", err));
   }, []);
 
   // Handle PDF generation

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -105,7 +106,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: LeadsS
       }
     }
   } catch (error) {
-    console.error("[LeadsPage] Failed to fetch leads:", error);
+    logger.error("[LeadsPage] Failed to fetch leads:", error);
     // Treat as empty state - user sees friendly "No leads yet" instead of scary error
     leads = [];
     contactsById = new Map();

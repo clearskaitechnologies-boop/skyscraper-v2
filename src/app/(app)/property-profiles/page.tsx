@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResolvedOrgResult } from "@/lib/auth/orgResolver";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -67,7 +68,7 @@ async function getPropertyProfiles(orgId: string) {
       },
     }));
   } catch (error) {
-    console.error("[PropertyProfiles] Error loading properties:", error);
+    logger.error("[PropertyProfiles] Error loading properties:", error);
     return [];
   }
 }

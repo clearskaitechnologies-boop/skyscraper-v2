@@ -12,6 +12,8 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 type DashboardStats = {
   claimsCount: number;
   leadsCount: number;
@@ -34,7 +36,7 @@ export default function StatsCards() {
         const data = await res.json();
         if (data.ok) setStats(data.stats);
       } catch (error) {
-        console.error("Failed to load stats:", error);
+        logger.error("Failed to load stats:", error);
       } finally {
         setLoading(false);
       }

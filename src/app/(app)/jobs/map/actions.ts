@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export type JobPin = {
   id: string;
@@ -130,7 +131,7 @@ export const getJobsForMap = cache(async (): Promise<JobPin[]> => {
 
     return [...jobPins, ...projectPins];
   } catch (error) {
-    console.error("Error fetching jobs for map:", error);
+    logger.error("Error fetching jobs for map:", error);
     return [];
   }
 });

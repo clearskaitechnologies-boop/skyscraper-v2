@@ -20,8 +20,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import prisma from "@/lib/db/prisma";
 import { PUBLIC_DEMO_ORG_ID } from "@/lib/demo/constants";
-import { getOrg } from "@/lib/org/getOrg";
 import { logger } from "@/lib/logger";
+import { getOrg } from "@/lib/org/getOrg";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

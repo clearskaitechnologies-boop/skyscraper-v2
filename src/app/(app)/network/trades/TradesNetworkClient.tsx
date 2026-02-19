@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 type ConnectionStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "REVOKED";
 
@@ -78,7 +79,7 @@ export function TradesNetworkClient({ contractors, currentUserId }: TradesNetwor
       setMessage("");
       router.refresh(); // Refresh to update connection status
     } catch (error) {
-      console.error("Error sending connection request:", error);
+      logger.error("Error sending connection request:", error);
       toast.error("Failed to send connection request");
     } finally {
       setLoading(false);

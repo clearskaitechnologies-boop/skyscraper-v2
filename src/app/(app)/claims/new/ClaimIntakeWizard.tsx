@@ -10,24 +10,14 @@
 
 "use client";
 
-import {
-  Camera,
-  CheckCircle,
-  CloudRain,
-  FileText,
-  Loader2,
-  Search,
-  Sparkles,
-  Upload,
-  X,
-} from "lucide-react";
+import { Camera, CheckCircle, CloudRain, FileText, Loader2, Sparkles, X } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
-import { QuickDOLFinder } from "@/components/weather/QuickDOLFinder";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { QuickDOLFinder } from "@/components/weather/QuickDOLFinder";
 import { logger } from "@/lib/logger";
 
 type Props = {

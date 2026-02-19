@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 import {
   AlertCircle,
   CheckCircle2,
@@ -26,7 +27,6 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { logger } from "@/lib/logger";
 
 interface AppealHistoryItem {
   id: string;

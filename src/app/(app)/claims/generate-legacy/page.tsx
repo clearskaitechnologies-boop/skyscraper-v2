@@ -18,8 +18,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { ClaimGenerateSchema, formatZodError } from "@/lib/validation/schemas";
 import { logger } from "@/lib/logger";
+import { ClaimGenerateSchema, formatZodError } from "@/lib/validation/schemas";
 
 export default function ClaimsGeneratePage() {
   const router = useRouter();

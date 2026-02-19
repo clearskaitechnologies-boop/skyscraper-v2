@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface DepreciationItem {
   id: string;
@@ -115,7 +116,7 @@ export const getDepreciationData = cache(async (): Promise<DepreciationSummary[]
 
     return summaries;
   } catch (error) {
-    console.error("[getDepreciationData] Error:", error);
+    logger.error("[getDepreciationData] Error:", error);
     return [];
   }
 });

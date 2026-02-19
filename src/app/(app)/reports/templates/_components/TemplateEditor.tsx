@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { REPORT_SECTION_REGISTRY } from "@/lib/reports/sectionRegistry";
+import { logger } from "@/lib/logger";
 
 interface TemplateEditorProps {
   orgId: string;
@@ -75,7 +76,7 @@ export function TemplateEditor({ orgId, userId, existingTemplate }: TemplateEdit
         router.push(`/reports/templates/${template.id}`);
       }
     } catch (error) {
-      console.error("Failed to save template:", error);
+      logger.error("Failed to save template:", error);
       toast.error(existingTemplate ? "Failed to update template" : "Failed to create template");
     } finally {
       setSaving(false);

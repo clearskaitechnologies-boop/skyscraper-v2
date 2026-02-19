@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { clientFetch } from "@/lib/http/clientFetch";
+import { logger } from "@/lib/logger";
 
 interface AddToTemplatesButtonProps {
   templateId: string;
@@ -71,7 +72,7 @@ export function AddToTemplatesButton({
       }
 
       setError(err.message || "Failed to add template");
-      console.error("[AddToTemplatesButton] Error:", err);
+      logger.error("[AddToTemplatesButton] Error:", err);
     } finally {
       setLoading(false);
     }

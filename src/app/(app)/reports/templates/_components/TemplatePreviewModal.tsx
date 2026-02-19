@@ -10,6 +10,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 // Works with OrgTemplate data shape from the templates page
 interface OrgTemplateData {
@@ -101,7 +102,7 @@ export function TemplatePreviewModal({ template, onClose }: TemplatePreviewModal
         throw new Error(data.error || "Unknown error");
       }
     } catch (err: any) {
-      console.error("Failed to fetch template:", err);
+      logger.error("Failed to fetch template:", err);
       setError(err.message);
     } finally {
       setLoading(false);

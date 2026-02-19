@@ -6,8 +6,8 @@ import InviteClientButton from "@/components/clients/InviteClientButton";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { getTenant } from "@/lib/auth/tenant";
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
