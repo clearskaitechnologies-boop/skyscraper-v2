@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // Use activities model directly
 const Activity = prisma.activities;
@@ -14,6 +15,9 @@ const Activity = prisma.activities;
 export async function GET(req: Request) {
   const authResult = await requireApiAuth();
   if (authResult instanceof NextResponse) return authResult;
+
+  const rl = await checkRateLimit(authResult.userId, "API");
+  if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
   const { searchParams } = new URL(req.url);
   const limit = parseInt(searchParams.get("limit") || "50", 10);

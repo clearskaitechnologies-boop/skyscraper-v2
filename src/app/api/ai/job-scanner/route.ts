@@ -4,11 +4,12 @@
  * Runs in the background and provides actionable insights
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -31,6 +32,12 @@ export async function GET(req: NextRequest) {
 
     if (!orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit AI requests
+    const rl = await checkRateLimit(orgId, "AI");
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
     const recommendations: JobRecommendation[] = [];

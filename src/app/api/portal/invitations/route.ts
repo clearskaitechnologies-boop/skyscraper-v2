@@ -3,11 +3,12 @@
  * Handles fetching invitations from pros to clients (homeowners)
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const dynamic = "force-dynamic";
 
@@ -19,6 +20,10 @@ export async function GET() {
     const authResult = await requirePortalAuth();
     if (isPortalAuthError(authResult)) return authResult;
     const { userId } = authResult;
+
+    // Rate limit portal requests
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
     // Get the client record for this user
     const client = await prisma.client.findFirst({

@@ -5,12 +5,13 @@
  * POST /api/portal/claims/[claimId]/assets - Upload files
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -21,6 +22,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
   const authResult = await requirePortalAuth();
   if (isPortalAuthError(authResult)) return authResult;
   const { userId } = authResult;
+
+  // Rate limit portal requests
+  const rl = await checkRateLimit(userId, "API");
+  if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
   try {
     const { claimId } = await params;
@@ -110,6 +115,10 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
   const authResult = await requirePortalAuth();
   if (isPortalAuthError(authResult)) return authResult;
   const { userId } = authResult;
+
+  // Rate limit portal uploads
+  const rlPost = await checkRateLimit(userId, "UPLOAD");
+  if (!rlPost.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
   try {
     const { claimId } = await params;

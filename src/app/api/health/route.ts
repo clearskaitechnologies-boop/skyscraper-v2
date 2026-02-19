@@ -107,10 +107,11 @@ export async function GET() {
       `[${Date.now()}][/api/health] Status: ${status} | DB: ${databaseOk} | Redis: ${redisConfigured ? redisOk : "unconfigured"} | Auth: ${authOk} | Storage: ${storageOk}`
     );
 
+    // Return proper HTTP status codes for uptime monitors & load balancers
+    const httpStatus = !databaseOk ? 503 : status === "degraded" ? 207 : 200;
+
     return NextResponse.json(response, {
-      // Demo hardening: always return 200 so automated QA can run even when
-      // optional integrations (DB/Auth/Storage) are not configured locally.
-      status: 200,
+      status: httpStatus,
       headers: {
         "Cache-Control": "no-store",
         "X-SkaiScraper-Version": "v3",
@@ -129,8 +130,7 @@ export async function GET() {
         status: "offline",
         error: error instanceof Error ? error.message : "Unknown error",
       },
-      // Keep 200 for deterministic QA; payload carries failure state.
-      { status: 200 }
+      { status: 503 }
     );
   }
 }

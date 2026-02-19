@@ -2,7 +2,14 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
+import { requireApiAuth } from "@/lib/auth/apiAuth";
+import { NextResponse } from "next/server";
+
 export async function GET() {
+  // Auth required — env config is internal-only
+  const authResult = await requireApiAuth();
+  if (authResult instanceof NextResponse) return authResult;
+
   const ok = {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     CLERK_SECRET_KEY: !!process.env.CLERK_SECRET_KEY,

@@ -4,19 +4,20 @@ export const revalidate = 0;
 
 /**
  * Signed Upload URL API
- * 
+ *
  * Generates signed upload URLs for client-side file uploads to Supabase Storage.
  * Scopes uploads to org/proposal paths for RLS enforcement.
- * 
+ *
  * Path structure: orgs/{orgId}/proposals/{proposalId}/photos/{uuid}-{fileName}
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // =============================================================================
 // REQUEST SCHEMA
@@ -36,6 +37,10 @@ export async function POST(req: Request) {
   try {
     // Authenticate and get org context
     const { orgId } = await getSessionOrgUser();
+
+    // Rate limit storage uploads
+    const rl = await checkRateLimit(orgId, "UPLOAD");
+    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
     // Validate request body
     const body = await req.json().catch(() => ({}));
@@ -83,9 +88,7 @@ export async function POST(req: Request) {
     const key = `orgs/${orgId}/proposals/${proposalId}/photos/${uuid}-${sanitizedFileName}`;
 
     // Generate signed upload URL (5 minute expiry)
-    const { data, error } = await supabase.storage
-      .from("proposals")
-      .createSignedUploadUrl(key);
+    const { data, error } = await supabase.storage.from("proposals").createSignedUploadUrl(key);
 
     if (error) {
       logger.error("Failed to create signed upload URL:", error);

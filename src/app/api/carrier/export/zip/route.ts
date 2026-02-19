@@ -4,6 +4,9 @@ export const revalidate = 0;
 
 import { NextResponse } from "next/server";
 
+import { getSessionOrgUser } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
+
 /**
  * Body: { claim_id: string, include: { photos?: boolean, pdf?: boolean, weather?: boolean, codes?: boolean } }
  * Returns: { url: string } — a signed/public URL to the ZIP
@@ -16,6 +19,12 @@ import { NextResponse } from "next/server";
  * 5. Return download link
  */
 export async function POST(req: Request) {
+  // Auth required — will expose claim data when implemented
+  const { orgId, userId } = await getSessionOrgUser();
+
+  const rl = await checkRateLimit(userId, "API");
+  if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+
   const { claimId, include = {} } = await req.json();
   if (!claimId) return NextResponse.json({ error: "Missing claimId" }, { status: 400 });
 

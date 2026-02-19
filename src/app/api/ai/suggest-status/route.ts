@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getTenant } from "@/lib/auth/tenant";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { suggestStatusSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 /**
@@ -14,6 +15,12 @@ export async function POST(req: NextRequest) {
     const orgId = await getTenant();
     if (!orgId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Rate limit AI requests
+    const rl = await checkRateLimit(orgId, "AI");
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
 
     const body = await req.json();

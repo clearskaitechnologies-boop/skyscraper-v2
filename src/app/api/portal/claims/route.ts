@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { isPortalAuthError, requirePortalAuth } from "@/lib/auth/requirePortalAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -17,6 +18,10 @@ export async function GET(req: NextRequest) {
     const authResult = await requirePortalAuth();
     if (isPortalAuthError(authResult)) return authResult;
     const { userId, email: userEmail } = authResult;
+
+    // Rate limit portal requests
+    const rl = await checkRateLimit(userId, "API");
+    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
     if (!userEmail) {
       return NextResponse.json({ ok: true, claims: [] });

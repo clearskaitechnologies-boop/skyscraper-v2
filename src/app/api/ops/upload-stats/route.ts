@@ -1,8 +1,9 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /**
  * GET /api/ops/upload-stats
@@ -11,6 +12,9 @@ import prisma from "@/lib/prisma";
 export async function GET() {
   const authResult = await requireApiAuth();
   if (authResult instanceof NextResponse) return authResult;
+
+  const rl = await checkRateLimit(authResult.userId, "API");
+  if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
   try {
     const now = new Date();

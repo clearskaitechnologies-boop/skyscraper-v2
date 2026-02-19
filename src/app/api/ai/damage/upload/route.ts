@@ -22,6 +22,7 @@ import { z } from "zod";
 import { getSessionOrgUser } from "@/lib/auth";
 import { insertPhoto } from "@/lib/db/photos-simple";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { uploadProposalPhoto } from "@/lib/storage-server";
 
 // =============================================================================
@@ -47,6 +48,12 @@ export async function POST(req: Request) {
   try {
     // Authenticate and get org context
     const { orgId, userId } = await getSessionOrgUser();
+
+    // Rate limit AI uploads
+    const rl = await checkRateLimit(userId, "UPLOAD");
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
 
     // Parse multipart form data
     const formData = await req.formData();

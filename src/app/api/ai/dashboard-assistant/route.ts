@@ -5,6 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getResolvedOrgId } from "@/lib/auth/getResolvedOrgId";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { dashboardAssistantSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +14,12 @@ export async function POST(req: NextRequest) {
   try {
     // Verify org access
     const resolvedOrgId = await getResolvedOrgId();
+
+    // Rate limit AI requests
+    const rl = await checkRateLimit(resolvedOrgId || "anon", "AI");
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
 
     const body = await req.json();
     const validated = validateAIRequest(dashboardAssistantSchema, body);

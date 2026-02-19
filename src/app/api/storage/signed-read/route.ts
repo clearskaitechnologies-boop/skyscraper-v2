@@ -4,19 +4,20 @@ export const revalidate = 0;
 
 /**
  * Signed Read URL API
- * 
+ *
  * Generates short-lived signed URLs for reading private files from Supabase Storage.
  * Verifies org ownership before granting access.
- * 
+ *
  * Used for displaying uploaded photos in UI without exposing permanent URLs.
  */
 
-import { createClient } from "@supabase/supabase-js";
 import { logger } from "@/lib/logger";
+import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 // =============================================================================
 // REQUEST SCHEMA
@@ -35,6 +36,10 @@ export async function POST(req: Request) {
   try {
     // Authenticate and get org context
     const { orgId } = await getSessionOrgUser();
+
+    // Rate limit storage reads
+    const rl = await checkRateLimit(orgId, "API");
+    if (!rl.success) return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
 
     // Validate request body
     const body = await req.json().catch(() => ({}));

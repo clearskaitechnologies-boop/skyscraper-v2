@@ -11,6 +11,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
+import { checkRateLimit as checkUpstashRateLimit } from "@/lib/rate-limit";
 
 // 🚧 BETA MODE FLAG 🚧
 // true = Log everything, block nothing (testing phase)
@@ -61,10 +62,19 @@ export function withAiBilling<T = any>(
 
       const { userId, orgId } = authResult;
 
-      // 2. Get org plan (future: query actual subscription)
+      // 2. Enforce Upstash Redis rate limit (always active, survives cold starts)
+      const rl = await checkUpstashRateLimit(userId, "AI");
+      if (!rl.success) {
+        return NextResponse.json(
+          { error: "Rate limit exceeded", feature: config.feature, retryAfter: 60 },
+          { status: 429, headers: { "Retry-After": "60" } }
+        );
+      }
+
+      // 3. Get org plan (future: query actual subscription)
       const planType = "beta"; // For now, everyone is in beta
 
-      // 3. Log usage (always, even in beta mode)
+      // 4. Log usage (always, even in beta mode)
       console.log(`[AI-BILLING] ${config.feature}`, {
         userId,
         orgId,

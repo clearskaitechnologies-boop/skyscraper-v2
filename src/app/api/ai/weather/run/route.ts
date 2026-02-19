@@ -16,13 +16,14 @@ export const revalidate = 0;
  * Used for date of loss verification and claim substantiation.
  */
 
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getSessionOrgUser } from "@/lib/auth";
 import { runJob } from "@/lib/jobs/runJob";
 import prisma from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { emitEvent } from "@/lib/telemetry";
 
 // =============================================================================
@@ -95,6 +96,12 @@ export async function POST(req: Request) {
     orgIdForTelemetry = orgId;
     userIdForTelemetry = userId;
 
+    // Rate limit weather API requests
+    const rl = await checkRateLimit(userId, "WEATHER");
+    if (!rl.success) {
+      return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
+    }
+
     // Parse and validate request body
     const body = await req.json().catch(() => ({}));
     const parsed = WeatherRequestSchema.safeParse(body);
@@ -148,7 +155,6 @@ export async function POST(req: Request) {
         proposalId,
         date,
         location: location.address || `${location.lat},${location.lng}`,
-        
       },
       fn: async () => {
         // Fetch weather data from provider
@@ -187,7 +193,6 @@ export async function POST(req: Request) {
             proposalId,
             date,
             location: location.address || `${location.lat},${location.lng}`,
-            
           })
         );
 
@@ -207,7 +212,7 @@ export async function POST(req: Request) {
       meta: {
         date,
         location: location.address || `${location.lat},${location.lng}`,
-        
+
         durationMs: Date.now() - startedAtMs,
         success: true,
       },
@@ -233,7 +238,6 @@ export async function POST(req: Request) {
         refId: undefined,
         title: "Weather report failed",
         meta: {
-          
           durationMs: Date.now() - startedAtMs,
           success: false,
           error: String(error?.message || error),
