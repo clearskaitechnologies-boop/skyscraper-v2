@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { isBetaMode } from "@/lib/beta";
@@ -36,9 +36,8 @@ export async function getUserPlanAndTokens(userId?: string): Promise<UserPlanAnd
         clerkOrgId: orgId || "",
       },
       include: {
-        plan: true,
-        subscription: true,
-        tokens: true,
+        Plan: true,
+        Subscription: true,
       },
     });
 
@@ -58,9 +57,9 @@ export async function getUserPlanAndTokens(userId?: string): Promise<UserPlanAnd
       orderBy: { createdAt: "desc" },
     });
 
-    const plan = org.plan?.slug || "free";
-    const tokensRemaining = latestTokenEntry?.balance || org.tokens?.aiRemaining || 0;
-    const subscriptionStatus = org.subscription?.status || "inactive";
+    const plan = org.Plan?.slug || "free";
+    const tokensRemaining = latestTokenEntry?.balance || 0;
+    const subscriptionStatus = org.Subscription?.status || "inactive";
 
     return {
       plan,
@@ -115,9 +114,6 @@ export async function consumeTokens(
   try {
     const org = await prisma.org.findUnique({
       where: { clerkOrgId: targetOrgId },
-      include: {
-        tokens: true,
-      },
     });
 
     if (!org) {
@@ -130,7 +126,7 @@ export async function consumeTokens(
       orderBy: { createdAt: "desc" },
     });
 
-    const currentBalance = latestEntry?.balance || org.tokens?.aiRemaining || 0;
+    const currentBalance = latestEntry?.balance || 0;
 
     if (currentBalance < count) {
       return { success: false, remainingTokens: currentBalance };

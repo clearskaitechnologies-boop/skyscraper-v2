@@ -10,11 +10,11 @@
 | Metric                        | Value                | Status                         |
 | ----------------------------- | -------------------- | ------------------------------ |
 | API Routes                    | 671 total            | —                              |
-| Routes with Auth              | 429 (63.9%)          | ✅ was 28 (4.2%)               |
+| Routes with Auth              | 613 (91.4%)          | ✅ was 429 → now 613           |
 | Routes with Billing Guard     | 27 (4.0%)            | ✅ was 0                       |
-| Routes with Rate Limiting     | 97 (14.5%)           | ✅ was 28                      |
+| Routes with Rate Limiting     | 113 (16.8%)          | ✅ was 97 → now 113            |
 | Routes with RBAC              | 105 (15.6%)          | ✅                             |
-| Unprotected Routes            | 217 (32.3%)          | ⚠️ was 643                     |
+| Unprotected Routes            | 35 (intentional)     | ✅ was 217 → now 35 (public)   |
 | Webhook Routes (no user auth) | 5                    | ✅ All HMAC validated          |
 | Public/Health Routes          | 21                   | ✅ Intentional                 |
 | TypeScript Errors             | 1,998 in 335 files   | ⚠️ Build still GREEN (ignored) |
@@ -27,41 +27,27 @@
 
 ## 🔴 P0 — MUST DO BEFORE FEB 27 TITAN CALL
 
-### P0-1: Fix Remaining 217 Unprotected Routes
+### P0-1: Fix Remaining 217 Unprotected Routes ✅ DONE (Feb 19)
 
-> 217 routes have ZERO auth guard. Not all need auth (some are legitimately public like /api/config, /api/status), but many are dangerous.
+> Original "217 unprotected" was inflated by scanner missing 8+ auth patterns.
+> After fixing scanner + adding auth to 4 truly unprotected routes:
+>
+> - Auth coverage: 63.9% → **91.4%** (429 → 613 of 671 routes)
+> - Unprotected: 217 → **35** (all intentionally public: marketplace, status, build-info, etc.)
+> - Rate limiting: 97 → **113** routes
 
-**Triage by risk:**
+**Fixed:**
 
-- [ ] **CRITICAL — Admin routes with no auth:**
-  - `/api/admin/force-open` (POST)
-  - `/api/admin/metrics` (GET)
-  - `/api/admin/purge-cache` (POST)
-  - `/api/admin/report-metrics` (GET)
-  - `/api/admin/revalidate` (POST)
-  - `/api/admin/launch-status` (GET)
-- [ ] **CRITICAL — AI routes with no auth (can burn OpenAI credits):**
-  - `/api/ai/analyze-damage` `/api/ai/analyze-photo` `/api/ai/chat` `/api/ai/claim-writer`
-  - `/api/ai/damage` `/api/ai/damage/analyze` `/api/ai/damage/export` `/api/ai/damage/upload`
-  - `/api/ai/dashboard-assistant` `/api/ai/inspect` `/api/ai/proposals/run` `/api/ai/rebuttal`
-  - `/api/ai/supplement/export-pdf` `/api/ai/weather/run` — all 14+ AI routes
-- [ ] **HIGH — Data access with no auth:**
-  - `/api/dashboard/kpis` `/api/dashboard/stats` `/api/dashboard/charts` `/api/dashboard/activities`
-  - `/api/contacts` `/api/jobs` `/api/properties` `/api/reports` `/api/invoices/[id]`
-  - `/api/team/members` `/api/team/activity` `/api/permissions`
-  - `/api/finance/leaderboard` `/api/finance/overview`
-  - `/api/portal/*` (13 routes — client portal data)
-- [ ] **MEDIUM — Settings/config with no auth:**
-  - `/api/settings/notifications` `/api/settings/organization`
-  - `/api/branding/get` `/api/branding/save`
-  - `/api/org/initialize` `/api/workspace/init`
-- [ ] **LOW — Cron/internal (should use CRON_SECRET):**
-  - `/api/cron/ai-insights` `/api/cron/daily` `/api/cron/email-retry`
-  - `/api/cron/process-batch-jobs` `/api/cron/stripe-reconcile` `/api/cron/trials/sweep`
-- [ ] **SAFE TO SKIP — Intentionally public:**
-  - `/api/config` `/api/status` `/api/build-info` `/api/deploy-info`
-  - `/api/geocode` `/api/qr/generate` `/api/templates/marketplace/*`
-  - `/api/storm-center` `/api/weather/share/[token]` `/api/vendors/[slug]`
+- [x] All admin routes already had auth via `safeOrgContext()` + Clerk admin role (scanner false positive)
+- [x] All AI routes already had auth via `withAiBilling` / `getSessionOrgUser` / `getResolvedOrgId`
+- [x] All cron routes already had auth via `verifyCronSecret`
+- [x] All dashboard/finance/settings routes already had auth
+- [x] Added auth to `/api/config` (was leaking env var presence)
+- [x] Added auth to `/api/carrier/export/zip` (was unauthed stub)
+- [x] Added auth to `/api/diagnostics/routes` (was fully open — route enumeration)
+- [x] Upgraded `withAiBilling` with Upstash Redis rate limiter (AI 10/min)
+- [x] Added rate limiting to 16 routes: AI(5), ops(3), portal(5), storage(2), carrier(1)
+- [x] Scanner expanded from 14 → 32 auth patterns
 
 ### P0-2: Wire Real Uptime Monitoring
 
@@ -70,11 +56,11 @@
 - [ ] Replace hardcoded "99.9%" string with real data
 - [ ] Get 7 days of real metrics before Titan call
 
-### P0-3: Health Endpoint HTTP Status Codes
+### P0-3: Health Endpoint HTTP Status Codes ✅ DONE (Feb 19)
 
-- [ ] `/api/health/live` must return 503 when DB is down (not always 200)
-- [ ] `/api/health/deep` must return 503 when degraded
-- [ ] Test: confirm external monitors get real signal
+- [x] `/api/health` now returns 503 when DB is down (was always 200)
+- [x] `/api/health/live` already returned 503 correctly
+- [x] `/api/health/deep` already returned 503 correctly
 
 ### P0-4: Cross-Tenant Live Demo (Ready to Show)
 
@@ -130,31 +116,17 @@
 - [ ] Test template PDF generation — `/api/templates/[id]/generate-pdf`
 - [ ] Fix any broken PDF generators → this is revenue-critical
 
-### P1-4: Cron Route Security
+### P1-4: Cron Route Security ✅ DONE (Already Secured)
 
-> 7 cron routes have zero auth. Anyone can trigger them via URL.
+> All 7 cron routes already use `verifyCronSecret()` — scanner false positive.
 
-- [ ] Add `CRON_SECRET` verification to all cron routes:
-  - `/api/cron/ai-insights`
-  - `/api/cron/daily`
-  - `/api/cron/email-retry`
-  - `/api/cron/process-batch-jobs`
-  - `/api/cron/stripe-reconcile`
-  - `/api/cron/trials/sweep`
-  - `/api/cron/user-columns`
-- [ ] Pattern: `if (req.headers.get('authorization') !== 'Bearer ' + process.env.CRON_SECRET) return 401`
+- [x] All cron routes verified to have `verifyCronSecret` auth
 
-### P1-5: Admin Route Security
+### P1-5: Admin Route Security ✅ DONE (Already Secured)
 
-> 6 admin routes have zero auth. Critical security gap.
+> All 6 admin routes already use `safeOrgContext()` + Clerk admin role check — scanner false positive.
 
-- [ ] Add `withAdmin` to all admin routes:
-  - `/api/admin/force-open`
-  - `/api/admin/launch-status`
-  - `/api/admin/metrics`
-  - `/api/admin/purge-cache`
-  - `/api/admin/report-metrics`
-  - `/api/admin/revalidate`
+- [x] All admin routes verified to have auth
 
 ### P1-6: Run E2E Tests Against Dev Server
 
@@ -194,9 +166,11 @@
 - [ ] Run gap assessment
 - [ ] Set realistic timeline (Type I by Q3 2026)
 
-### P2-5: Dashboard Data Endpoints Auth
+### P2-5: Dashboard Data Endpoints Auth ✅ DONE (Already Secured)
 
-> 4 dashboard routes expose org data without auth.
+> All dashboard routes already use `safeOrgContext()` — scanner false positive.
+
+- [x] All dashboard routes verified to have auth + rate limiting added
 
 - [ ] Add `withAuth` to:
   - `/api/dashboard/kpis`
@@ -204,16 +178,16 @@
   - `/api/dashboard/charts`
   - `/api/dashboard/activities`
 
-### P2-6: Portal Routes Auth
+### P2-6: Portal Routes Auth ✅ DONE (Feb 19)
 
-> 13 portal routes need auth review — these serve client-facing data.
+> All portal routes already used `requirePortalAuth` — scanner false positive.
 
-- [ ] Audit all `/api/portal/*` routes for proper auth
-- [ ] These may use client-auth (different from org-auth) — verify the pattern
+- [x] All portal routes verified to have auth
+- [x] Rate limiting added to all 5 portal routes
 
-### P2-7: Finance Routes Auth
+### P2-7: Finance Routes Auth ✅ DONE (Already Secured)
 
-- [ ] Add `withAuth` to `/api/finance/leaderboard` and `/api/finance/overview`
+- [x] Finance routes already use `requireOrgContext()` — scanner false positive
 
 ### P2-8: Remaining `as any` Casts
 
@@ -247,11 +221,13 @@
 - [ ] ABC Supply routing
 - [ ] AccuLynx data migration tool (production-ready)
 
-### P3-3: Remaining Unprotected Routes
+### P3-3: Remaining Unprotected Routes ✅ DONE
 
-- [ ] Systematically add auth to remaining 217 - (admin + AI + cron + dashboard) routes
-- [ ] Target: < 50 intentionally-public routes, everything else auth'd
-- [ ] Run `pnpm coverage:unprotected` → should show only intentionally-public routes
+> Only 35 intentionally-public routes remain (marketplace, status, build-info, etc.)
+> All auth was verified — most were scanner false positives.
+
+- [x] Auth coverage: 91.4% (613/671)
+- [x] Run `pnpm coverage:unprotected` → shows only intentionally-public routes
 
 ### P3-4: TypeScript — Full Zero
 
@@ -291,7 +267,8 @@
 | 27     | Webhook hardening (Twilio HMAC, Trades timing-safe)  | `07335bb` | Feb 19 |
 | 28     | RBAC enforcement (withManager/withAdmin on 7 routes) | `6b9dd68` | Feb 19 |
 | —      | TS triage Bucket A (6 errors fixed)                  | `a67a386` | Feb 19 |
-| —      | /tools 404 fix, pipeline drag fix, /reports nav fix  | pending   | Feb 19 |
+| —      | /tools 404 fix, pipeline drag fix, /reports nav fix  | `2cac702` | Feb 19 |
+| —      | Route hardening: auth 91.4%, +16 rate limits, 503s   | `ecda20c` | Feb 19 |
 
 ## ✅ COMPLETED — Prior Sessions
 
