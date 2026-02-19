@@ -32,6 +32,7 @@ import { Card } from "@/components/ui/card";
 import { getVendorResources } from "@/lib/vendors/vendorResources";
 import { toast } from "sonner";
 
+import { logger } from "@/lib/logger";
 import VendorLocationMap from "./_components/VendorLocationMap";
 
 interface VendorLocation {
@@ -201,7 +202,7 @@ export default function VendorDetailPage() {
         resources: mergedResources,
       });
     } catch (error) {
-      console.error("Failed to fetch vendor:", error);
+      logger.error("Failed to fetch vendor:", error);
     } finally {
       setLoading(false);
     }

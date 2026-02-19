@@ -22,6 +22,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface FeaturedWork {
   id: string;
@@ -52,7 +53,7 @@ export default function FeaturedJobsSection({ userId, isOwnProfile }: FeaturedJo
         setFeaturedWork(data.featuredWork || []);
       }
     } catch (error) {
-      console.error("Failed to fetch featured work:", error);
+      logger.error("Failed to fetch featured work:", error);
     } finally {
       setLoading(false);
     }

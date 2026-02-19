@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { revalidatePath, revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { logger } from "@/lib/logger";
 import { pool } from "@/server/db";
 
 export async function saveBranding(formData: FormData) {
@@ -49,7 +50,7 @@ export async function saveBranding(formData: FormData) {
 
     return { success: true };
   } catch (error: any) {
-    console.error("[saveBranding] Error:", error);
+    logger.error("[saveBranding] Error:", error);
     return { success: false, error: error.message };
   }
 }

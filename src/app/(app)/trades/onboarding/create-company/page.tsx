@@ -5,6 +5,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import { Building2, Loader2, MapPin, Shield } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -84,7 +85,7 @@ export default function CreateCompanyPage() {
       toast.success("Company created successfully!");
       router.push("/trades/onboarding/job-photos");
     } catch (error: any) {
-      console.error("Company creation error:", error);
+      logger.error("Company creation error:", error);
       toast.error(error.message || "Failed to create company");
     } finally {
       setLoading(false);

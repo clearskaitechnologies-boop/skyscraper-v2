@@ -13,6 +13,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface TradesCompany {
   id: string;
@@ -45,7 +46,7 @@ export default function TradesCompaniesPage() {
       const data = await response.json();
       setCompanies(data.companies || []);
     } catch (error) {
-      console.error("Failed to fetch companies:", error);
+      logger.error("Failed to fetch companies:", error);
     } finally {
       setLoading(false);
     }

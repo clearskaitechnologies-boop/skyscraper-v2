@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface PendingInvite {
   id: string;
@@ -94,7 +95,7 @@ export default function CompanyInvitePage() {
         setJoinRequests(data.requests || []);
       }
     } catch (error) {
-      console.error("Failed to load invite data:", error);
+      logger.error("Failed to load invite data:", error);
       toast.error("Failed to load data");
     } finally {
       setLoading(false);

@@ -27,6 +27,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface Connection {
   id: string;
@@ -83,7 +84,7 @@ export default function ConnectionsWidget({ userId, isOwnProfile }: ConnectionsW
         setPendingRequests((data.connections || []).filter((c: Connection) => !c.isRequester));
       }
     } catch (error) {
-      console.error("Failed to fetch connections:", error);
+      logger.error("Failed to fetch connections:", error);
     } finally {
       setLoading(false);
     }

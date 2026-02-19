@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface AcceptInviteClientProps {
   token: string;
@@ -45,7 +46,7 @@ export default function AcceptInviteClient({ token }: AcceptInviteClientProps) {
       // Clean the token from URL so refreshes don't show errors
       router.replace("/trades/join?accepted=true", { scroll: false });
     } catch (error) {
-      console.error("Accept invite error:", error);
+      logger.error("Accept invite error:", error);
       setErrorMessage("Something went wrong. Please try again.");
       setStatus("error");
     }

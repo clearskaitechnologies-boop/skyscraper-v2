@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { StandardButton } from "@/components/ui/StandardButton";
+import { logger } from "@/lib/logger";
 
 interface ConnectButtonProps {
   userId: string;
@@ -63,7 +64,7 @@ export default function ConnectButton({ userId }: ConnectButtonProps) {
         }
       }
     } catch (error) {
-      console.error("Connect error:", error);
+      logger.error("Connect error:", error);
       toast.error("Failed to send connection request");
     } finally {
       setLoading(false);

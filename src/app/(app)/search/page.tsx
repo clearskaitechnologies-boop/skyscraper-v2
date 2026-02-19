@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { getCurrentUserPermissions } from "@/lib/permissions";
 import prisma from "@/lib/prisma";
 
@@ -88,7 +89,7 @@ export default async function SearchPage({
       }
     }
   } catch (error) {
-    console.error("[SearchPage] Database error:", error);
+    logger.error("[SearchPage] Database error:", error);
   }
 
   const totalResults =

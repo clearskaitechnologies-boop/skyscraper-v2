@@ -1,7 +1,6 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
-import { ArrowLeft,Building2 } from "lucide-react";
+import { ArrowLeft, Building2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -9,14 +8,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 export default function NewVendorPage() {
   const router = useRouter();
@@ -89,7 +81,7 @@ export default function NewVendorPage() {
       router.push("/vendors");
       router.refresh();
     } catch (err: any) {
-      console.error(err);
+      logger.error(err);
       alert(`Failed to create vendor: ${err.message}`);
       setSaving(false);
     }

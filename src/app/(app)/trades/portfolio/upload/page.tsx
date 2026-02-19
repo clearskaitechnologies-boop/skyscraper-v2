@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 const CATEGORIES = [
   "Roofing",
@@ -121,7 +122,7 @@ export default function PortfolioUploadPage() {
       toast.success("✅ Portfolio item added!");
       router.push("/trades/profile");
     } catch (error) {
-      console.error("Upload error:", error);
+      logger.error("Upload error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to upload photos");
     } finally {
       setLoading(false);

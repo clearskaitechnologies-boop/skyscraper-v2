@@ -8,9 +8,9 @@ import RecordActions from "@/components/RecordActions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
-import { logger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

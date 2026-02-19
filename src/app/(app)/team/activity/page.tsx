@@ -1,7 +1,8 @@
 "use client";
 
+import { logger } from "@/lib/logger";
 import { useUser } from "@clerk/nextjs";
-import { Activity, Clock, FileText, Filter, Loader2, User, Users } from "lucide-react";
+import { Activity, Clock, FileText, Loader2, User, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -60,7 +61,7 @@ export default function ActivityFeedPage() {
         setActivities(data);
       }
     } catch (error) {
-      console.error("Failed to fetch activities:", error);
+      logger.error("Failed to fetch activities:", error);
     } finally {
       setLoading(false);
     }

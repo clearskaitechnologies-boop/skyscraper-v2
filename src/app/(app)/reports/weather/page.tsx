@@ -20,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 type ClaimLite = {
   id: string;
@@ -154,7 +155,7 @@ export default function WeatherReportsPage() {
 
       return data;
     } catch (e: any) {
-      console.error("[WeatherReportsPage] runWeather error:", e);
+      logger.error("[WeatherReportsPage] runWeather error:", e);
       toast.error(e?.message || "Failed to generate weather report");
     } finally {
       setIsRunning(false);

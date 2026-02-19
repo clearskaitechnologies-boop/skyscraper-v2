@@ -21,9 +21,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
-import { logger } from "@/lib/logger";
 
 import { TradesNetworkClient } from "./TradesNetworkClient";
 

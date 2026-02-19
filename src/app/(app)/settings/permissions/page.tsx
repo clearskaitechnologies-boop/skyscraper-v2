@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { PageSectionCard } from "@/components/layout/PageSectionCard";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
@@ -102,7 +103,7 @@ export default async function PermissionsPage() {
       createdAt: m.createdAt,
     }));
   } catch (error) {
-    console.error("[PermissionsPage] Failed to fetch team members:", error);
+    logger.error("[PermissionsPage] Failed to fetch team members:", error);
   }
 
   /* Normalize role string */

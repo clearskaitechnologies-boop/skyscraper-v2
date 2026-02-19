@@ -8,6 +8,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { logger } from "@/lib/logger";
 
 interface SearchResult {
   companies: Array<{
@@ -63,7 +64,7 @@ export function TradesSearchBar() {
         setIsOpen(true);
       }
     } catch (error) {
-      console.error("Search error:", error);
+      logger.error("Search error:", error);
     } finally {
       setLoading(false);
     }

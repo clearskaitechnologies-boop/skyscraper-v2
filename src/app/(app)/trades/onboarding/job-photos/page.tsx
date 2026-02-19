@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 interface PhotoUpload {
   id: string;
@@ -129,7 +130,7 @@ export default function JobPhotosOnboardingPage() {
       toast.success("Portfolio uploaded successfully!");
       router.push("/trades/profile");
     } catch (error: any) {
-      console.error("Portfolio upload error:", error);
+      logger.error("Portfolio upload error:", error);
       toast.error(error.message || "Failed to upload photos");
     } finally {
       setLoading(false);

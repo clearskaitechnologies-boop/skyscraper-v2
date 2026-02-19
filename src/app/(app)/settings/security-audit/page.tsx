@@ -2,6 +2,7 @@ import { Shield } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { PageHero } from "@/components/layout/PageHero";
+import { logger } from "@/lib/logger";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
@@ -28,7 +29,7 @@ export default async function SecurityAuditPage() {
   // HOTFIX: Disable Safe Mode in development
   const isDev = process.env.NODE_ENV !== "production";
   const safeMode = isDev ? false : ctx.status !== "ok" || !ctx.orgId;
-  if (safeMode && !ctx.orgId) console.warn("[SecurityAuditPage] Safe mode due to missing orgId");
+  if (safeMode && !ctx.orgId) logger.warn("[SecurityAuditPage] Safe mode due to missing orgId");
   const audit = safeMode ? null : await runAudit(ctx.orgId!);
   return (
     <div className="mx-auto max-w-5xl space-y-8 px-4 py-8">

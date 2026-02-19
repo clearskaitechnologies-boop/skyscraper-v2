@@ -40,9 +40,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 import { getOrg } from "@/lib/org/getOrg";
 import prisma from "@/lib/prisma";
-import { logger } from "@/lib/logger";
 
 export const metadata: Metadata = {
   title: "Clients Network",

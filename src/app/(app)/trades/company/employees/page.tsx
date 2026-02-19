@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { logger } from "@/lib/logger";
 
 interface Employee {
   id: string;
@@ -65,7 +66,7 @@ export default function ManageEmployeesPage() {
       setIsAdmin(data.isAdmin);
       setCurrentUserId(data.currentUserId);
     } catch (error) {
-      console.error("Failed to load employees:", error);
+      logger.error("Failed to load employees:", error);
       toast.error("Failed to load employees");
     } finally {
       setLoading(false);

@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 /* ------------------------------------------------------------------ */
 /*  Vendor Definitions (Future: pull from vendor API)                   */
@@ -104,7 +105,7 @@ export default function TradesOrdersPage() {
         setStats(data.stats || { active: 0, inTransit: 0, delivered: 0, totalSpent: 0 });
       }
     } catch (e) {
-      console.error("Failed to fetch orders", e);
+      logger.error("Failed to fetch orders", e);
     } finally {
       setLoading(false);
     }

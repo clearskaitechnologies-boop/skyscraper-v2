@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { logger } from "@/lib/logger";
 import { toast } from "sonner";
 
 const companySchema = z.object({
@@ -102,7 +103,7 @@ export function CompanySettingsClient({ org, profile }: CompanySettingsClientPro
 
       toast.success("Company profile updated successfully");
     } catch (error) {
-      console.error("Company update error:", error);
+      logger.error("Company update error:", error);
       toast.error("Failed to update company profile. Please try again.");
     } finally {
       setIsLoading(false);

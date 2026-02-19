@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import TeamInvitationsList from "@/components/team/TeamInvitationsList";
 import TeamInviteForm from "@/components/team/TeamInviteForm";
 import { guarded } from "@/lib/buildPhase";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
@@ -90,7 +91,7 @@ export default async function TeamPage() {
             : 0;
         return [members, invites, activity];
       } catch (e) {
-        console.error("[TEAM PAGE] stats error", e);
+        logger.error("[TEAM PAGE] stats error", e);
         return [0, 0, 0];
       }
     },

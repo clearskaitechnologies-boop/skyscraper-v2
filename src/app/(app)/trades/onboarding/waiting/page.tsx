@@ -5,6 +5,7 @@
 
 "use client";
 
+import { logger } from "@/lib/logger";
 import { CheckCircle, Copy, Loader2, Users } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -47,7 +48,7 @@ export default function WaitingPage() {
       setStatus(data);
       setInviteLink(`${window.location.origin}/trades/join/${data.pendingCompany.token}`);
     } catch (error) {
-      console.error("Status check error:", error);
+      logger.error("Status check error:", error);
     } finally {
       setLoading(false);
     }

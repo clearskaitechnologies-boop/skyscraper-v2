@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 interface Review {
   id: string;
@@ -51,7 +52,7 @@ function CustomerReviewsPage() {
         setReviews(mapped);
       }
     } catch (e) {
-      console.error("Failed to fetch reviews", e);
+      logger.error("Failed to fetch reviews", e);
     } finally {
       setLoading(false);
     }

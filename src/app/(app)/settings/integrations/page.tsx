@@ -15,6 +15,7 @@ import { PageHero } from "@/components/layout/PageHero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -156,7 +157,7 @@ export default function IntegrationsPage() {
         window.location.href = data.authUrl;
       }
     } catch (err) {
-      console.error("[INTEGRATIONS] connect error:", err);
+      logger.error("[INTEGRATIONS] connect error:", err);
     } finally {
       setConnecting(false);
     }

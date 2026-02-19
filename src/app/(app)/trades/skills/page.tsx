@@ -2,6 +2,7 @@
 
 import { SkillsEditor } from "@/components/trades/SkillsEditor";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -43,7 +44,7 @@ export default function SkillsCertificationsPage() {
           );
         }
       } catch (error) {
-        console.error("[SkillsPage] Failed to load skills:", error);
+        logger.error("[SkillsPage] Failed to load skills:", error);
         toast.error("Failed to load skills");
       } finally {
         setInitialLoading(false);

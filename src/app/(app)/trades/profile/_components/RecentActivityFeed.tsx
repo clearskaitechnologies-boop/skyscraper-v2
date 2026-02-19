@@ -20,6 +20,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 
 interface ActivityItem {
   id: string;
@@ -71,7 +72,7 @@ export default function RecentActivityFeed() {
         setItems((data.notifications || []).slice(0, 15));
       }
     } catch (error) {
-      console.error("Activity feed error:", error);
+      logger.error("Activity feed error:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);

@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 interface Company {
   id: string;
@@ -66,7 +67,7 @@ export default function JoinCompanyPage() {
         setCompanies(data.companies || []);
       }
     } catch (error) {
-      console.error("Failed to load companies:", error);
+      logger.error("Failed to load companies:", error);
     } finally {
       setLoading(false);
     }

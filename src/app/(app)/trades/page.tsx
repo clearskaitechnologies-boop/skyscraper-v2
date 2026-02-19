@@ -8,6 +8,7 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
+import { logger } from "@/lib/logger";
 import TradesNetworkDashboard from "./_components/TradesNetworkDashboard";
 
 export const dynamic = "force-dynamic";
@@ -95,7 +96,7 @@ export default async function TradesNetworkPage() {
       />
     );
   } catch (error) {
-    console.error("Trades Network Hub Error:", error);
+    logger.error("Trades Network Hub Error:", error);
     return (
       <PageContainer>
         <PageHero

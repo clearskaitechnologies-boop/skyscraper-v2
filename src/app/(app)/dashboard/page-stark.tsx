@@ -7,8 +7,8 @@ import GradientBackground from "@/components/GradientBackground";
 import RecentActivity from "@/components/RecentActivity";
 import MotionSection from "@/components/ui/MotionSection";
 import { getRecentActivity } from "@/lib/activity";
-import { getDashboardMetrics } from "@/lib/metrics";
 import { logger } from "@/lib/logger";
+import { getDashboardMetrics } from "@/lib/metrics";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;

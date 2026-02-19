@@ -3,6 +3,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export type RouteStop = {
@@ -112,7 +113,7 @@ export const getScheduledStops = cache(async (): Promise<RouteStop[]> => {
 
     return stops;
   } catch (error) {
-    console.error("Error fetching scheduled stops:", error);
+    logger.error("Error fetching scheduled stops:", error);
     return [];
   }
 });

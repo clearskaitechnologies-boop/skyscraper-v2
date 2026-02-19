@@ -1,10 +1,11 @@
 "use client";
 
-import { Clock, MapPin, Navigation, TrendingDown } from "lucide-react";
+import { Clock, Navigation, TrendingDown } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { logger } from "@/lib/logger";
 import type { RouteStop } from "./actions";
 import { optimizeRoute } from "./actions";
 
@@ -23,7 +24,7 @@ export default function RouteOptimizationClient({ stops }: { stops: RouteStop[] 
       const result = await optimizeRoute(selectedStops);
       setOptimizedRoute(result);
     } catch (error) {
-      console.error("Optimization failed:", error);
+      logger.error("Optimization failed:", error);
     } finally {
       setOptimizing(false);
     }

@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface Post {
   id: string;
@@ -69,7 +70,7 @@ export default function GroupFeed({ groupId, canPost, isMember, groupPrivacy }: 
           setHasMore(data.pagination.page < data.pagination.pages);
         }
       } catch (error) {
-        console.error("Failed to fetch posts:", error);
+        logger.error("Failed to fetch posts:", error);
       } finally {
         setLoading(false);
       }

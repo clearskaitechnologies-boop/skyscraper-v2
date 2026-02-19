@@ -37,6 +37,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { logger } from "@/lib/logger";
 
 interface PageProps {
   params: {
@@ -70,7 +71,7 @@ export default async function TeamMemberProfilePage({ params }: PageProps) {
       },
     });
   } catch (e) {
-    console.error(
+    logger.error(
       "[TeamMemberProfilePage] Failed to fetch member (possible missing headshot_url column)",
       e
     );

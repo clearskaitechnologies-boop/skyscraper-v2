@@ -7,6 +7,7 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
+import { logger } from "@/lib/logger";
 import CompanySeatsClient from "./CompanySeatsClient";
 
 export const dynamic = "force-dynamic";
@@ -105,7 +106,7 @@ export default async function CompanySeatsPage() {
         });
       }
     } catch (err) {
-      console.error("[teams] Failed to fetch members:", err);
+      logger.error("[teams] Failed to fetch members:", err);
     }
   }
 

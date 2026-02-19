@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import { SignaturePad } from "@/components/SignaturePad";
+import { logger } from "@/lib/logger";
 
 export default function SignDocumentPage({ params }: { params: { documentId: string } }) {
   const router = useRouter();
@@ -42,7 +43,7 @@ export default function SignDocumentPage({ params }: { params: { documentId: str
       alert("Document signed successfully");
       router.push("/documents");
     } catch (error) {
-      console.error("Signing failed:", error);
+      logger.error("Signing failed:", error);
       alert("Failed to sign document");
     } finally {
       setLoading(false);

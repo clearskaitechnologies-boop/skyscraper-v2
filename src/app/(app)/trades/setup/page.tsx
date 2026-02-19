@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 const TRADE_OPTIONS = [
   "Roofing",
@@ -156,7 +157,7 @@ export default function TradesSetupPage() {
       }, 100);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : "Failed to create profile";
-      console.error("[TradesSetup] Error:", error);
+      logger.error("[TradesSetup] Error:", error);
       toast.error(message);
     } finally {
       setLoading(false);

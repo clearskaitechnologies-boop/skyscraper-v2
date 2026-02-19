@@ -6,8 +6,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { REPORT_SECTION_REGISTRY } from "@/lib/reports/sectionRegistry";
 import { logger } from "@/lib/logger";
+import { REPORT_SECTION_REGISTRY } from "@/lib/reports/sectionRegistry";
 
 interface TemplateEditorProps {
   orgId: string;

@@ -7,6 +7,7 @@ import { CSVUploadDialog } from "@/components/team/CSVUploadDialog";
 import TeamInviteForm from "@/components/team/TeamInviteForm";
 import { TeamMemberActions } from "@/components/team/TeamMemberActions";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 
@@ -57,7 +58,7 @@ export default async function TeamSettingsPage() {
       clerkUserId: u.clerkUserId,
     }));
   } catch (e) {
-    console.error("[TeamSettings] Error fetching users:", e);
+    logger.error("[TeamSettings] Error fetching users:", e);
   }
 
   // Fetch real pending invitations - Note: user_organizations doesn't have status/email fields

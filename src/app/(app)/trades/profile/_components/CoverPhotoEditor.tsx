@@ -11,6 +11,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { logger } from "@/lib/logger";
 
 interface CoverPhotoEditorProps {
   imageUrl: string;
@@ -132,7 +133,7 @@ export default function CoverPhotoEditor({ imageUrl, onSave, onCancel }: CoverPh
       await onSave(url);
       toast.success("Cover photo saved!");
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       toast.error("Failed to save cover photo");
     } finally {
       setSaving(false);

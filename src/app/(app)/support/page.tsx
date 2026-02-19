@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 type TicketType = "bug" | "feature" | "support" | "other";
 
@@ -62,7 +63,7 @@ export default function SupportPage() {
       setType("bug");
     } catch (error) {
       toast.error("Failed to submit ticket. Please try emailing support@skaiscrape.com");
-      console.error("[SUPPORT_SUBMIT]", error);
+      logger.error("[SUPPORT_SUBMIT]", error);
     } finally {
       setIsSubmitting(false);
     }
