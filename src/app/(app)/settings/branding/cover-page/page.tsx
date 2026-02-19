@@ -21,6 +21,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 interface CoverPageData {
   companyName: string;
@@ -80,7 +81,7 @@ export default function CoverPageBuilderPage() {
           }
         }
       } catch (e) {
-        console.error("Failed to load branding:", e);
+        logger.error("Failed to load branding:", e);
       } finally {
         setLoading(false);
       }
@@ -147,12 +148,12 @@ export default function CoverPageBuilderPage() {
       if (!res.ok) {
         const errorData = await res.json().catch(() => null);
         const errorMsg = errorData?.error || `Server error: ${res.status}`;
-        console.error("[CoverPage] Save failed:", errorMsg);
+        logger.error("[CoverPage] Save failed:", errorMsg);
         throw new Error(errorMsg);
       }
       toast.success("Cover page settings saved!");
     } catch (e: any) {
-      console.error("[CoverPage] Save error:", e);
+      logger.error("[CoverPage] Save error:", e);
       toast.error(e?.message || "Failed to save cover page settings");
     } finally {
       setSaving(false);

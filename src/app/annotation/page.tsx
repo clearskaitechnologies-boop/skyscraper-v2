@@ -1,13 +1,12 @@
 "use client";
 
-import { doc, getDoc } from "firebase/firestore";
 import { httpsCallable } from "firebase/functions";
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { generateDamageCounts,saveEvidencePair } from "@/lib/evidence";
-import { db } from "@/lib/firebase";
+import { generateDamageCounts, saveEvidencePair } from "@/lib/evidence";
 import { functions } from "@/lib/firebase";
+import { logger } from "@/lib/logger";
 
 interface DamageDetection {
   type: string;
@@ -78,14 +77,14 @@ export default function AnnotationViewer() {
             counts,
             (data as any).detection_method || "ai_detection"
           );
-          console.log("Evidence saved to project");
+          logger.info("Evidence saved to project");
         } catch (saveError) {
-          console.warn("Failed to save evidence:", saveError);
+          logger.warn("Failed to save evidence:", saveError);
           // Don't block the UI for save errors
         }
       }
     } catch (error) {
-      console.error("Error analyzing image:", error);
+      logger.error("Error analyzing image:", error);
       alert("Failed to analyze image. Please try again.");
     } finally {
       setAnalyzing(false);

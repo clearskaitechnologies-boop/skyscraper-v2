@@ -18,6 +18,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { logger } from "@/lib/logger";
 
 interface CertificateOfCompletionProps {
   claimId: string;
@@ -88,7 +89,7 @@ export function CertificateOfCompletion({
       const dataUrl = sigPadRef.current.toDataURL("image/png");
       await onSign(dataUrl);
     } catch (error) {
-      console.error("Failed to save signature:", error);
+      logger.error("Failed to save signature:", error);
     } finally {
       setIsSaving(false);
     }
@@ -111,7 +112,7 @@ export function CertificateOfCompletion({
         toast.success(`Certificate sent to ${clientEmail}!`);
       }
     } catch (error) {
-      console.error("Failed to send to client:", error);
+      logger.error("Failed to send to client:", error);
       toast.error("Failed to send certificate to client");
     } finally {
       setIsSending(false);
@@ -137,7 +138,7 @@ export function CertificateOfCompletion({
         window.print();
       }
     } catch (error) {
-      console.error("Failed to download:", error);
+      logger.error("Failed to download:", error);
       toast.error("Failed to download certificate");
     } finally {
       setIsDownloading(false);

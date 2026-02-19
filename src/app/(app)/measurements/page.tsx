@@ -54,6 +54,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -152,7 +153,7 @@ export default function MeasurementsPage() {
       const data = await res.json();
       if (data.ok) setOrders(data.orders ?? []);
     } catch (err) {
-      console.error("[MEASUREMENTS] fetch error:", err);
+      logger.error("[MEASUREMENTS] fetch error:", err);
     } finally {
       setLoading(false);
     }
@@ -187,7 +188,7 @@ export default function MeasurementsPage() {
         await fetchOrders();
       }
     } catch (err) {
-      console.error("[MEASUREMENTS] create error:", err);
+      logger.error("[MEASUREMENTS] create error:", err);
     } finally {
       setCreating(false);
     }
@@ -199,7 +200,7 @@ export default function MeasurementsPage() {
       await fetch(`/api/measurements/${id}`, { method: "DELETE" });
       await fetchOrders();
     } catch (err) {
-      console.error("[MEASUREMENTS] cancel error:", err);
+      logger.error("[MEASUREMENTS] cancel error:", err);
     }
   }
 

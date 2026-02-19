@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 import { db } from "@/lib/firebase";
+import { logger } from "@/lib/logger";
 
 interface Vendor {
   id: string;
@@ -35,7 +36,7 @@ export default function VendorConnect() {
       const vendorList = snap.docs.map((d) => ({ id: d.id, ...d.data() }) as Vendor);
       setVendors(vendorList.sort((a, b) => a.name.localeCompare(b.name)));
     } catch (error) {
-      console.error("Error loading vendors:", error);
+      logger.error("Error loading vendors:", error);
     } finally {
       setLoading(false);
     }
@@ -73,7 +74,7 @@ export default function VendorConnect() {
       });
       await loadVendors();
     } catch (error) {
-      console.error("Error saving vendor:", error);
+      logger.error("Error saving vendor:", error);
       alert("Failed to save vendor");
     } finally {
       setSaving(false);
@@ -90,7 +91,7 @@ export default function VendorConnect() {
       alert("Vendor deleted successfully!");
       await loadVendors();
     } catch (error) {
-      console.error("Error deleting vendor:", error);
+      logger.error("Error deleting vendor:", error);
       alert("Failed to delete vendor");
     }
   }

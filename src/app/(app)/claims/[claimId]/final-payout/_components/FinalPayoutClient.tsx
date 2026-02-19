@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 // Types
 interface Supplement {
@@ -268,7 +269,7 @@ export function FinalPayoutClient({ claim, orgId, userId }: FinalPayoutClientPro
           }
         }
       } catch (error) {
-        console.error("Failed to fetch payout data:", error);
+        logger.error("Failed to fetch payout data:", error);
         // Show empty state on error, NOT hardcoded fake data
         setLineItems([]);
       } finally {
@@ -343,7 +344,7 @@ export function FinalPayoutClient({ claim, orgId, userId }: FinalPayoutClientPro
       setPayoutStatus("invoice_generated");
       toast.success("Final payout packet generated successfully!");
     } catch (error: any) {
-      console.error("Generate packet error:", error);
+      logger.error("Generate packet error:", error);
       toast.error(error.message || "Failed to generate invoice");
     } finally {
       setIsGeneratingInvoice(false);
@@ -382,7 +383,7 @@ export function FinalPayoutClient({ claim, orgId, userId }: FinalPayoutClientPro
         `Submitted to carrier successfully!${data.emailSent ? " Email notification sent." : ""}`
       );
     } catch (error: any) {
-      console.error("Submit error:", error);
+      logger.error("Submit error:", error);
       toast.error(error.message || "Failed to submit to carrier");
     } finally {
       setIsSubmitting(false);

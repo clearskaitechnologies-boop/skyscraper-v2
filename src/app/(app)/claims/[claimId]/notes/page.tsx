@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { textareaBase } from "@/lib/ui/inputStyles";
+import { logger } from "@/lib/logger";
 
 import SectionCard from "../_components/SectionCard";
 
@@ -42,7 +43,7 @@ export default function NotesPage() {
         setNotes(data.notes);
       }
     } catch (error) {
-      console.error("Failed to fetch notes:", error);
+      logger.error("Failed to fetch notes:", error);
     } finally {
       setLoading(false);
     }
@@ -68,7 +69,7 @@ export default function NotesPage() {
         await fetchNotes();
       }
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       alert("Failed to save note");
     } finally {
       setSaving(false);
@@ -90,7 +91,7 @@ export default function NotesPage() {
         setNotes((prev) => prev.filter((n) => n.id !== deleteTarget.id));
       }
     } catch (error) {
-      console.error("Delete error:", error);
+      logger.error("Delete error:", error);
     }
   };
 

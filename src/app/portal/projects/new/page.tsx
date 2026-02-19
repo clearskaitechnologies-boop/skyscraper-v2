@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import WorkRequestForm from "@/components/portal/WorkRequestForm";
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
@@ -52,7 +53,7 @@ export default async function NewProjectPage() {
             tradeType: sp.tradesCompany.specialties?.[0] || "General",
           }));
         } catch (savedProsError: any) {
-          console.log("[NewProjectPage] Saved pros fetch (non-critical):", savedProsError?.message);
+          logger.info("[NewProjectPage] Saved pros fetch (non-critical):", savedProsError?.message);
         }
 
         // Get connected contractors via ClientProConnection
@@ -76,11 +77,11 @@ export default async function NewProjectPage() {
             email: c.tradesCompany?.email || "",
           }));
         } catch (connError: any) {
-          console.log("[NewProjectPage] Connections fetch (non-critical):", connError?.message);
+          logger.info("[NewProjectPage] Connections fetch (non-critical):", connError?.message);
         }
       }
     } catch (error: any) {
-      console.error("[NewProjectPage] Error loading client profile:", error);
+      logger.error("[NewProjectPage] Error loading client profile:", error);
       if (error?.code !== "P2025" && error?.code !== "P2021") {
         hasError = true;
       }

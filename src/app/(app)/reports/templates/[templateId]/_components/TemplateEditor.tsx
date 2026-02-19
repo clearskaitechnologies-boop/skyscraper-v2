@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 import { TemplateBrandPreview } from "./TemplateBrandPreview";
 
@@ -62,7 +63,7 @@ export function TemplateEditor({ template }: TemplateEditorProps) {
       if (!res.ok) throw new Error("Failed to toggle section");
       toast.success("Section updated");
     } catch (error) {
-      console.error("Failed to toggle section:", error);
+      logger.error("Failed to toggle section:", error);
       toast.error("Failed to toggle section");
       setSections(parseSections(template));
     }
@@ -89,7 +90,7 @@ export function TemplateEditor({ template }: TemplateEditorProps) {
       if (!res.ok) throw new Error("Failed to save section order");
       toast.success("Section order saved");
     } catch (error) {
-      console.error("Failed to save section order:", error);
+      logger.error("Failed to save section order:", error);
       toast.error("Failed to save section order");
     } finally {
       setSaving(false);
@@ -109,7 +110,7 @@ export function TemplateEditor({ template }: TemplateEditorProps) {
       if (!res.ok) throw new Error("Failed to update branding");
       toast.success("Branding saved");
     } catch (error) {
-      console.error("Failed to update branding:", error);
+      logger.error("Failed to update branding:", error);
       toast.error("Failed to update branding");
     }
   };

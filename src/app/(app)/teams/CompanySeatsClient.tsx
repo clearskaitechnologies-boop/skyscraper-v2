@@ -63,6 +63,7 @@ interface CompanySeatsClientProps {
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 // Imported from shared pricing module
 import { PRICE_PER_SEAT_DOLLARS as PRICE_PER_SEAT } from "@/lib/billing/seat-pricing";
+import { logger } from "@/lib/logger";
 const MAX_SEATS = 500;
 
 /* -------------------------------------------------------------------------- */
@@ -254,7 +255,7 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
         toast.error(data.error || "Failed to send invitation");
       }
     } catch (err) {
-      console.error("Invite error:", err);
+      logger.error("Invite error:", err);
       toast.error("Failed to send invitation");
     } finally {
       setInviting(false);
@@ -291,7 +292,7 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
         toast.error(data.error || "Failed to resend invite");
       }
     } catch (err) {
-      console.error("Resend invite error:", err);
+      logger.error("Resend invite error:", err);
       toast.error("Failed to resend invite");
     }
   };
@@ -313,7 +314,7 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
         toast.error(data.error || "Failed to remove member");
       }
     } catch (err) {
-      console.error("Remove member error:", err);
+      logger.error("Remove member error:", err);
       toast.error("Failed to remove member");
     }
   };

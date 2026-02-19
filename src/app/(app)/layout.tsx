@@ -17,6 +17,7 @@ import { getActiveOrgSafe } from "@/lib/auth/getActiveOrgSafe";
 import { isBuildPhase } from "@/lib/buildPhase";
 import { getPendingLegalForUser } from "@/lib/legal/getPendingLegal";
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 // Replaced legacy UnifiedNavigation with new AppSidebar for consistent two-tone design
 import { AppSidebar } from "./_components/AppSidebar";
@@ -109,7 +110,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         brandingCompleted = !!(branding?.companyName && branding?.email && branding?.colorPrimary);
         onboardingCompleted = true; // Org exists = onboarding complete
       } catch (orgError: any) {
-        console.error("[LAYOUT_ORG_ERROR]", orgError?.message);
+        logger.error("[LAYOUT_ORG_ERROR]", orgError?.message);
       }
     }
 
@@ -123,7 +124,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       } else {
       }
     } catch (legalError: any) {
-      console.error("[LAYOUT] Failed to check legal compliance:", legalError);
+      logger.error("[LAYOUT] Failed to check legal compliance:", legalError);
       // Don't block - just log the error
     }
 
@@ -168,7 +169,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     if (layoutError?.message === "NEXT_REDIRECT" || layoutError?.stack?.includes("NEXT_REDIRECT")) {
       throw layoutError;
     }
-    console.error("🚨🚨🚨 CRITICAL: LAYOUT CRASHED 🚨🚨🚨", {
+    logger.error("🚨🚨🚨 CRITICAL: LAYOUT CRASHED 🚨🚨🚨", {
       message: layoutError?.message,
       name: layoutError?.name,
       code: layoutError?.code,

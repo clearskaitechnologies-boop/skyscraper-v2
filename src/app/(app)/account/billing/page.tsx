@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 interface BillingData {
   org: {
@@ -85,7 +86,7 @@ export default function BillingPage() {
           setData(billingData);
         }
       } catch (error) {
-        console.error("Failed to fetch billing data:", error);
+        logger.error("Failed to fetch billing data:", error);
       } finally {
         setLoading(false);
       }
@@ -112,7 +113,7 @@ export default function BillingPage() {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Failed to open billing portal:", error);
+      logger.error("Failed to open billing portal:", error);
     } finally {
       setPortalLoading(false);
     }
@@ -145,7 +146,7 @@ export default function BillingPage() {
         toast.error("Auto-refill settings are not yet available");
       }
     } catch (error) {
-      console.error("Failed to toggle auto-refill:", error);
+      logger.error("Failed to toggle auto-refill:", error);
       toast.error("Auto-refill settings are not yet available");
     }
   };

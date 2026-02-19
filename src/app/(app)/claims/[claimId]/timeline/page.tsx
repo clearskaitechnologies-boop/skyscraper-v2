@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { inputBase, selectBase, textareaBase } from "@/lib/ui/inputStyles";
+import { logger } from "@/lib/logger";
 
 import SectionCard from "../_components/SectionCard";
 
@@ -58,7 +59,7 @@ export default function TimelinePage() {
         setEvents(data.events);
       }
     } catch (error) {
-      console.error("Failed to fetch timeline:", error);
+      logger.error("Failed to fetch timeline:", error);
     } finally {
       setLoading(false);
     }
@@ -86,7 +87,7 @@ export default function TimelinePage() {
       setShowForm(false);
       fetchTimeline();
     } catch (error) {
-      console.error("Failed to add event:", error);
+      logger.error("Failed to add event:", error);
       alert("Failed to add event");
     } finally {
       setSaving(false);
@@ -112,7 +113,7 @@ export default function TimelinePage() {
       }
       fetchTimeline();
     } catch (error) {
-      console.error("Failed to delete event:", error);
+      logger.error("Failed to delete event:", error);
       alert("Failed to delete event");
     }
   };

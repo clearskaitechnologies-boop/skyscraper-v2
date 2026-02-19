@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { inputBase, selectBase } from "@/lib/ui/inputStyles";
+import { logger } from "@/lib/logger";
 
 import SectionCard from "../_components/SectionCard";
 
@@ -65,7 +66,7 @@ export default function TradesPage() {
         setTrades(data.trades);
       }
     } catch (error) {
-      console.error("Failed to fetch trades:", error);
+      logger.error("Failed to fetch trades:", error);
     } finally {
       setLoading(false);
     }
@@ -103,7 +104,7 @@ export default function TradesPage() {
       setShowForm(false);
       fetchTrades();
     } catch (error) {
-      console.error("Failed to add trade:", error);
+      logger.error("Failed to add trade:", error);
       alert("Failed to add trade");
     } finally {
       setSaving(false);
@@ -126,7 +127,7 @@ export default function TradesPage() {
       }
       fetchTrades();
     } catch (error) {
-      console.error("Failed to delete trade:", error);
+      logger.error("Failed to delete trade:", error);
       alert("Failed to delete trade");
     }
   };

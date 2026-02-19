@@ -9,6 +9,7 @@ import { PageSectionCard } from "@/components/layout/PageSectionCard";
 import { TradesToolJobPicker } from "@/components/trades/TradesToolJobPicker";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 export default function ProjectPlanBuilderPage() {
   const [generating, setGenerating] = useState(false);
@@ -108,13 +109,13 @@ ${formData.documents || "No additional documents provided."}
         });
 
         if (!response.ok) {
-          console.warn("Failed to save artifact:", await response.text());
+          logger.warn("Failed to save artifact:", await response.text());
         }
       } catch (saveError) {
-        console.error("Error saving artifact:", saveError);
+        logger.error("Error saving artifact:", saveError);
       }
     } catch (error) {
-      console.error("Error generating project plan:", error);
+      logger.error("Error generating project plan:", error);
       setResult("Error generating project plan. Please try again.");
     } finally {
       setGenerating(false);

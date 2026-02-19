@@ -1,10 +1,11 @@
 "use client";
 
-import { collection, doc, getDoc, getDocs,setDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 import { db } from "@/lib/firebase";
+import { logger } from "@/lib/logger";
 
 const ALL_SECTIONS = [
   {
@@ -109,7 +110,7 @@ export default function TemplateDesigner() {
       }));
       setExistingPresets(presets);
     } catch (error) {
-      console.error("Error loading presets:", error);
+      logger.error("Error loading presets:", error);
     }
   }
 
@@ -124,7 +125,7 @@ export default function TemplateDesigner() {
         setPresetLabel(data.label || presetId);
       }
     } catch (error) {
-      console.error("Error loading preset:", error);
+      logger.error("Error loading preset:", error);
     }
   }
 
@@ -170,7 +171,7 @@ export default function TemplateDesigner() {
       alert("Template saved successfully!");
       await loadExistingPresets(); // Refresh the list
     } catch (error) {
-      console.error("Error saving preset:", error);
+      logger.error("Error saving preset:", error);
       alert("Failed to save template");
     } finally {
       setSaving(false);

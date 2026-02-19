@@ -9,6 +9,7 @@ import { Edit3, FileText, Film, Image, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 export interface EvidenceAsset {
   id: string;
@@ -43,7 +44,7 @@ export function EvidenceGrid({ assets, claimId, onAssetUpdated }: EvidenceGridPr
       const data = await response.json();
       setThumbnailUrls((prev) => ({ ...prev, [assetId]: data.signedUrl }));
     } catch (error) {
-      console.error("Failed to fetch thumbnail:", error);
+      logger.error("Failed to fetch thumbnail:", error);
     }
   };
 
@@ -117,7 +118,7 @@ export function EvidenceGrid({ assets, claimId, onAssetUpdated }: EvidenceGridPr
                       // Refresh the list
                       onAssetUpdated?.();
                     } catch (error) {
-                      console.error("Delete failed:", error);
+                      logger.error("Delete failed:", error);
                       alert("Failed to delete evidence. Please try again.");
                     } finally {
                       setDeletingId(null);
@@ -244,7 +245,7 @@ export function EvidenceGrid({ assets, claimId, onAssetUpdated }: EvidenceGridPr
                     onAssetUpdated?.();
                     setSelectedAsset(null);
                   } catch (error) {
-                    console.error("Save failed:", error);
+                    logger.error("Save failed:", error);
                     alert("Failed to save changes. Please try again.");
                   } finally {
                     setSavingChanges(false);

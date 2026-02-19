@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { logger } from "@/lib/logger";
+
 interface Skill {
   skill: string;
   level: "Beginner" | "Intermediate" | "Advanced" | "Expert";
@@ -82,7 +84,7 @@ export default function ProfileEditPage({ params }: { params: { memberId: string
         setTestimonials(data.clientTestimonials || []);
       }
     } catch (error) {
-      console.error("Failed to load profile:", error);
+      logger.error("Failed to load profile:", error);
     } finally {
       setLoading(false);
     }
@@ -109,7 +111,7 @@ export default function ProfileEditPage({ params }: { params: { memberId: string
         alert("Failed to upload headshot");
       }
     } catch (error) {
-      console.error("Headshot upload error:", error);
+      logger.error("Headshot upload error:", error);
       alert("Failed to upload headshot");
     } finally {
       setUploadingHeadshot(false);
@@ -139,7 +141,7 @@ export default function ProfileEditPage({ params }: { params: { memberId: string
         alert("Failed to save profile");
       }
     } catch (error) {
-      console.error("Save error:", error);
+      logger.error("Save error:", error);
       alert("Failed to save profile");
     } finally {
       setSaving(false);

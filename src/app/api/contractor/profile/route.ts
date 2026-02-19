@@ -6,8 +6,8 @@
  * PATCH: Allow updating profile fields
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { requireApiAuth } from "@/lib/auth/apiAuth";
 import prisma from "@/lib/prisma";
@@ -259,9 +259,7 @@ export async function PATCH(req: NextRequest) {
 
     // Warn about ignored fields (but don't fail)
     if (invalidFields.length > 0) {
-      console.warn(
-        `[contractor/profile PATCH] Ignored invalid fields: ${invalidFields.join(", ")}`
-      );
+      logger.warn(`[contractor/profile PATCH] Ignored invalid fields: ${invalidFields.join(", ")}`);
     }
 
     // Perform the update
@@ -430,7 +428,7 @@ export async function POST(req: NextRequest) {
       return { company, member };
     });
 
-    console.log("[contractor/profile POST] Created company and profile:", {
+    logger.info("[contractor/profile POST] Created company and profile:", {
       companyId: result.company.id,
       memberId: result.member.id,
       orgId: body.orgId,
@@ -549,7 +547,7 @@ export async function PUT(req: NextRequest) {
       return { company, member };
     });
 
-    console.log("[contractor/profile PUT] Updated company and profile:", {
+    logger.info("[contractor/profile PUT] Updated company and profile:", {
       companyId: result.company.id,
       memberId: result.member.id,
     });

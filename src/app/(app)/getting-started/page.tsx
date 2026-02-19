@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { logger } from "@/lib/logger";
 
 interface ChecklistItem {
   id: string;
@@ -54,7 +55,7 @@ export default function GettingStartedPage() {
           }
         }
       } catch (error) {
-        console.error("[ONBOARDING] Failed to fetch progress:", error);
+        logger.error("[ONBOARDING] Failed to fetch progress:", error);
       } finally {
         setIsLoading(false);
       }
@@ -86,7 +87,7 @@ export default function GettingStartedPage() {
       }
     } catch (error) {
       toast.error("Failed to create sample data");
-      console.error("[CREATE_SAMPLE]", error);
+      logger.error("[CREATE_SAMPLE]", error);
     } finally {
       setIsCreatingSample(false);
     }
@@ -116,7 +117,7 @@ export default function GettingStartedPage() {
       }
     } catch (error) {
       toast.error("Failed to delete sample data");
-      console.error("[DELETE_SAMPLE]", error);
+      logger.error("[DELETE_SAMPLE]", error);
     } finally {
       setIsDeletingSample(false);
     }

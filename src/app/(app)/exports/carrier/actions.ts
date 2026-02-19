@@ -5,6 +5,7 @@ import JSZip from "jszip";
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ExportProject {
   id: string;
@@ -63,7 +64,7 @@ export const getExportableProjects = cache(async (): Promise<ExportProject[]> =>
       };
     });
   } catch (error) {
-    console.error("[getExportableProjects] Error:", error);
+    logger.error("[getExportableProjects] Error:", error);
     return [];
   }
 });
@@ -106,7 +107,7 @@ export async function generateCarrierExport(
       message: "Export generation coming soon",
     };
   } catch (error) {
-    console.error("[generateCarrierExport] Error:", error);
+    logger.error("[generateCarrierExport] Error:", error);
     return { success: false, message: "Failed to generate export" };
   }
 }
@@ -200,7 +201,7 @@ export async function generateBulkCarrierExport(
       message: `Bulk export prepared: ${projects.length} projects`,
     };
   } catch (error) {
-    console.error("[generateBulkCarrierExport] Error:", error);
+    logger.error("[generateBulkCarrierExport] Error:", error);
     return { success: false, message: "Failed to generate bulk export" };
   }
 }

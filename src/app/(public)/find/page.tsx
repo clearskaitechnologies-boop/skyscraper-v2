@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect,useState } from "react";
+import { useEffect, useState } from "react";
 
 import { ContractorCard } from "@/components/contractors/ContractorCard";
-import { Button } from "@/components/ui/button";
 import { guardedFetch } from "@/lib/guardedFetch";
+import { logger } from "@/lib/logger";
 
 import ContractorMap from "./components/ContractorMap";
 import FilterBar from "./components/FilterBar";
@@ -64,12 +64,12 @@ export default function PublicDirectoryPage() {
   // Detect user's location using browser geolocation API
   async function detectLocation() {
     if (!navigator.geolocation) return;
-    
+
     setDetectingLocation(true);
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        
+
         // Reverse geocode to get ZIP code
         try {
           const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
@@ -78,7 +78,9 @@ export default function PublicDirectoryPage() {
             const res = await guardedFetch(url, {}, "mapbox-reverse-geocode");
             let data: any = null;
             if (res) {
-              try { data = await res.json(); } catch {}
+              try {
+                data = await res.json();
+              } catch {}
             }
             if (data?.features?.[0]?.text) {
               const zip = data.features[0].text;
@@ -92,13 +94,13 @@ export default function PublicDirectoryPage() {
             setFilters((prev) => ({ ...prev, zip: "00000", radius: "25" }));
           }
         } catch (error) {
-          console.error("Geocoding error:", error);
+          logger.error("Geocoding error:", error);
         } finally {
           setDetectingLocation(false);
         }
       },
       (error) => {
-        console.error("Location detection error:", error);
+        logger.error("Location detection error:", error);
         setDetectingLocation(false);
       }
     );
@@ -123,7 +125,7 @@ export default function PublicDirectoryPage() {
       setContractors(data.contractors || []);
       setOrigin(data.origin || null);
     } catch (error) {
-      console.error("Error loading contractors:", error);
+      logger.error("Error loading contractors:", error);
       setContractors([]);
       setOrigin(null);
     } finally {
@@ -136,7 +138,14 @@ export default function PublicDirectoryPage() {
     if (filters.zip || filters.trade) {
       loadContractors(filters);
     }
-  }, [filters.zip, filters.radius, filters.trade, filters.verified, filters.emergency, filters.sort]);
+  }, [
+    filters.zip,
+    filters.radius,
+    filters.trade,
+    filters.verified,
+    filters.emergency,
+    filters.sort,
+  ]);
 
   // 3️⃣ Handle filter changes
   function handleFilterChange(updated: Filters) {
@@ -147,19 +156,17 @@ export default function PublicDirectoryPage() {
     <div className="min-h-screen w-full bg-gray-50 pb-20">
       {/* HEADER */}
       <div className="space-y-3 bg-gradient-to-br from-sky-600 to-sky-800 py-12 text-center text-white">
-        <h1 className="text-4xl font-bold">
-          Find Trusted Contractors Near You
-        </h1>
+        <h1 className="text-4xl font-bold">Find Trusted Contractors Near You</h1>
         <p className="mx-auto max-w-2xl px-4 text-lg text-sky-100">
-          Search the SkaiScraper Network for verified pros ready to help you
-          with repairs, maintenance, upgrades, or emergencies.
+          Search the SkaiScraper Network for verified pros ready to help you with repairs,
+          maintenance, upgrades, or emergencies.
         </p>
       </div>
 
       {/* FILTER BAR */}
       <div className="mx-auto -mt-6 mb-8 max-w-6xl px-4">
         <FilterBar onChange={handleFilterChange} />
-        
+
         {/* Location Detection */}
         {detectingLocation && (
           <div className="mt-4 text-center text-sm text-gray-600">

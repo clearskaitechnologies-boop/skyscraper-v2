@@ -7,8 +7,8 @@ export const revalidate = 0;
  * Builds a new proposal draft with AI-generated content
  */
 
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
     }
 
     // Track analytics: proposal_build_started
-    console.log("[Analytics] proposal_build_started", {
+    logger.info("[Analytics] proposal_build_started", {
       userId: effectiveUserId,
       orgId: effectiveOrgId,
       leadId,
@@ -179,7 +179,7 @@ export async function POST(request: Request) {
     });
 
     // Track analytics: proposal_build_succeeded
-    console.log("[Analytics] proposal.build.succeeded", {
+    logger.info("[Analytics] proposal.build.succeeded", {
       userId: effectiveUserId,
       orgId: effectiveOrgId,
       leadId,
@@ -189,7 +189,7 @@ export async function POST(request: Request) {
       draftId: draft.id,
       tokensConsumed: TOKENS_REQUIRED,
     });
-    console.log("[Analytics] proposal_build_succeeded", {
+    logger.info("[Analytics] proposal_build_succeeded", {
       userId: effectiveUserId,
       orgId: effectiveOrgId,
       draftId: draft.id,

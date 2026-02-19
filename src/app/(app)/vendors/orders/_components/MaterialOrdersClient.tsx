@@ -52,6 +52,7 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { logger } from "@/lib/logger";
 
 // Order status configuration
 const ORDER_STATUSES = [
@@ -161,7 +162,7 @@ export function MaterialOrdersClient({ orgId, userId }: MaterialOrdersClientProp
         setOrders(getDemoOrders());
       }
     } catch (error) {
-      console.error("Failed to fetch orders:", error);
+      logger.error("Failed to fetch orders:", error);
       setOrders(getDemoOrders());
     } finally {
       setLoading(false);
@@ -338,7 +339,7 @@ export function MaterialOrdersClient({ orgId, userId }: MaterialOrdersClientProp
         toast.error("Failed to create order");
       }
     } catch (error) {
-      console.error("Failed to create order:", error);
+      logger.error("Failed to create order:", error);
       toast.error("Failed to create order");
     }
   };
@@ -356,7 +357,7 @@ export function MaterialOrdersClient({ orgId, userId }: MaterialOrdersClientProp
         toast.error("Failed to submit order");
       }
     } catch (error) {
-      console.error("Failed to submit order:", error);
+      logger.error("Failed to submit order:", error);
       toast.error("Failed to submit order");
     }
   };

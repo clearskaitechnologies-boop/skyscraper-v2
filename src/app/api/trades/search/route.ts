@@ -3,8 +3,8 @@
 // and Vendor records. None of these tables use orgId;
 // the trades marketplace search is intentionally cross-org for public discovery.
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest) {
           },
         })
         .catch((err) => {
-          console.error("trades/search: company query error:", err.message);
+          logger.error("trades/search: company query error:", err.message);
           return [];
         });
 
@@ -179,7 +179,7 @@ export async function GET(request: NextRequest) {
           },
         })
         .catch((err) => {
-          console.error("trades/search: member query error:", err.message);
+          logger.error("trades/search: member query error:", err.message);
           return [];
         });
 
@@ -256,7 +256,7 @@ export async function GET(request: NextRequest) {
           },
         })
         .catch((err) => {
-          console.error("trades/search: vendor query error:", err.message);
+          logger.error("trades/search: vendor query error:", err.message);
           return [];
         });
 

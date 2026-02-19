@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
                 updatedAt: new Date(),
               },
             });
-            console.log(
+            logger.info(
               `[connections/accept] Created contact card for client ${clientRecord.id} in org ${proUser.orgId}`
             );
           }
@@ -113,7 +113,7 @@ export async function POST(request: NextRequest) {
       }
     } catch (contactErr) {
       // Don't fail the connection acceptance if contact creation fails
-      console.error("[connections/accept] Contact creation error:", contactErr);
+      logger.error("[connections/accept] Contact creation error:", contactErr);
     }
 
     // Send notification to client
@@ -135,7 +135,7 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (notifErr) {
-      console.error("[connections/accept] Notification error:", notifErr);
+      logger.error("[connections/accept] Notification error:", notifErr);
     }
 
     return NextResponse.json({ ok: true, connection: updated });

@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { logger } from "@/lib/logger";
 
 interface BatchJob {
   id: string;
@@ -106,7 +107,7 @@ export default function BatchJobDetailPage() {
         setJob(data);
       }
     } catch (error) {
-      console.error("Error fetching job:", error);
+      logger.error("Error fetching job:", error);
     } finally {
       setLoading(false);
     }
@@ -120,7 +121,7 @@ export default function BatchJobDetailPage() {
         setMailerBatches(data.batches || []);
       }
     } catch (error) {
-      console.error("Error fetching mailer batches:", error);
+      logger.error("Error fetching mailer batches:", error);
     }
   };
 
@@ -161,7 +162,7 @@ export default function BatchJobDetailPage() {
       const interval = setInterval(fetchJob, 3000);
       setTimeout(() => clearInterval(interval), 60000);
     } catch (error) {
-      console.error("Error processing job:", error);
+      logger.error("Error processing job:", error);
     } finally {
       setProcessing(false);
     }

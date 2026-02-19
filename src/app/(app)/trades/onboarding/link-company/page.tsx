@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { logger } from "@/lib/logger";
+
 export default function LinkCompanyPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
@@ -46,7 +48,7 @@ export default function LinkCompanyPage() {
 
       setOnboardingStatus(data);
     } catch (error) {
-      console.error("Status check error:", error);
+      logger.error("Status check error:", error);
       toast.error("Failed to load onboarding status");
     } finally {
       setLoading(false);
@@ -76,7 +78,7 @@ export default function LinkCompanyPage() {
       toast.success("Pending company created!");
       router.push("/trades/onboarding/waiting");
     } catch (error: any) {
-      console.error("Create company error:", error);
+      logger.error("Create company error:", error);
       toast.error(error.message || "Failed to create pending company");
     } finally {
       setSubmitting(false);
@@ -106,7 +108,7 @@ export default function LinkCompanyPage() {
       toast.success(result.message);
       router.push("/trades/onboarding/waiting");
     } catch (error: any) {
-      console.error("Join company error:", error);
+      logger.error("Join company error:", error);
       toast.error(error.message || "Failed to join company");
     } finally {
       setSubmitting(false);

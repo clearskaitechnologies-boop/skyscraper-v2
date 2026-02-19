@@ -23,6 +23,7 @@ import NewClientMessageModal from "@/components/messages/NewClientMessageModal";
 import PortalPageHero from "@/components/portal/portal-page-hero";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { logger } from "@/lib/logger";
 
 /**
  * Messages Page - Client Portal
@@ -103,7 +104,7 @@ export default function ClientMessagesPage() {
       const data = await res.json();
       setThreads(data.threads || []);
     } catch (error) {
-      if (!silent) console.error("Failed to fetch threads:", error);
+      if (!silent) logger.error("Failed to fetch threads:", error);
       if (!silent) setThreads([]);
     } finally {
       if (!silent) setLoading(false);
@@ -120,7 +121,7 @@ export default function ClientMessagesPage() {
       setSelectedThread(data);
       setMessages(data.messages || []);
     } catch (error) {
-      if (!silent) console.error("Failed to fetch thread:", error);
+      if (!silent) logger.error("Failed to fetch thread:", error);
       if (!silent) setSelectedThread(null);
       if (!silent) setMessages([]);
     }
@@ -153,7 +154,7 @@ export default function ClientMessagesPage() {
         toast.error("Failed to archive conversation");
       }
     } catch (error) {
-      console.error("Archive thread error:", error);
+      logger.error("Archive thread error:", error);
       toast.error("Failed to archive conversation");
     }
   };

@@ -35,6 +35,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { getActiveOrgContext } from "@/lib/org/getActiveOrgContext";
 import prisma from "@/lib/prisma";
 
@@ -93,7 +94,7 @@ async function getCategoryStats(orgId: string) {
     });
     return stats;
   } catch (error) {
-    console.error("[getCategoryStats] Error:", error);
+    logger.error("[getCategoryStats] Error:", error);
     return [];
   }
 }
@@ -177,7 +178,7 @@ async function getJobsByCategory(orgId: string) {
 
     return [...claimItems, ...normalizedLeads];
   } catch (error) {
-    console.error("[getJobsByCategory] Error:", error);
+    logger.error("[getJobsByCategory] Error:", error);
     return [];
   }
 }
@@ -199,7 +200,7 @@ export default async function PipelinePage() {
       redirect("/onboarding");
     }
   } catch (error) {
-    console.error("[PipelinePage] Error:", error);
+    logger.error("[PipelinePage] Error:", error);
   }
 
   // Group jobs by category (includes claims)

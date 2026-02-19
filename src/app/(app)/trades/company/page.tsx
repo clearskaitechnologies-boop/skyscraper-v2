@@ -48,6 +48,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 interface MemberSettings {
   tagline?: string;
@@ -200,7 +201,7 @@ export default function CompanyPage() {
         setJoinRequests(joinData.requests || []);
       }
     } catch (error) {
-      console.error("Failed to load company data:", error);
+      logger.error("Failed to load company data:", error);
     } finally {
       setLoading(false);
     }
@@ -251,7 +252,7 @@ export default function CompanyPage() {
       setShowInviteModal(false);
       loadData();
     } catch (error) {
-      console.error("Failed to send invite:", error);
+      logger.error("Failed to send invite:", error);
       toast.error("Failed to send invite");
     } finally {
       setInviting(false);
@@ -276,7 +277,7 @@ export default function CompanyPage() {
       toast.success(action === "approve" ? "Employee approved! 🎉" : "Request declined.");
       loadData();
     } catch (error) {
-      console.error("Failed to process join request:", error);
+      logger.error("Failed to process join request:", error);
       toast.error("Failed to process request");
     } finally {
       setProcessingRequest(null);

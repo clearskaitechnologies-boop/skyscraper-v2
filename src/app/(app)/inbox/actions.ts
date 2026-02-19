@@ -4,6 +4,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { cache } from "react";
 
 import prisma from "@/lib/prisma";
+import { logger } from "@/lib/logger";
 
 export interface ActivityItem {
   id: string;
@@ -66,7 +67,7 @@ export const getInboxActivities = cache(async (): Promise<ActivityItem[]> => {
       };
     });
   } catch (error) {
-    console.error("[getInboxActivities] Error:", error);
+    logger.error("[getInboxActivities] Error:", error);
     return [];
   }
 });
@@ -120,7 +121,7 @@ export async function markAsRead(activityId: string): Promise<{ success: boolean
 
     return { success: true };
   } catch (error) {
-    console.error("[markAsRead] Error:", error);
+    logger.error("[markAsRead] Error:", error);
     return { success: false };
   }
 }
@@ -151,7 +152,7 @@ export async function markAllAsRead(): Promise<{ success: boolean; count: number
 
     return { success: true, count };
   } catch (error) {
-    console.error("[markAllAsRead] Error:", error);
+    logger.error("[markAllAsRead] Error:", error);
     return { success: false, count: 0 };
   }
 }

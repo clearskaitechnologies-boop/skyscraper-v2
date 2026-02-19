@@ -26,6 +26,7 @@ import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { logger } from "@/lib/logger";
 import { toast } from "sonner";
 
 interface VideoReportPanelProps {
@@ -74,7 +75,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
         setVideoAccessMessage(data.message);
       }
     } catch (err) {
-      console.error("Error loading video access:", err);
+      logger.error("Error loading video access:", err);
     }
   };
 
@@ -101,7 +102,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
         }
       }
     } catch (err) {
-      console.error("Error loading existing report:", err);
+      logger.error("Error loading existing report:", err);
     }
   };
 
@@ -176,7 +177,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
           }
         }
       } catch (err) {
-        console.error("Error polling job status:", err);
+        logger.error("Error polling job status:", err);
       }
     }, 3000); // Poll every 3 seconds
   };

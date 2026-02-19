@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { logger } from "@/lib/logger";
 
 interface Signer {
   id: string;
@@ -73,7 +74,7 @@ export default function OnSiteSigningPage() {
         }
       }
     } catch (error) {
-      console.error("Failed to load envelope:", error);
+      logger.error("Failed to load envelope:", error);
     } finally {
       setLoading(false);
     }
@@ -119,7 +120,7 @@ export default function OnSiteSigningPage() {
         alert(data.message || "Failed to save signature");
       }
     } catch (error) {
-      console.error("Signature save error:", error);
+      logger.error("Signature save error:", error);
       alert("Failed to save signature");
     }
   }
@@ -137,7 +138,7 @@ export default function OnSiteSigningPage() {
         alert(data.message || "Failed to finalize");
       }
     } catch (error) {
-      console.error("Finalize error:", error);
+      logger.error("Finalize error:", error);
       alert("Failed to finalize");
     }
   }
