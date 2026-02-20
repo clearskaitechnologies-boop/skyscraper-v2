@@ -6,6 +6,38 @@ import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
 
+// ──────────────────────────────────────────────────────────────────────
+// Cycle Detection: walk up the manager chain from `startId` to see if
+// assigning `managerId` would create a loop (A→B→C→A).
+// Max depth of 20 prevents infinite loops on corrupt data.
+// ──────────────────────────────────────────────────────────────────────
+async function wouldCreateCycle(
+  memberId: string,
+  proposedManagerId: string,
+  companyId: string
+): Promise<boolean> {
+  const MAX_DEPTH = 20;
+  let currentId: string | null = proposedManagerId;
+  const visited = new Set<string>();
+
+  for (let i = 0; i < MAX_DEPTH && currentId; i++) {
+    if (currentId === memberId) return true; // cycle detected
+    if (visited.has(currentId)) return false; // already visited, no cycle to us
+    visited.add(currentId);
+
+    const node = await prisma.tradesCompanyMember.findUnique({
+      where: { id: currentId },
+      select: { managerId: true, companyId: true },
+    });
+
+    // If node doesn't exist or left the company, chain is broken — no cycle
+    if (!node || node.companyId !== companyId) return false;
+    currentId = node.managerId;
+  }
+
+  return false; // exhausted depth — treat as no cycle
+}
+
 /**
  * POST /api/trades/company/seats/assign-manager
  * Assigns a manager to a team member or promotes a member to manager
@@ -89,6 +121,15 @@ export async function POST(req: NextRequest) {
         if (managerId === memberId) {
           return NextResponse.json(
             { error: "Cannot assign member as their own manager" },
+            { status: 400 }
+          );
+        }
+
+        // Prevent manager cycles (A→B→A, A→B→C→A, etc.)
+        const cycleDetected = await wouldCreateCycle(memberId, managerId, currentMember.companyId);
+        if (cycleDetected) {
+          return NextResponse.json(
+            { error: "Cannot assign this manager — it would create a circular reporting chain" },
             { status: 400 }
           );
         }

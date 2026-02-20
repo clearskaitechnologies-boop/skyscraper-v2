@@ -57,78 +57,126 @@ export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
     });
 
     // =====================================================================
-    // AUTO-CREATE: If user has no tradesCompanyMember at all, create one
-    // This ensures the company page works even if onboarding was incomplete
+    // SELF-HEALING: If no member by userId, try email + orgId before creating
+    // This prevents ghost records when Clerk userId drifts across accounts
     // =====================================================================
-    if (!membership) {
-      try {
-        // Get user info from Clerk to populate the member record
-        const { currentUser } = await import("@clerk/nextjs/server");
-        const user = await currentUser();
-        const email = user?.emailAddresses?.[0]?.emailAddress || `${userId}@unknown.invalid`;
-        const firstName = user?.firstName || "";
-        const lastName = user?.lastName || "";
-        const displayName = [firstName, lastName].filter(Boolean).join(" ") || "Unknown";
-
-        // Create the member record
-        const newMember = await prisma.tradesCompanyMember.create({
-          data: {
-            userId,
-            firstName: firstName || null,
-            lastName: lastName || null,
-            email,
-            status: "active",
-            isActive: true,
-            isOwner: true,
-            isAdmin: true,
-            role: "owner",
-            onboardingStep: "company",
-            companyName: `${displayName}'s Company`,
-          },
-        });
-
-        logger.info(`[trades/company] Auto-created member for user ${userId}`);
-
-        // Now re-fetch with the include
-        membership = await prisma.tradesCompanyMember.findUnique({
-          where: { userId },
-          include: {
-            company: {
-              include: {
-                members: {
-                  where: { isActive: true, status: "active" },
-                  select: {
-                    id: true,
-                    userId: true,
-                    firstName: true,
-                    lastName: true,
-                    avatar: true,
-                    profilePhoto: true,
-                    role: true,
-                    isOwner: true,
-                    isAdmin: true,
-                    title: true,
-                    tradeType: true,
-                  },
-                },
-              },
+    const memberInclude = {
+      company: {
+        include: {
+          members: {
+            where: { isActive: true, status: "active" },
+            select: {
+              id: true,
+              userId: true,
+              firstName: true,
+              lastName: true,
+              avatar: true,
+              profilePhoto: true,
+              role: true,
+              isOwner: true,
+              isAdmin: true,
+              title: true,
+              tradeType: true,
             },
           },
+        },
+      },
+    } as const;
+
+    if (!membership) {
+      const { currentUser } = await import("@clerk/nextjs/server");
+      const user = await currentUser();
+      const email = user?.emailAddresses?.[0]?.emailAddress || "";
+
+      // ── HEAL 1: Find by email (handles userId drift / account recreation) ──
+      if (email) {
+        const byEmail = await prisma.tradesCompanyMember.findFirst({
+          where: { email },
+          include: memberInclude,
         });
-      } catch (autoCreateMemberError) {
-        logger.error("[trades/company] Auto-create member failed:", autoCreateMemberError);
-        // Return a friendly error that guides user to proper onboarding
-        return NextResponse.json(
-          {
-            ok: false,
-            error: "No profile found. Please complete your profile setup.",
-            hasCompany: false,
-            hasProfile: false,
-            companyPageUnlocked: false,
-            requiresOnboarding: true,
-          },
-          { status: 404 }
-        );
+        if (byEmail) {
+          try {
+            membership = await prisma.tradesCompanyMember.update({
+              where: { id: byEmail.id },
+              data: { userId },
+              include: memberInclude,
+            });
+            logger.info(
+              `[trades/company] Healed userId via email: ${email}, old=${byEmail.userId}, new=${userId}`
+            );
+          } catch {
+            // Unique constraint on userId — another record already has it; use found record as-is
+            membership = byEmail;
+          }
+        }
+      }
+
+      // ── HEAL 2: Find by orgId (owner record in same org with wrong userId) ──
+      if (!membership && orgId) {
+        const byOrg = await prisma.tradesCompanyMember.findFirst({
+          where: { orgId, isOwner: true },
+          include: memberInclude,
+        });
+        if (byOrg) {
+          try {
+            membership = await prisma.tradesCompanyMember.update({
+              where: { id: byOrg.id },
+              data: { userId },
+              include: memberInclude,
+            });
+            logger.info(
+              `[trades/company] Healed userId via orgId: orgId=${orgId}, old=${byOrg.userId}, new=${userId}`
+            );
+          } catch {
+            membership = byOrg;
+          }
+        }
+      }
+
+      // ── LAST RESORT: Auto-create a new member record ──
+      if (!membership) {
+        try {
+          const firstName = user?.firstName || "";
+          const lastName = user?.lastName || "";
+          const displayName = [firstName, lastName].filter(Boolean).join(" ") || "Unknown";
+
+          await prisma.tradesCompanyMember.create({
+            data: {
+              userId,
+              orgId: orgId || undefined,
+              firstName: firstName || null,
+              lastName: lastName || null,
+              email: email || `${userId}@unknown.invalid`,
+              status: "active",
+              isActive: true,
+              isOwner: true,
+              isAdmin: true,
+              role: "owner",
+              onboardingStep: "company",
+              companyName: `${displayName}'s Company`,
+            },
+          });
+
+          logger.info(`[trades/company] Auto-created member for user ${userId}`);
+
+          membership = await prisma.tradesCompanyMember.findUnique({
+            where: { userId },
+            include: memberInclude,
+          });
+        } catch (autoCreateError) {
+          logger.error("[trades/company] Auto-create member failed:", autoCreateError);
+          return NextResponse.json(
+            {
+              ok: false,
+              error: "No profile found. Please complete your profile setup.",
+              hasCompany: false,
+              hasProfile: false,
+              companyPageUnlocked: false,
+              requiresOnboarding: true,
+            },
+            { status: 404 }
+          );
+        }
       }
     }
 
