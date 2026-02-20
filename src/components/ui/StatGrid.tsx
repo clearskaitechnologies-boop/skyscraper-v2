@@ -1,4 +1,4 @@
-import KpiCard from "./MetricCard";
+import { MetricCard } from "./MetricCard";
 
 export default function StatGrid({
   stats,
@@ -8,7 +8,13 @@ export default function StatGrid({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {stats.map((s, i) => (
-        <KpiCard key={s.title} title={s.title} value={s.value} sub={s.sub} delay={i * 0.06} />
+        <MetricCard
+          key={s.title}
+          label={s.title}
+          value={s.value}
+          description={s.sub}
+          delay={i * 0.06}
+        />
       ))}
     </div>
   );

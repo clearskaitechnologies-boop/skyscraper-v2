@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Rate limiting
-    const rateLimit = await checkRateLimit(userId, "carrier-compliance");
+    const rateLimit = await checkRateLimit(userId, "API");
     if (!rateLimit.success) {
       return NextResponse.json(
         {
@@ -141,12 +141,14 @@ export async function POST(request: NextRequest) {
     // 11. Save carrier profile
     await prisma.carrierProfile.create({
       data: {
+        id: crypto.randomUUID(),
         orgId: user.orgId,
         leadId: leadId,
         carrierName: carrierDetection.carrierName,
         detectedFrom: carrierDetection.detectedFrom,
         confidence: carrierDetection.confidence,
-        guidelinesJson: carrierDetection.rules as unknown as Record<string, unknown>,
+        guidelinesJson: carrierDetection.rules as any,
+        updatedAt: new Date(),
       },
     });
 

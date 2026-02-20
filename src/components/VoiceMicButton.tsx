@@ -1,6 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-import VoiceRecorder from "./VoiceRecorder";
+// VoiceRecorder module removed — stub inline
+const VoiceRecorder = ({
+  relatedType,
+  relatedId,
+  onSaved,
+}: {
+  relatedType?: string;
+  relatedId: string;
+  onSaved: () => void;
+}) => <div className="text-sm text-slate-400">Voice recording coming soon</div>;
 
 export default function VoiceMicButton({
   relatedType = "lead",

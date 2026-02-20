@@ -49,7 +49,7 @@ export default async function MyNetworkPage() {
       },
     })
     .catch((err: Error) => {
-      logger.error("[Trades Profile] Query ERROR for", user.id, ":", err.message);
+      logger.error(`[Trades Profile] Query ERROR for ${user.id}: ${err.message}`);
       return null;
     });
 

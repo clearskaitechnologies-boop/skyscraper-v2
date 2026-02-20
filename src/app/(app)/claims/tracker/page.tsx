@@ -41,7 +41,7 @@ interface PipelineClaim {
 async function getClaimsForPipeline(orgId: string) {
   let claims: PipelineClaim[] = [];
   try {
-    claims = await prisma.claims.findMany({
+    const raw = await prisma.claims.findMany({
       where: { orgId },
       select: {
         id: true,
@@ -62,6 +62,7 @@ async function getClaimsForPipeline(orgId: string) {
       },
       orderBy: { createdAt: "desc" },
     });
+    claims = raw as unknown as PipelineClaim[];
   } catch (err) {
     const prismaErr = err as { code?: string };
     if (prismaErr?.code === "P2022") {
@@ -84,7 +85,8 @@ async function getClaimsForPipeline(orgId: string) {
     else if (status === "completed") lifecycleStage = "COMPLETED";
 
     // Derive insured name from property contact
-    const contact = claim.properties?.contacts;
+    const contacts = claim.properties?.contacts;
+    const contact = Array.isArray(contacts) ? contacts[0] : null;
     const insured_name = contact
       ? `${contact.firstName || ""} ${contact.lastName || ""}`.trim()
       : null;
@@ -217,7 +219,7 @@ export default async function ClaimsTrackerPage() {
             </div>
           }
         >
-          <ClaimsPipeline claims={claims} />
+          <ClaimsPipeline claims={claims as any} />
         </Suspense>
 
         {claims.length === 0 && (

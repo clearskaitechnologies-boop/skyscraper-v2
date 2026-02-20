@@ -17,9 +17,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-const stripe = getStripeClient();
-
-// Prisma singleton imported from @/lib/db/prisma
+const stripe = getStripeClient()!;
 
 // Durable idempotency check using database
 async function saveEventId(eventId: string, eventType: string): Promise<boolean> {
@@ -45,7 +43,7 @@ async function saveEventId(eventId: string, eventType: string): Promise<boolean>
 export async function POST(req: Request) {
   // Basic rate limiting per source IP to reduce abuse / signature brute force
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  const rl = await checkRateLimit(`stripe:${ip}`, "webhook-stripe");
+  const rl = await checkRateLimit(`stripe:${ip}`, "WEBHOOK");
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
   }

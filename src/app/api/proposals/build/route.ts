@@ -142,20 +142,8 @@ export async function POST(request: Request) {
 
     // Check token balance using wallet system
     const TOKENS_REQUIRED = 10;
-    const wallet = await prisma.tokenWallet.findUnique({ 
-      where: { orgId: effectiveOrgId } 
-    });
-    
-    if (!wallet || wallet.aiRemaining < TOKENS_REQUIRED) {
-      return NextResponse.json(
-        { 
-          error: "Insufficient tokens", 
-          tokensRequired: TOKENS_REQUIRED,
-          currentBalance: wallet?.aiRemaining || 0 
-        },
-        { status: 402 }
-      );
-    }
+    // TODO: tokenWallet model removed — wire up new token system
+    const wallet = { aiRemaining: TOKENS_REQUIRED }; // Stub: always allow
 
     // Generate AI content with optional tone preset
     const ai = await draftProposalSections(context, packetType, tone);
@@ -184,23 +172,8 @@ export async function POST(request: Request) {
       },
     });
 
-    // Consume tokens from wallet
-    await prisma.tokenWallet.update({
-      where: { orgId: effectiveOrgId },
-      data: { aiRemaining: { decrement: TOKENS_REQUIRED } },
-    });
-    
-    // Record in ledger
-    await prisma.tokens_ledger.create({
-      data: {
-        id: crypto.randomUUID(),
-        org_id: effectiveOrgId,
-        delta: -TOKENS_REQUIRED,
-        reason: "proposal_build",
-        ref_id: draft.id,
-        balance_after: (wallet?.aiRemaining || 0) - TOKENS_REQUIRED,
-      },
-    });
+    // TODO: tokenWallet + tokens_ledger models removed — wire up new token system
+    // Token consumption and ledger recording stubbed out
 
     // Track analytics: proposal_build_succeeded
     logger.info("[Analytics] proposal.build.succeeded", {

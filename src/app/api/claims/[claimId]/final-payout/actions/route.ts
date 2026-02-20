@@ -27,8 +27,8 @@
  * ============================================================================
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
@@ -175,14 +175,17 @@ async function handleGeneratePacket(
     return NextResponse.json({
       success: true,
       packet: {
-        url: packet.url,
+        url: (packet as any).url || null,
         generatedAt: new Date().toISOString(),
       },
     });
   } catch (error) {
     logger.error("[generate_packet] Error:", error);
     return NextResponse.json(
-      { error: "Failed to generate packet", details: error.message },
+      {
+        error: "Failed to generate packet",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
     );
   }
@@ -201,14 +204,14 @@ async function handleSaveCertificate(
       certificate_date: new Date(payload.certificateData.completionDate),
       certificate_notes: payload.certificateData.notes,
       updated_at: new Date(),
-    },
+    } as any,
     create: {
       claim_id: claimId,
       org_id: orgId,
       status: "work_completed",
       certificate_date: new Date(payload.certificateData.completionDate),
       certificate_notes: payload.certificateData.notes,
-    },
+    } as any,
   });
 
   return NextResponse.json({
@@ -241,13 +244,8 @@ async function handleSendCertificate(
 
   await sendEmail({
     to: payload.recipientEmail,
-    template: TEMPLATES.COMPLETION_CERTIFICATE,
-    data: {
-      companyName: branding?.companyName || "SkaiScraper",
-      claimNumber: claim?.claimNumber || claimId,
-      recipientName: payload.recipientName || "there",
-      customMessage: payload.message,
-    },
+    subject: "Completion Certificate",
+    html: `<div><h2>Completion Certificate</h2><p>Dear ${payload.recipientName || "there"},</p><p>Your completion certificate for claim ${claim?.claimNumber || claimId} is ready.</p>${payload.message ? `<p>${payload.message}</p>` : ""}<p>— ${branding?.companyName || "SkaiScraper"}</p></div>`,
   });
 
   return NextResponse.json({
@@ -271,7 +269,7 @@ async function handleCaptureSignature(
       [`${payload.signerRole}_name`]: payload.signerName,
       [`${payload.signerRole}_signed_at`]: new Date(),
       updated_at: new Date(),
-    },
+    } as any,
     create: {
       claim_id: claimId,
       org_id: orgId,
@@ -279,7 +277,7 @@ async function handleCaptureSignature(
       [`${payload.signerRole}_signature`]: payload.signatureData,
       [`${payload.signerRole}_name`]: payload.signerName,
       [`${payload.signerRole}_signed_at`]: new Date(),
-    },
+    } as any,
   });
 
   return NextResponse.json({
@@ -320,14 +318,14 @@ async function handleSubmit(
       submitted_at: new Date(),
       submitted_by: userId,
       updated_at: new Date(),
-    },
+    } as any,
     create: {
       claim_id: claimId,
       org_id: orgId,
       status: "submitted",
       submitted_at: new Date(),
       submitted_by: userId,
-    },
+    } as any,
   });
 
   // Update claim status

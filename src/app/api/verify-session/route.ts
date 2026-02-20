@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-const stripe = getStripeClient();
+const stripe = getStripeClient()!;
 
 export async function GET(req: Request) {
   try {

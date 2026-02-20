@@ -165,16 +165,41 @@ async function handleRemoveEmployee(
   companyId: string,
   input: Extract<ActionInput, { action: "remove_employee" }>
 ) {
-  // Remove from tradesCompanyMember
-  await prisma.tradesCompanyMember
-    .delete({
-      where: { id: input.employeeId },
-    })
-    .catch(() => {
-      // May not exist — graceful
-    });
+  // Instead of deleting the member record entirely, we:
+  // 1. Unlink them from the company (set companyId to null)
+  // 2. Set their status to inactive
+  // 3. Preserve their profile data so they can join another company
+  //
+  // This prevents "ghost" profiles and data loss while properly removing them
+  const result = await prisma.tradesCompanyMember.updateMany({
+    where: {
+      id: input.employeeId,
+      companyId: companyId, // Only allow removing from YOUR company
+    },
+    data: {
+      companyId: null,
+      status: "inactive",
+      isActive: false,
+      role: "member", // Reset role since they're no longer in the company
+      isOwner: false,
+      isAdmin: false,
+      canEditCompany: false,
+    },
+  });
 
-  return NextResponse.json({ success: true });
+  if (result.count === 0) {
+    return NextResponse.json(
+      { error: "Employee not found or not in your company" },
+      { status: 404 }
+    );
+  }
+
+  logger.info("[Trades] Employee removed from company", {
+    companyId,
+    employeeId: input.employeeId,
+  });
+
+  return NextResponse.json({ success: true, message: "Employee removed from company" });
 }
 
 async function handleJoinRequest(

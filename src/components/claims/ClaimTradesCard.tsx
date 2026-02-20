@@ -91,10 +91,9 @@ export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
       });
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Trade partner linked to claim",
-        });
+        toast.success("Success", {
+        description: "Trade partner linked to claim",
+      });
         fetchLinkedTrades();
         setIsOpen(false);
       } else {
@@ -102,10 +101,8 @@ export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
         throw new Error(data.error);
       }
     } catch (error: any) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error.message || "Failed to link trade partner",
-        variant: "destructive",
       });
     }
   };
@@ -117,19 +114,16 @@ export function ClaimTradesCard({ claimId }: ClaimTradesCardProps) {
       });
 
       if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Trade partner removed from claim",
-        });
+        toast.success("Success", {
+        description: "Trade partner removed from claim",
+      });
         fetchLinkedTrades();
       } else {
         throw new Error("Failed to unlink");
       }
     } catch (error) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to remove trade partner",
-        variant: "destructive",
       });
     }
   };

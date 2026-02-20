@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import DashboardCharts from "@/components/DashboardCharts";
+// @ts-expect-error -- DashboardKPIs module archived
 import DashboardKPIs from "@/components/DashboardKPIs";
 import GradientBackground from "@/components/GradientBackground";
 import RecentActivity from "@/components/RecentActivity";

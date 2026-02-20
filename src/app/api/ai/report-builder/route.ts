@@ -157,7 +157,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const pdfBuffer = await generatePDFBuffer(reportData);
 
     logger.debug("[Report Builder] PDF generated successfully");
-    logger.debug("[Report Builder] PDF size:", (pdfBuffer.length / 1024).toFixed(2), "KB");
+    logger.debug(`[Report Builder] PDF size: ${(pdfBuffer.length / 1024).toFixed(2)} KB`);
 
     // Return PDF as downloadable file
     return new NextResponse(pdfBuffer as unknown as BodyInit, {

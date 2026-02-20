@@ -35,13 +35,13 @@ export async function analyzePropertyImage(
 ): Promise<AiResponse<VisionAnalysis>> {
   try {
     // Use existing OpenAI vision analysis
-    const result = await analyzeImage(imageUrl);
+    const result = (await analyzeImage(imageUrl)) as any;
 
     if (!result.ok || !result.data) {
       return result as AiResponse<VisionAnalysis>;
     }
 
-    const damageReport = result.data as DamageReport;
+    const damageReport = result.data as any;
 
     // Transform to VisionAnalysis format
     const analysis: VisionAnalysis = {
@@ -50,7 +50,7 @@ export async function analyzePropertyImage(
       severity: (damageReport.severity ?? "none") as VisionAnalysis["severity"],
       confidence: damageReport.confidence ?? 0,
       details: damageReport.summary,
-      regions: damageReport.regions?.map((r) => ({
+      regions: damageReport.regions?.map((r: any) => ({
         type: r.type,
         location: r.location,
         severity: r.severity as DamageRegion["severity"],
@@ -61,16 +61,12 @@ export async function analyzePropertyImage(
     return {
       ok: true,
       data: analysis,
-      errorType: undefined,
-      error: undefined,
-    };
+    } as any;
   } catch (error: any) {
     return {
       ok: false,
-      data: undefined,
-      errorType: "INTERNAL",
       error: error.message || "Vision analysis failed",
-    };
+    } as any;
   }
 }
 

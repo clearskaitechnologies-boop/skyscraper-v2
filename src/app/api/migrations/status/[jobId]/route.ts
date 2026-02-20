@@ -204,8 +204,12 @@ export async function POST(
         });
 
         // Delete in batches by entity type
-        const contactIds = items.filter((i) => i.entityType === "CONTACT").map((i) => i.internalId);
-        const jobIds = items.filter((i) => i.entityType === "JOB").map((i) => i.internalId);
+        const contactIds = items
+          .filter((i) => i.entityType === "CONTACT" && i.internalId)
+          .map((i) => i.internalId!);
+        const jobIds = items
+          .filter((i) => i.entityType === "JOB" && i.internalId)
+          .map((i) => i.internalId!);
 
         // Delete jobs first (may have foreign key to contacts)
         if (jobIds.length > 0) {
@@ -216,8 +220,8 @@ export async function POST(
 
         // Delete contacts
         if (contactIds.length > 0) {
-          await prisma.crm_contacts.deleteMany({
-            where: { id: { in: contactIds }, org_id: orgId },
+          await prisma.contacts.deleteMany({
+            where: { id: { in: contactIds }, orgId },
           });
         }
 

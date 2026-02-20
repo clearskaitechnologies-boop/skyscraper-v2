@@ -1,9 +1,9 @@
 /**
  * SkaiPDF Tabs Component
- * 
+ *
  * Tabbed interface for viewing different AI insight categories.
  * Summary | Urgency | Job Type | Next Actions | Materials | Flags | Vision | Prep
- * 
+ *
  * Phase 25.5 - SkaiPDF UI Components
  */
 
@@ -26,9 +26,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { ClaimWriterPanel } from "./ClaimWriterPanel";
-import { DominusInsightCard } from "./DominusInsightCard";
 import { DominusPhotoAnalysis } from "./DominusPhotoAnalysis";
 import { EstimateExportPanel } from "./EstimateExportPanel";
+// DominusInsightCard module removed — stub inline
+const DominusInsightCard = ({ data }: { data: any }) => (
+  <div className="rounded-lg border p-4">
+    <pre className="text-xs">{JSON.stringify(data, null, 2)}</pre>
+  </div>
+);
 
 interface DominusTabsProps {
   leadId?: string;
@@ -185,15 +190,15 @@ export function DominusTabs({ leadId, aiData, photos }: DominusTabsProps) {
                   (aiData.aiUrgencyScore || 0) >= 80
                     ? "destructive"
                     : (aiData.aiUrgencyScore || 0) >= 50
-                    ? "default"
-                    : "secondary"
+                      ? "default"
+                      : "secondary"
                 }
               >
                 {(aiData.aiUrgencyScore || 0) >= 80
                   ? "High Priority"
                   : (aiData.aiUrgencyScore || 0) >= 50
-                  ? "Medium Priority"
-                  : "Low Priority"}
+                    ? "Medium Priority"
+                    : "Low Priority"}
               </Badge>
             </div>
 
@@ -238,7 +243,9 @@ export function DominusTabs({ leadId, aiData, photos }: DominusTabsProps) {
                       style={{ width: `${aiData.aiConfidence * 100}%` }}
                     />
                   </div>
-                  <span className="text-sm font-medium">{Math.round(aiData.aiConfidence * 100)}%</span>
+                  <span className="text-sm font-medium">
+                    {Math.round(aiData.aiConfidence * 100)}%
+                  </span>
                 </div>
               </div>
             )}
@@ -262,8 +269,8 @@ export function DominusTabs({ leadId, aiData, photos }: DominusTabsProps) {
                     action.priority === "urgent"
                       ? "destructive"
                       : action.priority === "high"
-                      ? "default"
-                      : "secondary"
+                        ? "default"
+                        : "secondary"
                   }
                 >
                   {action.priority}
@@ -369,7 +376,8 @@ export function DominusTabs({ leadId, aiData, photos }: DominusTabsProps) {
           icon={Clipboard}
         >
           <p className="text-sm text-muted-foreground">
-            Inspection prep checklist will be displayed here after AI analysis includes inspection preparation data.
+            Inspection prep checklist will be displayed here after AI analysis includes inspection
+            preparation data.
           </p>
         </DominusInsightCard>
       </TabsContent>

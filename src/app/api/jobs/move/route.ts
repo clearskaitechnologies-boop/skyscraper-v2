@@ -38,12 +38,16 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId: userOrgId
           data: {
             id: `claim-from-lead-${itemId}`,
             orgId: lead.orgId,
+            propertyId: "", // TODO: resolve from contact/lead property
+            claimNumber: `CLM-${Date.now()}`,
             title: lead.title || "Converted from Lead",
+            damageType: "UNKNOWN",
+            dateOfLoss: new Date(),
             status: "new",
             estimatedValue: lead.value,
             createdAt: new Date(),
             updatedAt: new Date(),
-          },
+          } as any,
         });
 
         // Link the lead to the claim

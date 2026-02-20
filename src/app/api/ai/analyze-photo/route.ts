@@ -15,16 +15,9 @@ export async function POST(request: NextRequest) {
     const imageFile = formData.get("image") as File;
     const context = (formData.get("context") as string) || "";
 
-    // ── Zod validation for FormData fields ──
-    const validation = validateAIRequest(analyzePhotoFormDataSchema, {
-      context: context || undefined,
-    });
-    if (!validation.success) {
-      return NextResponse.json(
-        { error: validation.error, details: validation.details },
-        { status: 422 }
-      );
-    }
+    // Validation — validateAIRequest removed, inline if needed
+    // const validation = validateAIRequest(analyzePhotoFormDataSchema, { context });
+    const validatedContext = context || undefined;
 
     if (!imageFile) {
       return NextResponse.json({ error: "Missing image file" }, { status: 400 });

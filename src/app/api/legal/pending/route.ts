@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { LEGAL_DOCUMENTS } from "@/lib/legal/config";
@@ -39,7 +39,7 @@ export async function GET() {
     // Find pending documents (not yet accepted or outdated version)
     const pending = allDocs.filter((doc) => !acceptedKeys.has(`${doc.id}:${doc.latestVersion}`));
 
-    logger.debug("[Legal Pending] User:", userId, "Org:", orgId, "Pending:", pending.length);
+    logger.debug(`[Legal Pending] User: ${userId} Org: ${orgId} Pending: ${pending.length}`);
 
     return NextResponse.json({
       pending: pending.map((doc) => ({

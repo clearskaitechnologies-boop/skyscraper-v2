@@ -77,14 +77,7 @@ export async function GET() {
     const orgFilter =
       companyId && companyId !== orgId ? { OR: [{ orgId }, { orgId: companyId }] } : { orgId };
 
-    logger.info(
-      "[DASHBOARD_STATS] resolved orgId:",
-      orgId,
-      "companyId:",
-      companyId,
-      "userId:",
-      user.id
-    );
+    logger.info("[DASHBOARD_STATS] resolved", { orgId, companyId, userId: user.id });
 
     // Calculate date ranges for trends (30 days ago)
     const thirtyDaysAgo = new Date();
@@ -242,7 +235,7 @@ export async function GET() {
   } catch (error) {
     logger.error("[GET /api/dashboard/stats] error:", error);
     return NextResponse.json(
-      { ok: false, error: error.message ?? "Unknown error" },
+      { ok: false, error: (error as Error).message ?? "Unknown error" },
       { status: 500 }
     );
   }

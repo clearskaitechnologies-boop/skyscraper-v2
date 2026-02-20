@@ -198,9 +198,9 @@ async function runDryRun(
 
     // Check email match
     if (email) {
-      const existing = await prisma.crm_contacts.findFirst({
-        where: { org_id: orgId, email },
-        select: { id: true, name: true },
+      const existing = await prisma.contacts.findFirst({
+        where: { orgId, email },
+        select: { id: true, firstName: true, lastName: true },
       });
 
       if (existing) {
@@ -209,7 +209,7 @@ async function runDryRun(
           externalId: contact.id || contact.jnid,
           externalName: name,
           matchedInternalId: existing.id,
-          matchedInternalName: existing.name || "Unknown",
+          matchedInternalName: `${existing.firstName} ${existing.lastName}`.trim() || "Unknown",
           matchType: "email",
           action: "update",
         });
@@ -220,12 +220,12 @@ async function runDryRun(
     if (phone && !duplicates.find((d) => d.externalId === (contact.id || contact.jnid))) {
       const normalizedPhone = phone.replace(/\D/g, "");
       if (normalizedPhone.length >= 10) {
-        const existing = await prisma.crm_contacts.findFirst({
+        const existing = await prisma.contacts.findFirst({
           where: {
-            org_id: orgId,
+            orgId,
             phone: { contains: normalizedPhone.slice(-10) },
           },
-          select: { id: true, name: true },
+          select: { id: true, firstName: true, lastName: true },
         });
 
         if (existing) {
@@ -234,7 +234,7 @@ async function runDryRun(
             externalId: contact.id || contact.jnid,
             externalName: name,
             matchedInternalId: existing.id,
-            matchedInternalName: existing.name || "Unknown",
+            matchedInternalName: `${existing.firstName} ${existing.lastName}`.trim() || "Unknown",
             matchType: "phone",
             action: "update",
           });

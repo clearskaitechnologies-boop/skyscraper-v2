@@ -85,8 +85,8 @@ export async function runStormIntakePipeline(
   input: StormIntakeInput
 ): Promise<{ success: boolean; results?: StormIntakeResults; error?: string }> {
   try {
-    logger.debug("[Storm Intake] Starting pipeline for claim:", input.claimId);
-    logger.debug("[Storm Intake] Processing", input.images.length, "images");
+    logger.debug(`[Storm Intake] Starting pipeline for claim: ${input.claimId}`);
+    logger.debug(`[Storm Intake] Processing ${input.images.length} images`);
 
     const router = new AICoreRouter();
 

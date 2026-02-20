@@ -75,18 +75,15 @@ export function ProfileForm({ initialData, onSuccess }: ProfileFormProps) {
         throw new Error("Failed to update profile");
       }
 
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Profile updated successfully",
       });
 
       onSuccess?.();
     } catch (error) {
       logger.error("Profile update error:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to update profile. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setIsLoading(false);

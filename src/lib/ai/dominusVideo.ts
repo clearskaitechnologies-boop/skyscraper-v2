@@ -5,11 +5,12 @@
  */
 
 import { withConditionalCache } from "@/lib/ai/cache";
-import { logger } from "@/lib/logger";
 import { getOpenAI } from "@/lib/ai/client";
 import { withConditionalDedupe } from "@/lib/ai/dedupe";
-import { selectModelForOrg } from "@/lib/ai/modeSelector";
 import { trackPerformance } from "@/lib/ai/perf";
+import { logger } from "@/lib/logger";
+// modeSelector archived — stub inline
+const selectModelForOrg = async (_orgId: string): Promise<any> => "gpt-4o-mini";
 
 const openai = getOpenAI();
 

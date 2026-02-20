@@ -110,7 +110,7 @@ const TOOLS = [
 
 export default async function ToolsPage() {
   const orgCtx = await getActiveOrgContext();
-  if (!orgCtx?.orgId) {
+  if (!orgCtx?.ok) {
     redirect("/sign-in");
   }
 

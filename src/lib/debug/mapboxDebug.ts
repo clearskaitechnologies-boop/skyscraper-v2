@@ -40,8 +40,7 @@ export function getMapboxToken(): string | null {
   }
 
   // Server-side: Check process.env
-  const token =
-    process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? process.env.MAPBOX_API_KEY ?? fallbackToken ?? null;
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN ?? process.env.MAPBOX_API_KEY ?? null;
   if (!token) {
     console.warn(
       "[Mapbox] No token found on server. Set NEXT_PUBLIC_MAPBOX_TOKEN in your environment."

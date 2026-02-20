@@ -46,14 +46,17 @@ export async function POST(req: NextRequest) {
     }
 
     const {
-      photos,
-      findings,
+      photos: rawPhotos,
+      findings: rawFindings,
       leadId,
       jobId,
       propertyAddress,
       includeCodeCompliance,
       includeMaterialSpecs,
     } = validated.data;
+
+    const photos = (rawPhotos || []) as unknown as PhotoData[];
+    const findings = (rawFindings || []) as unknown as DamageFinding[];
 
     // Generate PDF
     const doc = new jsPDF();

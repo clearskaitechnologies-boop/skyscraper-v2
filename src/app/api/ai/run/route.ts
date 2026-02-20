@@ -12,7 +12,7 @@ export const revalidate = 0;
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 
 import {
   requireActiveSubscription,
@@ -24,13 +24,13 @@ import { validateQuota } from "@/modules/ai/core/tokens";
 import { enqueue } from "@/modules/ai/jobs/queue";
 import type { AISectionKey, AITokenBucket } from "@/modules/ai/types";
 
-async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
+async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
   try {
     const { userId, orgId } = ctx;
 
     // ── Billing guard ──
     try {
-      await requireActiveSubscription(orgId);
+      await requireActiveSubscription(orgId!);
     } catch (error) {
       if (error instanceof SubscriptionRequiredError) {
         return NextResponse.json(
@@ -111,7 +111,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const jobId = await enqueue({
       reportId,
       engine,
-      sectionKey: sectionKey || engine,
+      sectionKey: (sectionKey || engine) as any,
       context,
     });
 

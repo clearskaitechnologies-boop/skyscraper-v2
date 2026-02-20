@@ -59,8 +59,8 @@ async function handlePOST(
   const prompt = damageBuilderPrompt({
     address,
     dateOfLoss,
-    roofType,
-    roofSqft,
+    roofType: roofType || "",
+    roofSqft: roofSqft || 0,
     materials,
     windSpeed,
     hailSize,
@@ -110,8 +110,8 @@ async function handlePOST(
     meta: {
       address,
       dateOfLoss,
-      roofType,
-      roofSqft,
+      roofType: roofType || "",
+      roofSqft: roofSqft || 0,
       orgName: "SkaiScraper",
     },
   });
@@ -148,7 +148,7 @@ async function handlePOST(
   }
 
   // 9) Get updated token balance
-  const updatedBalance = await getTokenStatus(userId);
+  const updatedBalance = { remaining: 0 }; // TODO: getTokenStatus removed — wire up new token system
 
   // 10) Log success and return
   const duration = Date.now() - startTime;

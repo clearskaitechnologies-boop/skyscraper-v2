@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { claimId, denialText, tone } = validated.data;
+    const { claimId, denialText, tone = "professional" } = validated.data;
 
     // Verify claim exists and belongs to org
     const claim = await prisma.claims.findFirst({

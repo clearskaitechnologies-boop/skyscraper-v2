@@ -67,28 +67,22 @@ export function SupplementPanel({ leadId, claimId, currentScope = [] }: Suppleme
 
   async function generateSupplement() {
     if (!claimId) {
-      toast({
-        title: "No Claim ID",
+      toast.error("No Claim ID", {
         description: "This lead needs a claim number to generate a supplement",
-        variant: "destructive",
       });
       return;
     }
 
     if (!pdfFile) {
-      toast({
-        title: "Missing Carrier Scope",
+      toast.error("Missing Carrier Scope", {
         description: "Please upload the carrier's scope PDF",
-        variant: "destructive",
       });
       return;
     }
 
     if (currentScope.length === 0) {
-      toast({
-        title: "No Contractor Scope",
+      toast.error("No Contractor Scope", {
         description: "Generate an estimate with Dominus AI first",
-        variant: "destructive",
       });
       return;
     }
@@ -120,18 +114,15 @@ export function SupplementPanel({ leadId, claimId, currentScope = [] }: Suppleme
         }
 
         setResult(data);
-        toast({
-          title: "Supplement Generated!",
-          description: `Total supplement: $${data.financials.total.toFixed(2)}`,
-        });
+        toast.success("Supplement Generated!", {
+        description: `Total supplement: $${data.financials.total.toFixed(2)}`,
+      });
       };
 
       reader.readAsText(pdfFile);
     } catch (err) {
-      toast({
-        title: "Supplement Generation Failed",
+      toast.error("Supplement Generation Failed", {
         description: err instanceof Error ? err.message : "Unknown error",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);

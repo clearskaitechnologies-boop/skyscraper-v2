@@ -9,7 +9,7 @@
 import type { MigrationProgress, MigrationSource } from "@/lib/migrations/base-engine";
 import { JobNimbusMigrationEngine } from "@/lib/migrations/jobnimbus-engine";
 import prisma from "@/lib/prisma";
-import { RATE_LIMIT_PRESETS, checkRateLimit } from "@/lib/rate-limit";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -35,7 +35,7 @@ export async function POST(
   }
 
   // Rate limit (migrations are expensive)
-  const rateLimitResult = await checkRateLimit(`migration:${orgId}`, RATE_LIMIT_PRESETS.MIGRATION);
+  const rateLimitResult = await checkRateLimit(`migration:${orgId}`, "MIGRATION");
   if (!rateLimitResult.success) {
     return NextResponse.json(
       { error: "Too many migration requests. Please wait before starting another." },

@@ -74,16 +74,13 @@ export function TeamMemberActions({
       }
 
       setSelectedRole(newRole);
-      toast({
-        title: "Role updated",
+      toast.success("Role updated", {
         description: `${memberName}'s role has been changed to ${newRole}`,
       });
       router.refresh();
     } catch (error: any) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error.message || "Failed to update role",
-        variant: "destructive",
       });
       // Reset to original role on error
       setSelectedRole(currentRole.toLowerCase());
@@ -107,17 +104,14 @@ export function TeamMemberActions({
         throw new Error(data.error || "Failed to remove member");
       }
 
-      toast({
-        title: "Member removed",
+      toast.success("Member removed", {
         description: `${memberName} has been removed from the team`,
       });
       setShowRemoveDialog(false);
       router.refresh();
     } catch (error: any) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error.message || "Failed to remove member",
-        variant: "destructive",
       });
     } finally {
       setIsRemoving(false);

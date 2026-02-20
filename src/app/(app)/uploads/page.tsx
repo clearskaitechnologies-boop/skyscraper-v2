@@ -28,7 +28,7 @@ export default async function UploadsPage() {
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border border-slate-200/50 bg-white/80 p-6 shadow-sm backdrop-blur-xl dark:border-slate-700/50 dark:bg-slate-900/80">
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <Image className="h-4 w-4 text-blue-500" alt="" /> Photos
+            <Image className="h-4 w-4 text-blue-500" /> Photos
           </div>
           <p className="mt-2 text-3xl font-bold">—</p>
           <p className="text-xs text-slate-400">Uploaded images</p>

@@ -43,8 +43,7 @@ export function ClaimWeatherTab({ claimId, propertyAddress, currentDol }: ClaimW
       }
 
       setSelectedDol(date);
-      toast({
-        title: "Date of Loss Updated",
+      toast.success("Date of Loss Updated", {
         description: `Claim DOL set to ${new Date(date).toLocaleDateString()}`,
       });
 
@@ -55,19 +54,16 @@ export function ClaimWeatherTab({ claimId, propertyAddress, currentDol }: ClaimW
       router.refresh();
     } catch (error) {
       logger.error("Error updating DOL:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to update date of loss. Please try again.",
-        variant: "destructive",
       });
     }
   };
 
   const handleReportGenerated = (reportId: string) => {
-    toast({
-      title: "Report Generated",
-      description: "Weather analysis report has been saved",
-    });
+    toast.success("Report Generated", {
+        description: "Weather analysis report has been saved",
+      });
     
     // Switch to saved reports tab
     setActiveTab("saved-reports");

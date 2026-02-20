@@ -26,7 +26,13 @@ export async function generateClaimNarratives(input: {
     }
 
     // Authenticate and authorize
-    const { userId, orgId } = await requireAuth();
+    const authResult = await requireAuth();
+    const { userId, orgId } = authResult as {
+      userId: string;
+      orgId: string;
+      role: string;
+      membershipId: string;
+    };
     if (!orgId) {
       throw new Error("Organization access required");
     }

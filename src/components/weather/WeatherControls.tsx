@@ -43,15 +43,12 @@ export function WeatherControls({ lat, lon, orgId, propertyId }: WeatherControls
       }
 
       await pullQuickDol(lat, lon);
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Quick DOL pulled successfully (365-day scan)",
       });
     } catch (err) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error || "Failed to pull Quick DOL",
-        variant: "destructive",
       });
     }
   };
@@ -59,15 +56,12 @@ export function WeatherControls({ lat, lon, orgId, propertyId }: WeatherControls
   const handleGeneratePdf = async () => {
     try {
       await generatePdf(lat, lon, orgId, propertyId);
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "PDF generated successfully",
       });
     } catch (err) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: error || "Failed to generate PDF",
-        variant: "destructive",
       });
     }
   };

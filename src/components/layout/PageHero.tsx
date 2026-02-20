@@ -36,7 +36,7 @@ export function PageHero({
   const effectiveSubtitle = subtitle ?? description;
 
   // Auto-detect section from current route when no explicit section is given
-  const resolvedSection: SectionTheme = section ?? getSectionTheme(pathname);
+  const resolvedSection: SectionTheme = section ?? getSectionTheme(pathname || "");
 
   // Priority: resolvedSection (explicit or auto-detected) ALWAYS wins.
   // Fallback to "command" theme if section is somehow invalid.

@@ -1,5 +1,5 @@
-import crypto from "crypto";
 import { logger } from "@/lib/logger";
+import crypto from "crypto";
 import { NextResponse } from "next/server";
 
 import { getDelegate } from "@/lib/db/modelAliases";
@@ -39,7 +39,7 @@ export async function GET() {
 // Create a new webhook
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  const rl = await checkRateLimit(`webhook-manage:${ip}`, "webhook-manage-create");
+  const rl = await checkRateLimit(`webhook-manage:${ip}`, "WEBHOOK");
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
   }

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Rate limiting
-    const rateLimit = await checkRateLimit(userId, "estimate-priced");
+    const rateLimit = await checkRateLimit(userId, "API");
     if (!rateLimit.success) {
       return NextResponse.json(
         {

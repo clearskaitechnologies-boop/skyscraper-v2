@@ -21,7 +21,7 @@ function AcceptInviteContent() {
   const router = useRouter();
   const { isSignedIn, isLoaded } = useUser();
 
-  const token = searchParams.get("token");
+  const token = searchParams?.get("token");
 
   const [invite, setInvite] = useState<InviteInfo | null>(null);
   const [loading, setLoading] = useState(true);

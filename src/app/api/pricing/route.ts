@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { getAIPricing } from "@/lib/ai/pricing";
@@ -10,21 +10,23 @@ export async function GET(req: Request) {
   const { userId } = await auth();
   if (!userId) {
     // Anomaly logging of repeated unauthorized access attempts
-    logger.warn(`[pricing] Unauthorized access attempt productId=${new URL(req.url).searchParams.get('productId')}`);
+    logger.warn(
+      `[pricing] Unauthorized access attempt productId=${new URL(req.url).searchParams.get("productId")}`
+    );
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const { searchParams } = new URL(req.url);
   const productId = searchParams.get("productId");
   const market = searchParams.get("market") ?? "US";
-  
+
   if (!productId) {
     return NextResponse.json({ error: "Missing productId" }, { status: 400 });
   }
 
   // Rate limit pricing lookups per user+product
   const rlKey = `${userId}:${productId}`;
-  const rl = await checkRateLimit(rlKey, 'pricing-lookup');
+  const rl = await checkRateLimit(rlKey, "PUBLIC");
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
   }
@@ -56,19 +58,19 @@ export async function GET(req: Request) {
          VALUES ($1, $2, 'ea', $3, 'ai')`,
         [productId, market, aiPrice]
       );
-      
-      return NextResponse.json({ 
-        price: aiPrice, 
-        unit: "ea", 
+
+      return NextResponse.json({
+        price: aiPrice,
+        unit: "ea",
         source: "ai",
         rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
       });
     }
 
     // 3) No price available
-    return NextResponse.json({ 
-      price: null, 
-      unit: "ea", 
+    return NextResponse.json({
+      price: null,
+      unit: "ea",
       source: "none",
       rateLimit: { remaining: rl.remaining, limit: rl.limit, reset: rl.reset },
     });

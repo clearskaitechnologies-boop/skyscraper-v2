@@ -24,20 +24,16 @@ export function AvatarUploader({ currentPhotoUrl, onUploadComplete, userId }: Av
 
     // Validate file type
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Invalid file type",
+      toast.error("Invalid file type", {
         description: "Please upload an image file",
-        variant: "destructive",
       });
       return;
     }
 
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
+      toast.error("File too large", {
         description: "Please upload an image smaller than 5MB",
-        variant: "destructive",
       });
       return;
     }
@@ -82,16 +78,13 @@ export function AvatarUploader({ currentPhotoUrl, onUploadComplete, userId }: Av
 
       setPreviewUrl(url);
       onUploadComplete(url);
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Profile photo updated successfully",
       });
     } catch (error) {
       logger.error("Upload error:", error);
-      toast({
-        title: "Upload failed",
+      toast.error("Upload failed", {
         description: "Failed to upload photo. Please try again.",
-        variant: "destructive",
       });
     } finally {
       setUploading(false);

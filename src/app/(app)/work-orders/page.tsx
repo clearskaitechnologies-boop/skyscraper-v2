@@ -52,18 +52,18 @@ export default async function WorkOrdersPage() {
           claims: { select: { id: true, claimNumber: true, title: true } },
         },
       });
-      return data.map((w: Record<string, unknown>) => ({
+      return data.map((w) => ({
         id: w.id,
-        title: w.title,
-        description: w.description,
-        status: w.status,
-        priority: w.priority,
-        claimNumber: w.claims?.claimNumber ?? "—",
-        claimTitle: w.claims?.title ?? "—",
-        assignedTo: w.foreman,
-        dueDate: w.scheduledStart?.toISOString().split("T")[0] ?? null,
+        title: w.title as string | null,
+        description: w.description as string | null,
+        status: w.status as string,
+        priority: w.priority as string,
+        claimNumber: (w as any).claims?.claimNumber ?? "—",
+        claimTitle: (w as any).claims?.title ?? "—",
+        assignedTo: w.foreman as string | null,
+        dueDate: (w.scheduledStart as Date | null)?.toISOString().split("T")[0] ?? null,
         materials: w.materials as any[] | null,
-        createdAt: w.createdAt.toISOString().split("T")[0],
+        createdAt: (w.createdAt as Date).toISOString().split("T")[0],
       }));
     },
     []

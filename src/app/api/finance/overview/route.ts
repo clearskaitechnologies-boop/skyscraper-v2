@@ -95,7 +95,7 @@ export async function GET() {
 
     // Build commission summary
     const commissionSummary: Record<string, { total: number; count: number }> = {};
-    for (const group of commissions as Record<string, unknown>[]) {
+    for (const group of commissions as any[]) {
       commissionSummary[group.status] = {
         total: Number(group._sum?.commission_amount ?? 0),
         count: group._count ?? 0,

@@ -10,7 +10,7 @@ import { Construction } from "lucide-react";
 
 export default function GovernanceRules() {
   return (
-    <PageContainer title="Governance Rules">
+    <PageContainer>
       <div className="flex flex-col items-center justify-center py-20 text-center">
         <Construction className="mb-4 h-12 w-12 text-muted-foreground" />
         <h2 className="text-xl font-semibold">Governance Rules</h2>

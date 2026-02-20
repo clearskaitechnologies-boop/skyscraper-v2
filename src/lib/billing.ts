@@ -52,7 +52,7 @@ export async function getUserPlanAndTokens(userId?: string): Promise<UserPlanAnd
     }
 
     // Get latest token balance from ledger
-    const latestTokenEntry = await prisma.tokens_ledger.findFirst({
+    const latestTokenEntry = await (prisma as any).tokens_ledger.findFirst({
       where: { org_id: org.id },
       orderBy: { createdAt: "desc" },
     });
@@ -121,7 +121,7 @@ export async function consumeTokens(
     }
 
     // Get current balance from latest ledger entry
-    const latestEntry = await prisma.tokens_ledger.findFirst({
+    const latestEntry = await (prisma as any).tokens_ledger.findFirst({
       where: { org_id: org.id },
       orderBy: { createdAt: "desc" },
     });
@@ -133,7 +133,7 @@ export async function consumeTokens(
     }
 
     // Atomic token consumption - create ledger entry
-    await prisma.tokens_ledger.create({
+    await (prisma as any).tokens_ledger.create({
       data: {
         org_id: org.id,
         change: -count,

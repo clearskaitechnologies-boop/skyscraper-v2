@@ -1,7 +1,7 @@
 import { requireOrg } from "./org";
 
 export async function assertPaidAccess(minPlan: "Solo" | "Business" | "Enterprise" = "Solo") {
-  const org = await requireOrg();
+  const org = (await requireOrg()) as any;
 
   // BETA MODE: Allow FREE tier access during beta testing
   // TODO: Re-enable strict enforcement after beta when Stripe is activated
@@ -27,7 +27,7 @@ export async function assertPaidAccess(minPlan: "Solo" | "Business" | "Enterpris
 }
 
 export async function checkTokenBalance(type: "ai" | "dolCheck" | "dolFull", needed: number = 1) {
-  const org = await requireOrg();
+  const org = (await requireOrg()) as any;
 
   if (!org.tokens) {
     throw new Error("NO_TOKEN_WALLET");

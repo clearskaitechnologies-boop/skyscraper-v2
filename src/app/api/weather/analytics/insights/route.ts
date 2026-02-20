@@ -48,17 +48,16 @@ export async function POST(req: NextRequest) {
     let recentEvents: any[] = [];
     try {
       recentEvents = await prisma.weather_events.findMany({
-        orderBy: { date: "desc" },
+        orderBy: { timeUtc: "desc" },
         take: 50,
         select: {
           id: true,
           type: true,
-          severity: true,
-          date: true,
-          location: true,
-          state: true,
-          county: true,
-          description: true,
+          magnitude: true,
+          timeUtc: true,
+          source: true,
+          propertyId: true,
+          metadataJson: true,
         },
       });
     } catch {

@@ -249,7 +249,7 @@ export function AIControlPanel({
         return;
       }
 
-      logger.debug("[AIControlPanel] Generating report with", images.length, "images");
+      logger.debug(`[AIControlPanel] Generating report with ${images.length} images`);
 
       const response = await fetch("/api/ai/report-builder", {
         method: "POST",

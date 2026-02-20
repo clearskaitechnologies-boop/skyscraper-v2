@@ -9,6 +9,7 @@ import { resolveClaim } from "@/lib/claims/resolveClaim";
 import { prismaModel } from "@/lib/db/prismaModel";
 import { logger } from "@/lib/logger";
 import { getActiveOrg } from "@/lib/org/getActiveOrg";
+import prisma from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
@@ -214,9 +215,7 @@ export async function GET(request: NextRequest, { params }: { params: { claimId:
           .count({ where: { claimId: claim.id } })
           .catch(() => 0),
         // timeline events
-        prismaModel("claim_timeline_events")
-          .count({ where: { claimId: claim.id } })
-          .catch(() => 0),
+        prisma.claim_timeline_events.count({ where: { claim_id: claim.id } }).catch(() => 0),
         claim.propertyId
           ? prismaModel("properties")
               .findUnique({

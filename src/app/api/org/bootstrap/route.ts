@@ -14,8 +14,8 @@
  * Returns: { ok: true, orgId, created: boolean } or { ok: false, error }
  */
 
-import { auth, currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
       : "User";
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || `${userId}@skaiscrape.com`;
 
-    logger.debug("[bootstrap] Starting for user:", userId, "clerkOrgId:", clerkOrgId);
+    logger.debug(`[bootstrap] Starting for user: ${userId} clerkOrgId: ${clerkOrgId}`);
 
     // Use a transaction for atomicity
     const result = await prisma.$transaction(async (tx) => {
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
 
       const orphanedMemberships = allMemberships.filter((m) => !m.Org);
       if (orphanedMemberships.length > 0) {
-        logger.debug("[bootstrap] Cleaning up", orphanedMemberships.length, "orphaned memberships");
+        logger.debug(`[bootstrap] Cleaning up ${orphanedMemberships.length} orphaned memberships`);
         await tx.user_organizations.deleteMany({
           where: {
             id: { in: orphanedMemberships.map((m) => m.id) },
@@ -93,7 +93,7 @@ export async function POST(req: Request) {
             select: { id: true, name: true, clerkOrgId: true },
           });
           created = org.id === newOrgId; // Only true if we actually created it
-          logger.debug("[bootstrap] Upserted org for Clerk org:", org.id, "created:", created);
+          logger.debug(`[bootstrap] Upserted org for Clerk org: ${org.id} created: ${created}`);
         }
       } else {
         // No Clerk org - check existing VALID membership (after cleanup)
@@ -155,7 +155,7 @@ export async function POST(req: Request) {
     // STEP 4: Seed demo claim (outside transaction - non-critical)
     await seedDemoClaimForOrg(result.org.id);
 
-    logger.debug("[bootstrap] Complete. OrgId:", result.org.id, "Created:", result.created);
+    logger.debug(`[bootstrap] Complete. OrgId: ${result.org.id} Created: ${result.created}`);
 
     return NextResponse.json({
       ok: true,

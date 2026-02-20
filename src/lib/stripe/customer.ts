@@ -17,7 +17,7 @@ export async function getStripeCustomerIdForUser(
   if (existing) return existing;
 
   // Create new Stripe customer
-  const customer = await stripe.customers.create({
+  const customer = await stripe!.customers.create({
     email,
     name,
     metadata: { userId },

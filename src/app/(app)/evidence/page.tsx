@@ -160,7 +160,7 @@ export default function EvidencePage() {
                   className="flex items-center gap-3 rounded-lg bg-[var(--surface-2)] p-3"
                 >
                   {file.type.startsWith("image/") ? (
-                    <Image className="h-5 w-5 text-blue-600" alt="" />
+                    <Image className="h-5 w-5 text-blue-600" />
                   ) : (
                     <FileText className="h-5 w-5 text-blue-600" />
                   )}

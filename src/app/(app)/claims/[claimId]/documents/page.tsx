@@ -53,9 +53,9 @@ export default function ClaimDocumentsPage() {
       setError(""); // Clear any previous errors
     } catch (err) {
       logger.error("[CLAIMS_DOCS] Fetch error:", {
-        status: err.status,
-        message: err.message,
-        claimId: params.claimId,
+        status: (err as any).status,
+        message: (err as any).message,
+        claimId,
       });
       // Handle specific error statuses
       if (err.status === 404) {
@@ -112,7 +112,7 @@ export default function ClaimDocumentsPage() {
 
   const toggleClientVisibility = async (documentId: string, currentValue: boolean) => {
     try {
-      const response = await fetch(`/api/claims/${params.claimId}/files/${documentId}`, {
+      const response = await fetch(`/api/claims/${claimId}/files/${documentId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ visibleToClient: !currentValue }),
@@ -154,10 +154,7 @@ export default function ClaimDocumentsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            onClick={() => router.push(`/claims/${params.claimId}/completion`)}
-            className="gap-2"
-          >
+          <Button onClick={() => router.push(`/claims/${claimId}/completion`)} className="gap-2">
             <FileCheck className="h-5 w-5" />
             Generate Documents
           </Button>
@@ -166,12 +163,12 @@ export default function ClaimDocumentsPage() {
 
       {/* Upload Component */}
       <div className="mb-8">
-        <DocumentUpload claimId={params.claimId} onUploadComplete={handleUploadComplete} />
+        <DocumentUpload claimId={claimId!} onUploadComplete={handleUploadComplete} />
       </div>
 
       {/* Client Document Sharing Component */}
       <div className="mb-8">
-        <ClientDocumentSharing claimId={params.claimId} onClientAdded={fetchDocuments} />
+        <ClientDocumentSharing claimId={claimId!} onClientAdded={fetchDocuments} />
       </div>
 
       {/* Error - show friendly message during deployment drift */}
@@ -207,10 +204,7 @@ export default function ClaimDocumentsPage() {
           <p className="mb-6 text-gray-600 dark:text-gray-400 dark:text-gray-600">
             Generate your first document using the completion tools
           </p>
-          <Button
-            onClick={() => router.push(`/claims/${params.claimId}/completion`)}
-            className="gap-2"
-          >
+          <Button onClick={() => router.push(`/claims/${claimId}/completion`)} className="gap-2">
             <FileCheck className="h-5 w-5" />
             Go to Completion
           </Button>

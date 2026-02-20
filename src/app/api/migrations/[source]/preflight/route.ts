@@ -205,9 +205,9 @@ async function checkForDuplicates(
   let phoneMatches = 0;
 
   if (emails.length > 0) {
-    const existingByEmail = await prisma.crm_contacts.count({
+    const existingByEmail = await prisma.contacts.count({
       where: {
-        org_id: orgId,
+        orgId,
         email: { in: emails },
       },
     });
@@ -216,9 +216,9 @@ async function checkForDuplicates(
   }
 
   if (phones.length > 0) {
-    const existingByPhone = await prisma.crm_contacts.count({
+    const existingByPhone = await prisma.contacts.count({
       where: {
-        org_id: orgId,
+        orgId,
         phone: { in: phones },
       },
     });

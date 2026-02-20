@@ -1095,7 +1095,7 @@ function FeedPostCard({ post, onLike }: { post: FeedPost; onLike: () => void }) 
               if (navigator.share) {
                 try {
                   await navigator.share({
-                    title: `${post.author.name} on SkaiScraper`,
+                    title: `${post.authorName} on SkaiScraper`,
                     text: post.content.substring(0, 100),
                     url: postUrl,
                   });

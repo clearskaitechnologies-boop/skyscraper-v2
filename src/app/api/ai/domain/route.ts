@@ -15,7 +15,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { AICoreRouter } from "@/lib/ai/router";
-import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 import {
   requireActiveSubscription,
   SubscriptionRequiredError,
@@ -23,13 +23,13 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit";
 import { domainSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
 
-async function POST_INNER(request: NextRequest, ctx: { userId: string; orgId: string }) {
+async function POST_INNER(request: NextRequest, ctx: AiBillingContext) {
   try {
     const { userId, orgId } = ctx;
 
     // ── Billing guard ──
     try {
-      await requireActiveSubscription(orgId);
+      await requireActiveSubscription(orgId!);
     } catch (error) {
       if (error instanceof SubscriptionRequiredError) {
         return NextResponse.json(

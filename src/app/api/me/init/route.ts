@@ -52,11 +52,12 @@ export async function POST(request: Request) {
           where: { clerkOrgId: userId },
           update: {},
           create: {
+            id: randomUUID(),
             name: orgName,
             clerkOrgId: userId,
             createdAt: new Date(),
             updatedAt: new Date(),
-          },
+          } as any,
         });
         targetOrgId = userId;
         createdOrg = true;
@@ -94,11 +95,12 @@ export async function POST(request: Request) {
           where: { clerkOrgId: orgId! },
           update: {},
           create: {
+            id: randomUUID(),
             name: `Organization`,
             clerkOrgId: orgId!,
             createdAt: new Date(),
             updatedAt: new Date(),
-          },
+          } as any,
         });
         createdOrg = true;
 
@@ -139,12 +141,13 @@ export async function POST(request: Request) {
       // Create user in database
       dbUser = await prisma.users.create({
         data: {
+          id: randomUUID(),
           clerkUserId: userId,
           email: user.emailAddresses[0]?.emailAddress || "",
           name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || null,
-          role: "ADMIN", // First user in Org becomes admin
+          role: "ADMIN",
           orgId: dbOrg.id,
-        },
+        } as any,
       });
       createdUser = true;
     } else {

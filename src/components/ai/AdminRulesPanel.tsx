@@ -71,10 +71,8 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
       setRules(data.rules || []);
     } catch (err) {
       logger.error("Failed to fetch rules:", err);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to load rules",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -94,15 +92,12 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
       }
 
       setRules(rules.map((r) => (r.id === ruleId ? { ...r, enabled } : r)));
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: `Rule ${enabled ? "enabled" : "disabled"}`,
       });
     } catch (err) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to update rule",
-        variant: "destructive",
       });
     }
   };
@@ -120,15 +115,12 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
       }
 
       setRules(rules.filter((r) => r.id !== ruleId));
-      toast({
-        title: "Success",
+      toast.success("Success", {
         description: "Rule deleted",
       });
     } catch (err) {
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to delete rule",
-        variant: "destructive",
       });
     }
   };
@@ -192,10 +184,9 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
                   onSave={(newRule) => {
                     setRules([...rules, newRule]);
                     setIsCreateDialogOpen(false);
-                    toast({
-                      title: "Success",
-                      description: "Rule created successfully",
-                    });
+                    toast.success("Success", {
+        description: "Rule created successfully",
+      });
                   }}
                   onCancel={() => setIsCreateDialogOpen(false)}
                 />
@@ -279,10 +270,9 @@ export function AdminRulesPanel({ orgId }: AdminRulesPanelProps) {
                               rule={rule}
                               onSave={(updatedRule) => {
                                 setRules(rules.map((r) => (r.id === rule.id ? updatedRule : r)));
-                                toast({
-                                  title: "Success",
-                                  description: "Rule updated successfully",
-                                });
+                                toast.success("Success", {
+        description: "Rule updated successfully",
+      });
                               }}
                               onCancel={() => {}}
                             />
@@ -351,10 +341,8 @@ function RuleEditor({ rule, onSave, onCancel }: RuleEditorProps) {
       // For now, just return the data
       onSave(ruleData);
     } catch (err) {
-      toast({
-        title: "Invalid JSON",
+      toast.error("Invalid JSON", {
         description: "Please check your DSL syntax",
-        variant: "destructive",
       });
     } finally {
       setSaving(false);

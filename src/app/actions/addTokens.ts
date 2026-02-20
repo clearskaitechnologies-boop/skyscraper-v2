@@ -47,7 +47,7 @@ export async function createTokenCheckout(orgId: string, pack: string) {
   }
 
   try {
-    const session = await stripe.checkout.sessions.create({
+    const session = await stripe!.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
       line_items: [{ price: packInfo.priceId, quantity: 1 }],

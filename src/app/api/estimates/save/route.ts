@@ -41,6 +41,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
 
     const estimates = await prisma.estimates.create({
       data: {
+        id: crypto.randomUUID(),
         orgId,
         projectId: "default", // Required field
         authorId: userId,
@@ -63,7 +64,8 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
           lineItems: body.lineItems,
           opEnabled: body.opEnabled,
           ...body.meta,
-        } as Record<string, unknown>,
+        } as any,
+        updatedAt: new Date(),
       },
     });
 

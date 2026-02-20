@@ -117,6 +117,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
     // Create estimates with line items
     const estimates = await prisma.estimates.create({
       data: {
+        id: crypto.randomUUID(),
         orgId,
         projectId: data.projectId,
         authorId: userId,
@@ -141,6 +142,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
         source: data.source,
         notes: data.notes,
         status: "DRAFT",
+        updatedAt: new Date(),
         estimate_line_items: {
           create: items,
         },

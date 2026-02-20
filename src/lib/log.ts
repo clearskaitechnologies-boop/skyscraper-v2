@@ -80,7 +80,10 @@ function emitLog(entry: LogEntry): void {
   // Also log human-readable format in development
   if (process.env.NODE_ENV === "development") {
     const emoji = level === "error" ? "❌" : level === "warn" ? "⚠️" : "ℹ️";
-    logger.debug(`${emoji} [${entry.event}]`, entry.context, entry.error || "");
+    logger.debug(`${emoji} [${entry.event}]`, {
+      ...entry.context,
+      error: entry.error || undefined,
+    });
   }
 }
 

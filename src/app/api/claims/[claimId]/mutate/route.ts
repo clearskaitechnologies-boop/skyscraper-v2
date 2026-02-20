@@ -434,12 +434,12 @@ async function handleInviteClient(
 
   await sendEmail({
     to: payload.clientEmail,
-    template: TEMPLATES.CLIENT_INVITE,
-    data: {
+    subject: TEMPLATES.CLIENT_INVITE.subject,
+    html: TEMPLATES.CLIENT_INVITE.getHtml({
       companyName,
       clientName: payload.clientName || "there",
       magicLink,
-    },
+    }),
   }).catch(logger.error);
 
   return NextResponse.json({
@@ -466,7 +466,7 @@ async function handleAttachContact(
   // Update claim with contact
   await prisma.claims.update({
     where: { id: claimId },
-    data: { contactId: payload.contactId },
+    data: { contactId: payload.contactId } as any,
   });
 
   return NextResponse.json({
@@ -474,7 +474,7 @@ async function handleAttachContact(
     message: "Contact attached to claim",
     contact: {
       id: contact.id,
-      name: contact.name,
+      name: `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || contact.email,
       email: contact.email,
     },
   });
@@ -486,14 +486,17 @@ async function handleAddNote(
   userId: string,
   payload: Extract<ActionPayload, { action: "add_note" }>
 ) {
-  const note = await prisma.claim_notes.create({
+  const note = await prisma.claim_timeline_events.create({
     data: {
       id: crypto.randomUUID(),
       claim_id: claimId,
       org_id: orgId,
-      created_by: userId,
-      content: payload.content,
-      is_internal: payload.type === "internal",
+      actor_id: userId,
+      actor_type: "user",
+      type: payload.type === "internal" ? "internal_note" : "note",
+      description: payload.content,
+      visible_to_client: payload.type !== "internal",
+      occurred_at: new Date(),
     },
   });
 
@@ -501,9 +504,9 @@ async function handleAddNote(
     success: true,
     note: {
       id: note.id,
-      content: note.content,
-      isInternal: note.is_internal,
-      createdAt: note.created_at,
+      content: note.description,
+      isInternal: !note.visible_to_client,
+      createdAt: note.occurred_at,
     },
   });
 }
@@ -519,11 +522,12 @@ async function handleAddTimelineEvent(
       id: crypto.randomUUID(),
       claim_id: claimId,
       org_id: orgId,
-      created_by: userId,
-      title: payload.title,
-      description: payload.description,
-      event_type: payload.eventType,
+      actor_id: userId,
+      actor_type: "user",
+      type: payload.eventType || "custom",
+      description: `${payload.title || ""}: ${payload.description || ""}`.trim(),
       visible_to_client: payload.visibleToClient,
+      occurred_at: new Date(),
     },
   });
 
@@ -531,11 +535,11 @@ async function handleAddTimelineEvent(
     success: true,
     event: {
       id: event.id,
-      title: event.title,
+      title: event.type,
       description: event.description,
-      eventType: event.event_type,
+      eventType: event.type,
       visibleToClient: event.visible_to_client,
-      createdAt: event.created_at,
+      createdAt: event.occurred_at,
     },
   });
 }

@@ -276,25 +276,32 @@ export default async function AdminDashboardPage() {
             <p className="py-4 text-center text-sm text-slate-400">No recent activity</p>
           ) : (
             <div className="space-y-3">
-              {stats.recentActivity.map((activity) => (
-                <div
-                  key={activity.id}
-                  className="flex items-start gap-3 rounded-lg border border-[color:var(--border)] p-3"
-                >
-                  <div className="rounded-full bg-blue-100 p-1.5 dark:bg-blue-900/50">
-                    <Activity className="h-3 w-3 text-blue-600" />
+              {stats.recentActivity.map((activity) => {
+                const a = activity as {
+                  id?: string;
+                  description?: string;
+                  action?: string;
+                  userName?: string;
+                  createdAt?: string | Date;
+                };
+                return (
+                  <div
+                    key={a.id ?? String(Math.random())}
+                    className="flex items-start gap-3 rounded-lg border border-[color:var(--border)] p-3"
+                  >
+                    <div className="rounded-full bg-blue-100 p-1.5 dark:bg-blue-900/50">
+                      <Activity className="h-3 w-3 text-blue-600" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium">{a.description || a.action}</p>
+                      <p className="text-xs text-slate-500">
+                        {a.userName && <span>{a.userName} · </span>}
+                        {a.createdAt ? new Date(a.createdAt).toLocaleString() : "—"}
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">
-                      {activity.description || activity.action}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      {activity.userName && <span>{activity.userName} · </span>}
-                      {activity.createdAt ? new Date(activity.createdAt).toLocaleString() : "—"}
-                    </p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </PageSectionCard>

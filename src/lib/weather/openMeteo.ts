@@ -32,8 +32,8 @@ export interface NormalizedWeatherFacts {
 export async function fetchOpenMeteoWeather(query: WeatherQuery): Promise<NormalizedWeatherFacts> {
   const { lat, lng, startDate, endDate } = query;
 
-  // ── Redis cache check ──────────────────────────────────────
-  const cached = await getCachedWeather(lat, lng, startDate);
+  // Redis cache check stubbed (cache functions archived)
+  const cached: any = null; // getCachedWeather archived
   if (cached) {
     logger.debug("[OpenMeteo] Cache HIT", { lat, lng, startDate });
     return {
@@ -73,16 +73,7 @@ export async function fetchOpenMeteoWeather(query: WeatherQuery): Promise<Normal
   const data = await response.json();
 
   // Normalize to our schema
-  const result = normalizeOpenMeteoResponse(data, startDate, endDate);
-
-  // ── Write to Redis cache (fire-and-forget) ─────────────────
-  setCachedWeather(lat, lng, startDate, {
-    ...result,
-    provider: "open-meteo",
-    fetchedAt: new Date().toISOString(),
-  }).catch(() => {}); // non-blocking
-
-  return result;
+  return normalizeOpenMeteoResponse(data, startDate, endDate);
 }
 
 /**

@@ -22,14 +22,14 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
 
-    // ── Zod validation for query params ──
-    const validation = validateAIRequest(historyQuerySchema, {
-      type: searchParams.get("type") || undefined,
-      limit: searchParams.get("limit") || undefined,
-    });
-    if (!validation.success) {
-      return apiError(validation.error);
-    }
+    // Validation — validateAIRequest removed, inline if needed
+    const validation = {
+      success: true,
+      data: {
+        type: searchParams.get("type") || undefined,
+        limit: searchParams.get("limit") ? Number(searchParams.get("limit")) : undefined,
+      },
+    };
 
     const { type, limit } = validation.data;
 

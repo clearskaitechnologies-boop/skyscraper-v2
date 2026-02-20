@@ -7,7 +7,7 @@ import { ClientConnectSection } from "../_components/ClientConnectSection";
 
 export default function ClaimClientPage() {
   const params = useParams();
-  const claimId = params.claimId as string;
+  const claimId = (params?.claimId ?? "") as string;
 
   return (
     <div className="space-y-6">

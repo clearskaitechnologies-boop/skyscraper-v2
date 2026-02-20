@@ -55,10 +55,10 @@ export const getInboxActivities = cache(async (): Promise<ActivityItem[]> => {
         id: activity.id,
         type: activity.type || "notification",
         title: activity.title || "New Activity",
-        description: activity.description || metadata.details || "",
+        description: (activity.description || (metadata.details as string) || "") as string,
         timestamp: activity.createdAt,
-        read: metadata.read || false,
-        priority: metadata.priority || "medium",
+        read: (metadata.read || false) as boolean,
+        priority: (metadata.priority || "medium") as ActivityItem["priority"],
         category: determineCategory(activity.type || ""),
         relatedEntityId: entityId,
         relatedEntityType: entityType,
@@ -116,7 +116,7 @@ export async function markAsRead(activityId: string): Promise<{ success: boolean
 
     await prisma.activities.update({
       where: { id: activityId },
-      data: { metadata },
+      data: { metadata: metadata as any },
     });
 
     return { success: true };
@@ -144,7 +144,7 @@ export async function markAllAsRead(): Promise<{ success: boolean; count: number
         metadata.read = true;
         await prisma.activities.update({
           where: { id: activity.id },
-          data: { metadata },
+          data: { metadata: metadata as any },
         });
         count++;
       }

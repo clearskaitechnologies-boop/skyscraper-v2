@@ -64,10 +64,7 @@ export default async function MarketplacePage({
   });
 
   return (
-    <WorkspaceShellClient
-      title="Contractor Marketplace"
-      subtitle="Find and connect with qualified contractors"
-    >
+    <WorkspaceShellClient>
       <div className="mx-auto max-w-7xl space-y-8">
         <PageHero
           section="network"

@@ -237,7 +237,7 @@ Format as professional insurance estimate ready for submission.
     });
 
     // Log AI action to console
-    logger.info("[AI Estimate] Generated estimate for claim:", claimId, {
+    logger.info(`[AI Estimate] Generated estimate for claim: ${claimId}`, {
       carrier: claim.carrier,
       inspectionsCount: claim.inspections?.length || 0,
       aiReportsCount: claim.ai_reports?.length || 0,

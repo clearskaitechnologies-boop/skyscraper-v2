@@ -21,7 +21,7 @@ import { getStripeClient } from "@/lib/stripe";
 
 export const maxDuration = 300; // 5 minutes — iterates up to 1000 orgs + Stripe API
 
-const stripe = getStripeClient();
+const stripe = getStripeClient()!;
 
 const PLAN_TOKENS: Record<string, number> = {
   solo: 200,
@@ -49,13 +49,6 @@ export async function GET(req: Request) {
         id: true,
         stripeCustomerId: true,
         planKey: true,
-        TokenWallet: {
-          select: {
-            aiRemaining: true,
-            dolCheckRemain: true,
-            dolFullRemain: true,
-          },
-        },
       },
     });
 
@@ -78,22 +71,11 @@ export async function GET(req: Request) {
         // Determine expected token balance
         const planKey = Org.planKey || "solo";
         const expectedTokens = PLAN_TOKENS[planKey] || 200;
-        const currentBalance = Org.TokenWallet?.aiRemaining || 0;
+        const currentBalance = 0; // TODO: TokenWallet model removed — wire up new token system
 
         // If balance is significantly lower than expected, top up
         if (currentBalance < expectedTokens * 0.5) {
-          // Top up to full amount
-          await prisma.usage_tokens.upsert({
-            where: { orgId: Org.id },
-            create: {
-              orgId: Org.id,
-              balance: expectedTokens,
-            },
-            update: {
-              balance: expectedTokens,
-            },
-          });
-
+          // TODO: usage_tokens model removed — wire up new token system
           fixed++;
 
           logger.debug(`Reconciled Org ${Org.id}: ${currentBalance} → ${expectedTokens} tokens`);

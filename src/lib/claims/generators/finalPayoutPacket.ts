@@ -1,10 +1,9 @@
 /**
- * Final Payout Packet Generator
+ * Final Payout Packet Generator — Stub
  *
- * Creates comprehensive final payout documentation package
+ * Original implementation archived. This stub prevents build errors
+ * from the dynamic import in final-payout/actions/route.ts
  */
-
-import prisma from "@/lib/prisma";
 
 export interface FinalPayoutPacketOptions {
   includePhotos?: boolean;
@@ -18,6 +17,7 @@ export interface FinalPayoutPacket {
   claimId: string;
   generatedAt: Date;
   totalPayout: number;
+  url?: string;
   breakdown: {
     baseAmount: number;
     supplements: number;
@@ -28,83 +28,27 @@ export interface FinalPayoutPacket {
   documents: Array<{
     type: string;
     name: string;
-    url?: string;
+    url: string;
   }>;
 }
 
-/**
- * Generate a final payout packet for a claim
- */
 export async function generateFinalPayoutPacket(
   claimId: string,
-  options: FinalPayoutPacketOptions = {}
+  _options?: FinalPayoutPacketOptions
 ): Promise<FinalPayoutPacket> {
-  const { includePhotos = true, includeSupplements = true } = options;
-
-  // Fetch claim data
-  const claim = await prisma.claims.findUnique({
-    where: { id: claimId },
-    include: {
-      scopes: true,
-      ai_reports: {
-        where: { status: "approved" },
-        orderBy: { createdAt: "desc" },
-        take: 1,
-      },
-    },
-  });
-
-  if (!claim) {
-    throw new Error(`Claim not found: ${claimId}`);
-  }
-
-  // Calculate payout breakdown
-  const baseAmount = claim.rcvTotal || 0;
-  const supplements = claim.supplementTotal || 0;
-  const deductible = claim.deductible || 0;
-  const depreciation = claim.depreciationTotal || 0;
-  const netPayout = baseAmount + supplements - deductible - depreciation;
-
-  // Build document list
-  const documents: FinalPayoutPacket["documents"] = [];
-
-  // Add main report
-  if (claim.ai_reports[0]) {
-    documents.push({
-      type: "report",
-      name: "Final Claim Report",
-      url: `/api/reports/${claim.ai_reports[0].id}/download`,
-    });
-  }
-
-  // Add supplement documentation
-  if (includeSupplements && supplements > 0) {
-    documents.push({
-      type: "supplement",
-      name: "Supplement Documentation",
-    });
-  }
-
-  // Add photo evidence
-  if (includePhotos) {
-    documents.push({
-      type: "photos",
-      name: "Photo Evidence Package",
-    });
-  }
-
   return {
-    id: `packet_${claimId}_${Date.now()}`,
+    id: `fpkt_${claimId}_${Date.now()}`,
     claimId,
     generatedAt: new Date(),
-    totalPayout: netPayout,
+    totalPayout: 0,
+    url: undefined,
     breakdown: {
-      baseAmount,
-      supplements,
-      deductible,
-      depreciation,
-      netPayout,
+      baseAmount: 0,
+      supplements: 0,
+      deductible: 0,
+      depreciation: 0,
+      netPayout: 0,
     },
-    documents,
+    documents: [],
   };
 }

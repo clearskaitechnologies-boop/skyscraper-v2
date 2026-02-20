@@ -280,6 +280,7 @@ export async function POST(req: NextRequest) {
         const { getUserName } = await import("@/lib/clerk-utils");
         await prisma.activities.create({
           data: {
+            id: crypto.randomUUID(),
             orgId: Org.id,
             type: "file_uploaded",
             title: "File Uploaded",
@@ -290,7 +291,8 @@ export async function POST(req: NextRequest) {
             userName: await getUserName(userId),
             leadId: leadId ?? undefined,
             claimId: claimId ?? undefined,
-          } as Record<string, unknown>,
+            updatedAt: new Date(),
+          },
         });
 
         results.push({

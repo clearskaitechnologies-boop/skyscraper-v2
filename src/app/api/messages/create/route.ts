@@ -80,7 +80,7 @@ export const POST = withAuth(async (req: NextRequest, { userId, orgId }) => {
           firstName: clientRecord.name?.split(" ")[0] || clientRecord.name || "Client",
           lastName: clientRecord.name?.split(" ").slice(1).join(" ") || "",
           email: clientRecord.email,
-        } as Record<string, unknown>;
+        } as any;
       }
     }
 

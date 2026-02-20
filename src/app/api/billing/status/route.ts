@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { isBetaMode } from "@/lib/beta";
@@ -98,10 +98,9 @@ export async function GET() {
       });
     }
 
-    // Get token wallet
-    const wallet = await prisma.usage_tokens.findUnique({
-      where: { orgId: org.id },
-    });
+    // Token wallet: usage_tokens table not yet migrated — stub balance to 0
+    // TODO: replace with real query once usage_tokens model is added to schema
+    const wallet: { balance: number } | null = { balance: 0 };
 
     // Get claims count for current month
     const now = new Date();

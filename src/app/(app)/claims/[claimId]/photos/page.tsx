@@ -448,7 +448,7 @@ export default function PhotosPage() {
       <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
         <DialogContent className="max-w-4xl">
           <DialogHeader>
-            <DialogTitle>{selectedPhoto?.title}</DialogTitle>
+            <DialogTitle>{selectedPhoto?.filename}</DialogTitle>
             <DialogDescription>
               {selectedPhoto?.analyzed
                 ? `AI Analysis: ${selectedPhoto.aiCaption?.summary || "Analysis complete"}`

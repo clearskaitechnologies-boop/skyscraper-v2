@@ -125,55 +125,22 @@ export async function POST(req: NextRequest) {
             OR: [{ email: email }, { clerkUserId: userId }],
           },
           include: {
-            Org: {
-              include: {
-                TokenWallet: true,
-              },
-            },
+            Org: true,
           },
         });
 
         if (user && user.Org) {
-          // Ensure token wallet exists
-          let tokenWallet = user.Org.TokenWallet;
-          if (!tokenWallet) {
-            tokenWallet = await prisma.tokenWallet.create({
-              data: {
-                id: crypto.randomUUID(),
-                orgId: user.orgId,
-                aiRemaining: 10, // Start with feedback bonus
-                dolCheckRemain: 0,
-                dolFullRemain: 0,
-                updatedAt: new Date(),
-              },
-            });
-          } else {
-            // Add 10 bonus AI tokens for feedback during beta
-            await prisma.tokenWallet.update({
-              where: { orgId: user.orgId },
-              data: {
-                aiRemaining: {
-                  increment: 10,
-                },
-                updatedAt: new Date(),
-              },
-            });
-          }
+          // TODO: TokenWallet model removed — wire up new token system for feedback bonus
+          logger.debug(`Feedback received from org ${user.Org.name}`);
 
-          logger.debug(`Added 10 bonus AI tokens to org ${user.Org.name} for beta feedback`);
-
-          // Log for admin dashboard
-          logger.info("Feedback bonus awarded:", {
+          logger.info("Feedback bonus noted", {
             timestamp: new Date().toISOString(),
             email: user.email,
-            tokensAdded: 10,
           });
 
           return NextResponse.json({
             success: true,
-            description:
-              "Thank you for your feedback! We've added 10 bonus AI tokens to your account.",
-            tokensAdded: 10,
+            description: "Thank you for your feedback!",
           });
         }
       } catch (tokenError) {

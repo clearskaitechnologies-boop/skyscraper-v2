@@ -66,10 +66,8 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
       }
     } catch (error) {
       logger.error("Failed to fetch trades:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to load trade partners",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -78,10 +76,8 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
 
   const assignTrade = async () => {
     if (!selectedTradeId) {
-      toast({
-        title: "Select a trade partner",
+      toast.error("Select a trade partner", {
         description: "Please choose a trade partner to assign",
-        variant: "destructive",
       });
       return;
     }
@@ -98,27 +94,22 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
       });
 
       if (response.ok) {
-        toast({
-          title: "Trade partner assigned",
-          description: "Successfully linked trade partner to claim",
-        });
+        toast.success("Trade partner assigned", {
+        description: "Successfully linked trade partner to claim",
+      });
         setSelectedTradeId("");
         setSelectedRole("Contractor");
         fetchData();
       } else {
         const data = await response.json();
-        toast({
-          title: "Failed to assign",
-          description: data.error || "Could not assign trade partner",
-          variant: "destructive",
-        });
+        toast.error("Failed to assign", {
+        description: data.error || "Could not assign trade partner",
+      });
       }
     } catch (error) {
       logger.error("Failed to assign trade:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to assign trade partner",
-        variant: "destructive",
       });
     } finally {
       setAssigning(false);
@@ -134,24 +125,19 @@ export function ClaimTradesPanel({ claimId }: ClaimTradesPanelProps) {
       });
 
       if (response.ok) {
-        toast({
-          title: "Trade partner removed",
-          description: `${businessName} unassigned from claim`,
-        });
+        toast.success("Trade partner removed", {
+        description: `${businessName} unassigned from claim`,
+      });
         fetchData();
       } else {
-        toast({
-          title: "Failed to remove",
-          description: "Could not unassign trade partner",
-          variant: "destructive",
-        });
+        toast.error("Failed to remove", {
+        description: "Could not unassign trade partner",
+      });
       }
     } catch (error) {
       logger.error("Failed to unassign trade:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to unassign trade partner",
-        variant: "destructive",
       });
     }
   };

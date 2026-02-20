@@ -43,7 +43,9 @@ export async function POST(req: NextRequest) {
     }
     const { step, data } = parsed.data;
 
-    logger.debug("[Trades Onboarding] Step:", step, "Data keys:", Object.keys(data || {}));
+    logger.debug(
+      `[Trades Onboarding] Step: ${step} Data keys: ${Object.keys(data || {}).join(", ")}`
+    );
 
     // ========================================================================
     // QUICK UPDATE: AVATAR ONLY

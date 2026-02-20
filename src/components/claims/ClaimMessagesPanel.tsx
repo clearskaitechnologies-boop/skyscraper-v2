@@ -63,10 +63,8 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
       }
     } catch (error) {
       logger.error("Failed to fetch threads:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to load messages",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -87,19 +85,15 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
 
   const sendMessage = async () => {
     if (!messageBody.trim()) {
-      toast({
-        title: "Message required",
+      toast.error("Message required", {
         description: "Please enter a message",
-        variant: "destructive",
       });
       return;
     }
 
     if (!selectedThread && !newSubject.trim()) {
-      toast({
-        title: "Subject required",
+      toast.error("Subject required", {
         description: "Please enter a subject for new threads",
-        variant: "destructive",
       });
       return;
     }
@@ -118,10 +112,9 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
       });
 
       if (response.ok) {
-        toast({
-          title: "Message sent",
-          description: "Your message has been sent successfully",
-        });
+        toast.success("Message sent", {
+        description: "Your message has been sent successfully",
+      });
         setMessageBody("");
         setNewSubject("");
         setShowNewThread(false);
@@ -131,18 +124,14 @@ export function ClaimMessagesPanel({ claimId }: ClaimMessagesPanelProps) {
         }
       } else {
         const data = await response.json();
-        toast({
-          title: "Failed to send",
-          description: data.error || "Could not send message",
-          variant: "destructive",
-        });
+        toast.error("Failed to send", {
+        description: data.error || "Could not send message",
+      });
       }
     } catch (error) {
       logger.error("Failed to send message:", error);
-      toast({
-        title: "Error",
+      toast.error("Error", {
         description: "Failed to send message",
-        variant: "destructive",
       });
     } finally {
       setSending(false);

@@ -81,9 +81,9 @@ export default function ContractorMap({ contractors, origin }: ContractorMapProp
     );
   }
 
-  const MapComponent = Map as React.ComponentType<Record<string, unknown>>;
-  const MarkerComponent = Marker as React.ComponentType<Record<string, unknown>>;
-  const PopupComponent = Popup as React.ComponentType<Record<string, unknown>>;
+  const MapComponent = Map as unknown as React.ComponentType<Record<string, unknown>>;
+  const MarkerComponent = Marker as unknown as React.ComponentType<Record<string, unknown>>;
+  const PopupComponent = Popup as unknown as React.ComponentType<Record<string, unknown>>;
 
   return (
     <MapComponent

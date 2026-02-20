@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
@@ -159,7 +159,7 @@ export async function GET(req: Request) {
         orgId: ctx.orgId,
         createdAt: { gte: periodStart },
       },
-      select: { id: true, estimatedValue: true, status: true, createdAt: true, createdBy: true },
+      select: { id: true, estimatedValue: true, status: true, createdAt: true, assignedTo: true },
     });
 
     // Get leads per user (leads created in period)
@@ -182,10 +182,10 @@ export async function GET(req: Request) {
     const leaderboard = users.map((user) => {
       // Attribute claims by createdBy, fallback to splitting evenly if no createdBy
       const userClaims = claims.filter(
-        (c) => c.createdBy === user.clerkUserId || c.createdBy === user.id
+        (c) => c.assignedTo === user.clerkUserId || c.assignedTo === user.id
       );
-      // If no claims have createdBy set, attribute all to user (solo org) or split
-      const claimsWithCreator = claims.filter((c) => c.createdBy);
+      // If no claims have assignedTo set, attribute all to user (solo org) or split
+      const claimsWithCreator = claims.filter((c) => c.assignedTo);
       const effectiveClaims = claimsWithCreator.length > 0 ? userClaims : claims;
 
       // Attribute leads by assignedTo

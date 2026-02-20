@@ -80,6 +80,7 @@ const isPublicRoute = createRouteMatcher([
   "/skaistack(.*)",
   "/investor(.*)",
   "/network(.*)",
+  "/contractors(.*)", // Public contractor profiles (redirects to appropriate view)
   // "/claims" is NOT public - it requires auth for the workspace!
   // Use /claims-legacy for the public demo page instead
   "/claims-legacy", // Public demo claims page (read-only)

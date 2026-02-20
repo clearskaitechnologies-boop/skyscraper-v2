@@ -7,8 +7,8 @@
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/ratelimit";
@@ -54,7 +54,7 @@ export async function GET(req: NextRequest) {
     // Get all contractors first (we'll filter by location in memory since JSON queries are complex)
     // Rate limit by simple pseudo key (public search flood protection)
     const rateKey = `${zipCode || city || state || "global"}:${service || "any"}`;
-    const rl = await checkRateLimit(rateKey, "public-search");
+    const rl = await checkRateLimit(rateKey, "PUBLIC");
     if (!rl.success) {
       return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
     }

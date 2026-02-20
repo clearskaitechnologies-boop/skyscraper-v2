@@ -78,12 +78,15 @@ export async function POST(req: Request) {
       await prisma.completion_status.upsert({
         where: { claim_id: claimId },
         create: {
+          id: crypto.randomUUID(),
           claim_id: claimId,
           org_id: orgId,
           completion_form_uploaded: true,
+          updated_at: new Date(),
         },
         update: {
           completion_form_uploaded: true,
+          updated_at: new Date(),
         },
       });
 

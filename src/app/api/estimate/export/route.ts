@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Rate limiting
-    const rateLimit = await checkRateLimit(userId, "estimate-export");
+    const rateLimit = await checkRateLimit(userId, "API");
     if (!rateLimit.success) {
       return NextResponse.json(
         {
@@ -145,6 +145,7 @@ export async function POST(request: NextRequest) {
     // 12. Save to database
     const estimateExportRecord = await prisma.estimateExport.create({
       data: {
+        id: crypto.randomUUID(),
         orgId,
         leadId,
         claimId: lead.claimId || undefined,

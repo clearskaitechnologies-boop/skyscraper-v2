@@ -57,10 +57,10 @@ export async function POST(req: Request) {
     }
 
     // Upsert all acceptances
-    logger.debug("[Legal Accept] Upserting", documents.length, "acceptances...");
-    const acceptances = [];
+    logger.debug(`[Legal Accept] Upserting ${documents.length} acceptances...`);
+    const acceptances: any[] = [];
     for (const doc of documents) {
-      const acceptance = await prisma.legal_acceptances.upsert({
+      const acceptance = await (prisma.legal_acceptances as any).upsert({
         where: {
           userId_documentId_version: {
             userId,
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
           acceptedAt: new Date(),
         },
       });
-      acceptances.push(acceptance);
+      acceptances.push(acceptance as any);
     }
 
     logger.info("[Legal Accept] ✅ Success:", {

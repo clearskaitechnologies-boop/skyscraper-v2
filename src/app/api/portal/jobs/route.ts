@@ -405,7 +405,7 @@ export async function PATCH(req: NextRequest) {
     const hasAccess = await prisma.claimClientLink.findFirst({
       where: {
         claimId: jobId,
-        clientId: client.id,
+        clientUserId: client.id,
       },
     });
 
@@ -490,7 +490,7 @@ export async function DELETE(req: NextRequest) {
     const hasAccess = await prisma.claimClientLink.findFirst({
       where: {
         claimId: jobId,
-        clientId: client.id,
+        clientUserId: client.id,
       },
     });
 

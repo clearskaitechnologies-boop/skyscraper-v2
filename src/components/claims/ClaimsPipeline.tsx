@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
 import { logger } from "@/lib/logger";
+import { useState } from "react";
 
 import { triggerNotification } from "@/components/notifications/UnifiedNotificationBell";
 import { card } from "@/lib/theme";
@@ -94,7 +94,7 @@ export default function ClaimsPipeline({ claims = [] }: { claims: ClaimCard[] })
         // Trigger notification about AI suggestion
         triggerNotification({
           message: `AI suggests ${aiData.suggestedStatus} for claim ${claim_id.substring(0, 8)}`,
-          claimId: claim_id,
+          id: claim_id,
           type: "ai_suggestion",
         });
 

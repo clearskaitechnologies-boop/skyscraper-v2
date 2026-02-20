@@ -21,13 +21,15 @@ export async function POST(request: Request) {
     // Create a client request record
     const clientRequest = await prisma.tasks.create({
       data: {
+        id: crypto.randomUUID(),
         title: subject,
         description,
-        priority: priority?.toUpperCase() || "MEDIUM",
-        status: "TODO",
+        priority: (priority?.toUpperCase() || "MEDIUM") as any,
+        status: "TODO" as any,
         type: "CLIENT_REQUEST",
         orgId: clientId || "unknown", // Will need proper org linking
         notes: `Client request submitted via portal`,
+        updatedAt: new Date(),
       },
     });
 

@@ -58,7 +58,7 @@ export async function createVideoFromScript(script: VideoScript): Promise<Buffer
 async function generateWithOpenAI(script: VideoScript, prompt: string): Promise<Buffer> {
   const openai = getOpenAI();
 
-  const response = await openai.videos.generate({
+  const response = await (openai as any).videos.generate({
     model: process.env.OPENAI_VIDEO_MODEL || "sora-1.0",
     prompt: prompt,
     duration: script.durationSeconds,

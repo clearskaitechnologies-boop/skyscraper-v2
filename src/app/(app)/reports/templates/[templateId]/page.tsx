@@ -1,4 +1,4 @@
-import { ArrowLeft, FileText, Settings } from "lucide-react";
+import { ArrowLeft, Download, FileText, Settings } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 

@@ -117,7 +117,7 @@ function typeLabel(type: string) {
 
 export default function ClaimMeasurementsPage() {
   const params = useParams();
-  const claimId = params.claimId as string;
+  const claimId = (params?.claimId ?? "") as string;
 
   const [orders, setOrders] = useState<MeasurementOrder[]>([]);
   const [loading, setLoading] = useState(true);

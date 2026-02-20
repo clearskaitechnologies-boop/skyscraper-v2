@@ -80,10 +80,9 @@ export default async function PublicProfilePage({ params }: ProfilePageProps) {
         content: true,
         type: true,
         images: true,
-        likes: true,
         comments: true,
         createdAt: true,
-      },
+      } as any,
     });
     posts = feedPosts;
   } catch {

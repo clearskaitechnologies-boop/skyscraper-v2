@@ -72,7 +72,7 @@ export const POST = withAuth(async (req: NextRequest, { orgId: userOrgId, userId
         where: { id: claimId },
         data: {
           status: newStatus,
-          lifecycle_stage: newLifecycle,
+          lifecycle_stage: newLifecycle as any,
           updatedAt: new Date(),
         },
         select: { id: true, status: true, lifecycle_stage: true, updatedAt: true },

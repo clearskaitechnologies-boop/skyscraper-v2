@@ -10,6 +10,7 @@ import { logger } from "@/lib/observability/logger";
 import { NextResponse } from "next/server";
 import type OpenAI from "openai";
 
+import { getOpenAI } from "@/lib/ai/client";
 import { requireAuth } from "@/lib/auth/requireAuth";
 
 export const runtime = "nodejs";
@@ -96,7 +97,8 @@ export async function POST(req: Request) {
       let pdfText = "";
       try {
         // Lazy load pdf-parse at runtime only
-        const pdfParse = (await import("pdf-parse")).default;
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        const pdfParse = require("pdf-parse");
         const pdfData = await pdfParse(buffer);
         pdfText = pdfData.text;
       } catch (pdfErr) {
@@ -167,7 +169,7 @@ export async function POST(req: Request) {
         .trim();
       parsed = JSON.parse(jsonStr);
     } catch {
-      logger.error("[parse-scope] Failed to parse AI response:", raw);
+      logger.error(`[parse-scope] Failed to parse AI response: ${String(raw).substring(0, 200)}`);
       return NextResponse.json(
         { error: "AI could not extract structured data from this document." },
         { status: 422 }

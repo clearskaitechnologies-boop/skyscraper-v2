@@ -41,7 +41,7 @@ export async function POST(): Promise<NextResponse> {
     const deletedMemberships = await prisma.user_organizations.deleteMany({
       where: { userId },
     });
-    logger.debug("[NUCLEAR RESET] Deleted", deletedMemberships.count, "memberships");
+    logger.debug(`[NUCLEAR RESET] Deleted ${deletedMemberships.count} memberships`);
 
     // STEP 2: Create fresh org
     const newOrgId = crypto.randomUUID();

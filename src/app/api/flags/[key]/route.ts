@@ -5,12 +5,11 @@ import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-import { withRateLimit } from "@/lib/api/wrappers";
+import { withRateLimit, withSentryApi } from "@/lib/api/wrappers";
 import { getApiToken } from "@/lib/apiTokens";
 import { deleteFlag, evaluateFlag, setFlag } from "@/lib/flags";
-import { withSentryApi } from "@/lib/monitoring/sentryApi";
 
-export const GET = withSentryApi(async (req: Request, { params }: { params: { key: string } }) => {
+export const GET = withSentryApi(async (req, { params }: { params: { key: string } }) => {
   try {
     const hasDb = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith("postgres");
     if (!hasDb) {
@@ -42,7 +41,7 @@ export const GET = withSentryApi(async (req: Request, { params }: { params: { ke
 });
 
 export const POST = withSentryApi(
-  withRateLimit(async (req: Request, { params }: { params: { key: string } }) => {
+  withRateLimit(async (req, { params }: { params: { key: string } }) => {
     const hasDb = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith("postgres");
     if (!hasDb) {
       return NextResponse.json({
@@ -80,7 +79,7 @@ export const POST = withSentryApi(
 );
 
 export const DELETE = withSentryApi(
-  withRateLimit(async (req: Request, { params }: { params: { key: string } }) => {
+  withRateLimit(async (req, { params }: { params: { key: string } }) => {
     const hasDb = process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith("postgres");
     if (!hasDb) {
       return NextResponse.json({

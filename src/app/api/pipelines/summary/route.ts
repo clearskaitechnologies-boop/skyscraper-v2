@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -112,12 +112,12 @@ export async function GET(request: NextRequest) {
     }
 
     const formattedRecentUpdates = recentActivities.map((activity) => {
-      const metadata = safeParse(PipelineActivityMetadataSchema, activity.metadata);
+      const metadata = (activity.metadata || {}) as Record<string, unknown>;
       return {
         id: activity.id,
         leadId: activity.leadId || "",
-        fromStage: metadata?.fromStage || "",
-        toStage: metadata?.toStage || "",
+        fromStage: (metadata?.fromStage as string) || "",
+        toStage: (metadata?.toStage as string) || "",
         updatedAt: activity.createdAt,
         updatedBy:
           activity.userName || (activity.userId ? userMap.get(activity.userId) : null) || "System",

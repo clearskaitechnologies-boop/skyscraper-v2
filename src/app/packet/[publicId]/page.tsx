@@ -266,8 +266,10 @@ export default async function AdjusterPacketPage({ params }: { params: { publicI
                       <span className="text-sm text-gray-900 dark:text-gray-100">
                         {typeof flag === "string"
                           ? flag
-                          : (flag as Record<string, unknown>)?.description ||
-                            "Safety concern noted"}
+                          : String(
+                              (flag as Record<string, unknown>)?.description ||
+                                "Safety concern noted"
+                            )}
                       </span>
                     </li>
                   ))}
@@ -293,7 +295,7 @@ export default async function AdjusterPacketPage({ params }: { params: { publicI
                           •{" "}
                           {typeof action === "string"
                             ? action
-                            : (action as Record<string, unknown>)?.description || String(action)}
+                            : String((action as Record<string, unknown>)?.description || action)}
                         </li>
                       ))}
                     </ul>

@@ -186,7 +186,7 @@ export default async function PublicTradeProfilePage({ params }: PublicProfilePa
       }
     }
 
-    logger.info("[Public Profile] Resolved member:", member?.id, "hasCompany:", !!member?.company);
+    logger.info(`[Public Profile] Resolved member: ${member?.id} hasCompany: ${!!member?.company}`);
   } catch (error) {
     logger.error("[Public Profile] Error fetching member:", error);
     throw new Error(

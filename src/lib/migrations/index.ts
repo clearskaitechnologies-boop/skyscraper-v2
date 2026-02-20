@@ -18,11 +18,3 @@ export type {
   JobNimbusJob,
 } from "./jobnimbus-client";
 export { JobNimbusMigrationEngine } from "./jobnimbus-engine";
-export {
-  mapAllData as mapAllJobNimbusData,
-  mapActivity as mapJobNimbusActivity,
-  mapContact as mapJobNimbusContact,
-  mapFile as mapJobNimbusFile,
-  mapJob as mapJobNimbusJob,
-  mapTask as mapJobNimbusTask,
-} from "./jobnimbus-mapper";

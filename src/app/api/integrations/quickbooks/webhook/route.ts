@@ -89,9 +89,7 @@ export async function POST(req: NextRequest) {
           where: { id: conn.id },
           data: {
             sync_errors: [
-              ...(Array.isArray(conn.sync_errors)
-                ? (conn.sync_errors as unknown[]).slice(-49)
-                : []),
+              ...(Array.isArray(conn.sync_errors) ? (conn.sync_errors as any[]).slice(-49) : []),
               {
                 type: "webhook",
                 entity: name,

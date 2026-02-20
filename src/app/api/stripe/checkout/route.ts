@@ -8,9 +8,7 @@ import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getStripeClient } from "@/lib/stripe";
 
-const stripe = getStripeClient();
-
-// Prisma singleton imported from @/lib/db/prisma
+const stripe = getStripeClient()!;
 
 export const dynamic = "force-dynamic";
 

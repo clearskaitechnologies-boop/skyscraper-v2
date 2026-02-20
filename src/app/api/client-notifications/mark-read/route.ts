@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import { getClientFromAuth } from "@/lib/portal/getClientFromAuth";
@@ -72,7 +72,7 @@ export async function POST(req: NextRequest) {
               const msg = await prisma.message.findFirst({
                 where: {
                   id: messageId,
-                  thread: {
+                  MessageThread: {
                     OR: [
                       { participants: { has: userId } },
                       { participants: { has: user.id } },

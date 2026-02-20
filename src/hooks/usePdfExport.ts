@@ -6,8 +6,8 @@
 // await exportPdf({ mode: "retail", packetId, data });
 // ============================================================================
 
-import { useState } from "react";
 import { logger } from "@/lib/logger";
+import { useState } from "react";
 
 import { toast } from "sonner";
 
@@ -68,8 +68,7 @@ export function usePdfExport() {
       // Cleanup
       URL.revokeObjectURL(url);
 
-      toast({
-        title: "PDF exported successfully",
+      toast.success("PDF exported successfully", {
         description: `${filename} has been downloaded.`,
       });
 
@@ -81,10 +80,8 @@ export function usePdfExport() {
       const errorMessage = err.message || "Failed to export PDF";
       setError(errorMessage);
 
-      toast({
-        title: "Export failed",
+      toast.error("Export failed", {
         description: errorMessage,
-        variant: "destructive",
       });
 
       return {

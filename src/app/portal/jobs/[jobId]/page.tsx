@@ -423,8 +423,10 @@ export default function JobDetailPage() {
           icon={Wrench}
           title="Project Not Found"
           description="This project doesn't exist or you don't have permission to view it. Create a new project to get started."
-          cta={{ label: "Create Project", href: "/portal/projects/new" }}
-          secondaryCta={{ label: "Back to My Jobs", href: "/portal/my-jobs" }}
+          ctaLabel="Create Project"
+          ctaHref="/portal/projects/new"
+          secondaryLabel="Back to My Jobs"
+          secondaryHref="/portal/my-jobs"
           size="lg"
         />
       </div>

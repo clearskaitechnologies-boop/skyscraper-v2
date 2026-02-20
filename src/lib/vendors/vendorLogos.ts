@@ -1090,60 +1090,8 @@ export const VENDOR_LOGOS: Record<
   },
 
   // ═══════════════════════════════════════════════════════════════════════
-  // SOLAR MANUFACTURERS
-  // ═══════════════════════════════════════════════════════════════════════
-  "tesla-solar": {
-    slug: "tesla-solar",
-    name: "Tesla Energy",
-    website: "https://www.tesla.com/solarpanels",
-    logoPath: fav("tesla.com"),
-  },
-  enphase: {
-    slug: "enphase",
-    name: "Enphase Energy",
-    website: "https://www.enphase.com",
-    logoPath: fav("enphase.com"),
-  },
-  solaredge: {
-    slug: "solaredge",
-    name: "SolarEdge Technologies",
-    website: "https://www.solaredge.com",
-    logoPath: fav("solaredge.com"),
-  },
-  qcells: {
-    slug: "qcells",
-    name: "Q CELLS (Hanwha)",
-    website: "https://www.q-cells.us",
-    logoPath: fav("q-cells.us"),
-  },
-  sunpower: {
-    slug: "sunpower",
-    name: "SunPower / Maxeon",
-    website: "https://us.sunpower.com",
-    logoPath: fav("sunpower.com"),
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════
   // CONCRETE / MASONRY MANUFACTURERS (ADDITIONAL)
   // ═══════════════════════════════════════════════════════════════════════
-  quikrete: {
-    slug: "quikrete",
-    name: "QUIKRETE",
-    website: "https://www.quikrete.com",
-    logoPath: fav("quikrete.com"),
-  },
-  sakrete: {
-    slug: "sakrete",
-    name: "Sakrete",
-    website: "https://www.sakrete.com",
-    logoPath: fav("sakrete.com"),
-  },
-  belgard: {
-    slug: "belgard",
-    name: "Belgard (Oldcastle APG)",
-    website: "https://www.belgard.com",
-    logoPath: fav("belgard.com"),
-  },
   "techo-bloc": {
     slug: "techo-bloc",
     name: "Techo-Bloc",
@@ -1155,16 +1103,6 @@ export const VENDOR_LOGOS: Record<
     name: "Eldorado Stone",
     website: "https://www.eldoradostone.com",
     logoPath: fav("eldoradostone.com"),
-  },
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // TILE MANUFACTURERS (ADDITIONAL)
-  // ═══════════════════════════════════════════════════════════════════════
-  daltile: {
-    slug: "daltile",
-    name: "Daltile (Mohawk)",
-    website: "https://www.daltile.com",
-    logoPath: fav("daltile.com"),
   },
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -1244,18 +1182,6 @@ export const VENDOR_LOGOS: Record<
   // ═══════════════════════════════════════════════════════════════════════
   // CABINETS MANUFACTURERS (ADDITIONAL)
   // ═══════════════════════════════════════════════════════════════════════
-  kraftmaid: {
-    slug: "kraftmaid",
-    name: "KraftMaid",
-    website: "https://www.kraftmaid.com",
-    logoPath: fav("kraftmaid.com"),
-  },
-  merillat: {
-    slug: "merillat",
-    name: "Merillat Cabinetry",
-    website: "https://www.merillat.com",
-    logoPath: fav("merillat.com"),
-  },
   "rev-a-shelf": {
     slug: "rev-a-shelf",
     name: "Rev-A-Shelf",
@@ -1266,23 +1192,11 @@ export const VENDOR_LOGOS: Record<
   // ═══════════════════════════════════════════════════════════════════════
   // COUNTERTOP MANUFACTURERS (ADDITIONAL)
   // ═══════════════════════════════════════════════════════════════════════
-  caesarstone: {
-    slug: "caesarstone",
-    name: "Caesarstone",
-    website: "https://www.caesarstoneus.com",
-    logoPath: fav("caesarstoneus.com"),
-  },
   cambria: {
     slug: "cambria",
     name: "Cambria",
     website: "https://www.cambriausa.com",
     logoPath: fav("cambriausa.com"),
-  },
-  silestone: {
-    slug: "silestone",
-    name: "Silestone (Cosentino)",
-    website: "https://www.silestone.com",
-    logoPath: fav("cosentino.com"),
   },
 
   // ═══════════════════════════════════════════════════════════════════════
@@ -1293,12 +1207,6 @@ export const VENDOR_LOGOS: Record<
     name: "Whirlpool (Pro)",
     website: "https://www.whirlpoolpro.com",
     logoPath: fav("whirlpool.com"),
-  },
-  "ge-appliances": {
-    slug: "ge-appliances",
-    name: "GE Appliances",
-    website: "https://www.geappliances.com",
-    logoPath: fav("geappliances.com"),
   },
   "bosch-home": {
     slug: "bosch-home",
@@ -1498,30 +1406,6 @@ export const VENDOR_LOGOS: Record<
     name: "Boral Industries",
     website: "https://www.boralamerica.com",
     logoPath: fav("boralamerica.com"),
-  },
-  "masonite-doors": {
-    slug: "masonite-doors",
-    name: "Masonite Doors",
-    website: "https://www.masonite.com",
-    logoPath: fav("masonite.com"),
-  },
-  "norandex-siding": {
-    slug: "norandex-siding",
-    name: "Norandex Siding",
-    website: "https://www.norandex.com",
-    logoPath: fav("norandex.com"),
-  },
-  "ruud-hvac": {
-    slug: "ruud-hvac",
-    name: "Ruud HVAC",
-    website: "https://www.ruud.com",
-    logoPath: fav("ruud.com"),
-  },
-  "kolbe-windows": {
-    slug: "kolbe-windows",
-    name: "Kolbe Windows & Doors",
-    website: "https://www.kolbewindows.com",
-    logoPath: fav("kolbewindows.com"),
   },
   "cat-equipment": {
     slug: "cat-equipment",

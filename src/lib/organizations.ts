@@ -67,9 +67,11 @@ export async function bootstrapNewOrgForUser(args: {
 
   // Seed dependent singletons if missing (idempotent)
   try {
-    const wallet = await prisma.tokenWallet.findUnique({ where: { orgId: Org.id } });
+    const wallet = await (prisma as any).tokenWallet
+      ?.findUnique?.({ where: { orgId: Org.id } })
+      .catch(() => null);
     if (!wallet) {
-      await prisma.tokenWallet.create({
+      await (prisma as any).tokenWallet?.create?.({
         data: {
           id: `tw_${Org.id}`,
           orgId: Org.id,

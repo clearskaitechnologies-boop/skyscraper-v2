@@ -53,22 +53,22 @@ export default async function CrewsPage() {
           : [];
       const membersMap = new Map(members.map((m) => [m.id, m]));
 
-      return data.map((s: Record<string, unknown>) => ({
+      return data.map((s) => ({
         id: s.id,
-        claimNumber: s.claims?.claimNumber ?? "—",
-        claimTitle: s.claims?.title ?? "—",
-        crewLead: s.users,
-        crewMembers: s.crewMemberIds.map(
+        claimNumber: (s as any).claims?.claimNumber ?? "—",
+        claimTitle: (s as any).claims?.title ?? "—",
+        crewLead: (s as any).users,
+        crewMembers: (s.crewMemberIds as string[]).map(
           (id) => membersMap.get(id) ?? { id, name: null, headshot_url: null }
         ),
-        scheduledDate: s.scheduledDate.toISOString().split("T")[0],
-        startTime: s.startTime,
-        estimatedDuration: s.estimatedDuration,
-        complexity: s.complexity,
-        status: s.status,
-        scopeOfWork: s.scopeOfWork,
-        weatherRisk: s.weatherRisk,
-      }));
+        scheduledDate: (s.scheduledDate as Date).toISOString().split("T")[0],
+        startTime: s.startTime as string | null,
+        estimatedDuration: s.estimatedDuration as unknown as string | null,
+        complexity: s.complexity as string | null,
+        status: s.status as string,
+        scopeOfWork: s.scopeOfWork as string | null,
+        weatherRisk: s.weatherRisk as string | null,
+      })) as any[];
     },
     []
   );

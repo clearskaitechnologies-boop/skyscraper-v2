@@ -27,7 +27,7 @@ const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0] || "unknown";
-  const rl = await checkRateLimit(`clerk:${ip}`, "webhook-clerk");
+  const rl = await checkRateLimit(`clerk:${ip}`, "WEBHOOK");
   if (!rl.success) {
     return NextResponse.json({ error: "Rate limit exceeded", reset: rl.reset }, { status: 429 });
   }

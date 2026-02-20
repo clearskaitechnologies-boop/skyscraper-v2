@@ -86,7 +86,7 @@ export class RebuttalAgent extends BaseAgent<
     // Persist token usage to ledger if available
     try {
       if (ctx.orgId && output.tokensUsed) {
-        await prisma.tokens_ledger
+        await (prisma as any).tokens_ledger
           .create({
             data: {
               id: randomUUID(),

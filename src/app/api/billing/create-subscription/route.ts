@@ -151,7 +151,8 @@ export const POST = withManager(async (req: NextRequest, { orgId, userId }) => {
     });
 
     // ── Return client secret for payment ────────────────────────────
-    const invoice = subscription.latest_invoice as Record<string, unknown> | null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const invoice = subscription.latest_invoice as any;
     const clientSecret = invoice?.payment_intent?.client_secret || null;
 
     return NextResponse.json({
@@ -164,7 +165,7 @@ export const POST = withManager(async (req: NextRequest, { orgId, userId }) => {
   } catch (error) {
     logger.error("[create-subscription] Error:", error);
     return NextResponse.json(
-      { error: error?.message || "Failed to create subscription" },
+      { error: (error as Error)?.message || "Failed to create subscription" },
       { status: 500 }
     );
   }

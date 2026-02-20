@@ -47,17 +47,14 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
   } = useAIStream({
     onComplete: async (fullText) => {
       await loadAIData();
-      toast({
-        title: "Analysis Complete!",
+      toast.success("Analysis Complete!", {
         description: "All insights have been updated",
       });
     },
     onError: (err) => {
       setError(err.message);
-      toast({
-        title: "Analysis Failed",
+      toast.error("Analysis Failed", {
         description: err.message,
-        variant: "destructive",
       });
     },
   });
@@ -87,10 +84,9 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
 
   async function runAnalysis() {
     setError(null);
-    toast({
-      title: "Analyzing with SkaiPDF...",
-      description: "Streaming analysis in real-time",
-    });
+    toast.success("Analyzing with SkaiPDF...", {
+        description: "Streaming analysis in real-time",
+      });
 
     try {
       await startStream("/api/ai/stream/analyze", {

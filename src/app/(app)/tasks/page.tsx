@@ -209,7 +209,10 @@ export default function TasksPage() {
         )}
 
         <div className="mt-3">
-          <Select value={task.status} onValueChange={(value) => handleStatusChange(task.id, value)}>
+          <Select
+            value={task.status}
+            onValueChange={(value: string) => handleStatusChange(task.id, value as any)}
+          >
             <SelectTrigger className="h-8 text-xs">
               <SelectValue />
             </SelectTrigger>

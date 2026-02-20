@@ -515,11 +515,27 @@ export async function addEmployee(input: AddEmployeeInput) {
 
 /**
  * Remove employee from company
+ *
+ * Instead of deleting, we unlink them and set inactive.
+ * This preserves their profile so they can join another company.
  */
 export async function removeEmployee(input: RemoveEmployeeInput) {
-  await prisma.tradesCompanyMember.delete({ where: { id: input.employeeId } }).catch(() => {});
+  const result = await prisma.tradesCompanyMember
+    .update({
+      where: { id: input.employeeId },
+      data: {
+        companyId: null,
+        status: "inactive",
+        isActive: false,
+        role: "member",
+        isOwner: false,
+        isAdmin: false,
+        canEditCompany: false,
+      },
+    })
+    .catch(() => null);
 
-  return { success: true };
+  return { success: !!result };
 }
 
 /**

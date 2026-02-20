@@ -11,10 +11,10 @@ export const revalidate = 0;
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 import { getStatus } from "@/modules/ai/jobs/queue";
 
-async function GET_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
+async function GET_INNER(req: NextRequest, ctx: AiBillingContext) {
   try {
     const { userId } = ctx;
 

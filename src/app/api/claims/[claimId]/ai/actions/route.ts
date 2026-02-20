@@ -26,8 +26,8 @@
  * ============================================================================
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { callOpenAI, getOpenAI } from "@/lib/ai/client";
@@ -105,7 +105,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
 
     // Rate limit
     const identifier = getClientIdentifier(req, userId);
-    const rl = await checkRateLimit(identifier, "api");
+    const rl = await checkRateLimit(identifier, "API");
     if (!rl.success) {
       return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
     }
@@ -192,8 +192,8 @@ Loss Date: ${claimContext.claim.lossDate || "N/A"}
 Carrier: ${claimContext.claim.carrier || "N/A"}
 Damage Type: ${claimContext.claim.damageType || "N/A"}
 Status: ${claimContext.claim.status || "N/A"}
-Photos: ${claimContext.photos?.length || 0} available
-Notes: ${claimContext.notes?.length || 0} recorded
+Photos: ${(claimContext as any).photos?.length || 0} available
+Notes: ${(claimContext as any).notes?.length || 0} recorded
 `;
 
   const systemPrompt = `You are an expert insurance claims assistant for SkaiScraper.
@@ -318,9 +318,15 @@ Write a persuasive, professional rebuttal that:
   let pdfUrl: string | null = null;
   if (payload.savePdf && result) {
     try {
-      const html = `<div style="font-family: Arial, sans-serif; padding: 40px;">${result.replace(/\n/g, "<br>")}</div>`;
+      const html = `<div style="font-family: Arial, sans-serif; padding: 40px;">${String(result).replace(/\n/g, "<br>")}</div>`;
       const pdfBuffer = await htmlToPdfBuffer(html);
-      pdfUrl = await saveAiPdfToStorage(pdfBuffer, claimId, "rebuttal", orgId);
+      const pdfResult = await saveAiPdfToStorage({
+        buffer: pdfBuffer,
+        claimId,
+        type: "rebuttal",
+        orgId,
+      } as any);
+      pdfUrl = (pdfResult as any)?.url || null;
     } catch (e) {
       logger.error("PDF save failed:", e);
     }
@@ -425,9 +431,7 @@ async function handlePredict(claimId: string, orgId: string) {
           urgency: (skaiAnalysis.risk_flags as Record<string, unknown> | null)?.urgency as
             | string
             | undefined,
-          materials: skaiAnalysis.materials
-            ? (skaiAnalysis.materials as unknown[])
-            : undefined,
+          materials: skaiAnalysis.materials ? (skaiAnalysis.materials as unknown[]) : undefined,
           flags: skaiAnalysis.risk_flags ? ["comprehensive_damage"] : ["minimal_damage"],
         }
       : undefined,
@@ -468,7 +472,7 @@ async function handleCarrierSummary(claimId: string, format: "json" | "text") {
 
 async function handleAnalyze(claimId: string, analysisType: string) {
   const { triggerManualAnalysis } = await import("@/lib/claims/aiHooks");
-  const result = await triggerManualAnalysis(claimId, analysisType);
+  const result = await triggerManualAnalysis(claimId, analysisType as any);
 
   if (!result) {
     return NextResponse.json(

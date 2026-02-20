@@ -103,11 +103,12 @@ export async function POST(req: Request) {
     // Save video record in DB
     await prisma.videoReport.create({
       data: {
+        id: crypto.randomUUID(),
         orgId: claims.orgId,
         claimId,
-        type,
+        type: type as any,
         url,
-      } as Record<string, unknown>,
+      },
     });
 
     return NextResponse.json({ url });

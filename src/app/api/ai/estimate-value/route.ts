@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 
-import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
+import { createAiConfig, withAiBilling, type AiBillingContext } from "@/lib/ai/withAiBilling";
 import {
   requireActiveSubscription,
   SubscriptionRequiredError,
@@ -14,13 +14,13 @@ import { estimateValueSchema, validateAIRequest } from "@/lib/validation/aiSchem
  * Estimates claim value based on property details and damage type
  * Rate-limited and authenticated
  */
-async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
+async function POST_INNER(req: NextRequest, ctx: AiBillingContext) {
   try {
     const { userId, orgId } = ctx;
 
     // ── Billing guard ──
     try {
-      await requireActiveSubscription(orgId);
+      await requireActiveSubscription(orgId!);
     } catch (error) {
       if (error instanceof SubscriptionRequiredError) {
         return NextResponse.json(
@@ -33,7 +33,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
     // Rate limiting check
     const identifier = orgId || userId;
-    const rateLimit = await checkRateLimit(identifier, "estimate-value");
+    const rateLimit = await checkRateLimit(identifier, "AI");
     if (!rateLimit.success) {
       return NextResponse.json({ error: getRateLimitError(rateLimit.reset) }, { status: 429 });
     }
@@ -72,8 +72,8 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       Condo: 0.7,
     };
 
-    const baseEstimate = damageTypeEstimates[damageType] || 1000000; // Default $10,000
-    const multiplier = propertyMultipliers[propertyType] || 1.0;
+    const baseEstimate = damageTypeEstimates[damageType || ""] || 1000000; // Default $10,000
+    const multiplier = propertyMultipliers[propertyType || ""] || 1.0;
 
     estimatedValueCents = Math.floor(baseEstimate * multiplier);
 

@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const engine = new JobNimbusMigrationEngine({
       orgId,
       userId,
-      source: "jobnimbus",
+      source: "JOBNIMBUS",
       credentials: { apiKey },
       options: { dryRun: !!dryRun },
     });
@@ -70,10 +70,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       ok: result.success,
-      migrationId: result.migrationId,
+      migrationId: result.jobId,
       stats: result.stats,
       errors: result.errors?.slice(0, 50) ?? [],
-      durationMs: result.durationMs,
+      durationMs: result.duration,
     });
   } catch (err) {
     logger.error("[API] /api/migrations/jobnimbus error:", err);

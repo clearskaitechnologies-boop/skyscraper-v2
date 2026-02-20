@@ -4,8 +4,8 @@
  * Uploads to Firebase Storage with signed URLs
  */
 
-import puppeteer, { type Browser } from "puppeteer";
 import { logger } from "@/lib/logger";
+import puppeteer, { type Browser } from "puppeteer";
 
 import { APP_URL } from "@/lib/env";
 import prisma from "@/lib/prisma";
@@ -132,7 +132,7 @@ async function renderPdfWithRetry(
     await browser.close();
     browser = null;
 
-    logger.debug("[PDF Render] PDF generated, size:", pdfBuffer.length, "bytes");
+    logger.debug(`[PDF Render] PDF generated, size: ${pdfBuffer.length} bytes`);
 
     // Upload to Firebase Storage
     const filePath = `proposals/${(draft as any).org_id || "org"}/${draftId}.pdf`;

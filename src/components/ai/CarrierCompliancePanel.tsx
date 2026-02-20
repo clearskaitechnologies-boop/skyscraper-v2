@@ -52,10 +52,8 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
 
   async function runComplianceCheck() {
     if (currentScope.length === 0) {
-      toast({
-        title: "No Scope Data",
+      toast.error("No Scope Data", {
         description: "Please generate an estimate first using SkaiPDF",
-        variant: "destructive",
       });
       return;
     }
@@ -80,15 +78,12 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
       }
 
       setResult(data);
-      toast({
-        title: "Compliance Analysis Complete!",
+      toast.success("Compliance Analysis Complete!", {
         description: `Detected ${data.carrier.name} with ${Math.round(data.carrier.confidence * 100)}% confidence`,
       });
     } catch (err) {
-      toast({
-        title: "Compliance Check Failed",
+      toast.error("Compliance Check Failed", {
         description: err instanceof Error ? err.message : "Unknown error",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
