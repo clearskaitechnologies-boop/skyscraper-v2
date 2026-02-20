@@ -12,6 +12,7 @@ import { redirect } from "next/navigation";
 
 import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHero } from "@/components/layout/PageHero";
+import prisma from "@/lib/prisma";
 import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const metadata: Metadata = {
@@ -23,6 +24,18 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+
+// ----- Helpers -----
+function timeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
 
 // ----- Stat Card Component -----
 function StatCard({
@@ -119,23 +132,117 @@ export default async function StormCenterPage() {
     redirect("/sign-in");
   }
 
-  // Fetch storm center data from API
-  let data: any = null;
-  try {
-    // In a real deployment this would call the Storm Center API
-    // For now we use sensible defaults that show the UI structure
-    data = {
-      activeClaims: 0,
-      pendingSupplements: 0,
-      supplementsApproved: 0,
-      revenuePipeline: 0,
-      materialOrdersPending: 0,
-      avgClaimVelocity: 0,
-      recentActivity: [],
-      weatherAlerts: [],
-    };
-  } catch {
-    // Graceful degradation — show zeros
+  // Fetch storm center data from real database
+  let data = {
+    activeClaims: 0,
+    pendingSupplements: 0,
+    supplementsApproved: 0,
+    revenuePipeline: 0,
+    materialOrdersPending: 0,
+    avgClaimVelocity: 0,
+  };
+
+  let recentActivity: {
+    title: string;
+    description: string;
+    time: string;
+    type: "claim" | "supplement" | "order" | "payment" | "weather";
+  }[] = [];
+
+  if (orgCtx.orgId) {
+    try {
+      const orgId = orgCtx.orgId;
+
+      const [
+        activeClaims,
+        pendingSupplements,
+        supplementsApproved,
+        pipelineAgg,
+        materialOrdersPending,
+        velocityResult,
+      ] = await Promise.all([
+        // Active claims: not closed/completed/cancelled, not archived
+        prisma.claims.count({
+          where: {
+            orgId,
+            status: { notIn: ["closed", "completed", "cancelled"] },
+            archivedAt: null,
+            isDemo: false,
+          },
+        }),
+        // Pending supplements (DRAFT or REQUESTED)
+        prisma.supplements.count({
+          where: {
+            org_id: orgId,
+            status: { in: ["DRAFT", "REQUESTED"] },
+          },
+        }),
+        // Approved supplements this month
+        prisma.supplements.count({
+          where: {
+            org_id: orgId,
+            status: "APPROVED",
+            updated_at: {
+              gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            },
+          },
+        }),
+        // Revenue pipeline — sum of estimatedValue for active claims
+        prisma.claims.aggregate({
+          where: {
+            orgId,
+            status: { notIn: ["closed", "completed", "cancelled"] },
+            archivedAt: null,
+            isDemo: false,
+          },
+          _sum: { estimatedValue: true },
+        }),
+        // Pending material orders
+        prisma.materialOrder.count({
+          where: { orgId, status: { notIn: ["delivered", "cancelled"] } },
+        }),
+        // Average claim velocity (days from creation to closeout)
+        prisma.$queryRaw<{ avg_days: number | null }[]>`
+          SELECT AVG(EXTRACT(EPOCH FROM (j."closeoutCompletedAt" - c."createdAt")) / 86400)::int
+            AS avg_days
+          FROM claims c
+          JOIN "JobCloseout" j ON j."claimId" = c.id
+          WHERE c."orgId" = ${orgId}
+            AND j."closeoutCompletedAt" IS NOT NULL
+        `,
+      ]);
+
+      data = {
+        activeClaims,
+        pendingSupplements,
+        supplementsApproved,
+        revenuePipeline: pipelineAgg._sum.estimatedValue ?? 0,
+        materialOrdersPending,
+        avgClaimVelocity: velocityResult[0]?.avg_days ?? 0,
+      };
+
+      // Recent activity — last 5 claims updated
+      const recentClaims = await prisma.claims.findMany({
+        where: { orgId, isDemo: false },
+        orderBy: { updatedAt: "desc" },
+        take: 5,
+        select: {
+          id: true,
+          title: true,
+          status: true,
+          updatedAt: true,
+        },
+      });
+
+      recentActivity = recentClaims.map((c) => ({
+        title: c.title ?? `Claim ${c.id.slice(0, 8)}`,
+        description: `Status: ${c.status ?? "new"}`,
+        time: timeAgo(c.updatedAt),
+        type: "claim" as const,
+      }));
+    } catch {
+      // Graceful degradation — keep zeros
+    }
   }
 
   return (
@@ -205,9 +312,9 @@ export default async function StormCenterPage() {
             <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
               Recent Activity
             </h2>
-            {data?.recentActivity && data.recentActivity.length > 0 ? (
+            {recentActivity.length > 0 ? (
               <div className="space-y-3">
-                {data.recentActivity.map((item: any, idx: number) => (
+                {recentActivity.map((item, idx) => (
                   <ActivityItem key={idx} {...item} />
                 ))}
               </div>
@@ -238,27 +345,9 @@ export default async function StormCenterPage() {
             <h2 className="mb-4 text-lg font-bold text-slate-900 dark:text-white">
               ⛈️ Weather Alerts
             </h2>
-            {data?.weatherAlerts && data.weatherAlerts.length > 0 ? (
-              <div className="space-y-3">
-                {data.weatherAlerts.map((alert: any, idx: number) => (
-                  <div
-                    key={idx}
-                    className="rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-800 dark:bg-amber-900/20"
-                  >
-                    <p className="text-sm font-semibold text-amber-800 dark:text-amber-300">
-                      {alert.title}
-                    </p>
-                    <p className="mt-1 text-xs text-amber-600 dark:text-amber-400">
-                      {alert.description}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                No active weather alerts in your service area
-              </p>
-            )}
+            <p className="text-sm text-slate-500 dark:text-slate-400">
+              No active weather alerts in your service area
+            </p>
           </div>
 
           {/* Quick Actions */}
