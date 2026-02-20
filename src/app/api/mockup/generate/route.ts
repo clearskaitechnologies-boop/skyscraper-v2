@@ -7,6 +7,7 @@ import {
   requireActiveSubscription,
   SubscriptionRequiredError,
 } from "@/lib/billing/requireActiveSubscription";
+import prisma from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -118,6 +119,26 @@ export async function POST(request: NextRequest) {
 
       if (afterImageUrl) {
         logger.debug(`[Mockup Generate] SUCCESS via OpenAI DALL-E 3`);
+
+        // Persist the generated mockup to the database
+        try {
+          await prisma.generatedArtifact.create({
+            data: {
+              orgId,
+              type: "mockup",
+              title: `${projectType} Mockup — ${new Date().toLocaleDateString()}`,
+              content: enhancedPrompt,
+              fileUrl: afterImageUrl,
+              model: "dall-e-3",
+              tokensUsed: 1,
+              status: "completed",
+              metadata: { projectType, projectDescription, method: "OpenAI DALL-E 3" },
+            },
+          });
+        } catch (saveErr) {
+          logger.error("[Mockup Generate] Failed to save artifact:", saveErr);
+        }
+
         return NextResponse.json({
           success: true,
           afterImageUrl,

@@ -3,9 +3,17 @@
  *
  * Pure business logic functions - no HTTP, no Next.js, no UI.
  * Route handlers call these, they return results.
+ *
+ * Uses ONLY real Prisma models:
+ *   - ai_reports: id, orgId, type, title, prompt, content, tokensUsed, model,
+ *                 claimId, inspectionId, userId, userName, status, attachments
+ *   - claim_activities: event logging
+ *   - reports: generated reports with sections/PDF
  */
 
+import { logger } from "@/lib/logger";
 import prisma from "@/lib/prisma";
+import type { Prisma } from "@prisma/client";
 
 // ============================================================================
 // Types
@@ -66,11 +74,38 @@ export interface AddReportNoteInput {
 }
 
 // ============================================================================
+// Helpers
+// ============================================================================
+
+/** Log a report event to claim_activities (fire-and-forget) */
+function logReportEvent(
+  reportId: string,
+  claimId: string | null,
+  userId: string,
+  eventType: string,
+  metadata: Record<string, unknown> = {}
+) {
+  if (!claimId) return;
+  prisma.claim_activities
+    .create({
+      data: {
+        id: crypto.randomUUID(),
+        claim_id: claimId,
+        user_id: userId,
+        type: "NOTE",
+        message: `Report ${eventType}: ${reportId}`,
+        metadata: { reportId, eventType, ...metadata },
+      },
+    })
+    .catch((err: unknown) => logger.error("[ReportService] Failed to log event:", err));
+}
+
+// ============================================================================
 // Service Functions
 // ============================================================================
 
 /**
- * Approve a report
+ * Approve a report — update status + log event
  */
 export async function approveReport(input: ApproveReportInput) {
   const { reportId, orgId, userId, notes } = input;
@@ -79,28 +114,21 @@ export async function approveReport(input: ApproveReportInput) {
     where: { id: reportId },
     data: {
       status: "approved",
-      approvedAt: new Date(),
-      approvedBy: userId,
-      approvalNotes: notes,
+      attachments: {
+        approvedAt: new Date().toISOString(),
+        approvedBy: userId,
+        approvalNotes: notes,
+      },
     },
   });
 
-  // Log the event
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "approved",
-      userId,
-      metadata: { notes },
-    },
-  });
+  logReportEvent(reportId, report.claimId, userId, "approved", { notes });
 
   return { success: true, report };
 }
 
 /**
- * Reject a report
+ * Reject a report — update status + log event
  */
 export async function rejectReport(input: RejectReportInput) {
   const { reportId, orgId, userId, reason, notes } = input;
@@ -109,118 +137,110 @@ export async function rejectReport(input: RejectReportInput) {
     where: { id: reportId },
     data: {
       status: "rejected",
-      rejectedAt: new Date(),
-      rejectedBy: userId,
-      rejectionReason: reason,
-      rejectionNotes: notes,
+      attachments: {
+        rejectedAt: new Date().toISOString(),
+        rejectedBy: userId,
+        rejectionReason: reason,
+        rejectionNotes: notes,
+      },
     },
   });
 
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "rejected",
-      userId,
-      metadata: { reason, notes },
-    },
-  });
+  logReportEvent(reportId, report.claimId, userId, "rejected", { reason, notes });
 
   return { success: true, report };
 }
 
 /**
- * Send a report to a recipient
+ * Send a report — update status, log event
+ * TODO: wire actual email delivery via EmailQueue
  */
 export async function sendReport(input: SendReportInput) {
   const { reportId, orgId, userId, recipientEmail, recipientType, message } = input;
 
-  // Create send record
-  const sendRecord = await prisma.reportSend.create({
-    data: {
-      reportId,
-      recipientEmail,
-      recipientType: recipientType || "adjuster",
-      message,
-      sentBy: userId,
-      sentAt: new Date(),
-    },
-  });
-
-  // Update report status
-  await prisma.ai_reports.update({
+  const report = await prisma.ai_reports.update({
     where: { id: reportId },
-    data: { status: "sent", sentAt: new Date() },
-  });
-
-  await prisma.reportEvent.create({
     data: {
-      reportId,
-      orgId,
-      eventType: "sent",
-      userId,
-      metadata: { recipientEmail, recipientType },
+      status: "sent",
+      attachments: {
+        sentAt: new Date().toISOString(),
+        sentBy: userId,
+        recipientEmail,
+        recipientType: recipientType || "adjuster",
+        message,
+      },
     },
   });
 
-  // TODO: Trigger actual email send via queue
-  return { success: true, sendRecord };
+  logReportEvent(reportId, report.claimId, userId, "sent", {
+    recipientEmail,
+    recipientType,
+  });
+
+  return { success: true, message: "Report marked as sent" };
 }
 
 /**
- * Send a complete packet with attachments
+ * Send a complete packet — update status, log event
+ * TODO: wire actual packet assembly + email via EmailQueue
  */
 export async function sendPacket(input: SendPacketInput) {
   const { reportId, orgId, userId, recipientEmail, message, includePhotos, includeDocuments } =
     input;
 
-  const packet = await prisma.reportPacket.create({
+  const report = await prisma.ai_reports.update({
+    where: { id: reportId },
     data: {
-      reportId,
-      recipientEmail,
-      message,
-      includePhotos: includePhotos ?? true,
-      includeDocuments: includeDocuments ?? true,
-      sentBy: userId,
-      sentAt: new Date(),
+      status: "sent",
+      attachments: {
+        packetSentAt: new Date().toISOString(),
+        sentBy: userId,
+        recipientEmail,
+        message,
+        includePhotos: includePhotos ?? true,
+        includeDocuments: includeDocuments ?? true,
+      },
     },
   });
 
-  await prisma.reportEvent.create({
-    data: {
-      reportId,
-      orgId,
-      eventType: "packet_sent",
-      userId,
-      metadata: { packetId: packet.id },
-    },
+  logReportEvent(reportId, report.claimId, userId, "packet_sent", {
+    recipientEmail,
+    includePhotos,
+    includeDocuments,
   });
 
-  return { success: true, packet };
+  return { success: true, message: "Packet marked as sent" };
 }
 
 /**
- * Generate a new report
+ * Generate a new report — create ai_reports record
  */
 export async function generateReport(input: GenerateReportInput) {
   const { claimId, orgId, userId, reportType, options } = input;
 
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
   const report = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType,
-      status: "generating",
-      createdBy: userId,
-      options: options || {},
+      type: reportType,
+      title: `${reportType} Report`,
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
+      status: "pending",
+      attachments: { options: (options || {}) as Prisma.InputJsonValue } as Prisma.InputJsonValue,
+      updatedAt: new Date(),
     },
   });
 
-  // TODO: Queue async generation job
-  await prisma.ai_reports.update({
-    where: { id: report.id },
-    data: { status: "pending" },
-  });
+  logReportEvent(report.id, claimId, userId, "generation_started", { reportType });
 
   return { success: true, report: { id: report.id, status: "pending" } };
 }
@@ -240,59 +260,93 @@ export async function updateReportStatus(input: UpdateReportStatusInput) {
 }
 
 /**
- * Add a note to a report
+ * Add a note to a report — stored in attachments JSON
  */
 export async function addReportNote(input: AddReportNoteInput) {
   const { reportId, userId, content, noteType } = input;
 
-  const note = await prisma.reportNote.create({
+  const report = await prisma.ai_reports.findUnique({
+    where: { id: reportId },
+    select: { attachments: true, claimId: true },
+  });
+
+  const currentAttachments =
+    report?.attachments && typeof report.attachments === "object"
+      ? (report.attachments as Record<string, unknown>)
+      : {};
+
+  const existingNotes = Array.isArray(currentAttachments.notes)
+    ? (currentAttachments.notes as Record<string, unknown>[])
+    : [];
+
+  const newNote = {
+    id: crypto.randomUUID(),
+    content,
+    noteType: noteType || "general",
+    authorId: userId,
+    createdAt: new Date().toISOString(),
+  };
+
+  await prisma.ai_reports.update({
+    where: { id: reportId },
     data: {
-      reportId,
-      content,
-      noteType: noteType || "general",
-      authorId: userId,
+      attachments: {
+        ...currentAttachments,
+        notes: [...existingNotes, newNote],
+      } as Prisma.InputJsonValue,
     },
   });
 
-  return { success: true, note };
+  logReportEvent(reportId, report?.claimId || null, userId, "note_added", {
+    noteType,
+  });
+
+  return { success: true, note: newNote };
 }
 
 /**
- * Regenerate share links for a report
+ * Regenerate share links — store token in attachments
  */
 export async function regenerateShareLinks(reportId: string, expireExisting?: boolean) {
-  if (expireExisting) {
-    await prisma.reportShareLink.updateMany({
-      where: { reportId, active: true },
-      data: { active: false, expiredAt: new Date() },
-    });
-  }
-
   const token = crypto.randomUUID();
-  const link = await prisma.reportShareLink.create({
+
+  const report = await prisma.ai_reports.findUnique({
+    where: { id: reportId },
+    select: { attachments: true },
+  });
+
+  const currentAttachments =
+    report?.attachments && typeof report.attachments === "object"
+      ? (report.attachments as Record<string, unknown>)
+      : {};
+
+  await prisma.ai_reports.update({
+    where: { id: reportId },
     data: {
-      reportId,
-      token,
-      active: true,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      attachments: {
+        ...currentAttachments,
+        shareToken: token,
+        shareCreatedAt: new Date().toISOString(),
+        shareExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        previousShareExpired: expireExisting ?? false,
+      },
     },
   });
 
   return {
     success: true,
     shareUrl: `/reports/share/${token}`,
-    link,
   };
 }
 
 /**
- * Save draft content
+ * Save draft content — update ai_reports content field
  */
 export async function saveDraft(reportId: string, content: Record<string, unknown>) {
   await prisma.ai_reports.update({
     where: { id: reportId },
     data: {
-      draftContent: content,
+      content: JSON.stringify(content),
       status: "draft",
     },
   });
@@ -301,7 +355,8 @@ export async function saveDraft(reportId: string, content: Record<string, unknow
 }
 
 /**
- * Create email draft
+ * Create email draft — stored in attachments
+ * TODO: integrate with EmailQueue model for real sending
  */
 export async function createEmailDraft(
   reportId: string,
@@ -309,12 +364,31 @@ export async function createEmailDraft(
   body: string,
   recipientType: "adjuster" | "homeowner" | "contractor"
 ) {
-  const draft = await prisma.emailDraft.create({
+  const report = await prisma.ai_reports.findUnique({
+    where: { id: reportId },
+    select: { attachments: true },
+  });
+
+  const currentAttachments =
+    report?.attachments && typeof report.attachments === "object"
+      ? (report.attachments as Record<string, unknown>)
+      : {};
+
+  const draft = {
+    id: crypto.randomUUID(),
+    subject,
+    body,
+    recipientType,
+    createdAt: new Date().toISOString(),
+  };
+
+  await prisma.ai_reports.update({
+    where: { id: reportId },
     data: {
-      reportId,
-      subject,
-      body,
-      recipientType,
+      attachments: {
+        ...currentAttachments,
+        emailDraft: draft,
+      },
     },
   });
 
@@ -374,7 +448,6 @@ export interface QueueReportInput {
 export async function generateFromTemplate(input: GenerateFromTemplateInput) {
   const { claimId, orgId, userId, templateId, variables } = input;
 
-  // Verify template exists
   const template = await prisma.reportTemplate.findFirst({
     where: { id: templateId, orgId },
   });
@@ -383,15 +456,28 @@ export async function generateFromTemplate(input: GenerateFromTemplateInput) {
     throw new Error("Template not found");
   }
 
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
   const report = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType: template.type,
-      templateId,
+      type: template.type,
+      title: `${template.name} Report`,
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "generating",
-      createdBy: userId,
-      variables: variables || {},
+      attachments: {
+        templateId,
+        variables: (variables || {}) as Prisma.InputJsonValue,
+      } as Prisma.InputJsonValue,
+      updatedAt: new Date(),
     },
   });
 
@@ -404,14 +490,25 @@ export async function generateFromTemplate(input: GenerateFromTemplateInput) {
 export async function composeReport(input: ComposeReportInput) {
   const { claimId, orgId, userId, sections } = input;
 
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
   const report = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType: "composed",
+      type: "composed",
+      title: "Composed Report",
+      content: JSON.stringify(sections),
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "draft",
-      createdBy: userId,
-      sections,
+      attachments: { sections },
+      updatedAt: new Date(),
     },
   });
 
@@ -424,14 +521,25 @@ export async function composeReport(input: ComposeReportInput) {
 export async function generateSummary(input: GenerateSummaryInput) {
   const { claimId, orgId, userId, format } = input;
 
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
   const report = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType: "summary",
+      type: "summary",
+      title: `${(format || "detailed").charAt(0).toUpperCase() + (format || "detailed").slice(1)} Summary`,
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "generating",
-      createdBy: userId,
-      options: { format: format || "detailed" },
+      attachments: { format: format || "detailed" },
+      updatedAt: new Date(),
     },
   });
 
@@ -444,15 +552,28 @@ export async function generateSummary(input: GenerateSummaryInput) {
 export async function generateSupplement(input: GenerateSupplementInput) {
   const { claimId, orgId, userId, originalReportId, newDamage } = input;
 
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
   const report = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType: "supplement",
+      type: "supplement",
+      title: "Supplement Report",
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "generating",
-      createdBy: userId,
-      parentReportId: originalReportId,
-      supplementData: { newDamage: newDamage || [] },
+      attachments: {
+        parentReportId: originalReportId,
+        newDamage: (newDamage || []) as Prisma.InputJsonValue,
+      } as Prisma.InputJsonValue,
+      updatedAt: new Date(),
     },
   });
 
@@ -460,20 +581,34 @@ export async function generateSupplement(input: GenerateSupplementInput) {
 }
 
 /**
- * Queue report for generation
+ * Queue report for generation — stored as ai_reports with status "queued"
  */
 export async function queueReport(input: QueueReportInput) {
   const { claimId, orgId, userId, reportType, priority, scheduledFor } = input;
 
-  const queueItem = await prisma.reportQueue.create({
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
+  const queueItem = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
       orgId,
-      reportType,
-      priority: priority || "normal",
-      scheduledFor: scheduledFor ? new Date(scheduledFor) : null,
-      createdBy: userId,
+      type: reportType,
+      title: `Queued: ${reportType} Report`,
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "queued",
+      attachments: {
+        priority: priority || "normal",
+        scheduledFor: scheduledFor || null,
+        queuedAt: new Date().toISOString(),
+      },
+      updatedAt: new Date(),
     },
   });
 
@@ -481,31 +616,35 @@ export async function queueReport(input: QueueReportInput) {
 }
 
 /**
- * Start generating a report
+ * Start generating a report (transition from queued → processing)
  */
 export async function startReport(queueId: string) {
-  const queueItem = await prisma.reportQueue.update({
+  const report = await prisma.ai_reports.update({
     where: { id: queueId },
-    data: { status: "processing", startedAt: new Date() },
+    data: {
+      status: "processing",
+    },
   });
 
-  return { success: true, queueItem };
+  return { success: true, queueItem: report };
 }
 
 /**
  * Mark report generation as finished
  */
 export async function finishReport(queueId: string, reportId: string) {
-  const queueItem = await prisma.reportQueue.update({
+  const report = await prisma.ai_reports.update({
     where: { id: queueId },
     data: {
       status: "completed",
-      completedAt: new Date(),
-      reportId,
+      attachments: {
+        completedAt: new Date().toISOString(),
+        generatedReportId: reportId,
+      },
     },
   });
 
-  return { success: true, queueItem };
+  return { success: true, queueItem: report };
 }
 
 /**
@@ -514,23 +653,36 @@ export async function finishReport(queueId: string, reportId: string) {
 export async function regenerateReport(reportId: string, userId: string) {
   const report = await prisma.ai_reports.findUnique({
     where: { id: reportId },
-    select: { claimId: true, orgId: true, reportType: true },
+    select: { claimId: true, orgId: true, type: true },
   });
 
   if (!report) {
     return { success: false, error: "Report not found" };
   }
 
-  // Queue a new generation
-  const queueItem = await prisma.reportQueue.create({
+  const user = await prisma.users.findFirst({
+    where: { clerkUserId: userId },
+    select: { name: true },
+  });
+
+  const queueItem = await prisma.ai_reports.create({
     data: {
+      id: crypto.randomUUID(),
       claimId: report.claimId,
       orgId: report.orgId,
-      reportType: report.reportType || "standard",
-      priority: "high",
-      createdBy: userId,
+      type: report.type || "standard",
+      title: `Regenerate: ${report.type || "standard"} Report`,
+      content: "",
+      tokensUsed: 0,
+      userId,
+      userName: user?.name || "System",
       status: "queued",
-      regenerateFrom: reportId,
+      attachments: {
+        priority: "high",
+        regenerateFrom: reportId,
+        queuedAt: new Date().toISOString(),
+      },
+      updatedAt: new Date(),
     },
   });
 

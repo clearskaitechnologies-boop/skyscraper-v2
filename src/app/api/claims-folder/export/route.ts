@@ -4,8 +4,8 @@
  * Exports a claims folder to PDF, ZIP, or Xactimate ESX format
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
 import { getOrgClaimOrThrow, OrgScopeError } from "@/lib/auth/orgScope";
@@ -77,9 +77,8 @@ export async function POST(request: NextRequest) {
       }
 
       case "zip": {
-        // For ZIP, we'd bundle multiple files
-        // Using text format as placeholder - would use actual zip library
-        const zipContent = JSON.stringify(
+        // Export as structured JSON bundle (ZIP requires additional server dependencies)
+        const bundleContent = JSON.stringify(
           {
             claim: claimId,
             folder,
@@ -89,14 +88,14 @@ export async function POST(request: NextRequest) {
           null,
           2
         );
-        const zipBytes = new TextEncoder().encode(zipContent);
+        const bundleBytes = new TextEncoder().encode(bundleContent);
 
-        return new NextResponse(zipBytes, {
+        return new NextResponse(bundleBytes, {
           status: 200,
           headers: {
-            "Content-Type": "application/zip",
-            "Content-Disposition": `attachment; filename="claim-${claimId}-package.zip"`,
-            "Content-Length": String(zipBytes.length),
+            "Content-Type": "application/json",
+            "Content-Disposition": `attachment; filename="claim-${claimId}-bundle.json"`,
+            "Content-Length": String(bundleBytes.length),
           },
         });
       }

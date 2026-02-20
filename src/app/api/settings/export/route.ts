@@ -1,5 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -11,11 +11,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const where: any = {};
-    if (orgId) where.orgId = orgId;
+    if (!orgId) {
+      return NextResponse.json({ error: "Organization required for data export" }, { status: 403 });
+    }
 
     const claims = await prisma.claims.findMany({
-      where,
+      where: { orgId },
       select: {
         id: true,
         claimNumber: true,
@@ -44,11 +45,14 @@ export async function GET(request: NextRequest) {
       status: 200,
       headers: {
         "Content-Type": "application/json",
-        "Content-Disposition": "attachment; filename=\"skaiscrape-export.json\"",
+        "Content-Disposition": 'attachment; filename="skaiscrape-export.json"',
       },
     });
   } catch (error) {
     logger.error("Settings export error:", error);
-    return NextResponse.json({ error: error.message || "Export failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Export failed" },
+      { status: 500 }
+    );
   }
 }

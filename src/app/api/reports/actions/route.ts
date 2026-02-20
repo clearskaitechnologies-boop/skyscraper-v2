@@ -1,8 +1,10 @@
 /**
  * Reports Generate Actions - Unified handler for report generation
  *
- * POST /api/reports/generate
+ * POST /api/reports/actions
  * Actions: generate, generate_from_template, compose, summary, supplement, queue
+ *
+ * Uses service layer → ai_reports model (real fields only)
  */
 
 import { auth } from "@clerk/nextjs/server";
@@ -10,6 +12,7 @@ import { logger } from "@/lib/logger";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
+import * as reportService from "@/lib/domain/reports";
 import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
@@ -59,8 +62,6 @@ const ActionSchema = z.discriminatedUnion("action", [
   }),
 ]);
 
-type ActionInput = z.infer<typeof ActionSchema>;
-
 export async function POST(req: NextRequest) {
   try {
     const { userId, orgId } = await auth();
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Verify org
+    // Resolve Clerk orgId → internal UUID
     const org = await prisma.org.findUnique({
       where: { clerkOrgId: orgId },
       select: { id: true },
@@ -99,24 +100,72 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Claim not found" }, { status: 404 });
     }
 
+    // Delegate to service layer (uses real Prisma models only)
     switch (input.action) {
-      case "generate":
-        return handleGenerate(claim.id, org.id, userId, input);
+      case "generate": {
+        const result = await reportService.generateReport({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          reportType: input.reportType,
+          options: input.options,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "generate_from_template":
-        return handleGenerateFromTemplate(claim.id, org.id, userId, input);
+      case "generate_from_template": {
+        const result = await reportService.generateFromTemplate({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          templateId: input.templateId,
+          variables: input.variables,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "compose":
-        return handleCompose(claim.id, org.id, userId, input);
+      case "compose": {
+        const result = await reportService.composeReport({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          sections: input.sections,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "summary":
-        return handleSummary(claim.id, org.id, userId, input);
+      case "summary": {
+        const result = await reportService.generateSummary({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          format: input.format,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "supplement":
-        return handleSupplement(claim.id, org.id, userId, input);
+      case "supplement": {
+        const result = await reportService.generateSupplement({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          originalReportId: input.originalReportId,
+          newDamage: input.newDamage,
+        });
+        return NextResponse.json(result);
+      }
 
-      case "queue":
-        return handleQueue(claim.id, org.id, userId, input);
+      case "queue": {
+        const result = await reportService.queueReport({
+          claimId: claim.id,
+          orgId: org.id,
+          userId,
+          reportType: input.reportType,
+          priority: input.priority,
+          scheduledFor: input.scheduledFor,
+        });
+        return NextResponse.json(result);
+      }
 
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
@@ -125,169 +174,4 @@ export async function POST(req: NextRequest) {
     logger.error("[Reports Generate] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-}
-
-async function handleGenerate(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "generate" }>
-) {
-  // Create report record
-  const report = await prisma.ai_reports.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: input.reportType,
-      status: "generating",
-      createdBy: userId,
-      options: input.options || {},
-    },
-  });
-
-  // In production, trigger async generation job here
-  // For now, mark as pending
-  await prisma.ai_reports.update({
-    where: { id: report.id },
-    data: { status: "pending" },
-  });
-
-  return NextResponse.json({
-    success: true,
-    report: { id: report.id, status: "pending" },
-    message: "Report generation started",
-  });
-}
-
-async function handleGenerateFromTemplate(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "generate_from_template" }>
-) {
-  // Verify template exists
-  const template = await prisma.reportTemplate.findFirst({
-    where: { id: input.templateId, orgId },
-  });
-
-  if (!template) {
-    return NextResponse.json({ error: "Template not found" }, { status: 404 });
-  }
-
-  const report = await prisma.ai_reports.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: template.type,
-      templateId: input.templateId,
-      status: "generating",
-      createdBy: userId,
-      variables: input.variables || {},
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    report: { id: report.id },
-    message: "Report generation from template started",
-  });
-}
-
-async function handleCompose(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "compose" }>
-) {
-  // Create composed report with sections
-  const report = await prisma.ai_reports.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: "composed",
-      status: "draft",
-      createdBy: userId,
-      sections: input.sections,
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    report: { id: report.id },
-    message: "Composed report created",
-  });
-}
-
-async function handleSummary(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "summary" }>
-) {
-  const report = await prisma.ai_reports.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: "summary",
-      status: "generating",
-      createdBy: userId,
-      options: { format: input.format || "detailed" },
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    report: { id: report.id },
-    message: "Summary generation started",
-  });
-}
-
-async function handleSupplement(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "supplement" }>
-) {
-  const report = await prisma.ai_reports.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: "supplement",
-      status: "generating",
-      createdBy: userId,
-      parentReportId: input.originalReportId,
-      supplementData: { newDamage: input.newDamage || [] },
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    report: { id: report.id },
-    message: "Supplement generation started",
-  });
-}
-
-async function handleQueue(
-  claimId: string,
-  orgId: string,
-  userId: string,
-  input: Extract<ActionInput, { action: "queue" }>
-) {
-  const queueItem = await prisma.reportQueue.create({
-    data: {
-      claimId,
-      orgId,
-      reportType: input.reportType,
-      priority: input.priority || "normal",
-      scheduledFor: input.scheduledFor ? new Date(input.scheduledFor) : null,
-      createdBy: userId,
-      status: "queued",
-    },
-  });
-
-  return NextResponse.json({
-    success: true,
-    queueItem: { id: queueItem.id },
-    message: "Report queued for generation",
-  });
 }

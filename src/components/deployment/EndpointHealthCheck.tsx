@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { logger } from "@/lib/logger";
+import { useEffect, useState } from "react";
 
 import {
   checkEndpoints,
@@ -16,7 +16,7 @@ const CRITICAL_ENDPOINTS = [
   "/api/reports/context",
   "/api/templates/add-to-company",
   "/api/supplements/generate",
-  "/api/mockups/generate",
+  "/api/mockup/generate",
 ];
 
 const OPTIONAL_ENDPOINTS = ["/api/__truth", "/api/_build", "/api/build-info"];

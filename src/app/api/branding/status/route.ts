@@ -10,49 +10,32 @@ export const revalidate = 0;
 export async function GET(request: NextRequest) {
   try {
     const { userId } = await auth();
-    let effectiveUserId = userId;
-    let user: Record<string, unknown> | null = null;
-
-    if (!effectiveUserId) {
-      // Dev-only fallback to facilitate local status checks without Clerk session
-      if (process.env.DEV_BRANDING_AUTOFALLBACK === "1") {
-        // Select first user; rely on orgId check below to validate presence
-        user = await prisma.users.findFirst({
-          select: { id: true, clerkUserId: true, orgId: true, Org: { select: { id: true } } },
-        });
-        if (user?.orgId) {
-          effectiveUserId = user.clerkUserId;
-        }
-      } else if (process.env.LOCAL_BRANDING_TEST_USER) {
-        user = await prisma.users.findUnique({
-          where: { clerkUserId: process.env.LOCAL_BRANDING_TEST_USER },
-          include: { Org: true },
-        });
-        effectiveUserId = user?.clerkUserId;
-      }
-      if (!effectiveUserId) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-      }
+    if (!userId) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    let user: Record<string, unknown> | null = null;
 
     if (!user) {
       user = await prisma.users.findUnique({
-        where: { clerkUserId: effectiveUserId },
+        where: { clerkUserId: userId },
         include: { Org: true },
       });
     }
 
-    if (!user?.orgId) {
+    if (!user || !user.orgId) {
       return NextResponse.json({
         isComplete: false,
         description: "No organization found",
       });
     }
 
+    const userOrgId = user.orgId as string;
+
     // Check if organization branding exists and is complete
     const orgBranding = await prisma.org_branding.findFirst({
       where: {
-        orgId: user.orgId,
+        orgId: userOrgId,
       },
     });
 

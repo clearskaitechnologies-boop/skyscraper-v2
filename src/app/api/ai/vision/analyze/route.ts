@@ -3,8 +3,8 @@
  * Rate-limited and authenticated
  */
 
-import { NextRequest, NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextRequest, NextResponse } from "next/server";
 
 import { createAiConfig, withAiBilling } from "@/lib/ai/withAiBilling";
 
@@ -13,7 +13,7 @@ import { analyzePropertyImage } from "@/lib/ai/vision";
 import { aiFail, aiOk, classifyOpenAiError } from "@/lib/api/aiResponse";
 import prisma from "@/lib/prisma";
 import { checkRateLimit, getRateLimitError } from "@/lib/ratelimit";
-import { visionAnalyzeSchema, validateAIRequest } from "@/lib/validation/aiSchemas";
+import { validateAIRequest, visionAnalyzeSchema } from "@/lib/validation/aiSchemas";
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string | null }) {
   try {
@@ -21,7 +21,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
     // Rate limiting check (10 requests per minute)
     const identifier = orgId || userId;
-    const rateLimit = await checkRateLimit(identifier, "vision-analyze");
+    const rateLimit = await checkRateLimit(identifier, "AI");
     if (!rateLimit.success) {
       return NextResponse.json(
         { success: false, error: getRateLimitError(rateLimit.reset) },
@@ -52,6 +52,25 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       focusAreas,
       claimId,
     });
+
+    // Persist the analysis to GeneratedArtifact so it survives page refresh
+    try {
+      await prisma.generatedArtifact.create({
+        data: {
+          orgId: user.orgId,
+          claimId: claimId || null,
+          type: "vision_analysis",
+          title: `Vision Analysis — ${new Date().toLocaleDateString()}`,
+          content: JSON.stringify(analysis),
+          model: "gpt-4o",
+          tokensUsed: 500,
+          status: "completed",
+          metadata: { focusAreas, imageUrl },
+        },
+      });
+    } catch (saveErr) {
+      logger.error("[Vision API] Failed to save analysis artifact:", saveErr);
+    }
 
     // Track AI usage
     await trackAiUsage({

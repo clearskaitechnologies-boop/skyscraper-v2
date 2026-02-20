@@ -1,5 +1,5 @@
 export async function generateMockup(reportIntakeId: string, page = "cover") {
-  const res = await fetch("/api/generate-mockup", {
+  const res = await fetch("/api/mockup/generate", {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ reportIntakeId, page }),

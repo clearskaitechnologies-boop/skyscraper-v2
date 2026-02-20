@@ -67,31 +67,7 @@ export const POST = withAuth(
         const doc = new PDFDocument({ size: "LETTER", margin: 50 });
         const chunks: Buffer[] = [];
 
-        doc.on("data", (chunk) => chunks.push(chunk));
-        doc.on("end", () => {
-          const pdfBuffer = Buffer.concat(chunks);
-
-          // Create activity log
-          prisma.claim_activities
-            .create({
-              data: {
-                id: crypto.randomUUID(),
-                claim_id: claimId,
-                user_id: userId,
-                type: "NOTE",
-                message: `PDF depreciation invoice generated for claim ${claim.claimNumber}`,
-                metadata: { format: "pdf", itemCount: depreciationItems.length },
-              },
-            })
-            .catch(logger.error);
-
-          return new NextResponse(pdfBuffer, {
-            headers: {
-              "Content-Type": "application/pdf",
-              "Content-Disposition": `attachment; filename="depreciation-${claim.claimNumber}.pdf"`,
-            },
-          });
-        });
+        doc.on("data", (chunk: Buffer) => chunks.push(chunk));
 
         // PDF Header
         doc.fontSize(24).text("Depreciation Invoice", { align: "center" });
@@ -157,8 +133,32 @@ export const POST = withAuth(
 
         doc.end();
 
-        // Return will happen in the 'end' event handler above
-        return new Promise(() => {}); // Promise never resolves, handled by event
+        // Collect PDF buffer via promise
+        const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
+          doc.on("end", () => resolve(Buffer.concat(chunks)));
+          doc.on("error", reject);
+        });
+
+        // Create activity log (fire and forget)
+        prisma.claim_activities
+          .create({
+            data: {
+              id: crypto.randomUUID(),
+              claim_id: claimId,
+              user_id: userId,
+              type: "NOTE",
+              message: `PDF depreciation invoice generated for claim ${claim.claimNumber}`,
+              metadata: { format: "pdf", itemCount: depreciationItems.length },
+            },
+          })
+          .catch(logger.error);
+
+        return new NextResponse(new Uint8Array(pdfBuffer), {
+          headers: {
+            "Content-Type": "application/pdf",
+            "Content-Disposition": `attachment; filename="depreciation-${claim.claimNumber}.pdf"`,
+          },
+        });
       } else {
         return NextResponse.json(
           {

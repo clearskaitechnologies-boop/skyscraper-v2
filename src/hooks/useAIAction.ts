@@ -8,7 +8,7 @@
  * - History tracking
  */
 
-import { useCallback,useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
 export interface UseAIActionOptions {
@@ -176,7 +176,7 @@ export function useSupplementBuilder() {
  */
 export function useAIMockup() {
   return useAIAction({
-    endpoint: "/api/ai/mockup",
+    endpoint: "/api/mockup/generate",
     successMessage: "Mockup generated successfully",
     errorMessage: "Failed to generate mockup",
   });

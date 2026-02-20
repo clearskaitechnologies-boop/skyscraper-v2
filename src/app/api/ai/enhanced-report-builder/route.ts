@@ -23,7 +23,7 @@ import { enhancedReportBuilderSchema, validateAIRequest } from "@/lib/validation
 
 async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string }) {
   try {
-    const { userId, orgId } = ctx;
+    const { userId, orgId: clerkOrgId } = ctx;
 
     const body = await req.json();
     const validated = validateAIRequest(enhancedReportBuilderSchema, body);
@@ -35,6 +35,16 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     }
 
     const { claimId, options } = validated.data;
+
+    // Resolve Clerk orgId → internal UUID for DB comparisons
+    let internalOrgId = clerkOrgId;
+    if (clerkOrgId) {
+      const org = await prisma.org.findUnique({
+        where: { clerkOrgId },
+        select: { id: true },
+      });
+      if (org) internalOrgId = org.id;
+    }
 
     // 1. FETCH CLAIM DETAILS
     const claim = await prisma.claims.findUnique({
@@ -55,7 +65,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
       where: { claimId },
     });
 
-    if (!claim || claim.orgId !== orgId) {
+    if (!claim || claim.orgId !== internalOrgId) {
       return NextResponse.json({ error: "Claim not found or access denied" }, { status: 404 });
     }
 
@@ -75,7 +85,7 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     const analysisResult = await runStormIntakePipeline({
       images: photoUrls,
       claimId,
-      orgId,
+      orgId: internalOrgId,
       propertyAddress: property.street,
       lossDate: claim.dateOfLoss,
       damageType: claim.damageType,
@@ -94,8 +104,8 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     let weatherData;
     if (options?.includeWeather !== false && claim.dateOfLoss) {
       // fetchWeatherForDOL returns WeatherData | null
-      const lat = 0; // TODO: Get from property if available
-      const lng = 0; // TODO: Get from property if available
+      const lat = (property as any).latitude || (property as any).lat || 33.4484; // Default to Phoenix AZ
+      const lng = (property as any).longitude || (property as any).lng || -112.074;
       const weatherResult = await fetchWeatherForDOL(lat, lng, claim.dateOfLoss);
 
       if (weatherResult) {
@@ -140,9 +150,9 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
 
     // 7. FETCH COMPANY BRANDING
     let branding;
-    if (orgId) {
+    if (clerkOrgId) {
       const org = await prisma.org.findUnique({
-        where: { clerkOrgId: orgId },
+        where: { clerkOrgId },
       });
       const orgBranding = await prisma.org_branding.findFirst({
         where: { orgId: org?.id },
@@ -194,7 +204,39 @@ async function POST_INNER(req: NextRequest, ctx: { userId: string; orgId: string
     // 9. GENERATE COMPREHENSIVE PDF
     const pdfBuffer = await generateEnhancedPDFReport(reportData);
 
-    // 10. RETURN PDF
+    // 10. SAVE REPORT TO DATABASE
+    const reportId = crypto.randomUUID();
+    try {
+      await prisma.reports.create({
+        data: {
+          id: reportId,
+          orgId: claim.orgId,
+          claimId: claim.id,
+          createdById: userId,
+          type: "enhanced_damage_report",
+          title: `Comprehensive Damage Report - ${claim.claimNumber || claimId}`,
+          subtitle: `Generated ${new Date().toLocaleDateString()}`,
+          lossType: claim.damageType,
+          dol: claim.dateOfLoss,
+          address: property.street,
+          sections: reportData as any,
+          summary: {
+            photoCount: photos.length,
+            hasWeather: !!weatherData,
+            hasCompliance: !!complianceReport,
+            hasMaterials: !!recommendedMaterials,
+            version: "2.0-Enhanced",
+          },
+          updatedAt: new Date(),
+        },
+      });
+      logger.info(`[Enhanced Report Builder] Report saved: ${reportId} for claim ${claimId}`);
+    } catch (saveErr) {
+      logger.error("[Enhanced Report Builder] Failed to save report record:", saveErr);
+      // Don't block PDF delivery if save fails
+    }
+
+    // 11. RETURN PDF
     return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {

@@ -1,6 +1,6 @@
 // app/api/weather/export/route.ts
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 import prisma from "@/lib/prisma";
@@ -54,11 +54,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Weather report not found" }, { status: 404 });
     }
 
-    // Verify org access
-    if (orgId && report.claimId) {
+    // Verify org access — must belong to user's org
+    if (report.claimId) {
       const claim = report.claims;
-      if (claim && claim.orgId !== orgId) {
+      if (claim && orgId && claim.orgId !== orgId) {
         return new NextResponse("Forbidden", { status: 403 });
+      }
+      if (!orgId) {
+        return NextResponse.json({ error: "Organization required" }, { status: 403 });
       }
     }
 
@@ -83,6 +86,9 @@ export async function POST(req: NextRequest) {
     );
   } catch (err) {
     logger.error("WEATHER PACKET EXPORT ERROR:", err);
-    return NextResponse.json({ error: err?.message || "Packet export failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Packet export failed" },
+      { status: 500 }
+    );
   }
 }
