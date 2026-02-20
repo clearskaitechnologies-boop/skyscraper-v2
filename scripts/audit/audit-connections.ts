@@ -278,19 +278,18 @@ async function auditClaimAccess() {
   log(invalidAccess.length === 0 ? "✅" : "🚨", `Invalid claim access: ${invalidAccess.length}`);
 
   // 5.2 Claims without orgId
-  const noOrgClaims = await prisma.claims.count({
-    where: {
-      OR: [{ orgId: null }, { orgId: "" }],
-    },
-  });
+  const noOrgClaims = await prisma.$queryRaw<{ count: bigint }[]>`
+    SELECT count(*) as count FROM claims WHERE "orgId" IS NULL OR "orgId" = ''
+  `;
+  const noOrgCount = Number(noOrgClaims[0]?.count ?? 0);
 
   addResult({
     check: "Claims without orgId",
-    passed: noOrgClaims === 0,
+    passed: noOrgCount === 0,
     level: "critical",
-    count: noOrgClaims,
+    count: noOrgCount,
   });
-  log(noOrgClaims === 0 ? "✅" : "🚨", `Claims without orgId: ${noOrgClaims}`);
+  log(noOrgCount === 0 ? "✅" : "🚨", `Claims without orgId: ${noOrgCount}`);
 }
 
 // ============================================================================
@@ -318,11 +317,10 @@ async function auditMessaging() {
   log(emptyThreads.length === 0 ? "✅" : "⚠️", `Empty participant threads: ${emptyThreads.length}`);
 
   // 6.2 Threads without orgId
-  const noOrgThreads = await prisma.messageThread.count({
-    where: {
-      OR: [{ orgId: null }, { orgId: "" }],
-    },
-  });
+  const noOrgThreadsResult = await prisma.$queryRaw<{ count: bigint }[]>`
+    SELECT count(*) as count FROM "MessageThread" WHERE "orgId" IS NULL OR "orgId" = ''
+  `;
+  const noOrgThreads = Number(noOrgThreadsResult[0]?.count ?? 0);
 
   addResult({
     check: "Threads without orgId",
