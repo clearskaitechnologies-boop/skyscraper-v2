@@ -25,9 +25,9 @@ const runningRequests = new Map<string, Promise<any>>();
  * 
  * Usage:
  *   const result = await withDedupe(
- *     'dominus',
+ *     'skai',
  *     { leadId: '123' },
- *     () => callDominusAI()
+ *     () => callSkaiAI()
  *   );
  */
 export async function withDedupe<T>(

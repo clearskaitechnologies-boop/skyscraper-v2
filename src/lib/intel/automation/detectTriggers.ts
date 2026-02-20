@@ -1,6 +1,6 @@
 // lib/intel/automation/detectTriggers.ts
 /**
- * 🔥 PHASE 12 - DOMINUS TRIGGER DETECTION SYSTEM
+ * 🔥 PHASE 12 - SKAI TRIGGER DETECTION SYSTEM
  *
  * Scans claims for conditions that should trigger automations:
  * - Financial underpayment detected

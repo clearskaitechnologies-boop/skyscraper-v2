@@ -5,7 +5,7 @@
  * Pulls from:
  * - Phase 49 merged timeline events
  * - Storm data & weather reports
- * - Dominus AI insights
+ * - SkaiPDF insights
  * - Carrier documents
  * - Task outcomes
  * - Photo analyses
@@ -84,7 +84,7 @@ export async function generateNarrative(
     // 2. Fetch merged timeline from Phase 49
     const { realTimeline: timeline } = await reconstructClaimTimeline(claimId);
 
-    // 3. Fetch Dominus AI insights from leads table
+    // 3. Fetch SkaiPDF insights from leads table
     const lead = await prisma.leads.findFirst({
       where: { claimId: claim.id },
     });

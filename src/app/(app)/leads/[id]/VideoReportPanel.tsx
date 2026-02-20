@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * 🔥 PHASE 27: DOMINUS VIDEO AI (v1.5)
+ * 🔥 PHASE 27: SKAI VIDEO AI (v1.5)
  *
  * VideoReportPanel - Generate cinematic damage report videos
  */
@@ -111,7 +111,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
       setIsGenerating(true);
       setError(null);
 
-      const response = await fetch("/api/ai/dominus/video/job", {
+      const response = await fetch("/api/ai/skai/video/job", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -165,7 +165,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
   const pollJobStatus = async (jobId: string) => {
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`/api/ai/dominus/video/job/${jobId}`);
+        const response = await fetch(`/api/ai/skai/video/job/${jobId}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -187,7 +187,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
 
     try {
       setIsRunning(true);
-      const response = await fetch(`/api/ai/dominus/video/job/${job.reportId}/run`, {
+      const response = await fetch(`/api/ai/skai/video/job/${job.reportId}/run`, {
         method: "POST",
       });
 
@@ -305,7 +305,7 @@ export function VideoReportPanel({ leadId }: VideoReportPanelProps) {
           <div className="flex flex-col gap-2">
             <CardTitle className="flex items-center gap-2 text-lg">
               <Film className="h-5 w-5 text-purple-600" />
-              Dominus Video AI
+              SkaiPDF Video
               <Badge variant="outline" className="ml-2 text-xs">
                 v1.5 BETA
               </Badge>

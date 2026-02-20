@@ -18,7 +18,7 @@ export async function executeCreateTask(
     linkedReportId?: string;
   }
 ) {
-  logger.debug(`[DOMINUS] Creating task: ${config.title}`);
+  logger.debug(`[SKAI] Creating task: ${config.title}`);
 
   const task = await getDelegate("automationTask").create({
     data: {
@@ -35,7 +35,7 @@ export async function executeCreateTask(
     },
   });
 
-  logger.debug(`[DOMINUS] Task created - ID: ${task.id}`);
+  logger.debug(`[SKAI] Task created - ID: ${task.id}`);
 
   return {
     taskId: task.id,

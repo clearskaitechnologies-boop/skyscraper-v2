@@ -35,13 +35,13 @@ export const REPORTS_HISTORY = "/reports/history";
 export const AI_HUB = "/ai/hub";
 
 // AI API endpoints (superset – keep unless confirmed deprecated)
-export const ASK_DOMINUS = "/api/ask-dominus"; // alias
+export const ASK_SKAI = "/api/ask-skai"; // alias
 export const AI_APPEALS = "/api/claims/[claimId]/appeal";
 export const AI_CLAIMS = "/api/claims"; // claims root API
 export const AI_WEATHER_API = "/api/ai/weather/run"; // representative weather AI run endpoint
 export const AI_GEOMETRY_SLOPES = "/api/ai/geometry/detect-slopes";
-export const AI_VIDEO_JOB = "/api/ai/dominus/video/job";
-export const AI_VIDEO_JOB_RUN = "/api/ai/dominus/video/job/[id]/run";
+export const AI_VIDEO_JOB = "/api/ai/skai/video/job";
+export const AI_VIDEO_JOB_RUN = "/api/ai/skai/video/job/[id]/run";
 export const AI_VISION = "/api/ai/vision/analyze"; // generic vision analyze endpoint
 export const AI_SUPPLEMENT_API = "/api/claims/[claimId]/supplement";
 export const AI_DEPRECIATION_API = "/api/depreciation/generate";

@@ -9,7 +9,7 @@
  * - Storm data (when damage actually occurred)
  * - Carrier documents (letters, denials, approvals)
  * - Video transcripts (what was said, when)
- * - Dominus AI analysis (damage detection timeline)
+ * - SkaiPDF analysis (damage detection timeline)
  * - Pipeline events (workflow actions)
  * - Tasks (what work was done when)
  *
@@ -36,7 +36,7 @@ export interface ClaimSource {
   storm: StormEvent | null;
   carrier: CarrierEvent[];
   video: VideoEvent | null;
-  dominus: DominusEvent | null;
+  skai: SkaiAnalysisEvent | null;
   pipeline: PipelineEvent[];
   tasks: TaskEvent[];
   claim: ClaimData;
@@ -85,7 +85,7 @@ export interface VideoEvent {
   confidence: number;
 }
 
-export interface DominusEvent {
+export interface SkaiAnalysisEvent {
   timestamp: Date;
   flagCount: number;
   score: number;
@@ -169,7 +169,7 @@ export async function reconstructClaimTimeline(claimId: string): Promise<Reconst
   const stormEvents = sources.storm ? [extractEventFromStorm(sources.storm)] : [];
   const carrierEvents = extractEventsFromCarrier(sources.carrier);
   const videoEvents = sources.video ? [extractEventFromVideo(sources.video)] : [];
-  const dominusEvents = sources.dominus ? [extractEventFromDominus(sources.dominus)] : [];
+  const skaiEvents = sources.skai ? [extractEventFromSkai(sources.skai)] : [];
   const pipelineEvents = extractEventsFromPipeline(sources.pipeline);
   const taskEvents = extractEventsFromTasks(sources.tasks);
 
@@ -180,7 +180,7 @@ export async function reconstructClaimTimeline(claimId: string): Promise<Reconst
     ...stormEvents,
     ...carrierEvents,
     ...videoEvents,
-    ...dominusEvents,
+    ...skaiEvents,
     ...pipelineEvents,
     ...taskEvents,
   ].sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
@@ -274,7 +274,7 @@ export async function gatherClaimSources(claimId: string): Promise<ClaimSource> 
     storm: null,
     carrier: [],
     video: null,
-    dominus: null,
+    skai: null,
     pipeline: pipelineEvents.map((e) => ({
       id: e.id,
       timestamp: e.createdAt,
@@ -363,14 +363,14 @@ export function extractEventFromVideo(video: VideoEvent): TimelineEvent {
   };
 }
 
-export function extractEventFromDominus(dominus: DominusEvent): TimelineEvent {
+export function extractEventFromSkai(skai: SkaiAnalysisEvent): TimelineEvent {
   return {
-    timestamp: dominus.timestamp,
-    title: `🤖 Dominus AI Analysis Complete (${dominus.flagCount} flags)`,
-    description: `AI detected ${dominus.flagCount} damage indicators. Score: ${dominus.score}/100`,
-    source: "dominus",
-    confidence: dominus.confidence,
-    severity: dominus.flagCount >= 5 ? "high" : "medium",
+    timestamp: skai.timestamp,
+    title: `🤖 SkaiPDF Analysis Complete (${skai.flagCount} flags)`,
+    description: `AI detected ${skai.flagCount} damage indicators. Score: ${skai.score}/100`,
+    source: "skai",
+    confidence: skai.confidence,
+    severity: skai.flagCount >= 5 ? "high" : "medium",
   };
 }
 
@@ -560,7 +560,7 @@ export function detectMissingEvents(
   const hasFieldInspection = realTimeline.some(
     (e) => e.title.toLowerCase().includes("field") || e.title.toLowerCase().includes("adjuster")
   );
-  const hasDominusAnalysis = realTimeline.some((e) => e.source === "dominus");
+  const hasSkaiAnalysis = realTimeline.some((e) => e.source === "dominus");
 
   if (!hasCarrierResponse) {
     missing.push({
@@ -580,10 +580,10 @@ export function detectMissingEvents(
     });
   }
 
-  if (!hasDominusAnalysis) {
+  if (!hasSkaiAnalysis) {
     missing.push({
       title: "ℹ️ AI Damage Analysis Not Run",
-      reason: "Dominus AI analysis not yet performed",
+      reason: "SkaiPDF analysis not yet performed",
       confidence: 100,
       severity: "medium",
     });
@@ -627,7 +627,7 @@ export function findDiscrepancies(
   // Check for incomplete documentation
   const hasPhotos = realTimeline.some((e) => e.source === "photo");
   const hasVideo = realTimeline.some((e) => e.source === "video");
-  const hasDominus = realTimeline.some((e) => e.source === "dominus");
+  const hasSkai = realTimeline.some((e) => e.source === "dominus");
 
   if (!hasPhotos) {
     discrepancies.push({
@@ -674,13 +674,13 @@ export function calculateQualityScore(
   // Add points for completeness
   const hasPhotos = realTimeline.some((e) => e.source === "photo");
   const hasVideo = realTimeline.some((e) => e.source === "video");
-  const hasDominus = realTimeline.some((e) => e.source === "dominus");
+  const hasSkai = realTimeline.some((e) => e.source === "dominus");
   const hasCarrier = realTimeline.some((e) => e.source === "carrier");
   const hasStorm = realTimeline.some((e) => e.source === "storm");
 
   if (hasPhotos) score += 5;
   if (hasVideo) score += 10;
-  if (hasDominus) score += 10;
+  if (hasSkai) score += 10;
   if (hasCarrier) score += 5;
   if (hasStorm) score += 10;
 

@@ -142,7 +142,7 @@ export async function getCacheStats(): Promise<{
  * 
  * Usage:
  *   const result = await withCache(
- *     'dominus',
+ *     'skai',
  *     { leadId, options },
  *     () => performExpensiveAICall()
  *   );

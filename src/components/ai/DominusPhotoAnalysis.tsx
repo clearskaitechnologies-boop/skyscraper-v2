@@ -1,10 +1,10 @@
 /**
- * Dominus Photo Analysis Component
+ * SkaiPDF Photo Analysis Component
  * 
  * Displays vision AI findings with thumbnail grid, lightbox modal,
  * damage types, severity indicators, and safety flags.
  * 
- * Phase 25.5 - Dominus AI UI Components
+ * Phase 25.5 - SkaiPDF UI Components
  */
 
 "use client";

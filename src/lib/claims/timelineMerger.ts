@@ -189,18 +189,18 @@ export function createVideoEventStream(video: { timestamp: Date }): EventStream 
 }
 
 /**
- * Merge dominus events into timeline
+ * Merge skai events into timeline
  */
-export function createDominusEventStream(dominus: { timestamp: Date; flagCount: number; score: number }): EventStream {
+export function createSkaiEventStream(dominus: { timestamp: Date; flagCount: number; score: number }): EventStream {
   return {
-    source: "dominus",
+    source: "skai",
     weight: 0.95,
     events: [
       {
         timestamp: dominus.timestamp,
-        title: `🤖 Dominus AI Analysis (${dominus.flagCount} flags, ${dominus.score}/100)`,
+        title: `🤖 SkaiPDF Analysis (${dominus.flagCount} flags, ${dominus.score}/100)`,
         description: `AI damage detection completed with ${dominus.flagCount} indicators found`,
-        source: "dominus",
+        source: "skai",
         confidence: 95,
         severity: dominus.flagCount >= 5 ? ("high" as const) : ("medium" as const),
       },

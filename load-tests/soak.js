@@ -1,7 +1,7 @@
 /**
  * k6 Soak Test — Sustained Enterprise Load
  *
- * Simulates 200 concurrent users (Titan + Pro West peak) for 30 minutes.
+ * Simulates 200 concurrent users (Enterprise Clients peak) for 30 minutes.
  * Validates Prisma pool stability, Redis cache hit rates, and memory.
  *
  * Usage:  k6 run load-tests/soak.js

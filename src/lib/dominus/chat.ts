@@ -1,7 +1,7 @@
 import { logger } from "@/lib/logger";
 
 /**
- * DEPRECATED: dominusChatMessage model doesn't exist in schema.
+ * DEPRECATED: skaiChatMessage model doesn't exist in schema.
  */
 
 export interface ChatMessageInput {
@@ -14,13 +14,13 @@ export interface ChatMessageInput {
 }
 
 export async function saveChatMessage(data: ChatMessageInput) {
-  // dominusChatMessage model doesn't exist in schema
-  logger.debug(`[dominus/chat] Would save chat message for user ${data.userId}`);
+  // skaiChatMessage model doesn't exist in schema
+  logger.debug(`[skai/chat] Would save chat message for user ${data.userId}`);
   return null;
 }
 
 export async function getRecentChatHistory(userId: string, limit = 25) {
-  // dominusChatMessage model doesn't exist in schema
-  logger.debug(`[dominus/chat] Would get chat history for user ${userId}`);
+  // skaiChatMessage model doesn't exist in schema
+  logger.debug(`[skai/chat] Would get chat history for user ${userId}`);
   return [];
 }

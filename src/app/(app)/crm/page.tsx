@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// Deprecated: Skai Assistant removed (11/22/2025). Use AskDominusWidget (global) instead.
+// Deprecated: Skai Assistant removed (11/22/2025). Use AskSkaiWidget (global) instead.
 // import { openSkaiAssistant } from "@/components/SKaiAssistant";
 import { logger } from "@/lib/logger";
 

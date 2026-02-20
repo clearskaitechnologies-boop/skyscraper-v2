@@ -1,6 +1,6 @@
 // app/(app)/claims/[claimId]/automation/page.tsx
 /**
- * 🔥 DOMINUS AUTOMATIONS PAGE
+ * 🔥 SKAI AUTOMATIONS PAGE
  * Complete autonomous claims engine dashboard
  */
 
@@ -98,7 +98,7 @@ export default function ClaimAutomationPage({ params }: AutomationPageProps) {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-6">
-        <p>Loading Dominus Intelligence...</p>
+        <p>Loading SkaiPDF Intelligence...</p>
       </div>
     );
   }
@@ -109,13 +109,13 @@ export default function ClaimAutomationPage({ params }: AutomationPageProps) {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="flex items-center gap-3 text-3xl font-bold">
-            🔥 Dominus Automations
+            🔥 Skai Automations
             <span className="rounded-full bg-red-100 px-3 py-1 text-sm font-normal text-red-800">
               AUTONOMOUS CLAIMS ENGINE
             </span>
           </h1>
           <p className="mt-1 text-sm text-gray-600">
-            Let the claim manage itself. Dominus detects, predicts, alerts, and acts automatically.
+            Let the claim manage itself. SkaiPDF detects, predicts, alerts, and acts automatically.
           </p>
         </div>
         <DominusGodModeButton claimId={params.claimId} onComplete={fetchIntelligence} />

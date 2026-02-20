@@ -14,7 +14,7 @@ export function DominusCommandBar({ claimId }: { claimId: string }) {
       const res = await fetch(path, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ claimId, ...body })
+        body: JSON.stringify({ claimId, ...body }),
       });
 
       if (!res.ok) throw new Error(await res.text());
@@ -30,15 +30,14 @@ export function DominusCommandBar({ claimId }: { claimId: string }) {
 
   return (
     <div className="mb-6 rounded-xl border bg-white p-4 shadow-sm">
-      <h3 className="mb-3 text-lg font-semibold">Dominus Automation Controls</h3>
+      <h3 className="mb-3 text-lg font-semibold">Skai Automation Controls</h3>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-
         <Button
           disabled={loading !== null}
-          onClick={() => run("/api/intel/automation/run", "Dominus Automation")}
+          onClick={() => run("/api/intel/automation/run", "Skai Automation")}
         >
-          {loading === "Dominus Automation" ? "Processing…" : "Run Dominus Automation"}
+          {loading === "Skai Automation" ? "Processing…" : "Run Skai Automation"}
         </Button>
 
         <Button

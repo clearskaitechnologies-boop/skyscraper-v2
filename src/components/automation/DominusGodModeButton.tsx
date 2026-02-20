@@ -6,8 +6,8 @@
 
 "use client";
 
-import { Loader2, Zap } from "lucide-react";
 import { logger } from "@/lib/logger";
+import { Loader2, Zap } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -23,7 +23,7 @@ export function DominusGodModeButton({ claimId, onComplete }: DominusGodModeButt
 
   const handleRunAutomation = async () => {
     setIsRunning(true);
-    toast.loading("🔥 Dominus is analyzing the claim...", { id: "dominus" });
+    toast.loading("🔥 SkaiPDF is analyzing the claim...", { id: "skai" });
 
     try {
       const res = await fetch("/api/automation/run", {
@@ -37,14 +37,14 @@ export function DominusGodModeButton({ claimId, onComplete }: DominusGodModeButt
       const data = await res.json();
 
       toast.success(
-        `🔥 Dominus complete! ${data.triggersDetected} triggers, ${data.actionsExecuted} actions`,
-        { id: "dominus" }
+        `🔥 SkaiPDF complete! ${data.triggersDetected} triggers, ${data.actionsExecuted} actions`,
+        { id: "skai" }
       );
 
       onComplete?.();
     } catch (error) {
-      logger.error("[DOMINUS] Error:", error);
-      toast.error("Automation failed", { id: "dominus" });
+      logger.error("[SKAI] Error:", error);
+      toast.error("Automation failed", { id: "skai" });
     } finally {
       setIsRunning(false);
     }
@@ -60,12 +60,12 @@ export function DominusGodModeButton({ claimId, onComplete }: DominusGodModeButt
       {isRunning ? (
         <>
           <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Running Dominus...
+          Running SkaiPDF...
         </>
       ) : (
         <>
           <Zap className="mr-2 h-5 w-5" />
-          🔥 RUN FULL DOMINUS
+          🔥 RUN FULL SKAI
         </>
       )}
     </Button>

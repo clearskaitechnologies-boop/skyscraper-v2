@@ -1,6 +1,6 @@
 // lib/intel/automation/engine.ts
 /**
- * 🔥 PHASE 12 - DOMINUS EXECUTION ENGINE
+ * 🔥 PHASE 12 - SKAI EXECUTION ENGINE
  *
  * The heart of the autonomous claims system.
  *
@@ -35,14 +35,14 @@ export interface AutomationResult {
 }
 
 /**
- * 🔥 MAIN DOMINUS ENGINE
+ * 🔥 MAIN SKAI ENGINE
  * Runs complete automation pipeline for a claim
  */
-export async function runDominusAutomations(
+export async function runSkaiAutomations(
   claimId: string,
   orgId: string
 ): Promise<AutomationResult> {
-  logger.debug(`\n🔥 [DOMINUS] Starting automation pipeline for claim ${claimId}\n`);
+  logger.debug(`\n🔥 [SKAI] Starting automation pipeline for claim ${claimId}\n`);
 
   const results: any[] = [];
   const errors: any[] = [];
@@ -51,11 +51,11 @@ export async function runDominusAutomations(
     // ========================================
     // STEP 1: DETECT TRIGGERS
     // ========================================
-    logger.debug("[DOMINUS] STEP 1: Detecting triggers...");
+    logger.debug("[SKAI] STEP 1: Detecting triggers...");
     const triggers = await detectTriggersForClaim(claimId, orgId);
 
     if (triggers.length === 0) {
-      logger.debug("[DOMINUS] No triggers detected - claim is healthy");
+      logger.debug("[SKAI] No triggers detected - claim is healthy");
       return {
         success: true,
         triggersDetected: [],
@@ -65,7 +65,7 @@ export async function runDominusAutomations(
       };
     }
 
-    logger.debug(`[DOMINUS] Found ${triggers.length} triggers:`);
+    logger.debug(`[SKAI] Found ${triggers.length} triggers:`);
     triggers.forEach((t) => console.log(`  - ${t.type} (${t.severity}): ${t.reason}`));
 
     // Save triggers to database
@@ -75,11 +75,11 @@ export async function runDominusAutomations(
     // STEP 2: MAP & EXECUTE ACTIONS
     // ========================================
     for (const trigger of triggers) {
-      logger.debug(`\n[DOMINUS] Processing trigger: ${trigger.type}`);
+      logger.debug(`\n[SKAI] Processing trigger: ${trigger.type}`);
 
       // Get mapped actions
       const actions = getSortedActions(trigger.type);
-      logger.debug(`[DOMINUS] ${actions.length} actions mapped`);
+      logger.debug(`[SKAI] ${actions.length} actions mapped`);
 
       // Create trigger record
       const triggerRecord = await getDelegate("automation_triggers").create({
@@ -96,7 +96,7 @@ export async function runDominusAutomations(
       // Execute each action
       for (const action of actions) {
         try {
-          logger.debug(`[DOMINUS] Executing: ${action.type}`);
+          logger.debug(`[SKAI] Executing: ${action.type}`);
 
           // Create action record
           const actionRecord = await getDelegate("automation_actions").create({
@@ -122,9 +122,9 @@ export async function runDominusAutomations(
           });
 
           results.push({ action: action.type, result });
-          logger.debug(`[DOMINUS] ✅ ${action.type} completed`);
+          logger.debug(`[SKAI] ✅ ${action.type} completed`);
         } catch (error) {
-          logger.error(`[DOMINUS] ❌ ${action.type} failed:`, error);
+          logger.error(`[SKAI] ❌ ${action.type} failed:`, error);
           errors.push({ action: action.type, error: String(error) });
 
           // Update action record with error - find by triggerId and actionType
@@ -162,11 +162,11 @@ export async function runDominusAutomations(
         id: crypto.randomUUID(),
         orgId,
         claimId,
-        userId: "dominus",
-        userName: "Dominus AI",
+        userId: "skai",
+        userName: "SkaiPDF",
         type: "automation_run",
         title: "Automation Run Complete",
-        description: `Dominus processed ${triggers.length} triggers and executed ${results.length} actions`,
+        description: `SkaiPDF processed ${triggers.length} triggers and executed ${results.length} actions`,
         metadata: {
           triggers: triggers.map((t) => t.type),
           actionsExecuted: results.length,
@@ -176,7 +176,7 @@ export async function runDominusAutomations(
       },
     });
 
-    logger.debug(`\n🔥 [DOMINUS] Automation complete - ${results.length} actions executed\n`);
+    logger.debug(`\n🔥 [SKAI] Automation complete - ${results.length} actions executed\n`);
 
     return {
       success: true,
@@ -186,7 +186,7 @@ export async function runDominusAutomations(
       errors,
     };
   } catch (error) {
-    logger.error("[DOMINUS] Pipeline failed:", error);
+    logger.error("[SKAI] Pipeline failed:", error);
     return {
       success: false,
       triggersDetected: [],
@@ -250,11 +250,11 @@ async function executeAction(
           id: crypto.randomUUID(),
           orgId,
           claimId,
-          userId: "dominus",
-          userName: "Dominus AI",
-          type: "dominus_action",
-          title: config.title || "Dominus Action",
-          description: config.description || config.title || "Dominus action",
+          userId: "skai",
+          userName: "SkaiPDF",
+          type: "skai_action",
+          title: config.title || "SkaiPDF Action",
+          description: config.description || config.title || "SkaiPDF action",
           metadata: config,
           updatedAt: new Date(),
         },

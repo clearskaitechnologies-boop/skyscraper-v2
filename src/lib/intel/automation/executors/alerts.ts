@@ -18,7 +18,7 @@ export async function executeCreateAlert(
     metadata?: any;
   }
 ) {
-  logger.debug(`[DOMINUS] Creating alert: ${config.title}`);
+  logger.debug(`[SKAI] Creating alert: ${config.title}`);
 
   const alert = await getDelegate("automationAlert").create({
     data: {
@@ -50,7 +50,7 @@ export async function executeCreateRecommendation(
     reasoning?: string;
   }
 ) {
-  logger.debug(`[DOMINUS] Creating recommendation: ${config.recommendationType}`);
+  logger.debug(`[SKAI] Creating recommendation: ${config.recommendationType}`);
 
   const recommendation = await getDelegate("automationRecommendation").create({
     data: {

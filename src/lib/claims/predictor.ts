@@ -5,7 +5,7 @@
  * AI that predicts the carrier's next move before they make it.
  *
  * Analyzes:
- * - Dominus AI output (damage, materials, urgency)
+ * - SkaiPDF output (damage, materials, urgency)
  * - Storm data (hail size, wind speed, distance)
  * - Photos & videos
  * - Timeline events
@@ -30,8 +30,8 @@ export interface PredictionInput {
   leadId?: string;
   orgId: string;
   stage?: string;
-  // Dominus AI analysis
-  dominusAnalysis?: {
+  // SkaiPDF analysis
+  skaiAnalysis?: {
     damageType?: string;
     urgency?: string;
     materials?: any[];
@@ -182,9 +182,9 @@ function calculateProbabilities(input: PredictionInput): {
     }
   }
 
-  // Dominus AI factors
-  if (input.dominusAnalysis) {
-    const { urgency, flags = [] } = input.dominusAnalysis;
+  // SkaiPDF factors
+  if (input.skaiAnalysis) {
+    const { urgency, flags = [] } = input.skaiAnalysis;
 
     if (urgency === "critical" || urgency === "high") {
       full += 10;
@@ -273,7 +273,7 @@ function generateRiskFlags(input: PredictionInput, probabilities: any): string[]
     flags.push("No video evidence - carrier may request more proof");
   }
 
-  if (input.dominusAnalysis?.flags?.includes("missing_documentation")) {
+  if (input.skaiAnalysis?.flags?.includes("missing_documentation")) {
     flags.push("Missing critical documentation");
   }
 
@@ -447,7 +447,7 @@ function generateSuccessPath(
       step: 2,
       action: "AI Analysis",
       doThis:
-        "Run Dominus AI analysis to identify all damage and materials. Export adjuster packet.",
+        "Run SkaiPDF analysis to identify all damage and materials. Export adjuster packet.",
       dontDoThis: "Don't skip AI analysis - carriers respect data-driven reports.",
     },
     {
@@ -488,7 +488,7 @@ function calculateConfidenceScore(input: PredictionInput, probabilities: any): n
 
   // More data = higher confidence
   if (input.stormImpact) confidence += 15;
-  if (input.dominusAnalysis) confidence += 15;
+  if (input.skaiAnalysis) confidence += 15;
   if (input.hasVideo) confidence += 10;
   if (input.photoCount && input.photoCount >= 10) confidence += 10;
 

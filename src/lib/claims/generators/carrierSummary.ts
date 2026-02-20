@@ -11,13 +11,13 @@
  * 📌 Pre-loss condition
  * 📌 Repeated weather events
  * 📌 Required materials
- * 📌 Dominus AI findings
+ * 📌 SkaiPDF findings
  * 📌 Video report link
  * 📌 Supplemental items
  */
 
-import prisma from "@/lib/prisma";
 import { logger } from "@/lib/logger";
+import prisma from "@/lib/prisma";
 
 import { formatCodeRequirementsForCarrier, generateCodeSummary } from "./code";
 import { generateNarrative } from "./narrative";
@@ -30,7 +30,7 @@ export interface CarrierSubmissionPacket {
   damageCauses: string[];
   weatherEvents: string[];
   requiredMaterials: string[];
-  dominusFindings: string;
+  skaiFindings: string;
   videoReportLinks: string[];
   supplementalItems: string[];
   estimatedTotal: number;
@@ -77,7 +77,7 @@ export async function generateCarrierSummary(claimId: string): Promise<CarrierSu
     // 3. Generate code summary
     const codeSummary = await generateCodeSummary(claimId);
 
-    // 4. Fetch Dominus AI insights
+    // 4. Fetch SkaiPDF insights
     const lead = await prisma.leads.findFirst({
       where: { claimId: claim.id },
     });
@@ -103,8 +103,8 @@ export async function generateCarrierSummary(claimId: string): Promise<CarrierSu
     // 9. Extract required materials
     const requiredMaterials = extractRequiredMaterials(lead, codeSummary);
 
-    // 10. Format Dominus findings
-    const dominusFindings = formatDominusFindings(lead);
+    // 10. Format SkaiPDF findings
+    const skaiFindings = formatSkaiFindings(lead);
 
     // 11. Extract video links
     const videoReportLinks = videoReports
@@ -135,7 +135,7 @@ export async function generateCarrierSummary(claimId: string): Promise<CarrierSu
       damageCauses,
       weatherEvents,
       requiredMaterials,
-      dominusFindings,
+      skaiFindings,
       videoReportLinks,
       supplementalItems,
       estimatedTotal,
@@ -222,12 +222,12 @@ function extractRequiredMaterials(lead: any, codeSummary: any): string[] {
 }
 
 /**
- * Format Dominus AI findings
+ * Format SkaiPDF findings
  */
-function formatDominusFindings(lead: any): string {
+function formatSkaiFindings(lead: any): string {
   if (!lead) return "AI analysis pending";
 
-  let findings = "**DOMINUS AI ANALYSIS:**\n\n";
+  let findings = "**SKAIPDF AI ANALYSIS:**\n\n";
 
   if (lead.aiSummary) {
     findings += `Summary: ${lead.aiSummary}\n\n`;
@@ -332,9 +332,9 @@ export function formatPacketForDelivery(packet: CarrierSubmissionPacket): string
   }
 
   formatted += `========================================\n`;
-  formatted += `DOMINUS AI FINDINGS\n`;
+  formatted += `SKAIPDF AI FINDINGS\n`;
   formatted += `========================================\n\n`;
-  formatted += packet.dominusFindings + `\n\n`;
+  formatted += packet.skaiFindings + `\n\n`;
 
   if (packet.videoReportLinks.length > 0) {
     formatted += `========================================\n`;

@@ -1,10 +1,10 @@
 /**
- * Dominus AI Intelligence Panel
+ * SkaiPDF Intelligence Panel
  * 
  * Main container for displaying AI-enhanced lead insights.
  * Shows summary, urgency, job type, next actions, materials, flags, vision, and prep.
  * 
- * Phase 25.5 - Dominus AI UI Components
+ * Phase 25.5 - SkaiPDF UI Components
  */
 
 "use client";
@@ -52,7 +52,7 @@ export function DominusPanel({ leadId, aiData, photos }: DominusPanelProps) {
     setIsAnalyzing(true);
 
     try {
-      const response = await fetch("/api/ai/dominus/analyze-lead", {
+      const response = await fetch("/api/ai/skai/analyze-lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leadId }),
@@ -113,7 +113,7 @@ export function DominusPanel({ leadId, aiData, photos }: DominusPanelProps) {
               <Brain className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold">Dominus AI Intelligence</CardTitle>
+              <CardTitle className="text-2xl font-bold">SkaiPDF Intelligence</CardTitle>
               <CardDescription>
                 {hasAnalysis
                   ? "AI-powered lead analysis and recommendations"
@@ -141,7 +141,7 @@ export function DominusPanel({ leadId, aiData, photos }: DominusPanelProps) {
             <div className="text-center">
               <h3 className="text-lg font-semibold">AI Analysis Not Yet Run</h3>
               <p className="max-w-md text-sm text-muted-foreground">
-                Run Dominus AI to analyze this lead and get intelligent insights including urgency
+                Run SkaiPDF to analyze this lead and get intelligent insights including urgency
                 scoring, job classification, damage detection, and recommended next actions.
               </p>
             </div>
@@ -159,7 +159,7 @@ export function DominusPanel({ leadId, aiData, photos }: DominusPanelProps) {
               ) : (
                 <>
                   <Brain className="mr-2 h-4 w-4" />
-                  Run Dominus AI Analysis
+                  Run SkaiPDF Analysis
                 </>
               )}
             </Button>

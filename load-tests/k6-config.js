@@ -9,7 +9,7 @@
  *   k6 run load-tests/stress.js             # Find breaking point (ramp to 500)
  *
  * Targets:
- *   Titan Roofing:  180 employees → ~90 concurrent users peak
+ *   Enterprise Client:  180 employees → ~90 concurrent users peak
  *   Pro West:       480 employees → ~120 concurrent users peak
  *   Combined:       660 employees → ~200 concurrent users peak
  *   Safety margin:  2x → test at 400 VUs for spike scenarios

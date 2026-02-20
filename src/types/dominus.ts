@@ -1,11 +1,11 @@
 /**
- * 🔥 PHASE D: Centralized Dominus Types
+ * 🔥 PHASE D: Centralized Skai Types
  * 
- * Shared TypeScript types for Dominus AI system
+ * Shared TypeScript types for SkaiPDF system
  */
 
 // Lead AI Data
-export interface DominusLeadAIData {
+export interface SkaiLeadAIData {
   aiSummaryJson: any;
   aiUrgencyScore: number;
   aiNextActions: string[];
@@ -17,7 +17,7 @@ export interface DominusLeadAIData {
 }
 
 // Summary Structure
-export interface DominusSummary {
+export interface SkaiSummary {
   overview: string;
   damageAreas: string[];
   estimatedSeverity: "low" | "medium" | "high" | "critical";
@@ -26,7 +26,7 @@ export interface DominusSummary {
 }
 
 // Next Action Item
-export interface DominusNextAction {
+export interface SkaiNextAction {
   action: string;
   priority: "low" | "medium" | "high";
   category: "inspection" | "documentation" | "communication" | "repair";
@@ -34,7 +34,7 @@ export interface DominusNextAction {
 }
 
 // Image Analysis Result
-export interface DominusImageAnalysis {
+export interface SkaiImageAnalysis {
   imageUrl: string;
   damageTypes: string[];
   confidence: number;

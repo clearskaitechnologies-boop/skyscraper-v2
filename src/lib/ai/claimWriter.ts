@@ -1,7 +1,7 @@
 /**
  * PHASE 38: Claim Writer Engine
  *
- * Converts Dominus AI analysis data into complete insurance claim documents.
+ * Converts SkaiPDF analysis data into complete insurance claim documents.
  * Generates professional narratives, Xactimate-structured scopes, and carrier rebuttals.
  */
 

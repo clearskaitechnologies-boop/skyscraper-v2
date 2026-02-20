@@ -1,5 +1,5 @@
 /**
- * 🔥 PHASE 27.2: DOMINUS VIDEO AI - SCRIPT & STORYBOARD ENGINE
+ * 🔥 PHASE 27.2: SKAI VIDEO AI - SCRIPT & STORYBOARD ENGINE
  *
  * Converts lead damage data into cinematic video scripts and storyboards
  */
@@ -194,16 +194,16 @@ export async function generateVideoScript(
   const model = await selectModelForOrg(orgId);
 
   const result = await withConditionalCache(
-    "dominus-video-script",
+    "skai-video-script",
     { leadId: input.leadId, photos: input.photos.length },
     async () => {
       return withConditionalDedupe(
-        "dominus-video-script",
+        "skai-video-script",
         { leadId: input.leadId },
         async () => {
           return trackPerformance(
             {
-              routeName: "dominus-video-script",
+              routeName: "skai-video-script",
               orgId,
               leadId: input.leadId,
               model,
@@ -306,16 +306,16 @@ export async function generateVideoStoryboard(
   const model = await selectModelForOrg(orgId);
 
   const result = await withConditionalCache(
-    "dominus-video-storyboard",
+    "skai-video-storyboard",
     { scriptSections: script.sections.length, scriptTitle: script.title },
     async () => {
       return withConditionalDedupe(
-        "dominus-video-storyboard",
+        "skai-video-storyboard",
         { scriptTitle: script.title },
         async () => {
           return trackPerformance(
             {
-              routeName: "dominus-video-storyboard",
+              routeName: "skai-video-storyboard",
               orgId,
               model,
               cacheHit: false,

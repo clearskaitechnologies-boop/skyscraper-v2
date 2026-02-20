@@ -83,7 +83,7 @@ export async function logAIPerformance(metrics: AIPerformanceMetrics): Promise<v
  * Usage:
  *   const result = await trackPerformance(
  *     {
- *       routeName: 'dominus',
+ *       routeName: 'skai',
  *       orgId: '123',
  *       leadId: '456',
  *       model: 'gpt-4o-mini',

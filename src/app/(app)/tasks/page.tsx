@@ -166,10 +166,10 @@ export default function TasksPage() {
           <Badge variant="secondary" className="text-xs">
             {task.priority}
           </Badge>
-          {task.source === "dominus_ai" && (
+          {task.source === "skai_ai" && (
             <Badge variant="outline" className="text-xs">
               <Brain className="mr-1 h-3 w-3" />
-              Dominus AI
+              SkaiPDF
             </Badge>
           )}
           {task.assigneeRole && (
@@ -239,7 +239,7 @@ export default function TasksPage() {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Sources</SelectItem>
-            <SelectItem value="dominus_ai">Dominus AI</SelectItem>
+            <SelectItem value="skai_ai">SkaiPDF</SelectItem>
             <SelectItem value="user">User Created</SelectItem>
             <SelectItem value="system">System</SelectItem>
           </SelectContent>
@@ -255,8 +255,7 @@ export default function TasksPage() {
           <Target className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
           <h3 className="mb-2 text-xl font-semibold">No Tasks Yet</h3>
           <p className="mb-6 text-muted-foreground">
-            Tasks will appear here when you accept Dominus AI recommendations or create them
-            manually.
+            Tasks will appear here when you accept SkaiPDF recommendations or create them manually.
           </p>
           <Button asChild>
             <Link href="/claims">View Claims</Link>

@@ -71,7 +71,7 @@ export function SkaiAssistantPanel({ leadId }: SkaiAssistantPanelProps) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/ai/dominus/lead/${leadId}`);
+      const res = await fetch(`/api/ai/skai/lead/${leadId}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setAiData(data.lead);

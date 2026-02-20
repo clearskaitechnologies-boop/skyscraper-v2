@@ -1,7 +1,7 @@
 /**
  * AI System Prompts for SkaiScraper Builders
  * Supplement Builder & Damage Builder
- * 
+ *
  * @module ai-prompts
  * @description System prompts for AI-powered supplement and damage analysis
  */
@@ -393,15 +393,15 @@ RULES:
 /**
  * Get the appropriate system prompt based on task type
  */
-export function getSystemPrompt(task: 'damage' | 'supplement' | 'photo' | 'carrier'): string {
+export function getSystemPrompt(task: "damage" | "supplement" | "photo" | "carrier"): string {
   switch (task) {
-    case 'damage':
+    case "damage":
       return DAMAGE_BUILDER_SYSTEM_PROMPT;
-    case 'supplement':
+    case "supplement":
       return SUPPLEMENT_BUILDER_SYSTEM_PROMPT;
-    case 'photo':
+    case "photo":
       return PHOTO_DAMAGE_ANALYSIS_PROMPT;
-    case 'carrier':
+    case "carrier":
       return CARRIER_ESTIMATE_PARSING_PROMPT;
     default:
       return SUPPLEMENT_BUILDER_SYSTEM_PROMPT;
@@ -421,7 +421,7 @@ export function buildDamageAnalysisPrompt(context: {
   };
 }): string {
   let prompt = "Analyze the following for storm damage:\n\n";
-  
+
   if (context.metadata) {
     prompt += "**Property Information:**\n";
     if (context.metadata.address) prompt += `- Address: ${context.metadata.address}\n`;
@@ -429,18 +429,18 @@ export function buildDamageAnalysisPrompt(context: {
     if (context.metadata.dateOfLoss) prompt += `- Date of Loss: ${context.metadata.dateOfLoss}\n`;
     prompt += "\n";
   }
-  
+
   if (context.hoverData) {
     prompt += "**HOVER Measurements:**\n";
     prompt += `${JSON.stringify(context.hoverData, null, 2)}\n\n`;
   }
-  
+
   if (context.photos && context.photos.length > 0) {
     prompt += `**Photos to Analyze:** ${context.photos.length} photos attached\n\n`;
   }
-  
+
   prompt += "Provide a comprehensive damage assessment following the required JSON format.";
-  
+
   return prompt;
 }
 
@@ -454,29 +454,29 @@ export function buildSupplementPrompt(context: {
   metadata?: any;
 }): string {
   let prompt = "Build a supplement for this insurance claim:\n\n";
-  
+
   if (context.metadata) {
     prompt += "**Claim Information:**\n";
     prompt += `${JSON.stringify(context.metadata, null, 2)}\n\n`;
   }
-  
+
   if (context.carrierEstimateText) {
     prompt += "**Carrier Estimate:**\n";
     prompt += `${context.carrierEstimateText.substring(0, 5000)}\n\n`;
   }
-  
+
   if (context.hoverData) {
     prompt += "**HOVER Measurements:**\n";
     prompt += `${JSON.stringify(context.hoverData, null, 2)}\n\n`;
   }
-  
+
   if (context.scopeText) {
     prompt += "**Scope of Work:**\n";
     prompt += `${context.scopeText.substring(0, 2000)}\n\n`;
   }
-  
+
   prompt += "Identify all missing and underpaid items following the required JSON format.";
-  
+
   return prompt;
 }
 
@@ -675,7 +675,8 @@ export function buildEstimatePrompt(context: {
     prompt += `${JSON.stringify(context.hoverData, null, 2)}\n\n`;
   }
 
-  prompt += "Generate a complete estimate following the required JSON format with all sections, line items, and totals structure.";
+  prompt +=
+    "Generate a complete estimate following the required JSON format with all sections, line items, and totals structure.";
 
   return prompt;
 }
@@ -836,23 +837,26 @@ export function buildScopePrompt(context: {
   }
 
   if (context.options?.tryMapCodes) {
-    prompt += "**Note:** Please attempt to map line items to Xactimate-style codes where possible.\n\n";
+    prompt +=
+      "**Note:** Please attempt to map line items to Xactimate-style codes where possible.\n\n";
   }
 
   if (context.options?.flagSupplementCandidates) {
-    prompt += "**Note:** Flag items that may be supplement candidates (code-required items, under-scoped quantities).\n\n";
+    prompt +=
+      "**Note:** Flag items that may be supplement candidates (code-required items, under-scoped quantities).\n\n";
   }
 
-  prompt += "Generate a complete structured scope following the required JSON format with meta, areas (with line items), and any issues you identify.";
+  prompt +=
+    "Generate a complete structured scope following the required JSON format with meta, areas (with line items), and any issues you identify.";
 
   return prompt;
 }
 
 // ============================================================================
-// CLAIM AUTOMATION ENGINE (DOMINUS AI)
+// CLAIM AUTOMATION ENGINE (SKAIPDF)
 // ============================================================================
 
-export const CLAIM_AUTOMATION_PROMPT = `You are Dominus, the SkaiScraper AI Claim Automation Engine.
+export const CLAIM_AUTOMATION_PROMPT = `You are SkaiPDF, the SkaiScraper AI Claim Automation Engine.
 
 You act like a senior project manager and claim strategist.
 
@@ -1064,11 +1068,13 @@ export function buildClaimAutomationPrompt(context: {
   // Existing tasks
   if (context.tasks && context.tasks.length > 0) {
     prompt += "**EXISTING TASKS:**\n";
-    const todoTasks = context.tasks.filter((t: any) => t.status !== "done" && t.status !== "cancelled");
+    const todoTasks = context.tasks.filter(
+      (t: any) => t.status !== "done" && t.status !== "cancelled"
+    );
     const doneTasks = context.tasks.filter((t: any) => t.status === "done");
     prompt += `- Active: ${todoTasks.length}\n`;
     prompt += `- Completed: ${doneTasks.length}\n`;
-    
+
     if (todoTasks.length > 0) {
       prompt += "\nActive tasks:\n";
       todoTasks.slice(0, 5).forEach((task: any) => {
@@ -1091,7 +1097,8 @@ export function buildClaimAutomationPrompt(context: {
   }
 
   prompt += "**YOUR TASK:**\n";
-  prompt += "Based on the above information, provide your analysis in the specified JSON format with:\n";
+  prompt +=
+    "Based on the above information, provide your analysis in the specified JSON format with:\n";
   prompt += "1. Current claim stage and risk assessment\n";
   prompt += "2. Identified gaps\n";
   prompt += "3. Prioritized next actions with specific due dates\n";
@@ -1099,7 +1106,6 @@ export function buildClaimAutomationPrompt(context: {
 
   return prompt;
 }
-
 
 // ============================================================================
 // MODULE 4: AI REPORT BUILDER SYSTEM PROMPT
@@ -1334,9 +1340,11 @@ export function buildReportBuilderPrompt(context: {
   if (context.damage) {
     prompt += "**DAMAGE ASSESSMENT:**\n";
     if (context.damage.primaryPeril) prompt += `- Primary Peril: ${context.damage.primaryPeril}\n`;
-    if (context.damage.overallCondition) prompt += `- Overall Condition: ${context.damage.overallCondition}\n`;
-    if (context.damage.recommendedAction) prompt += `- Recommended Action: ${context.damage.recommendedAction}\n`;
-    
+    if (context.damage.overallCondition)
+      prompt += `- Overall Condition: ${context.damage.overallCondition}\n`;
+    if (context.damage.recommendedAction)
+      prompt += `- Recommended Action: ${context.damage.recommendedAction}\n`;
+
     if (context.damage.findings && context.damage.findings.length > 0) {
       prompt += `- Findings (${context.damage.findings.length} total):\n`;
       context.damage.findings.slice(0, 10).forEach((finding, i) => {
@@ -1357,24 +1365,28 @@ export function buildReportBuilderPrompt(context: {
   if (context.weather && context.options?.includeWeatherSection !== false) {
     prompt += "**WEATHER VERIFICATION:**\n";
     if (context.weather.dol) prompt += `- Date of Loss: ${context.weather.dol}\n`;
-    if (context.weather.primaryPeril) prompt += `- Primary Peril: ${context.weather.primaryPeril}\n`;
+    if (context.weather.primaryPeril)
+      prompt += `- Primary Peril: ${context.weather.primaryPeril}\n`;
     if (context.weather.confidence) prompt += `- Confidence: ${context.weather.confidence}\n`;
     if (context.weather.overallAssessment) {
       prompt += `- Assessment: ${context.weather.overallAssessment.substring(0, 200)}\n`;
     }
-    
+
     if (context.weather.globalSummary) {
       if (context.weather.globalSummary.narrative) {
         prompt += `- AI Analysis: ${context.weather.globalSummary.narrative.substring(0, 300)}\n`;
       }
-      if (context.weather.globalSummary.keyFindings && context.weather.globalSummary.keyFindings.length > 0) {
+      if (
+        context.weather.globalSummary.keyFindings &&
+        context.weather.globalSummary.keyFindings.length > 0
+      ) {
         prompt += `- Key Findings:\n`;
         context.weather.globalSummary.keyFindings.slice(0, 5).forEach((finding) => {
           prompt += `  * ${finding}\n`;
         });
       }
     }
-    
+
     if (context.weather.events && context.weather.events.length > 0) {
       prompt += `- Weather Events (${context.weather.events.length} total):\n`;
       context.weather.events.slice(0, 5).forEach((event: any) => {
@@ -1388,15 +1400,21 @@ export function buildReportBuilderPrompt(context: {
   if (context.estimate && context.options?.includeEstimateSummary !== false) {
     prompt += "**ESTIMATE SUMMARY:**\n";
     if (context.estimate.title) prompt += `- Title: ${context.estimate.title}\n`;
-    if (context.estimate.grandTotal) prompt += `- Grand Total: $${context.estimate.grandTotal.toFixed(2)}\n`;
-    
+    if (context.estimate.grandTotal)
+      prompt += `- Grand Total: $${context.estimate.grandTotal.toFixed(2)}\n`;
+
     if (context.estimate.lineItems && context.estimate.lineItems.length > 0) {
       prompt += `- Line Items (${context.estimate.lineItems.length} total):\n`;
-      
+
       // Group by trade/category
-      const trades = Array.from(new Set(context.estimate.lineItems.map(item => item.trade || item.category || "Other")));
-      trades.slice(0, 5).forEach(trade => {
-        const items = context.estimate?.lineItems?.filter(item => (item.trade || item.category || "Other") === trade) || [];
+      const trades = Array.from(
+        new Set(context.estimate.lineItems.map((item) => item.trade || item.category || "Other"))
+      );
+      trades.slice(0, 5).forEach((trade) => {
+        const items =
+          context.estimate?.lineItems?.filter(
+            (item) => (item.trade || item.category || "Other") === trade
+          ) || [];
         const tradeTotal = items.reduce((sum, item) => sum + (item.lineTotal || 0), 0);
         prompt += `  * ${trade}: ${items.length} items, $${tradeTotal.toFixed(2)}\n`;
       });
@@ -1409,7 +1427,7 @@ export function buildReportBuilderPrompt(context: {
     prompt += "**SUPPLEMENT INFORMATION:**\n";
     if (context.supplement.title) prompt += `- Title: ${context.supplement.title}\n`;
     if (context.supplement.total) prompt += `- Total: $${context.supplement.total.toFixed(2)}\n`;
-    
+
     if (context.supplement.items && context.supplement.items.length > 0) {
       prompt += `- Supplement Items (${context.supplement.items.length} total):\n`;
       context.supplement.items.slice(0, 10).forEach((item) => {
@@ -1425,7 +1443,7 @@ export function buildReportBuilderPrompt(context: {
   // Photos
   if (context.photos && context.photos.length > 0 && context.options?.includePhotos !== false) {
     prompt += `**PHOTOS AVAILABLE:** ${context.photos.length} photos with tags: `;
-    const tags = Array.from(new Set(context.photos.map(p => p.tag).filter(Boolean)));
+    const tags = Array.from(new Set(context.photos.map((p) => p.tag).filter(Boolean)));
     prompt += tags.join(", ") + "\n\n";
   }
 
@@ -1446,7 +1464,8 @@ export function buildReportBuilderPrompt(context: {
     prompt += "\n";
   }
 
-  prompt += "Generate a complete, professional report following the required JSON structure with meta, sections (with proper HTML formatting), and summary.";
+  prompt +=
+    "Generate a complete, professional report following the required JSON structure with meta, sections (with proper HTML formatting), and summary.";
 
   return prompt;
 }

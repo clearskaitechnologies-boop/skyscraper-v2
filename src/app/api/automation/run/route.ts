@@ -10,7 +10,7 @@ import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
-import { runDominusAutomations } from "@/lib/intel/automation/engine";
+import { runSkaiAutomations } from "@/lib/intel/automation/engine";
 
 export async function POST(req: Request) {
   try {
@@ -29,7 +29,7 @@ export async function POST(req: Request) {
     logger.debug(`[API] Running Dominus automations for ${claimId}`);
 
     // Run the automation engine
-    const result = await runDominusAutomations(claimId, orgId);
+    const result = await runSkaiAutomations(claimId, orgId);
 
     return NextResponse.json({
       success: result.success,

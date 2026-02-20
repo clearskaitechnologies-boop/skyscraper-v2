@@ -212,7 +212,7 @@ export default function AboutPage() {
         {/* Enterprise Readiness */}
         <div className="mt-12 flex flex-col items-center gap-1 text-center">
           <a
-            href="/titan-proof/presentation.html"
+            href="/enterprise-proof/presentation.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/40 transition-colors hover:text-muted-foreground/70"
@@ -220,7 +220,7 @@ export default function AboutPage() {
             Enterprise Readiness ↗
           </a>
           <a
-            href="/titan-proof/readiness.html"
+            href="/enterprise-proof/readiness.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/30 transition-colors hover:text-muted-foreground/60"
@@ -228,7 +228,7 @@ export default function AboutPage() {
             Security & Architecture Summary ↗
           </a>
           <a
-            href="/titan-proof/comparison.html"
+            href="/enterprise-proof/comparison.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/30 transition-colors hover:text-muted-foreground/60"
@@ -236,7 +236,7 @@ export default function AboutPage() {
             Cost Comparison ↗
           </a>
           <a
-            href="/titan-proof/vision.html"
+            href="/enterprise-proof/vision.html"
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-muted-foreground/25 transition-colors hover:text-muted-foreground/50"

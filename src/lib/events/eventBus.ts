@@ -152,9 +152,9 @@ export const ClaimEvents = {
   DENIAL_RESPONSE_UPLOADED: "claim.denial.uploaded",
   APPROVAL_RECEIVED: "claim.approval.received",
 
-  // Dominus AI events
-  DOMINUS_ANALYSIS_STARTED: "claim.dominus.started",
-  DOMINUS_ANALYSIS_COMPLETED: "claim.dominus.completed",
+  // SkaiPDF events
+  SKAI_ANALYSIS_STARTED: "claim.skai.started",
+  SKAI_ANALYSIS_COMPLETED: "claim.skai.completed",
 
   // Status changes
   STATUS_CHANGED: "claim.status.changed",
@@ -218,10 +218,10 @@ export function emitCarrierLetterUploaded(claimId: string, orgId: string, letter
 }
 
 /**
- * Emit dominus analysis completed event
+ * Emit skai analysis completed event
  */
-export function emitDominusCompleted(claimId: string, orgId: string, analysisId: string, results: any) {
-  eventBus.emit(ClaimEvents.DOMINUS_ANALYSIS_COMPLETED, { claimId, orgId, analysisId, results, timestamp: new Date() });
+export function emitSkaiCompleted(claimId: string, orgId: string, analysisId: string, results: any) {
+  eventBus.emit(ClaimEvents.SKAI_ANALYSIS_COMPLETED, { claimId, orgId, analysisId, results, timestamp: new Date() });
 }
 
 /**

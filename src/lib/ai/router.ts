@@ -28,7 +28,7 @@ import * as damage from "./damage";
 import * as damageSchema from "./damage-schema";
 import * as damageBuilder from "./damageBuilder";
 import * as documentProcessing from "./documentProcessing";
-import * as dominusVideo from "./dominusVideo";
+import * as skaiVideo from "./dominusVideo";
 import * as embeddings from "./embeddings";
 import * as estimates from "./estimates";
 import * as estimatorEngine from "./estimatorEngine";
@@ -96,7 +96,7 @@ function registerModules() {
     damage,
     damageBuilder,
     documentProcessing,
-    dominusVideo,
+    skaiVideo,
     embeddings,
     estimates,
     estimatorEngine,

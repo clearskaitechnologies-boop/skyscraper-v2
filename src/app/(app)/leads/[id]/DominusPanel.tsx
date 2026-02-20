@@ -71,7 +71,7 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/ai/dominus/lead/${leadId}`);
+      const res = await fetch(`/api/ai/skai/lead/${leadId}`);
       const data = await res.json();
       if (res.ok && data.success) {
         setAiData(data.lead);
@@ -88,7 +88,7 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
   async function runAnalysis() {
     setError(null);
     toast({
-      title: "Analyzing with Dominus AI...",
+      title: "Analyzing with SkaiPDF...",
       description: "Streaming analysis in real-time",
     });
 
@@ -110,7 +110,7 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg">
             <Brain className="h-5 w-5 text-purple-600" />
-            Dominus AI Intelligence
+            SkaiPDF Intelligence
           </CardTitle>
           <div className="flex gap-2">
             <Button
@@ -192,14 +192,14 @@ export function DominusPanel({ leadId }: DominusPanelProps) {
             <Brain className="mx-auto mb-4 h-12 w-12 text-blue-600" />
             <h3 className="mb-2 font-semibold text-blue-900">No AI insights yet</h3>
             <p className="mb-4 text-sm text-blue-700">
-              Run Dominus AI to analyze this lead and get intelligent insights
+              Run SkaiPDF to analyze this lead and get intelligent insights
             </p>
             <Button
               onClick={runAnalysis}
               disabled={isStreaming}
               className="bg-sky-600 hover:bg-sky-700"
             >
-              Run Dominus AI
+              Run SkaiPDF
             </Button>
           </div>
         )}

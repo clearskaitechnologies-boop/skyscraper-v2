@@ -44,7 +44,7 @@ ${image.notes}
     toast("Running vision analysis again...");
 
     try {
-      const res = await fetch("/api/ai/dominus/images", {
+      const res = await fetch("/api/ai/skai/images", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ photos: [image.imageUrl] }),

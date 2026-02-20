@@ -2,8 +2,8 @@ import { logger } from "@/lib/logger";
 
 /**
  * PHASE 39: Estimator Engine
- * 
- * Converts Dominus scope into carrier-importable estimate formats:
+ *
+ * Converts SkaiPDF scope into carrier-importable estimate formats:
  * - Xactimate ESX-compatible XML
  * - Symbility D22-style JSON
  */
@@ -44,7 +44,7 @@ interface Lead {
 export function parseScope(scopeJson: any): ParsedScope {
   try {
     const items = Array.isArray(scopeJson?.items) ? scopeJson.items : [];
-    
+
     return {
       items: items.map((item: ScopeItem) => ({
         code: item.code || "UNKNOWN",
@@ -82,12 +82,11 @@ export function buildXactimateXml(
 
   const timestamp = new Date().toISOString();
   const claimNumber = lead.claimNumber || lead.id;
-  
+
   const lineItemsXml = scope.items
-    .map(
-      (item) => {
-        const pricingInfo = pricing?.find(p => p.code === item.code);
-        return `    <item>
+    .map((item) => {
+      const pricingInfo = pricing?.find((p) => p.code === item.code);
+      return `    <item>
       <code>${escapeXml(item.code)}</code>
       <description>${escapeXml(item.description)}</description>
       <quantity>${item.qty.toFixed(2)}</quantity>
@@ -99,8 +98,7 @@ export function buildXactimateXml(
       <notes>${escapeXml(item.justification)}${item.notes ? ` - ${escapeXml(item.notes)}` : ""}</notes>
       ${item.slope ? `<slopeReference>${escapeXml(item.slope)}</slopeReference>` : ""}
     </item>`;
-      }
-    )
+    })
     .join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
@@ -110,7 +108,7 @@ export function buildXactimateXml(
     <insured_name>${escapeXml(lead.name || "Unknown")}</insured_name>
     <propertyAddress>${escapeXml(lead.address || "")}</propertyAddress>
     <lossDate>${escapeXml(lead.dateOfLoss || "")}</lossDate>
-    <generatedBy>Dominus AI</generatedBy>
+    <generatedBy>SkaiPDF</generatedBy>
     <generatedDate>${timestamp}</generatedDate>
     <estimateType>Roof Damage</estimateType>
   </header>
@@ -118,7 +116,7 @@ export function buildXactimateXml(
 ${lineItemsXml}
   </lineItems>
   <metadata>
-    <source>Dominus Claim Writer</source>
+    <source>SkaiPDF Claim Writer</source>
     <aiGenerated>true</aiGenerated>
     <version>1.0</version>
   </metadata>
@@ -142,14 +140,14 @@ export function buildSymbilityJson(
       LossDate: lead.dateOfLoss || "",
       EstimateDate: new Date().toISOString().split("T")[0],
       EstimateType: "Roof Damage - Storm Loss",
-      PreparedBy: "Dominus AI",
+      PreparedBy: "SkaiPDF",
     },
     PropertyInfo: {
       Address: lead.address || "",
       PropertyType: "Residential",
     },
     LineItems: scope.items.map((item) => {
-      const pricingInfo = pricing?.find(p => p.code === item.code);
+      const pricingInfo = pricing?.find((p) => p.code === item.code);
       return {
         Code: item.code,
         Description: item.description,
@@ -171,7 +169,7 @@ export function buildSymbilityJson(
     }),
     Summary: {
       TotalLineItems: scope.items.length,
-      GeneratedBy: "Dominus AI Claim Writer",
+      GeneratedBy: "SkaiPDF Claim Writer",
       AIGenerated: true,
       Version: "1.0",
     },
@@ -199,43 +197,44 @@ function getCategoryFromCode(code: string): string {
  */
 export function buildEstimateSummary(scope: ParsedScope): string {
   const totalItems = scope.items.length;
-  
+
   // Group items by category
-  const roofing = scope.items.filter(i => i.code.startsWith("RFG"));
-  const drip = scope.items.filter(i => i.code.startsWith("DRP"));
-  const vents = scope.items.filter(i => i.code.startsWith("VNT"));
-  const jacks = scope.items.filter(i => i.code.startsWith("PJK"));
-  const other = scope.items.filter(i => 
-    !i.code.startsWith("RFG") && 
-    !i.code.startsWith("DRP") && 
-    !i.code.startsWith("VNT") && 
-    !i.code.startsWith("PJK")
+  const roofing = scope.items.filter((i) => i.code.startsWith("RFG"));
+  const drip = scope.items.filter((i) => i.code.startsWith("DRP"));
+  const vents = scope.items.filter((i) => i.code.startsWith("VNT"));
+  const jacks = scope.items.filter((i) => i.code.startsWith("PJK"));
+  const other = scope.items.filter(
+    (i) =>
+      !i.code.startsWith("RFG") &&
+      !i.code.startsWith("DRP") &&
+      !i.code.startsWith("VNT") &&
+      !i.code.startsWith("PJK")
   );
 
   const lines: string[] = [];
-  
+
   if (roofing.length > 0) {
-    const sq = roofing.find(i => i.units === "SQ");
+    const sq = roofing.find((i) => i.units === "SQ");
     if (sq) {
       lines.push(`${sq.qty} squares of roofing material`);
     }
   }
-  
+
   if (drip.length > 0) {
     const lf = drip.reduce((sum, i) => sum + (i.units === "LF" ? i.qty : 0), 0);
     if (lf > 0) lines.push(`${lf} linear feet of drip edge`);
   }
-  
+
   if (vents.length > 0) {
     const count = vents.reduce((sum, i) => sum + i.qty, 0);
     if (count > 0) lines.push(`${count} roof vents`);
   }
-  
+
   if (jacks.length > 0) {
     const count = jacks.reduce((sum, i) => sum + i.qty, 0);
     if (count > 0) lines.push(`${count} pipe jacks`);
   }
-  
+
   if (other.length > 0) {
     lines.push(`${other.length} additional line items (underlayment, flashing, etc.)`);
   }
@@ -244,7 +243,7 @@ export function buildEstimateSummary(scope: ParsedScope): string {
 
 This estimate includes ${totalItems} line items for complete roof replacement:
 
-${lines.map(l => `• ${l}`).join('\n')}
+${lines.map((l) => `• ${l}`).join("\n")}
 
 This scope has been generated using AI-assisted analysis of drone footage, damage detection, and slope measurements. All line items include detailed justifications and are ready for adjuster review.
 

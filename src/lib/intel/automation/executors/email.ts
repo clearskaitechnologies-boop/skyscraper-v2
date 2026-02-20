@@ -26,7 +26,7 @@ export async function executeSendEmail(
   audience: "ADJUSTER" | "HOMEOWNER",
   config?: any
 ) {
-  logger.debug(`[DOMINUS] Sending email to ${audience} for ${claimId}`);
+  logger.debug(`[SKAI] Sending email to ${audience} for ${claimId}`);
 
   // Fetch claim
   const claim = await prisma.claims.findUnique({
@@ -39,7 +39,7 @@ export async function executeSendEmail(
   const recipientEmail = audience === "ADJUSTER" ? claim.adjusterEmail : claim.homeowner_email;
 
   if (!recipientEmail) {
-    logger.debug(`[DOMINUS] No ${audience} email found - skipping`);
+    logger.debug(`[SKAI] No ${audience} email found - skipping`);
     return { skipped: true, reason: `No ${audience} email` };
   }
 
@@ -58,7 +58,7 @@ export async function executeSendEmail(
   try {
     const resendClient = getResend();
     if (!resendClient) {
-      logger.warn(`[DOMINUS] Resend not configured, skipping email to ${recipientEmail}`);
+      logger.warn(`[SKAI] Resend not configured, skipping email to ${recipientEmail}`);
       return;
     }
 
@@ -75,11 +75,11 @@ export async function executeSendEmail(
         id: randomUUID(),
         orgId,
         claimId,
-        userId: "dominus",
-        userName: "Dominus AI",
+        userId: "skai",
+        userName: "SkaiPDF",
         type: "email_sent",
         title: "Email Sent",
-        description: `Dominus sent email to ${audience.toLowerCase()}: ${recipientEmail}`,
+        description: `SkaiPDF sent email to ${audience.toLowerCase()}: ${recipientEmail}`,
         metadata: {
           audience,
           emailId: result.data?.id,
@@ -88,7 +88,7 @@ export async function executeSendEmail(
       },
     });
 
-    logger.debug(`[DOMINUS] Email sent successfully to ${recipientEmail}`);
+    logger.debug(`[SKAI] Email sent successfully to ${recipientEmail}`);
 
     return {
       success: true,
@@ -96,7 +96,7 @@ export async function executeSendEmail(
       recipient: recipientEmail,
     };
   } catch (error) {
-    logger.error(`[DOMINUS] Email send failed:`, error);
+    logger.error(`[SKAI] Email send failed:`, error);
     return {
       success: false,
       error: String(error),

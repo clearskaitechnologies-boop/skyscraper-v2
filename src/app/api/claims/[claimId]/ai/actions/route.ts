@@ -403,7 +403,7 @@ async function handlePredict(claimId: string, orgId: string) {
   }
 
   // Gather prediction data
-  const dominusAnalysis = await prisma.claim_analysis.findFirst({
+  const skaiAnalysis = await prisma.claim_analysis.findFirst({
     where: { claim_id: claimId },
   });
 
@@ -417,18 +417,18 @@ async function handlePredict(claimId: string, orgId: string) {
     leadId: claim.leads?.id || undefined,
     orgId,
     stage: claim.status || undefined,
-    dominusAnalysis: dominusAnalysis
+    skaiAnalysis: skaiAnalysis
       ? {
-          damageType: (dominusAnalysis.damages as Record<string, unknown> | null)?.type as
+          damageType: (skaiAnalysis.damages as Record<string, unknown> | null)?.type as
             | string
             | undefined,
-          urgency: (dominusAnalysis.risk_flags as Record<string, unknown> | null)?.urgency as
+          urgency: (skaiAnalysis.risk_flags as Record<string, unknown> | null)?.urgency as
             | string
             | undefined,
-          materials: dominusAnalysis.materials
-            ? (dominusAnalysis.materials as unknown[])
+          materials: skaiAnalysis.materials
+            ? (skaiAnalysis.materials as unknown[])
             : undefined,
-          flags: dominusAnalysis.risk_flags ? ["comprehensive_damage"] : ["minimal_damage"],
+          flags: skaiAnalysis.risk_flags ? ["comprehensive_damage"] : ["minimal_damage"],
         }
       : undefined,
     stormImpact: stormImpactData

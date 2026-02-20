@@ -1,5 +1,5 @@
 /**
- * 🔥 PHASE 27: DOMINUS VIDEO AI (v1.5)
+ * 🔥 PHASE 27: SKAI VIDEO AI (v1.5)
  *
  * Video Script Generator & Storyboard Engine
  * Converts AI insights + photos into cinematic damage reports

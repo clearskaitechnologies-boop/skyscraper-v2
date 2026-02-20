@@ -267,9 +267,9 @@ export async function processVideoJob(jobId: string) {
           duration: durationSec,
           status: "PROCESSING",
           tokensUsed: 0,
-          model: "dominus-video",
+          model: "skai-video",
           userId: "system",
-          userName: "Dominus Video AI",
+          userName: "SkaiPDF Video",
           updatedAt: new Date(),
         },
       });

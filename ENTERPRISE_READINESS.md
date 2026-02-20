@@ -1,6 +1,6 @@
 # 🏢 Enterprise Readiness Master Plan
 
-## Titan Roofing (180) + Pro West (480) = $633K ARR
+## Enterprise Client (180) + Pro West (480) = $633K ARR
 
 **Meeting in 10 days. This document is the execution plan.**
 
@@ -36,7 +36,7 @@
 #### ✅ DONE — k6 Load Test Suite
 
 - `load-tests/smoke.js` — Quick validation (5 VUs, 2 min)
-- `load-tests/soak.js` — 200 VU sustained (30 min) — matches Titan + Pro West peak
+- `load-tests/soak.js` — 200 VU sustained (30 min) — matches Enterprise Clients peak
 - `load-tests/spike.js` — Monday morning rush (0 → 400 VUs in 30s)
 - `load-tests/stress.js` — Breaking point finder (ramp to 500 VUs)
 - `load-tests/k6-config.js` — Shared config, thresholds, endpoint registry
@@ -82,7 +82,7 @@ Current config in `src/lib/prisma.ts`:
 
 ### Day 3–4: Data Migration Story
 
-#### What Titan/Pro West Will Ask:
+#### What Enterprise Clients Will Ask:
 
 > "We have 10,000 claims in AccuLynx/JobNimbus/CompanyCam. How do we migrate?"
 
@@ -161,14 +161,14 @@ A real-time dashboard at `/settings/ops` showing:
 
 #### Phase 1: Shadow Pilot (Week 1–2)
 
-- **Users:** 20–30 power users from Titan Roofing
+- **Users:** 20–30 power users from Enterprise Client
 - **Scope:** Claims dashboard, lead management, weather alerts
 - **Success metric:** p95 response time < 2s, 0 data leaks, 0 critical bugs
 - **Monitoring:** Sentry alerts on, PostHog session recording at 100%
 
 #### Phase 2: Department Rollout (Week 3–4)
 
-- **Users:** 100 users (Titan Roofing full team)
+- **Users:** 100 users (Enterprise Client full team)
 - **Scope:** Full platform including AI reports, token system
 - **Success metric:** <1% error rate, NPS > 50
 - **Monitoring:** Weekly SLA report, dedicated Slack channel
@@ -277,7 +277,7 @@ A real-time dashboard at `/settings/ops` showing:
 
 ## 💰 Deal Economics
 
-|                          | Titan Roofing  | Pro West       | Combined       |
+|                          | Enterprise Client  | Pro West       | Combined       |
 | ------------------------ | -------------- | -------------- | -------------- |
 | Employees                | 180            | 480            | 660            |
 | Active Seats (est.)      | 120            | 300            | 420            |

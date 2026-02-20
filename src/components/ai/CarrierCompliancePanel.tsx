@@ -1,14 +1,14 @@
 "use client";
 
-import { 
-  AlertTriangle, 
+import {
+  AlertTriangle,
   Building2,
-  CheckCircle, 
+  CheckCircle,
   Download,
   FileText,
-  Info, 
+  Info,
   Loader2,
-  Shield, 
+  Shield,
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
@@ -54,7 +54,7 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
     if (currentScope.length === 0) {
       toast({
         title: "No Scope Data",
-        description: "Please generate an estimate first using Dominus AI",
+        description: "Please generate an estimate first using SkaiPDF",
         variant: "destructive",
       });
       return;
@@ -97,19 +97,27 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
 
   function getSeverityColor(severity: string) {
     switch (severity) {
-      case "critical": return "text-red-600 bg-red-50 border-red-200";
-      case "warning": return "text-yellow-600 bg-yellow-50 border-yellow-200";
-      case "info": return "text-blue-600 bg-blue-50 border-blue-200";
-      default: return "text-gray-600 bg-gray-50 border-gray-200";
+      case "critical":
+        return "text-red-600 bg-red-50 border-red-200";
+      case "warning":
+        return "text-yellow-600 bg-yellow-50 border-yellow-200";
+      case "info":
+        return "text-blue-600 bg-blue-50 border-blue-200";
+      default:
+        return "text-gray-600 bg-gray-50 border-gray-200";
     }
   }
 
   function getSeverityIcon(severity: string) {
     switch (severity) {
-      case "critical": return <AlertTriangle className="h-5 w-5" />;
-      case "warning": return <Info className="h-5 w-5" />;
-      case "info": return <CheckCircle className="h-5 w-5" />;
-      default: return <Info className="h-5 w-5" />;
+      case "critical":
+        return <AlertTriangle className="h-5 w-5" />;
+      case "warning":
+        return <Info className="h-5 w-5" />;
+      case "info":
+        return <CheckCircle className="h-5 w-5" />;
+      default:
+        return <Info className="h-5 w-5" />;
     }
   }
 
@@ -125,7 +133,8 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-gray-600">
-            Automatically detect the insurance carrier and analyze your scope for carrier-specific compliance issues.
+            Automatically detect the insurance carrier and analyze your scope for carrier-specific
+            compliance issues.
           </p>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -138,7 +147,9 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                 value={adjusterEmail}
                 onChange={(e) => setAdjusterEmail(e.target.value)}
               />
-              <p className="text-xs text-gray-500">We'll detect the carrier from the email domain</p>
+              <p className="text-xs text-gray-500">
+                We'll detect the carrier from the email domain
+              </p>
             </div>
 
             <div className="space-y-2">
@@ -153,7 +164,7 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
             </div>
           </div>
 
-          <Button 
+          <Button
             onClick={runComplianceCheck}
             disabled={loading}
             className="w-full bg-purple-600 hover:bg-purple-700"
@@ -187,7 +198,8 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900">{result.carrier.name}</h3>
                     <p className="mt-1 text-sm text-gray-600">
-                      Detected via: <span className="font-medium">{result.carrier.detectedFrom}</span>
+                      Detected via:{" "}
+                      <span className="font-medium">{result.carrier.detectedFrom}</span>
                     </p>
                     <div className="mt-2 flex items-center gap-2">
                       <div className="text-sm text-gray-600">Confidence:</div>
@@ -231,7 +243,9 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                     <AlertTriangle className="h-4 w-4 text-red-600" />
                     <span className="text-sm text-red-600">Critical</span>
                   </div>
-                  <div className="text-2xl font-bold text-red-600">{result.summary.criticalIssues}</div>
+                  <div className="text-2xl font-bold text-red-600">
+                    {result.summary.criticalIssues}
+                  </div>
                 </div>
 
                 <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
@@ -239,7 +253,9 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                     <Info className="h-4 w-4 text-yellow-600" />
                     <span className="text-sm text-yellow-600">Warnings</span>
                   </div>
-                  <div className="text-2xl font-bold text-yellow-600">{result.summary.warningIssues}</div>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {result.summary.warningIssues}
+                  </div>
                 </div>
 
                 <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
@@ -247,7 +263,9 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                     <CheckCircle className="h-4 w-4 text-blue-600" />
                     <span className="text-sm text-blue-600">Info</span>
                   </div>
-                  <div className="text-2xl font-bold text-blue-600">{result.summary.infoIssues}</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {result.summary.infoIssues}
+                  </div>
                 </div>
               </div>
 
@@ -269,7 +287,8 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                       <div>
                         <p className="font-semibold text-orange-900">Action Required</p>
                         <p className="text-sm text-orange-700">
-                          {result.summary.criticalIssues} critical issues must be resolved before submission
+                          {result.summary.criticalIssues} critical issues must be resolved before
+                          submission
                         </p>
                       </div>
                     </>
@@ -291,7 +310,7 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
               <CardContent>
                 <div className="space-y-3">
                   {result.conflicts.map((conflict: any, idx: number) => (
-                    <div 
+                    <div
                       key={idx}
                       className={`rounded-lg border p-4 ${getSeverityColor(conflict.severity)}`}
                     >
@@ -299,12 +318,16 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                         {getSeverityIcon(conflict.severity)}
                         <div className="flex-1">
                           <div className="mb-1 flex items-center justify-between">
-                            <h4 className="font-semibold">{conflict.type.replace(/_/g, " ").toUpperCase()}</h4>
+                            <h4 className="font-semibold">
+                              {conflict.type.replace(/_/g, " ").toUpperCase()}
+                            </h4>
                             <Badge variant="outline">{conflict.severity}</Badge>
                           </div>
                           <p className="mb-2 text-sm">{conflict.description}</p>
                           <div className="space-y-1 text-xs">
-                            <p><span className="font-medium">Item:</span> {conflict.itemDescription}</p>
+                            <p>
+                              <span className="font-medium">Item:</span> {conflict.itemDescription}
+                            </p>
                             {conflict.suggestedFix && (
                               <p className="font-medium text-green-700">
                                 💡 Suggested Fix: {conflict.suggestedFix}
@@ -335,7 +358,9 @@ export function CarrierCompliancePanel({ leadId, currentScope = [] }: CarrierCom
                     <div key={idx} className="rounded-lg border border-green-200 bg-green-50 p-4">
                       <div className="mb-2 flex items-start justify-between">
                         <h4 className="font-semibold text-green-900">{adjustment.reason}</h4>
-                        <Badge variant="outline" className="bg-white">{adjustment.adjustmentType}</Badge>
+                        <Badge variant="outline" className="bg-white">
+                          {adjustment.adjustmentType}
+                        </Badge>
                       </div>
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>

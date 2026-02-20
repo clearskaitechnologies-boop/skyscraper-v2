@@ -4,7 +4,7 @@
  * 
  * Maps triggers to actions automatically.
  * 
- * When Dominus detects "UNDERPAYMENT_DETECTED" → 
+ * When SkaiPDF detects "UNDERPAYMENT_DETECTED" → 
  * It maps to: ["GENERATE_SUPPLEMENT", "SEND_ADJUSTER_EMAIL", "CREATE_TASK"]
  */
 

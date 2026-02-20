@@ -78,11 +78,11 @@ export async function POST(request: NextRequest) {
 
     // Verify API configuration
     const endpoint =
-      process.env.DOMINUS_AI_VISION_ENDPOINT || "https://api.dominusai.com/v1/vision/analyze";
-    const apiKey = process.env.DOMINUS_AI_API_KEY;
+      process.env.SKAI_VISION_ENDPOINT || "https://api.skaiscrape.com/v1/vision/analyze";
+    const apiKey = process.env.SKAI_AI_API_KEY;
 
     if (!apiKey) {
-      logger.error("[AI_VISION] ❌ CRITICAL: DOMINUS_AI_API_KEY not configured!");
+      logger.error("[AI_VISION] ❌ CRITICAL: SKAI_AI_API_KEY not configured!");
       return NextResponse.json(
         { error: "AI service configuration error. Please contact support." },
         { status: 503 }
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     // Retry loop with exponential backoff
     for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
       try {
-        // Call Dominus AI Vision Service
+        // Call SkaiPDF Vision Service
         aiResponse = await fetch(endpoint, {
           method: "POST",
           headers: {

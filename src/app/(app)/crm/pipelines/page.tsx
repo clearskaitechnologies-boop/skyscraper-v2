@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { logger } from "@/lib/logger";
-// Deprecated: Skai Assistant removed (11/22/2025). Use AskDominusWidget (global) instead.
+// Deprecated: Skai Assistant removed (11/22/2025). Use AskSkaiWidget (global) instead.
 // import { openSkaiAssistant } from "@/components/SKaiAssistant";
 
 interface PipelineSummary {
@@ -115,7 +115,7 @@ export default function PipelinesPage() {
         </div>
         <div className="rounded-xl border border-yellow-300/40 bg-yellow-50 p-4 text-sm text-yellow-800">
           <strong>Assistant Disabled:</strong> Pipeline AI assistant has been disabled while we
-          finalize the new Dominus AI suite.
+          finalize the new SkaiPDF suite.
         </div>
       </div>
     );
@@ -133,7 +133,7 @@ export default function PipelinesPage() {
       />
       <div className="rounded-xl border border-yellow-300/40 bg-yellow-50 p-4 text-sm text-yellow-800">
         <strong>Assistant Disabled:</strong> Pipeline AI assistant has been disabled while we
-        finalize the new Dominus AI suite.
+        finalize the new SkaiPDF suite.
       </div>
 
       {/* KPI Cards */}

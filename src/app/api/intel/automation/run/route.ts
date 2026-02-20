@@ -2,7 +2,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
 import { NextResponse } from "next/server";
 
-import { runDominusAutomations } from "@/lib/intel/automation/engine";
+import { runSkaiAutomations } from "@/lib/intel/automation/engine";
 
 export async function POST(req: Request) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "claimId required" }, { status: 400 });
     }
 
-    const result = await runDominusAutomations(claimId, orgId);
+    const result = await runSkaiAutomations(claimId, orgId);
     return NextResponse.json(result);
   } catch (error) {
     logger.error("[Automation Run Error]", error);

@@ -1,10 +1,10 @@
 /**
- * Dominus AI Tabs Component
+ * SkaiPDF Tabs Component
  * 
  * Tabbed interface for viewing different AI insight categories.
  * Summary | Urgency | Job Type | Next Actions | Materials | Flags | Vision | Prep
  * 
- * Phase 25.5 - Dominus AI UI Components
+ * Phase 25.5 - SkaiPDF UI Components
  */
 
 "use client";
