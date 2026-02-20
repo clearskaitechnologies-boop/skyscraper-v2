@@ -11,6 +11,7 @@
  */
 
 import prisma from "@/lib/prisma";
+import { isPlatformAdmin } from "@/lib/security/roles";
 
 export class SubscriptionRequiredError extends Error {
   constructor(message = "Active subscription required") {
@@ -20,6 +21,16 @@ export class SubscriptionRequiredError extends Error {
 }
 
 export async function requireActiveSubscription(orgId: string) {
+  // Founder bypass — platform admins never need a subscription
+  try {
+    const isAdmin = await isPlatformAdmin();
+    if (isAdmin) {
+      return { id: "admin-bypass", status: "active", seatCount: 999 };
+    }
+  } catch {
+    // auth() may not be available in all contexts — fall through to DB check
+  }
+
   // Check the Subscription table first (seat-billing source of truth)
   const subscription = await prisma.subscription.findFirst({
     where: { orgId },
