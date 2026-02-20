@@ -1,16 +1,30 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Phase 2 domain-level schemas & enums (strict + safe fallbacks using .catch)
 // These are intentionally minimal & focused on high-traffic entities.
 
-export const claimStatusEnum = z.enum(['new','in_review','approved','closed']).catch('new');
-export const claimPriorityEnum = z.enum(['low','medium','high','urgent']).catch('medium');
-export const claimLifecycleStageEnum = z.enum(['FILED','INSPECTION','ESTIMATE','NEGOTIATION','SETTLED','CLOSED']).catch(undefined as any).optional();
+export const claimStatusEnum = z.enum(["new", "in_review", "approved", "closed"]).catch("new");
+export const claimPriorityEnum = z.enum(["low", "medium", "high", "urgent"]).catch("medium");
+export const claimLifecycleStageEnum = z
+  .enum([
+    "FILED",
+    "ADJUSTER_REVIEW",
+    "APPROVED",
+    "DENIED",
+    "APPEAL",
+    "BUILD",
+    "COMPLETED",
+    "DEPRECIATION",
+  ])
+  .catch(undefined as any)
+  .optional();
 
-export const leadStageEnum = z.enum(['new','qualified','proposal','negotiation','won','lost']).catch('new');
-export const leadTempEnum = z.enum(['cold','warm','hot']).catch('warm');
+export const leadStageEnum = z
+  .enum(["new", "qualified", "proposal", "negotiation", "won", "lost"])
+  .catch("new");
+export const leadTempEnum = z.enum(["cold", "warm", "hot"]).catch("warm");
 
-export const teamRoleEnum = z.enum(['admin','member','viewer']).catch('member');
+export const teamRoleEnum = z.enum(["admin", "member", "viewer"]).catch("member");
 
 export const claimCoreSchema = z.object({
   id: z.string(),

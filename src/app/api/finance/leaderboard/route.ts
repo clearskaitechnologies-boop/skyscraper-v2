@@ -6,6 +6,37 @@ import { safeOrgContext } from "@/lib/safeOrgContext";
 
 export const dynamic = "force-dynamic";
 
+// ── Demo / test user filter ──
+// Matches the patterns used in contacts page to filter seed/test data
+const DEMO_USER_ID_PREFIXES = ["user_demo_", "user_test_"];
+const DEMO_NAME_PATTERNS = [
+  "demo admin",
+  "demo user",
+  "test user",
+  "test",
+  "demo",
+  "seed",
+  "sample",
+  "placeholder",
+];
+const DEMO_EMAIL_PATTERNS = [
+  "@example.com",
+  "@test.com",
+  "@demo.com",
+  "@fake.com",
+  "@placeholder.local",
+];
+
+function isDemoUser(user: { name?: string | null; email?: string | null; userId?: string }) {
+  const name = (user.name || "").toLowerCase().trim();
+  const email = (user.email || "").toLowerCase();
+  const uid = (user.userId || "").toLowerCase();
+  if (DEMO_USER_ID_PREFIXES.some((p) => uid.startsWith(p))) return true;
+  if (DEMO_NAME_PATTERNS.some((p) => name === p)) return true;
+  if (DEMO_EMAIL_PATTERNS.some((p) => email.includes(p))) return true;
+  return false;
+}
+
 /**
  * GET /api/finance/leaderboard — Company leaderboard
  * Hybrid: Uses team_performance table first, then falls back to
@@ -53,20 +84,31 @@ export async function GET(req: Request) {
 
     if (perfRecords.length > 0) {
       // Use team_performance data (existing path)
-      const userIds = [...new Set(perfRecords.map((r) => r.userId))];
+      // Filter out demo/test userIds before processing
+      const filteredPerfRecords = perfRecords.filter(
+        (r) => !DEMO_USER_ID_PREFIXES.some((p) => r.userId.toLowerCase().startsWith(p))
+      );
+      const userIds = [...new Set(filteredPerfRecords.map((r) => r.userId))];
       const users = await prisma.users.findMany({
-        where: { id: { in: userIds } },
-        select: { id: true, name: true, email: true, headshot_url: true },
+        where: {
+          OR: [{ id: { in: userIds } }, { clerkUserId: { in: userIds } }],
+        },
+        select: { id: true, clerkUserId: true, name: true, email: true, headshot_url: true },
       });
-      const usersMap = new Map(users.map((u) => [u.id, u]));
+      // Map by both id and clerkUserId so lookups work regardless of which was stored
+      const usersMap = new Map<string, (typeof users)[0]>();
+      for (const u of users) {
+        usersMap.set(u.id, u);
+        usersMap.set(u.clerkUserId, u);
+      }
 
-      const byRevenue = [...perfRecords].sort(
+      const byRevenue = [...filteredPerfRecords].sort(
         (a, b) => Number(b.totalRevenueGenerated) - Number(a.totalRevenueGenerated)
       );
-      const byClaims = [...perfRecords].sort((a, b) => b.claimsSigned - a.claimsSigned);
-      const byDoors = [...perfRecords].sort((a, b) => b.doorsKnocked - a.doorsKnocked);
+      const byClaims = [...filteredPerfRecords].sort((a, b) => b.claimsSigned - a.claimsSigned);
+      const byDoors = [...filteredPerfRecords].sort((a, b) => b.doorsKnocked - a.doorsKnocked);
 
-      const leaderboard = perfRecords.map((r) => {
+      const leaderboard = filteredPerfRecords.map((r) => {
         const user = usersMap.get(r.userId);
         return {
           userId: r.userId,
@@ -87,22 +129,25 @@ export async function GET(req: Request) {
         };
       });
 
-      const totalRevenue = perfRecords.reduce((s, r) => s + Number(r.totalRevenueGenerated), 0);
-      const totalClaims = perfRecords.reduce((s, r) => s + r.claimsSigned, 0);
-      const totalDoors = perfRecords.reduce((s, r) => s + r.doorsKnocked, 0);
+      // Filter out any remaining demo/test users by resolved name/email
+      const cleanLeaderboard = leaderboard.filter((entry) => !isDemoUser(entry));
+
+      const totalRevenue = cleanLeaderboard.reduce((s, r) => s + r.revenue, 0);
+      const totalClaims = cleanLeaderboard.reduce((s, r) => s + r.claimsSigned, 0);
+      const totalDoors = cleanLeaderboard.reduce((s, r) => s + r.doorsKnocked, 0);
 
       return NextResponse.json({
         success: true,
         data: {
-          leaderboard,
+          leaderboard: cleanLeaderboard,
           summary: {
             totalRevenue,
             totalClaims,
             totalDoors,
-            repCount: perfRecords.length,
+            repCount: cleanLeaderboard.length,
             avgCloseRate:
-              perfRecords.length > 0
-                ? perfRecords.reduce((s, r) => s + Number(r.closeRate), 0) / perfRecords.length
+              cleanLeaderboard.length > 0
+                ? cleanLeaderboard.reduce((s, r) => s + r.closeRate, 0) / cleanLeaderboard.length
                 : 0,
           },
           period,
@@ -153,11 +198,12 @@ export async function GET(req: Request) {
       select: { id: true, clerkUserId: true, name: true, email: true, headshot_url: true },
     });
 
-    // Get claims per user (claims signed in period)
+    // Get claims per user (claims signed in period) — exclude demo claims
     const claims = await prisma.claims.findMany({
       where: {
         orgId: ctx.orgId,
         createdAt: { gte: periodStart },
+        isDemo: false,
       },
       select: { id: true, estimatedValue: true, status: true, createdAt: true, assignedTo: true },
     });
@@ -223,20 +269,23 @@ export async function GET(req: Request) {
       };
     });
 
-    // Compute rankings
-    const byRevenue = [...leaderboard].sort((a, b) => b.revenue - a.revenue);
-    const byClaims = [...leaderboard].sort((a, b) => b.claimsSigned - a.claimsSigned);
-    const byDoors = [...leaderboard].sort((a, b) => b.doorsKnocked - a.doorsKnocked);
+    // Filter out demo/test users
+    const cleanLeaderboard = leaderboard.filter((entry) => !isDemoUser(entry));
 
-    leaderboard.forEach((entry) => {
+    // Compute rankings
+    const byRevenue = [...cleanLeaderboard].sort((a, b) => b.revenue - a.revenue);
+    const byClaims = [...cleanLeaderboard].sort((a, b) => b.claimsSigned - a.claimsSigned);
+    const byDoors = [...cleanLeaderboard].sort((a, b) => b.doorsKnocked - a.doorsKnocked);
+
+    cleanLeaderboard.forEach((entry) => {
       entry.rankRevenue = byRevenue.findIndex((x) => x.userId === entry.userId) + 1;
       entry.rankClaims = byClaims.findIndex((x) => x.userId === entry.userId) + 1;
       entry.rankDoors = byDoors.findIndex((x) => x.userId === entry.userId) + 1;
     });
 
-    const totalRevenue = leaderboard.reduce((s, r) => s + r.revenue, 0);
-    const totalClaims = leaderboard.reduce((s, r) => s + r.claimsSigned, 0);
-    const totalDoors = leaderboard.reduce((s, r) => s + r.doorsKnocked, 0);
+    const totalRevenue = cleanLeaderboard.reduce((s, r) => s + r.revenue, 0);
+    const totalClaims = cleanLeaderboard.reduce((s, r) => s + r.claimsSigned, 0);
+    const totalDoors = cleanLeaderboard.reduce((s, r) => s + r.doorsKnocked, 0);
 
     return NextResponse.json({
       success: true,
@@ -246,10 +295,10 @@ export async function GET(req: Request) {
           totalRevenue,
           totalClaims,
           totalDoors,
-          repCount: leaderboard.length,
+          repCount: cleanLeaderboard.length,
           avgCloseRate:
-            leaderboard.length > 0
-              ? leaderboard.reduce((s, r) => s + r.closeRate, 0) / leaderboard.length
+            cleanLeaderboard.length > 0
+              ? cleanLeaderboard.reduce((s, r) => s + r.closeRate, 0) / cleanLeaderboard.length
               : 0,
         },
         period,

@@ -81,7 +81,75 @@ export async function GET(req: Request) {
     },
   });
 
-  // If not found, try TradesProfile (legacy)
+  // ── Self-healing: if no member found, try alternate lookups and auto-create ──
+  // Mirrors the self-healing logic on /trades/profile page to prevent
+  // "Set Up Your Trade Profile" showing for users who already have a profile.
+  if (!profile) {
+    // Try finding by email (handles userId drift / account recreation)
+    const userEmail = user.emailAddresses?.[0]?.emailAddress;
+    if (userEmail) {
+      const byEmail = await prisma.tradesCompanyMember.findFirst({
+        where: { email: userEmail },
+        include: {
+          company: true,
+          reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+        },
+      });
+      if (byEmail) {
+        // Heal: update the userId to match current Clerk auth
+        try {
+          profile = await prisma.tradesCompanyMember.update({
+            where: { id: byEmail.id },
+            data: { userId },
+            include: {
+              company: true,
+              reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+            },
+          });
+          logger.debug(
+            `[API trades/profile] Healed userId drift: email=${userEmail}, newUserId=${userId}`
+          );
+        } catch {
+          // If update fails (e.g. unique constraint on userId), use the found record as-is
+          profile = byEmail;
+        }
+      }
+    }
+
+    // Try finding by orgId (user has an org but member record has no matching userId)
+    if (!profile && orgId) {
+      const byOrg = await prisma.tradesCompanyMember.findFirst({
+        where: {
+          orgId,
+          isOwner: true,
+        },
+        include: {
+          company: true,
+          reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+        },
+      });
+      if (byOrg && byOrg.userId !== userId) {
+        // Heal: link the owner record to the current user (stale or missing userId)
+        try {
+          profile = await prisma.tradesCompanyMember.update({
+            where: { id: byOrg.id },
+            data: { userId },
+            include: {
+              company: true,
+              reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+            },
+          });
+          logger.debug(
+            `[API trades/profile] Healed owner record: orgId=${orgId}, userId=${userId}`
+          );
+        } catch {
+          profile = byOrg;
+        }
+      }
+    }
+  }
+
+  // If still not found, try TradesProfile (legacy)
   if (!profile) {
     const legacyProfile = await prisma.tradesProfile.findUnique({
       where: { userId },

@@ -139,7 +139,6 @@ const ROUTE_THEME_MAP: [string, SectionTheme][] = [
   // ── Reports & Documents ────────────────────────────────────────────
   ["/reports", "reports"],
   ["/proposals", "reports"],
-  ["/batch-proposals", "reports"],
   ["/smart-docs", "reports"],
   ["/ai-proposals", "reports"],
   ["/ai-video-reports", "reports"],

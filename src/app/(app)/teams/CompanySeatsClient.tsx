@@ -6,6 +6,7 @@ import {
   CreditCard,
   Crown,
   ExternalLink,
+  GitBranch,
   Loader2,
   Mail,
   Minus,
@@ -15,6 +16,7 @@ import {
   Shield,
   Trash2,
   User,
+  UserCog,
   UserPlus,
   Users,
   Zap,
@@ -28,6 +30,14 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -35,6 +45,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 /* -------------------------------------------------------------------------- */
 /*  Types                                                                     */
@@ -49,6 +66,9 @@ interface Member {
   createdAt: string | Date;
   avatarUrl?: string | null;
   profileUrl?: string | null;
+  isManager?: boolean;
+  managerId?: string | null;
+  managerName?: string | null;
 }
 
 interface CompanySeatsClientProps {
@@ -92,6 +112,18 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
   const [currentPage, setCurrentPage] = useState(1);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const MEMBERS_PER_PAGE = 25;
+
+  /* ── Manager Hierarchy state ──────────────────────────────────── */
+  const [managerDialogOpen, setManagerDialogOpen] = useState(false);
+  const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [selectedManagerId, setSelectedManagerId] = useState<string>("");
+  const [isAssigningManager, setIsAssigningManager] = useState(false);
+  const [showOrgChart, setShowOrgChart] = useState(false);
+
+  // Filter managers (active members who are marked as managers or admins)
+  const availableManagers = memberList.filter(
+    (m) => (m.isManager || m.role === "Admin" || m.role === "admin") && m.status === "active"
+  );
 
   /* ── Derived billing values ───────────────────────────────────── */
   const hasSubscription = seatData?.subscription?.hasSubscription;
@@ -316,6 +348,88 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
     } catch (err) {
       logger.error("Remove member error:", err);
       toast.error("Failed to remove member");
+    }
+  };
+
+  /* ── Manager Hierarchy handlers ───────────────────────────────── */
+
+  const openManagerDialog = (member: Member) => {
+    setSelectedMember(member);
+    setSelectedManagerId(member.managerId || "none");
+    setManagerDialogOpen(true);
+  };
+
+  const handleAssignManager = async () => {
+    if (!selectedMember) return;
+    setIsAssigningManager(true);
+    try {
+      const res = await fetch("/api/trades/company/seats/assign-manager", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          memberId: selectedMember.id,
+          managerId: selectedManagerId === "none" ? null : selectedManagerId,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Update local state
+        const managerName =
+          selectedManagerId === "none"
+            ? null
+            : memberList.find((m) => m.id === selectedManagerId)?.name;
+        setMemberList((prev) =>
+          prev.map((m) =>
+            m.id === selectedMember.id
+              ? {
+                  ...m,
+                  managerId: selectedManagerId === "none" ? null : selectedManagerId,
+                  managerName,
+                }
+              : m
+          )
+        );
+        toast.success(data.message || "Manager updated successfully");
+        setManagerDialogOpen(false);
+      } else {
+        toast.error(data.error || "Failed to assign manager");
+      }
+    } catch (err) {
+      logger.error("Assign manager error:", err);
+      toast.error("Failed to assign manager");
+    } finally {
+      setIsAssigningManager(false);
+    }
+  };
+
+  const handleToggleManager = async (member: Member, makeManager: boolean) => {
+    try {
+      const res = await fetch("/api/trades/company/seats/assign-manager", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          memberId: member.id,
+          makeManager,
+        }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setMemberList((prev) =>
+          prev.map((m) =>
+            m.id === member.id
+              ? { ...m, isManager: makeManager, role: makeManager ? "Manager" : "Member" }
+              : m
+          )
+        );
+        toast.success(
+          data.message || `${member.name} is now a ${makeManager ? "manager" : "member"}`
+        );
+      } else {
+        toast.error(data.error || "Failed to update role");
+      }
+    } catch (err) {
+      logger.error("Toggle manager error:", err);
+      toast.error("Failed to update role");
     }
   };
 
@@ -728,14 +842,22 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
                       <p className="truncate text-xs text-slate-500 dark:text-slate-400">
                         {member.email}
                       </p>
-                      <div className="mt-0.5 flex items-center gap-1.5">
+                      <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
                         {isOwner && (
                           <>
                             <Crown className="h-3 w-3 text-amber-500" />
                             <span className="text-[10px] font-semibold text-amber-600">Owner</span>
                           </>
                         )}
-                        {!isOwner && member.status === "active" && (
+                        {!isOwner && member.isManager && (
+                          <>
+                            <GitBranch className="h-3 w-3 text-purple-500" />
+                            <span className="text-[10px] font-semibold text-purple-600">
+                              Manager
+                            </span>
+                          </>
+                        )}
+                        {!isOwner && member.status === "active" && !member.isManager && (
                           <span className="text-[10px] font-medium text-green-600">
                             &#10003; Active
                           </span>
@@ -744,6 +866,9 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
                           <span className="text-[10px] font-medium text-amber-600">
                             &#9203; Pending
                           </span>
+                        )}
+                        {member.managerName && (
+                          <span className="text-[10px] text-slate-400">→ {member.managerName}</span>
                         )}
                       </div>
                     </div>
@@ -756,6 +881,21 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
+                          {member.status === "active" && (
+                            <>
+                              <DropdownMenuItem onClick={() => openManagerDialog(member)}>
+                                <UserCog className="mr-2 h-4 w-4" />
+                                Assign Manager
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => handleToggleManager(member, !member.isManager)}
+                              >
+                                <GitBranch className="mr-2 h-4 w-4" />
+                                {member.isManager ? "Remove Manager Role" : "Make Manager"}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                            </>
+                          )}
                           {member.status === "pending" && (
                             <>
                               <DropdownMenuItem onClick={() => handleResendInvite(member)}>
@@ -872,6 +1012,108 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
         </div>
       </div>
 
+      {/* ── Manager Hierarchy Section ────────────────────────────── */}
+      {memberList.length > 1 && (
+        <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <GitBranch className="h-5 w-5 text-purple-500" />
+              <h3 className="text-lg font-bold text-[color:var(--text)]">Team Hierarchy</h3>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setShowOrgChart(!showOrgChart)}>
+              {showOrgChart ? "Hide" : "Show"} Org Chart
+            </Button>
+          </div>
+          <p className="mb-4 text-sm text-slate-500 dark:text-slate-400">
+            Assign managers to team members to create reporting structure. Use the dropdown menu on
+            each member card.
+          </p>
+
+          {showOrgChart && (
+            <div className="rounded-xl border border-slate-200 bg-slate-50/50 p-4 dark:border-slate-700 dark:bg-slate-800/30">
+              <div className="space-y-4">
+                {/* Managers with their reports */}
+                {availableManagers.map((manager) => {
+                  const reports = memberList.filter((m) => m.managerId === manager.id);
+                  return (
+                    <div
+                      key={manager.id}
+                      className="rounded-lg border border-purple-200 bg-white p-3 dark:border-purple-800 dark:bg-slate-900"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-8 w-8">
+                          <AvatarImage src={manager.avatarUrl || undefined} />
+                          <AvatarFallback className="bg-purple-600 text-white">
+                            {manager.name?.charAt(0)?.toUpperCase() || "M"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="text-sm font-semibold text-[color:var(--text)]">
+                            {manager.name}
+                          </p>
+                          <p className="text-xs text-purple-600">
+                            Manager • {reports.length} direct report
+                            {reports.length !== 1 ? "s" : ""}
+                          </p>
+                        </div>
+                      </div>
+                      {reports.length > 0 && (
+                        <div className="ml-6 mt-2 space-y-1 border-l-2 border-purple-200 pl-4 dark:border-purple-700">
+                          {reports.map((report) => (
+                            <div key={report.id} className="flex items-center gap-2 text-sm">
+                              <Avatar className="h-6 w-6">
+                                <AvatarImage src={report.avatarUrl || undefined} />
+                                <AvatarFallback className="bg-blue-500 text-xs text-white">
+                                  {report.name?.charAt(0)?.toUpperCase() || "T"}
+                                </AvatarFallback>
+                              </Avatar>
+                              <span className="text-slate-700 dark:text-slate-300">
+                                {report.name}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+
+                {/* Unassigned members */}
+                {(() => {
+                  const unassigned = memberList.filter(
+                    (m) =>
+                      !m.managerId && !m.isManager && m.status === "active" && m.role !== "Admin"
+                  );
+                  if (unassigned.length === 0) return null;
+                  return (
+                    <div className="rounded-lg border border-slate-200 bg-white p-3 dark:border-slate-700 dark:bg-slate-900">
+                      <p className="mb-2 text-sm font-medium text-slate-500">
+                        Unassigned ({unassigned.length})
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {unassigned.map((m) => (
+                          <div
+                            key={m.id}
+                            className="flex items-center gap-1.5 rounded-full bg-slate-100 px-2.5 py-1 text-xs dark:bg-slate-800"
+                          >
+                            <Avatar className="h-5 w-5">
+                              <AvatarFallback className="bg-slate-400 text-[10px] text-white">
+                                {m.name?.charAt(0)?.toUpperCase() || "?"}
+                              </AvatarFallback>
+                            </Avatar>
+                            {m.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ── Manage Subscription ──────────────────────────────────── */}
       {hasSubscription && (
         <div className="rounded-2xl border border-[color:var(--border)] bg-[var(--surface-glass)] p-6 backdrop-blur-xl">
@@ -898,6 +1140,55 @@ export default function CompanySeatsClient({ members, orgId }: CompanySeatsClien
           </div>
         </div>
       )}
+
+      {/* ── Manager Assignment Dialog ────────────────────────────── */}
+      <Dialog open={managerDialogOpen} onOpenChange={setManagerDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Assign Manager</DialogTitle>
+            <DialogDescription>
+              Select a manager for {selectedMember?.name || selectedMember?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <Select value={selectedManagerId} onValueChange={setSelectedManagerId}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a manager" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">No Manager</SelectItem>
+                {availableManagers
+                  .filter((m) => m.id !== selectedMember?.id)
+                  .map((manager) => (
+                    <SelectItem key={manager.id} value={manager.id}>
+                      {manager.name || manager.email}
+                    </SelectItem>
+                  ))}
+              </SelectContent>
+            </Select>
+            {availableManagers.length === 0 && (
+              <p className="mt-2 text-sm text-slate-500">
+                No managers available. Promote a team member to manager first.
+              </p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setManagerDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAssignManager} disabled={isAssigningManager}>
+              {isAssigningManager ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

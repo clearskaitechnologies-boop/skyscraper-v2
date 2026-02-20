@@ -1,7 +1,6 @@
 import {
   BarChart3,
   BookOpen,
-  Briefcase,
   Calculator,
   ClipboardCheck,
   FileBarChart,
@@ -132,13 +131,6 @@ export default async function ReportsHubPage() {
       desc: "Browse and purchase professional report templates from the community.",
       icon: ShoppingBag,
       color: "from-indigo-500 to-indigo-600",
-    },
-    {
-      href: "/reports/community",
-      title: "Community & Batch Reports",
-      desc: "Single-home professional reports and neighborhood-scale batch proposals.",
-      icon: Briefcase,
-      color: "from-teal-500 to-teal-600",
     },
     {
       href: "/settings/branding",

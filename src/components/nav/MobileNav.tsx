@@ -105,7 +105,6 @@ const navSections: NavSection[] = [
       { label: "Reports Hub", href: "/reports/hub", icon: FileText },
       { label: "Report Builder", href: "/reports/templates/pdf-builder", icon: FileText },
       { label: "Templates & Marketplace", href: "/reports/templates", icon: FolderOpen },
-      { label: "Community & Batch", href: "/reports/community", icon: Users },
       { label: "Company Documents", href: "/settings/company-documents", icon: FileText },
       { label: "Report History", href: "/reports/history", icon: History },
     ],

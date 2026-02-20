@@ -30,7 +30,7 @@ const COMPANY_PAGE_PLANS = [
 export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
   try {
     // Find the user's company membership
-    const membership = await prisma.tradesCompanyMember.findUnique({
+    let membership = await prisma.tradesCompanyMember.findUnique({
       where: { userId },
       include: {
         company: {
@@ -55,6 +55,82 @@ export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
         },
       },
     });
+
+    // =====================================================================
+    // AUTO-CREATE: If user has no tradesCompanyMember at all, create one
+    // This ensures the company page works even if onboarding was incomplete
+    // =====================================================================
+    if (!membership) {
+      try {
+        // Get user info from Clerk to populate the member record
+        const { currentUser } = await import("@clerk/nextjs/server");
+        const user = await currentUser();
+        const email = user?.emailAddresses?.[0]?.emailAddress || `${userId}@unknown.invalid`;
+        const firstName = user?.firstName || "";
+        const lastName = user?.lastName || "";
+        const displayName = [firstName, lastName].filter(Boolean).join(" ") || "Unknown";
+
+        // Create the member record
+        const newMember = await prisma.tradesCompanyMember.create({
+          data: {
+            userId,
+            firstName: firstName || null,
+            lastName: lastName || null,
+            email,
+            status: "active",
+            isActive: true,
+            isOwner: true,
+            isAdmin: true,
+            role: "owner",
+            onboardingStep: "company",
+            companyName: `${displayName}'s Company`,
+          },
+        });
+
+        logger.info(`[trades/company] Auto-created member for user ${userId}`);
+
+        // Now re-fetch with the include
+        membership = await prisma.tradesCompanyMember.findUnique({
+          where: { userId },
+          include: {
+            company: {
+              include: {
+                members: {
+                  where: { isActive: true, status: "active" },
+                  select: {
+                    id: true,
+                    userId: true,
+                    firstName: true,
+                    lastName: true,
+                    avatar: true,
+                    profilePhoto: true,
+                    role: true,
+                    isOwner: true,
+                    isAdmin: true,
+                    title: true,
+                    tradeType: true,
+                  },
+                },
+              },
+            },
+          },
+        });
+      } catch (autoCreateMemberError) {
+        logger.error("[trades/company] Auto-create member failed:", autoCreateMemberError);
+        // Return a friendly error that guides user to proper onboarding
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "No profile found. Please complete your profile setup.",
+            hasCompany: false,
+            hasProfile: false,
+            companyPageUnlocked: false,
+            requiresOnboarding: true,
+          },
+          { status: 404 }
+        );
+      }
+    }
 
     // Check if company page is unlocked
     let companyPageUnlocked = false;
@@ -100,15 +176,64 @@ export const GET = withAuth(async (req: NextRequest, { orgId, userId }) => {
     }
 
     if (!membership?.company) {
-      // Auto-create a company for users who have a member profile but no company
-      // This ensures the company page always works once the user has onboarded
-      // IMPORTANT: Never use firstName+lastName as company name — that creates
-      // ghost companies like "Damien Ray" when Clerk has different name data
+      // Auto-link or auto-create a company for users who have a member profile but no company
       if (membership) {
         try {
-          // Only use an explicit company name from the membership record.
-          // Never fall back to user?.name — that would use a personal name
-          // and create ghost companies like "Damien's Company".
+          // STEP 1: Look for an existing company already associated with this org
+          // This prevents ghost companies when the member→company FK is missing
+          let existingCompany = await prisma.tradesCompany.findFirst({
+            where: {
+              members: { some: { orgId } },
+            },
+            include: {
+              members: {
+                where: { isActive: true, status: "active" },
+                select: {
+                  id: true,
+                  userId: true,
+                  firstName: true,
+                  lastName: true,
+                  avatar: true,
+                  profilePhoto: true,
+                  role: true,
+                  isOwner: true,
+                  isAdmin: true,
+                  title: true,
+                  tradeType: true,
+                },
+              },
+            },
+          });
+
+          if (existingCompany) {
+            // Link this member to the existing company
+            await prisma.tradesCompanyMember.update({
+              where: { id: membership.id },
+              data: { companyId: existingCompany.id, isOwner: true, isAdmin: true, role: "owner" },
+            });
+            logger.debug(
+              `[trades/company] Linked member to existing company "${existingCompany.name}" for user ${userId}`
+            );
+
+            return NextResponse.json({
+              ok: true,
+              company: {
+                ...existingCompany,
+                coverPhoto: existingCompany.coverimage || null,
+                members: existingCompany.members.map((m: any) => ({
+                  ...m,
+                  avatar: m.avatar || m.profilePhoto || null,
+                })),
+              },
+              memberSettings: {},
+              hasCompany: true,
+              isAdmin: true,
+              companyPageUnlocked: true,
+              unlockReason: "auto_linked",
+            });
+          }
+
+          // STEP 2: No existing company found — create a new one
           const companyName = membership.companyName || "My Company";
 
           const newCompany = await prisma.tradesCompany.create({

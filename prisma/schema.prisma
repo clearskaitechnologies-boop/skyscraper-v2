@@ -5305,15 +5305,15 @@ model tradesCompany {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model tradesCompanyMember {
-  id                    String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  userId                String              @unique
-  companyId             String?             @db.Uuid
-  role                  String?             @default("member")
+  id                    String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId                String                @unique
+  companyId             String?               @db.Uuid
+  role                  String?               @default("member")
   title                 String?
-  isOwner               Boolean?            @default(false)
-  isActive              Boolean?            @default(true)
-  createdAt             DateTime?           @default(now()) @db.Timestamptz(6)
-  updatedAt             DateTime?           @default(now()) @db.Timestamptz(6)
+  isOwner               Boolean?              @default(false)
+  isActive              Boolean?              @default(true)
+  createdAt             DateTime?             @default(now()) @db.Timestamptz(6)
+  updatedAt             DateTime?             @default(now()) @db.Timestamptz(6)
   pendingCompanyToken   String?
   orgId                 String?
   firstName             String?
@@ -5325,16 +5325,16 @@ model tradesCompanyMember {
   bio                   String?
   avatar                String?
   workHistory           String?
-  skills                String[]            @default([])
-  certifications        String[]            @default([])
-  specialties           String[]            @default([])
-  lookingFor            String[]            @default([])
+  skills                String[]              @default([])
+  certifications        String[]              @default([])
+  specialties           String[]              @default([])
+  lookingFor            String[]              @default([])
   yearsExperience       Int?
   profilePhoto          String?
-  isAdmin               Boolean?            @default(false)
-  canEditCompany        Boolean?            @default(false)
-  status                String?             @default("active")
-  onboardingStep        String?             @default("profile")
+  isAdmin               Boolean?              @default(false)
+  canEditCompany        Boolean?              @default(false)
+  status                String?               @default("active")
+  onboardingStep        String?               @default("profile")
   companyName           String?
   companyEmail          String?
   companyWebsite        String?
@@ -5346,40 +5346,45 @@ model tradesCompanyMember {
   zip                   String?
   officePhone           String?
   mobilePhone           String?
-  hoursOfOperation      Json?               @default("{}")
+  hoursOfOperation      Json?                 @default("{}")
   rocNumber             String?
-  rocExpiration         DateTime?           @db.Date
+  rocExpiration         DateTime?             @db.Date
   licenseNumber         String?
   licenseState          String?
   businessEntityType    String?
-  isBonded              Boolean?            @default(false)
-  isInsured             Boolean?            @default(false)
+  isBonded              Boolean?              @default(false)
+  isInsured             Boolean?              @default(false)
   insuranceProvider     String?
-  insuranceExpiration   DateTime?           @db.Date
+  insuranceExpiration   DateTime?             @db.Date
   insurancePolicyNumber String?
   bondAmount            String?
-  bondExpiration        DateTime?           @db.Date
+  bondExpiration        DateTime?             @db.Date
   additionalNotes       String?
-  coverageTypes         String[]            @default([])
-  socialLinks           Json?               @default("{}")
-  paymentMethods        String[]            @default([])
-  languages             String[]            @default(["English"])
-  emergencyAvailable    Boolean?            @default(false)
-  freeEstimates         Boolean?            @default(true)
+  coverageTypes         String[]              @default([])
+  socialLinks           Json?                 @default("{}")
+  paymentMethods        String[]              @default([])
+  languages             String[]              @default(["English"])
+  emergencyAvailable    Boolean?              @default(false)
+  freeEstimates         Boolean?              @default(true)
   warrantyInfo          String?
   aboutCompany          String?
   tagline               String?
   foundedYear           Int?
   teamSize              String?
-  portfolioImages       String[]            @default([])
-  lastSeenAt            DateTime?           @default(now()) @db.Timestamptz(6)
+  portfolioImages       String[]              @default([])
+  lastSeenAt            DateTime?             @default(now()) @db.Timestamptz(6)
   customStatus          String?
   statusEmoji           String?
+  // Manager hierarchy fields
+  managerId             String?               @db.Uuid
+  isManager             Boolean?              @default(false)
   ClientJob             ClientJob[]
   ClientJobResponse     ClientJobResponse[]
   pro_engagement        pro_engagement?
   reviews               trade_reviews[]
-  company               tradesCompany?      @relation(fields: [companyId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  company               tradesCompany?        @relation(fields: [companyId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  manager               tradesCompanyMember?  @relation("ManagerToEmployee", fields: [managerId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  directReports         tradesCompanyMember[] @relation("ManagerToEmployee")
 
   @@index([companyId], map: "idx_trades_member_company")
   @@index([companyName], map: "idx_trades_member_company_name")

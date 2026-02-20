@@ -137,7 +137,7 @@ const nextConfig = {
 
       // Projects / Proposals
       { source: "/projects/browse", destination: "/opportunities", permanent: true },
-      { source: "/batch-proposals", destination: "/reports/community", permanent: false },
+      { source: "/batch-proposals", destination: "/reports/hub", permanent: true },
       { source: "/leads/pipeline", destination: "/pipeline", permanent: true },
 
       // Reports

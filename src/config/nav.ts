@@ -83,12 +83,6 @@ export const CORE_NAV: NavItem[] = [
         icon: "FileBarChart",
         match: /^\/reports\/retail(\/.*)?$/,
       },
-      {
-        href: "/reports/community",
-        label: "Community Reports",
-        icon: "Users2",
-        match: /^\/reports\/community(\/.*)?$/,
-      },
     ],
   },
 

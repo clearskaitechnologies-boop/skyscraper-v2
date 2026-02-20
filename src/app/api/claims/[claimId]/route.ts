@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { logger } from "@/lib/logger";
+import { NextResponse } from "next/server";
 import { z } from "zod";
 
 import { createForbiddenResponse, requirePermission } from "@/lib/auth/rbac";
@@ -14,7 +14,18 @@ const claimUpdateSchema = z
     dateOfLoss: z.string().optional(),
     carrier: z.string().optional(),
     policyNumber: z.string().optional(),
-    lifecycleStage: z.string().optional(),
+    lifecycleStage: z
+      .enum([
+        "FILED",
+        "ADJUSTER_REVIEW",
+        "APPROVED",
+        "DENIED",
+        "APPEAL",
+        "BUILD",
+        "COMPLETED",
+        "DEPRECIATION",
+      ])
+      .optional(),
     status: z.string().optional(),
     claimNumber: z.string().optional(),
     policy_number: z.string().optional(),
@@ -209,7 +220,7 @@ export const PATCH = withOrgScope(
       if (dateOfLoss !== undefined) updateData.dateOfLoss = new Date(dateOfLoss);
       if (carrier !== undefined) updateData.carrier = carrier;
       if (policyNumber !== undefined) updateData.policyNumber = policyNumber;
-      if (lifecycleStage !== undefined) updateData.lifecycleStage = lifecycleStage;
+      if (lifecycleStage !== undefined) updateData.lifecycle_stage = lifecycleStage;
       if (status !== undefined) updateData.status = status;
 
       // MASTER CLAIM WORKSPACE: Add new fields to whitelist

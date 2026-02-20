@@ -10,6 +10,7 @@
  * Throws if no active subscription (catch → 402).
  */
 
+import { isBetaMode } from "@/lib/beta";
 import prisma from "@/lib/prisma";
 import { isPlatformAdmin } from "@/lib/security/roles";
 
@@ -21,6 +22,11 @@ export class SubscriptionRequiredError extends Error {
 }
 
 export async function requireActiveSubscription(orgId: string) {
+  // Beta mode bypass — all users have full access during beta
+  if (isBetaMode()) {
+    return { id: "beta-bypass", status: "active", seatCount: 999 };
+  }
+
   // Founder bypass — platform admins never need a subscription
   try {
     const isAdmin = await isPlatformAdmin();

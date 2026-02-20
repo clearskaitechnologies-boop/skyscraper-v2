@@ -1,5 +1,5 @@
 // src/app/(app)/claims/[claimId]/layout.tsx
-import { ArrowLeft, FileText, Shield, User } from "lucide-react";
+import { ArrowLeft, DollarSign, FileText, Shield, User } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
@@ -122,6 +122,25 @@ export default async function ClaimLayout({ children, params }: ClaimLayoutProps
                     </div>
                   </div>
                 </div>
+
+                {/* Job Value Pill */}
+                {(claim.estimatedValue ?? 0) > 0 && (
+                  <div className="hidden items-center gap-2 sm:flex">
+                    <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 dark:border-emerald-800 dark:bg-emerald-900/30">
+                      <span className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                        <DollarSign className="h-3.5 w-3.5" />
+                        {(claim.estimatedValue ?? 0).toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                          maximumFractionDigits: 0,
+                        })}
+                      </span>
+                      <span className="text-[10px] font-medium uppercase tracking-wide text-emerald-500 dark:text-emerald-500">
+                        Job Value
+                      </span>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -276,6 +295,25 @@ export default async function ClaimLayout({ children, params }: ClaimLayoutProps
                 </div>
               </div>
             </div>
+
+            {/* Job Value Pill */}
+            {((claim as any).estimatedValue ?? 0) > 0 && (
+              <div className="hidden items-center gap-2 sm:flex">
+                <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 dark:border-emerald-800 dark:bg-emerald-900/30">
+                  <span className="flex items-center gap-1.5 text-sm font-semibold text-emerald-700 dark:text-emerald-400">
+                    <DollarSign className="h-3.5 w-3.5" />
+                    {((claim as any).estimatedValue ?? 0).toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                      maximumFractionDigits: 0,
+                    })}
+                  </span>
+                  <span className="text-[10px] font-medium uppercase tracking-wide text-emerald-500 dark:text-emerald-500">
+                    Job Value
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

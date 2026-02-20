@@ -57,22 +57,27 @@ export const POST = withAuth(async (req: NextRequest, { orgId: userOrgId, userId
         closed: "completed",
       };
 
+      // Map pipeline stage to valid ClaimLifecycleStage enum values
+      // Valid enum: FILED, ADJUSTER_REVIEW, APPROVED, DENIED, APPEAL, BUILD, COMPLETED, DEPRECIATION
       const stageToLifecycle: Record<string, string> = {
-        new: "INTAKE",
-        qualified: "ACTIVE",
-        proposal: "ACTIVE",
-        negotiation: "ACTIVE",
-        won: "CLOSED",
+        new: "FILED",
+        draft: "FILED",
+        qualified: "ADJUSTER_REVIEW",
+        proposal: "APPROVED",
+        negotiation: "APPROVED",
+        approved: "APPROVED",
+        won: "COMPLETED",
+        closed: "COMPLETED",
       };
 
       const newStatus = stageToStatus[stage] || stage;
-      const newLifecycle = stageToLifecycle[stage] || "ACTIVE";
+      const newLifecycle = stageToLifecycle[stage] || null;
 
       const updated = await prisma.claims.update({
         where: { id: claimId },
         data: {
           status: newStatus,
-          lifecycle_stage: newLifecycle as any,
+          ...(newLifecycle ? { lifecycle_stage: newLifecycle as any } : {}),
           updatedAt: new Date(),
         },
         select: { id: true, status: true, lifecycle_stage: true, updatedAt: true },

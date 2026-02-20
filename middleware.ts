@@ -110,11 +110,9 @@ const isPublicRoute = createRouteMatcher([
   "/client/sign-in(.*)",
   "/client/sign-up(.*)",
   "/client/sign-up(.*)",
-  // Portal PAGES are public (layout handles graceful auth for branding/UX)
-  // Note: /api/portal/* routes are NOT in this list — they go through the
-  // API auth block below which enforces userId at the edge, plus each route
-  // handler enforces auth() internally.
-  "/portal(.*)",
+  // Portal pages are PROTECTED — layout.tsx handles auth gracefully
+  // and individual pages call currentUser() which requires auth() context.
+  // Marking portal as public was starving currentUser() of session data.
   "/api/templates/marketplace(.*)", // Public marketplace browsing only
   "/api/templates/health", // Template health check
   "/api/auth/identity", // Identity lookup API
@@ -237,11 +235,17 @@ export default clerkMiddleware((auth, req) => {
   }
 
   // App routes: enforce authentication
+  // Portal routes use client-specific sign-in URL
+  const isPortalRoute = pathname.startsWith("/portal");
+  const authRedirectUrl = isPortalRoute
+    ? new URL(`/client/sign-in?redirect_url=${encodeURIComponent(pathname + search)}`, req.url)
+    : signInUrl;
+
   // CRITICAL: Pass redirect_url in BOTH unauthenticated and unauthorized URLs
   // so invite tokens (/trades/join?token=xxx) survive the auth flow
   auth().protect({
-    unauthenticatedUrl: signInUrl.toString(),
-    unauthorizedUrl: signInUrl.toString(),
+    unauthenticatedUrl: authRedirectUrl.toString(),
+    unauthorizedUrl: authRedirectUrl.toString(),
   });
 
   res.headers.set("x-auth-mode", "protected");

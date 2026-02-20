@@ -1,10 +1,70 @@
 # 🏗️ MASTER TODO — SkaiScraper Pro CRM
 
-> **Last Updated:** February 19, 2026  
+> **Last Updated:** February 20, 2026  
 > **Current State:** Production-deployed at [skaiscrape.com](https://skaiscrape.com)  
-> **HEAD Commit:** `8f73372` (Sprint 2 hardening)  
+> **HEAD Commit:** `a78fc46` (Sprint 2 stabilization)  
 > **AI Brand:** SkaiPDF (formerly "Dominus AI" — fully renamed)  
 > **Pricing:** $80/seat/month
+
+---
+
+## 🚨 CRITICAL FIXES COMPLETED (Feb 20, 2026)
+
+### Pipeline & Claims Fixes
+
+- [x] Fixed job pipeline lifecycle_stage enum error — was using invalid values (ACTIVE, INTAKE, CLOSED)
+- [x] Fixed to use valid ClaimLifecycleStage enum: FILED, ADJUSTER_REVIEW, APPROVED, DENIED, APPEAL, BUILD, COMPLETED, DEPRECIATION
+- [x] Removed Community & Batch Reports from sidebar navigation (feature deferred)
+- [x] Added side widgets to Claims workspace (Claim Value, Key Dates, Adjuster Contact, Quick Actions)
+
+### Known Issues (Billing Gate - Expected Behavior)
+
+- Weather Analytics returns HTTP 402 — This is correct behavior: `requireActiveSubscription()` gates premium features
+- Users must have active subscription (status: "active" or "trialing") to access Weather Analytics
+
+---
+
+## 🔥 P0 — IMMEDIATE PRIORITIES (Feb 20-27, 2026)
+
+### Manager Hierarchy System (Company Seats Page)
+
+- [ ] Add "Manager" role type to user_organizations/tradesCompanyMember
+- [ ] Create downline relationship model (manager → employees)
+- [ ] UI on Company Seats page to assign employees to managers
+- [ ] Managers can see only their team's data (scoped queries)
+
+### Task & Request Routing
+
+- [ ] Create tasks table (if not exists): task_requests with assignee, approver, status
+- [ ] Tasks/requests route to assigned manager instead of admin
+- [ ] Job value approval workflow: employee submits → manager approves → admin final approval
+- [ ] Notification system for pending approvals
+
+### Job Value Display
+
+- [ ] Add job value summary in claim/lead header
+- [ ] Display estimated/approved amounts prominently
+- [ ] Quick edit for job value from header
+
+### Dashboard Fixes
+
+- [ ] Trades Pro card widget not displaying on main dashboard — investigate `/api/trades/profile`
+- [ ] Clean up demo admin/test data from leaderboard — remove "Demo Admin" entries
+- [ ] Ensure leaderboard pulls real user data only (no test records)
+
+### Client Portal (CRITICAL)
+
+- [ ] Client dashboard has been down for a week — INVESTIGATE
+- [ ] Portal layout renders but may have data fetching issues
+- [ ] Check `/api/portal/*` endpoints for errors
+- [ ] Verify `ClientPortalWrapper` and `PortalErrorBoundary` are working
+
+### Company Page Flow
+
+- [ ] User reports "No Company" on trades company page despite having a company
+- [ ] Check `/api/trades/company` auto-heal logic
+- [ ] Verify tradesCompanyMember → tradesCompany linkage
+- [ ] ClearSkai should be attached as user's company
 
 ---
 

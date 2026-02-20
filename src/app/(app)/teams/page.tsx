@@ -84,9 +84,19 @@ export default async function CompanySeatsPage() {
             profilePhoto: true,
             avatar: true,
             onboardingStep: true,
+            isManager: true,
+            managerId: true,
           },
           orderBy: { createdAt: "asc" },
         });
+
+        // Build a map of id -> name for manager lookup
+        const memberNameMap = new Map(
+          companyMembers.map((m) => [
+            m.id,
+            [m.firstName, m.lastName].filter(Boolean).join(" ") || m.email || "Unknown",
+          ])
+        );
 
         members = companyMembers.map((m) => {
           const hasProfile = m.isActive && m.status === "active" && m.onboardingStep !== "profile";
@@ -102,6 +112,9 @@ export default async function CompanySeatsPage() {
             createdAt: m.createdAt,
             avatarUrl: m.avatar || m.profilePhoto || null,
             profileUrl,
+            isManager: m.isManager || false,
+            managerId: m.managerId || null,
+            managerName: m.managerId ? memberNameMap.get(m.managerId) || null : null,
           };
         });
       }
