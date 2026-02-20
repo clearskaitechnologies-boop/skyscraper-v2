@@ -1,15 +1,15 @@
-import { auth } from "@clerk/nextjs/server";
 import { logger } from "@/lib/logger";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
-import { db } from "@/lib/db";
+import prisma from "@/lib/prisma";
 
 type RouteContext = {
   params: Promise<{ id: string }>;
 };
 
-// PATCH /api/notifications/:id/read - Mark notification as read
-export async function PATCH(req: NextRequest, context: RouteContext) {
+// Mark a notification as read
+async function markAsRead(req: NextRequest, context: RouteContext) {
   try {
     const { userId } = await auth();
     if (!userId) {
@@ -18,9 +18,7 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
 
     const { id } = await context.params;
 
-    // Verify ownership
-    // @ts-expect-error - Notification model does not exist in Prisma schema
-    const existing = await db.notification.findUnique({
+    const existing = await prisma.notification.findUnique({
       where: { id },
     });
 
@@ -32,15 +30,18 @@ export async function PATCH(req: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // @ts-expect-error - Notification model does not exist in Prisma schema
-    const notification = await db.notification.update({
+    const notification = await prisma.notification.update({
       where: { id },
-      data: { read: true },
+      data: { readAt: new Date() },
     });
 
     return NextResponse.json(notification);
   } catch (error) {
-    logger.error("Error marking notification as read:", error);
+    logger.error("Error marking notification as read", { error });
     return NextResponse.json({ error: "Failed to mark notification as read" }, { status: 500 });
   }
 }
+
+// Support both PATCH and POST for compatibility
+export const PATCH = markAsRead;
+export const POST = markAsRead;
