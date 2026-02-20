@@ -42,16 +42,48 @@ const tradesProfileSchema = z.object({
 
 // GET /api/trades/profile - Get current user's profile
 export async function GET(req: Request) {
-  const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  try {
+    const { userId } = await auth();
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { searchParams } = new URL(req.url);
-  const profileId = searchParams.get("profileId");
+    const { searchParams } = new URL(req.url);
+    const profileId = searchParams.get("profileId");
 
-  if (profileId) {
-    // Get specific profile by ID
-    const profile = await prisma.tradesCompanyMember.findUnique({
-      where: { id: profileId },
+    if (profileId) {
+      // Get specific profile by ID
+      const profile = await prisma.tradesCompanyMember.findUnique({
+        where: { id: profileId },
+        include: {
+          company: true,
+          reviews: {
+            orderBy: { createdAt: "desc" },
+            take: 5,
+          },
+        },
+      });
+      return NextResponse.json(profile);
+    }
+
+    // Get current user's profile
+    const user = await currentUser();
+    if (!user) return new NextResponse("User not found", { status: 404 });
+
+    // Org context is only needed for fallback self-healing — never crash the whole
+    // GET handler if org resolution fails (was causing "Set Up Your Trade Profile"
+    // on dashboard when the DB connection pool was exhausted).
+    let orgId: string | null = null;
+    try {
+      const ctx = await ensureUserOrgContext(userId);
+      orgId = ctx.orgId;
+    } catch (err) {
+      logger.warn(
+        `[API trades/profile GET] ⚠️ ensureUserOrgContext failed for ${userId}: ${(err as Error).message} — continuing with userId-only lookup`
+      );
+    }
+
+    // Try to find tradesCompanyMember by userId
+    let profile = await prisma.tradesCompanyMember.findUnique({
+      where: { userId },
       include: {
         company: true,
         reviews: {
@@ -60,167 +92,158 @@ export async function GET(req: Request) {
         },
       },
     });
-    return NextResponse.json(profile);
-  }
 
-  // Get current user's profile
-  const user = await currentUser();
-  if (!user) return new NextResponse("User not found", { status: 404 });
+    // ── Self-healing: if no member found, try alternate lookups and auto-create ──
+    // Mirrors the self-healing logic on /trades/profile page to prevent
+    // "Set Up Your Trade Profile" showing for users who already have a profile.
+    if (!profile) {
+      // Try finding by email (handles userId drift / account recreation)
+      const userEmail = user.emailAddresses?.[0]?.emailAddress;
+      if (userEmail) {
+        const byEmail = await prisma.tradesCompanyMember.findFirst({
+          where: { email: userEmail },
+          include: {
+            company: true,
+            reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+          },
+        });
+        if (byEmail) {
+          // Heal: update the userId to match current Clerk auth
+          try {
+            profile = await prisma.tradesCompanyMember.update({
+              where: { id: byEmail.id },
+              data: { userId },
+              include: {
+                company: true,
+                reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+              },
+            });
+            logger.debug(
+              `[API trades/profile] Healed userId drift: email=${userEmail}, newUserId=${userId}`
+            );
+          } catch {
+            // If update fails (e.g. unique constraint on userId), use the found record as-is
+            profile = byEmail;
+          }
+        }
+      }
 
-  const { orgId } = await ensureUserOrgContext(userId);
-
-  // Try to find tradesCompanyMember by userId
-  let profile = await prisma.tradesCompanyMember.findUnique({
-    where: { userId },
-    include: {
-      company: true,
-      reviews: {
-        orderBy: { createdAt: "desc" },
-        take: 5,
-      },
-    },
-  });
-
-  // ── Self-healing: if no member found, try alternate lookups and auto-create ──
-  // Mirrors the self-healing logic on /trades/profile page to prevent
-  // "Set Up Your Trade Profile" showing for users who already have a profile.
-  if (!profile) {
-    // Try finding by email (handles userId drift / account recreation)
-    const userEmail = user.emailAddresses?.[0]?.emailAddress;
-    if (userEmail) {
-      const byEmail = await prisma.tradesCompanyMember.findFirst({
-        where: { email: userEmail },
-        include: {
-          company: true,
-          reviews: { orderBy: { createdAt: "desc" }, take: 5 },
-        },
-      });
-      if (byEmail) {
-        // Heal: update the userId to match current Clerk auth
-        try {
-          profile = await prisma.tradesCompanyMember.update({
-            where: { id: byEmail.id },
-            data: { userId },
-            include: {
-              company: true,
-              reviews: { orderBy: { createdAt: "desc" }, take: 5 },
-            },
-          });
-          logger.debug(
-            `[API trades/profile] Healed userId drift: email=${userEmail}, newUserId=${userId}`
-          );
-        } catch {
-          // If update fails (e.g. unique constraint on userId), use the found record as-is
-          profile = byEmail;
+      // Try finding by orgId (user has an org but member record has no matching userId)
+      if (!profile && orgId) {
+        const byOrg = await prisma.tradesCompanyMember.findFirst({
+          where: {
+            orgId,
+            isOwner: true,
+          },
+          include: {
+            company: true,
+            reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+          },
+        });
+        if (byOrg && byOrg.userId !== userId) {
+          // Heal: link the owner record to the current user (stale or missing userId)
+          try {
+            profile = await prisma.tradesCompanyMember.update({
+              where: { id: byOrg.id },
+              data: { userId },
+              include: {
+                company: true,
+                reviews: { orderBy: { createdAt: "desc" }, take: 5 },
+              },
+            });
+            logger.debug(
+              `[API trades/profile] Healed owner record: orgId=${orgId}, userId=${userId}`
+            );
+          } catch {
+            profile = byOrg;
+          }
         }
       }
     }
 
-    // Try finding by orgId (user has an org but member record has no matching userId)
-    if (!profile && orgId) {
-      const byOrg = await prisma.tradesCompanyMember.findFirst({
-        where: {
-          orgId,
-          isOwner: true,
-        },
-        include: {
-          company: true,
-          reviews: { orderBy: { createdAt: "desc" }, take: 5 },
-        },
+    // If still not found, try TradesProfile (legacy)
+    if (!profile) {
+      const legacyProfile = await prisma.tradesProfile.findUnique({
+        where: { userId },
       });
-      if (byOrg && byOrg.userId !== userId) {
-        // Heal: link the owner record to the current user (stale or missing userId)
-        try {
-          profile = await prisma.tradesCompanyMember.update({
-            where: { id: byOrg.id },
-            data: { userId },
-            include: {
-              company: true,
-              reviews: { orderBy: { createdAt: "desc" }, take: 5 },
-            },
-          });
-          logger.debug(
-            `[API trades/profile] Healed owner record: orgId=${orgId}, userId=${userId}`
-          );
-        } catch {
-          profile = byOrg;
-        }
+
+      if (legacyProfile) {
+        return NextResponse.json({
+          profile: {
+            ...legacyProfile,
+            businessName: legacyProfile.companyName,
+            tradeType: null,
+            serviceRadius: 50,
+            availability: "AVAILABLE",
+          },
+        });
       }
     }
-  }
 
-  // If still not found, try TradesProfile (legacy)
-  if (!profile) {
-    const legacyProfile = await prisma.tradesProfile.findUnique({
-      where: { userId },
-    });
+    if (!profile) {
+      return NextResponse.json({ profile: null });
+    }
 
-    if (legacyProfile) {
-      return NextResponse.json({
-        profile: {
-          ...legacyProfile,
-          businessName: legacyProfile.companyName,
-          tradeType: null,
-          serviceRadius: 50,
-          availability: "AVAILABLE",
+    // ── Auto-sync legacy TradesProfile so messaging/avatar subsystems work ──
+    try {
+      await prisma.tradesProfile.upsert({
+        where: { userId },
+        create: {
+          id: `tp-${profile.id.slice(0, 20)}`,
+          userId,
+          orgId: profile.orgId || orgId || "",
+          companyName: profile.companyName || profile.company?.name || "",
+          contactName:
+            `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Contractor",
+          email: profile.email || "",
+          phone: profile.phone || null,
+          city: profile.city || null,
+          state: profile.state || null,
+          zip: profile.zip || null,
+          specialties: (profile.specialties as string[]) || [],
+          certifications: (profile.certifications as string[]) || [],
+          bio: profile.bio || null,
+          logoUrl: profile.avatar || null,
+          website: profile.companyWebsite || null,
+          yearsInBusiness: profile.yearsExperience || null,
+          verified: true,
+          active: true,
+          rating: 5.0,
+          reviewCount: 0,
+          projectCount: 0,
+          updatedAt: new Date(),
+        },
+        update: {
+          companyName: profile.companyName || profile.company?.name || undefined,
+          contactName: `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || undefined,
+          email: profile.email || undefined,
+          active: true,
         },
       });
+    } catch {
+      // Non-fatal — member profile still works
     }
-  }
 
-  if (!profile) {
-    return NextResponse.json({ profile: null });
-  }
-
-  // ── Auto-sync legacy TradesProfile so messaging/avatar subsystems work ──
-  try {
-    await prisma.tradesProfile.upsert({
-      where: { userId },
-      create: {
-        id: `tp-${profile.id.slice(0, 20)}`,
-        userId,
-        orgId: profile.orgId || orgId,
-        companyName: profile.companyName || profile.company?.name || "",
-        contactName: `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || "Contractor",
-        email: profile.email || "",
-        phone: profile.phone || null,
-        city: profile.city || null,
-        state: profile.state || null,
-        zip: profile.zip || null,
-        specialties: (profile.specialties as string[]) || [],
-        certifications: (profile.certifications as string[]) || [],
-        bio: profile.bio || null,
-        logoUrl: profile.avatar || null,
-        website: profile.companyWebsite || null,
-        yearsInBusiness: profile.yearsExperience || null,
-        verified: true,
-        active: true,
-        rating: 5.0,
-        reviewCount: 0,
-        projectCount: 0,
-        updatedAt: new Date(),
-      },
-      update: {
-        companyName: profile.companyName || profile.company?.name || undefined,
-        contactName: `${profile.firstName || ""} ${profile.lastName || ""}`.trim() || undefined,
-        email: profile.email || undefined,
-        active: true,
+    // Return profile with normalized fields
+    return NextResponse.json({
+      profile: {
+        ...profile,
+        businessName: profile.companyName || profile.company?.name,
+        tradeType: profile.tradeType,
+        serviceRadius: 50,
+        availability: profile.status === "active" ? "AVAILABLE" : "UNAVAILABLE",
       },
     });
-  } catch {
-    // Non-fatal — member profile still works
+  } catch (err) {
+    logger.error(
+      `[API trades/profile GET] ❌ Unhandled error for request: ${(err as Error).message}`,
+      err
+    );
+    return NextResponse.json(
+      { profile: null, error: "Internal server error", detail: (err as Error).message },
+      { status: 500 }
+    );
   }
-
-  // Return profile with normalized fields
-  return NextResponse.json({
-    profile: {
-      ...profile,
-      businessName: profile.companyName || profile.company?.name,
-      tradeType: profile.tradeType,
-      serviceRadius: 50,
-      availability: profile.status === "active" ? "AVAILABLE" : "UNAVAILABLE",
-    },
-  });
 }
 
 // POST /api/trades/profile - Create new profile

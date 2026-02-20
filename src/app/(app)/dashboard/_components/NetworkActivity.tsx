@@ -26,11 +26,17 @@ const fetcher = async (u: string) => {
 
 const profileFetcher = async (u: string) => {
   try {
-    const r = await fetch(u);
-    if (!r.ok) return null;
+    const r = await fetch(u, { cache: "no-store" });
+    if (!r.ok) {
+      // On server error, return a sentinel so we can distinguish
+      // "API crashed" from "user genuinely has no profile"
+      console.warn(`[NetworkActivity] /api/trades/profile returned ${r.status}`);
+      return { _error: true, status: r.status };
+    }
     return await r.json();
-  } catch {
-    return null;
+  } catch (err) {
+    console.warn("[NetworkActivity] profile fetch failed:", err);
+    return { _error: true };
   }
 };
 
@@ -38,9 +44,12 @@ export default function NetworkActivity() {
   const { data, isLoading } = useSWR("/api/me/network-metrics", fetcher);
   const { data: profileData, isLoading: profileLoading } = useSWR(
     "/api/trades/profile",
-    profileFetcher
+    profileFetcher,
+    { errorRetryCount: 3, errorRetryInterval: 2000 }
   );
 
+  // If the API errored, don't show "Set Up Your Trade Profile" — show a retry link instead
+  const apiErrored = profileData?._error === true;
   const hasTradeProfile = profileData?.profile?.id;
   const profile = profileData?.profile;
   const hasActivity = (data?.likes ?? 0) > 0 || (data?.comments ?? 0) > 0;
@@ -66,6 +75,31 @@ export default function NetworkActivity() {
         <div className="space-y-3">
           <div className="h-8 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-700" />
           <div className="h-8 animate-pulse rounded-lg bg-slate-200 dark:bg-slate-700" />
+        </div>
+      ) : apiErrored ? (
+        // API errored — don't show misleading "Set Up" CTA
+        <div className="space-y-4">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-slate-800/50">
+            <div className="flex items-start gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">
+                <Users className="h-5 w-5 text-slate-500 dark:text-slate-400" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-slate-700 dark:text-slate-200">
+                  Network temporarily unavailable
+                </p>
+                <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+                  Your profile couldn&apos;t be loaded right now. Try refreshing.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/trades/profile"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-blue-700 hover:shadow-lg"
+            >
+              Open My Profile
+            </Link>
+          </div>
         </div>
       ) : !hasTradeProfile ? (
         // Setup Trade Profile CTA
