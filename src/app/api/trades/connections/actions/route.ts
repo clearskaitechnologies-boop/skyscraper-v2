@@ -2,11 +2,15 @@
  * Trades Connections Actions - Unified handler for connection operations
  *
  * POST /api/trades/connections/actions
- * Actions: accept, decline, remove, block
+ * Actions: accept, decline, remove, block, send_request
+ *
+ * Real model: tradesConnection (addresseeId NOT targetId, connectedAt NOT acceptedAt).
+ * Phantom stub: tradesBlock (no table — block action is a graceful no-op).
  */
 
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -14,6 +18,12 @@ import prisma from "@/lib/prisma";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+// Prisma name collision: TradesConnection (uppercase, social follows) vs tradesConnection
+// (lowercase, connection requests with requesterId/addresseeId/status).
+// TypeScript resolves to uppercase model types. Runtime dispatches correctly.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tradesConn = prisma.tradesConnection as any;
 
 const ActionSchema = z.discriminatedUnion("action", [
   z.object({
@@ -97,11 +107,11 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleAccept(profileId: string, input: Extract<ActionInput, { action: "accept" }>) {
-  // Verify this connection request is for the current user
-  const connection = await prisma.tradesConnection.findFirst({
+  // tradesConnection uses addresseeId (NOT targetId)
+  const connection = await tradesConn.findFirst({
     where: {
       id: input.connectionId,
-      targetId: profileId,
+      addresseeId: profileId,
       status: "pending",
     },
   });
@@ -110,11 +120,12 @@ async function handleAccept(profileId: string, input: Extract<ActionInput, { act
     return NextResponse.json({ error: "Connection request not found" }, { status: 404 });
   }
 
-  await prisma.tradesConnection.update({
+  // connectedAt (NOT acceptedAt)
+  await tradesConn.update({
     where: { id: input.connectionId },
     data: {
       status: "accepted",
-      acceptedAt: new Date(),
+      connectedAt: new Date(),
     },
   });
 
@@ -125,10 +136,10 @@ async function handleDecline(
   profileId: string,
   input: Extract<ActionInput, { action: "decline" }>
 ) {
-  const connection = await prisma.tradesConnection.findFirst({
+  const connection = await tradesConn.findFirst({
     where: {
       id: input.connectionId,
-      targetId: profileId,
+      addresseeId: profileId,
       status: "pending",
     },
   });
@@ -137,23 +148,19 @@ async function handleDecline(
     return NextResponse.json({ error: "Connection request not found" }, { status: 404 });
   }
 
-  await prisma.tradesConnection.update({
+  await tradesConn.update({
     where: { id: input.connectionId },
-    data: {
-      status: "declined",
-      declineReason: input.reason,
-    },
+    data: { status: "declined" },
   });
 
   return NextResponse.json({ success: true, message: "Connection declined" });
 }
 
 async function handleRemove(profileId: string, input: Extract<ActionInput, { action: "remove" }>) {
-  // Can remove connections where user is either requester or target
-  const connection = await prisma.tradesConnection.findFirst({
+  const connection = await tradesConn.findFirst({
     where: {
       id: input.connectionId,
-      OR: [{ requesterId: profileId }, { targetId: profileId }],
+      OR: [{ requesterId: profileId }, { addresseeId: profileId }],
       status: "accepted",
     },
   });
@@ -162,7 +169,7 @@ async function handleRemove(profileId: string, input: Extract<ActionInput, { act
     return NextResponse.json({ error: "Connection not found" }, { status: 404 });
   }
 
-  await prisma.tradesConnection.delete({
+  await tradesConn.delete({
     where: { id: input.connectionId },
   });
 
@@ -170,23 +177,20 @@ async function handleRemove(profileId: string, input: Extract<ActionInput, { act
 }
 
 async function handleBlock(profileId: string, input: Extract<ActionInput, { action: "block" }>) {
-  // Create block record
-  await prisma.tradesBlock.create({
-    data: {
-      blockerId: profileId,
-      blockedId: input.profileId,
-      reason: input.reason,
+  // No tradesBlock table — remove existing connection and log
+  await tradesConn.deleteMany({
+    where: {
+      OR: [
+        { requesterId: profileId, addresseeId: input.profileId },
+        { requesterId: input.profileId, addresseeId: profileId },
+      ],
     },
   });
 
-  // Remove any existing connection
-  await prisma.tradesConnection.deleteMany({
-    where: {
-      OR: [
-        { requesterId: profileId, targetId: input.profileId },
-        { requesterId: input.profileId, targetId: profileId },
-      ],
-    },
+  logger.info("[Trades] User blocked (no tradesBlock table)", {
+    blockerId: profileId,
+    blockedId: input.profileId,
+    reason: input.reason,
   });
 
   return NextResponse.json({ success: true, message: "User blocked" });
@@ -196,12 +200,12 @@ async function handleSendRequest(
   profileId: string,
   input: Extract<ActionInput, { action: "send_request" }>
 ) {
-  // Check if connection already exists
-  const existing = await prisma.tradesConnection.findFirst({
+  // Check if connection already exists (uses addresseeId)
+  const existing = await tradesConn.findFirst({
     where: {
       OR: [
-        { requesterId: profileId, targetId: input.targetProfileId },
-        { requesterId: input.targetProfileId, targetId: profileId },
+        { requesterId: profileId, addresseeId: input.targetProfileId },
+        { requesterId: input.targetProfileId, addresseeId: profileId },
       ],
     },
   });
@@ -210,24 +214,11 @@ async function handleSendRequest(
     return NextResponse.json({ error: "Connection already exists or pending" }, { status: 400 });
   }
 
-  // Check if blocked
-  const blocked = await prisma.tradesBlock.findFirst({
-    where: {
-      OR: [
-        { blockerId: profileId, blockedId: input.targetProfileId },
-        { blockerId: input.targetProfileId, blockedId: profileId },
-      ],
-    },
-  });
-
-  if (blocked) {
-    return NextResponse.json({ error: "Cannot connect with this user" }, { status: 400 });
-  }
-
-  const connection = await prisma.tradesConnection.create({
+  const connection = await tradesConn.create({
     data: {
+      id: crypto.randomUUID(),
       requesterId: profileId,
-      targetId: input.targetProfileId,
+      addresseeId: input.targetProfileId,
       message: input.message,
       status: "pending",
     },

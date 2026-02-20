@@ -27,14 +27,13 @@ export async function getClientClaims() {
 
   if (!client) return [];
 
-  // Get all claims this client has access to via ClientPortalAccess
+  // Get all claims this client has access to via client_access (linked by email, NOT clientId)
   const accessRecords = await prisma.client_access.findMany({
     where: {
-      clientId: client.id,
+      email: email.toLowerCase(),
     },
     select: {
       claimId: true,
-      accessLevel: true,
     },
   });
 

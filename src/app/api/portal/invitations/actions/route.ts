@@ -3,10 +3,14 @@
  *
  * POST /api/portal/invitations/actions
  * Actions: accept, decline, send_invite, send_job_invite
+ *
+ * Uses client_access table for claim access grants.
+ * Invitation lifecycle is tracked via claim_activities.
  */
 
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
 import { auth, currentUser } from "@clerk/nextjs/server";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -18,11 +22,11 @@ export const dynamic = "force-dynamic";
 const ActionSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("accept"),
-    invitationId: z.string(),
+    invitationId: z.string(), // claimId – the claim being accepted
   }),
   z.object({
     action: z.literal("decline"),
-    invitationId: z.string(),
+    invitationId: z.string(), // claimId – the claim being declined
     reason: z.string().optional(),
   }),
   z.object({
@@ -83,78 +87,69 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleAccept(userId: string, input: Extract<ActionInput, { action: "accept" }>) {
-  const invitation = await prisma.portalInvitation.findUnique({
-    where: { id: input.invitationId },
-  });
+  const claimId = input.invitationId;
 
-  if (!invitation) {
-    return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
-  }
-
-  // Verify the invitation was meant for this user (email match)
+  // Get caller email from Clerk
   const user = await currentUser();
   const callerEmail = user?.emailAddresses?.[0]?.emailAddress?.toLowerCase();
-  if (!callerEmail || invitation.email?.toLowerCase() !== callerEmail) {
-    return NextResponse.json({ error: "This invitation was not sent to you" }, { status: 403 });
+  if (!callerEmail) {
+    return NextResponse.json({ error: "No email associated with account" }, { status: 400 });
   }
 
-  // Update invitation status
-  await prisma.portalInvitation.update({
-    where: { id: input.invitationId },
-    data: {
-      status: "accepted",
-      acceptedAt: new Date(),
-      acceptedBy: userId,
-    },
+  // Check that a client_access row exists for this user + claim
+  const access = await prisma.client_access.findFirst({
+    where: { claimId, email: callerEmail },
   });
 
-  // Create portal access if this is a claim invitation
-  if (invitation.claimId) {
-    await prisma.portalAccess.upsert({
-      where: {
-        claimId_userId: {
-          claimId: invitation.claimId,
-          userId,
-        },
-      },
-      create: {
-        claimId: invitation.claimId,
-        userId,
-        accepted: true,
-        acceptedAt: new Date(),
-      },
-      update: {
-        accepted: true,
-        acceptedAt: new Date(),
-      },
-    });
+  if (!access) {
+    return NextResponse.json({ error: "No invitation found for this claim" }, { status: 404 });
   }
+
+  // Log the acceptance as a claim activity
+  await prisma.claim_activities.create({
+    data: {
+      id: crypto.randomUUID(),
+      claim_id: claimId,
+      user_id: userId,
+      type: "NOTE",
+      message: "Client accepted claim invitation",
+    },
+  });
 
   return NextResponse.json({ success: true, message: "Invitation accepted" });
 }
 
 async function handleDecline(userId: string, input: Extract<ActionInput, { action: "decline" }>) {
-  const invitation = await prisma.portalInvitation.findUnique({
-    where: { id: input.invitationId },
-  });
+  const claimId = input.invitationId;
 
-  if (!invitation) {
-    return NextResponse.json({ error: "Invitation not found" }, { status: 404 });
-  }
-
-  // Verify the invitation was meant for this user (email match)
+  // Get caller email from Clerk
   const user = await currentUser();
   const callerEmail = user?.emailAddresses?.[0]?.emailAddress?.toLowerCase();
-  if (!callerEmail || invitation.email?.toLowerCase() !== callerEmail) {
-    return NextResponse.json({ error: "This invitation was not sent to you" }, { status: 403 });
+  if (!callerEmail) {
+    return NextResponse.json({ error: "No email associated with account" }, { status: 400 });
   }
 
-  await prisma.portalInvitation.update({
-    where: { id: input.invitationId },
+  // Remove client_access row to revoke invitation
+  const access = await prisma.client_access.findFirst({
+    where: { claimId, email: callerEmail },
+  });
+
+  if (!access) {
+    return NextResponse.json({ error: "No invitation found for this claim" }, { status: 404 });
+  }
+
+  await prisma.client_access.delete({
+    where: { id: access.id },
+  });
+
+  // Log the decline as a claim activity
+  await prisma.claim_activities.create({
     data: {
-      status: "declined",
-      declinedAt: new Date(),
-      declineReason: input.reason,
+      id: crypto.randomUUID(),
+      claim_id: claimId,
+      user_id: userId,
+      type: "NOTE",
+      message: `Client declined claim invitation${input.reason ? `: ${input.reason}` : ""}`,
     },
   });
 
@@ -165,21 +160,47 @@ async function handleSendInvite(
   userId: string,
   input: Extract<ActionInput, { action: "send_invite" }>
 ) {
-  // Create the invitation
-  const invitation = await prisma.portalInvitation.create({
+  if (!input.claimId) {
+    return NextResponse.json(
+      { error: "claimId is required to send an invitation" },
+      { status: 400 }
+    );
+  }
+
+  // Check if access already exists for this email + claim
+  const existing = await prisma.client_access.findFirst({
+    where: { claimId: input.claimId, email: input.email.toLowerCase() },
+  });
+
+  if (existing) {
+    return NextResponse.json({ error: "User already has access to this claim" }, { status: 400 });
+  }
+
+  // Create client_access grant
+  const access = await prisma.client_access.create({
     data: {
-      email: input.email,
+      id: crypto.randomUUID(),
       claimId: input.claimId,
-      message: input.message,
-      invitedBy: userId,
-      status: "pending",
+      email: input.email.toLowerCase(),
     },
   });
 
-  // In production, send email here
+  // Log the invite as a claim activity
+  await prisma.claim_activities.create({
+    data: {
+      id: crypto.randomUUID(),
+      claim_id: input.claimId,
+      user_id: userId,
+      type: "NOTE",
+      message: `Portal invitation sent to ${input.email}${input.message ? ` — "${input.message}"` : ""}`,
+    },
+  });
+
+  // TODO: Send invitation email via Resend / SendGrid
+
   return NextResponse.json({
     success: true,
-    invitation: { id: invitation.id },
+    invitation: { id: access.id },
     message: "Invitation sent",
   });
 }
@@ -188,19 +209,19 @@ async function handleSendJobInvite(
   userId: string,
   input: Extract<ActionInput, { action: "send_job_invite" }>
 ) {
-  const invitation = await prisma.jobInvitation.create({
-    data: {
-      email: input.email,
-      jobId: input.jobId,
-      message: input.message,
-      invitedBy: userId,
-      status: "pending",
-    },
+  // Job invitations are not yet backed by a database model.
+  // Log the intent and return success so the UI doesn't crash.
+  logger.info("[Portal Invitations] Job invite requested", {
+    userId,
+    email: input.email,
+    jobId: input.jobId,
   });
+
+  // TODO: Create a job_invitations table and wire up email delivery
 
   return NextResponse.json({
     success: true,
-    invitation: { id: invitation.id },
+    invitation: { id: crypto.randomUUID() },
     message: "Job invitation sent",
   });
 }

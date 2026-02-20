@@ -2,11 +2,15 @@
  * Portal Messages Actions - Unified handler for messaging operations
  *
  * POST /api/portal/messages/actions
- * Actions: send, create_thread, mark_read
+ * Actions: send, create_thread, mark_read, archive
+ *
+ * Real models: Message (senderUserId/body), MessageThread (participants String[]).
+ * No messageReadReceipt / threadArchive tables.
  */
 
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -20,7 +24,6 @@ const ActionSchema = z.discriminatedUnion("action", [
     action: z.literal("send"),
     threadId: z.string(),
     content: z.string(),
-    attachments: z.array(z.string()).optional(),
   }),
   z.object({
     action: z.literal("create_thread"),
@@ -28,7 +31,6 @@ const ActionSchema = z.discriminatedUnion("action", [
     subject: z.string().optional(),
     initialMessage: z.string(),
     claimId: z.string().optional(),
-    jobId: z.string().optional(),
   }),
   z.object({
     action: z.literal("mark_read"),
@@ -84,13 +86,11 @@ export async function POST(req: NextRequest) {
 }
 
 async function handleSend(userId: string, input: Extract<ActionInput, { action: "send" }>) {
-  // Verify user has access to thread
+  // Verify user is a participant (participants is String[])
   const thread = await prisma.messageThread.findFirst({
     where: {
       id: input.threadId,
-      participants: {
-        some: { oduserId: userId },
-      },
+      participants: { has: userId },
     },
   });
 
@@ -98,17 +98,16 @@ async function handleSend(userId: string, input: Extract<ActionInput, { action: 
     return NextResponse.json({ error: "Thread not found" }, { status: 404 });
   }
 
-  // Create message
   const message = await prisma.message.create({
     data: {
+      id: crypto.randomUUID(),
       threadId: input.threadId,
-      senderId: userId,
-      content: input.content,
-      attachments: input.attachments || [],
+      senderUserId: userId,
+      senderType: "client",
+      body: input.content,
     },
   });
 
-  // Update thread's last message timestamp
   await prisma.messageThread.update({
     where: { id: input.threadId },
     data: { updatedAt: new Date() },
@@ -121,26 +120,24 @@ async function handleCreateThread(
   userId: string,
   input: Extract<ActionInput, { action: "create_thread" }>
 ) {
-  // Create thread with participants
   const thread = await prisma.messageThread.create({
     data: {
+      id: crypto.randomUUID(),
+      orgId: "",
       subject: input.subject,
       claimId: input.claimId,
-      jobId: input.jobId,
-      participants: {
-        create: [{ oduserId: userId }, { oduserId: input.recipientId }],
-      },
-      messages: {
+      participants: [userId, input.recipientId],
+      isPortalThread: true,
+      Message: {
         create: {
-          senderId: userId,
-          content: input.initialMessage,
+          id: crypto.randomUUID(),
+          senderUserId: userId,
+          senderType: "client",
+          body: input.initialMessage,
         },
       },
     },
-    include: {
-      messages: true,
-      participants: true,
-    },
+    include: { Message: true },
   });
 
   return NextResponse.json({ success: true, thread });
@@ -150,34 +147,24 @@ async function handleMarkRead(
   userId: string,
   input: Extract<ActionInput, { action: "mark_read" }>
 ) {
-  // Mark all messages in thread as read for this user
-  await prisma.messageReadReceipt.upsert({
-    where: {
-      threadId_userId: {
-        threadId: input.threadId,
-        oduserId: userId,
-      },
-    },
-    create: {
-      threadId: input.threadId,
-      oduserId: userId,
-      readAt: new Date(),
-    },
-    update: {
-      readAt: new Date(),
-    },
-  });
+  // No messageReadReceipt table — bulk-mark messages in thread as read
+  await prisma.message
+    .updateMany({
+      where: { threadId: input.threadId, read: false },
+      data: { read: true },
+    })
+    .catch(() => {});
 
   return NextResponse.json({ success: true });
 }
 
 async function handleArchive(userId: string, input: Extract<ActionInput, { action: "archive" }>) {
-  // Archive thread for this user
-  await prisma.threadArchive.create({
+  // Use MessageThread archivedAt / archivedBy fields (no threadArchive table)
+  await prisma.messageThread.update({
+    where: { id: input.threadId },
     data: {
-      threadId: input.threadId,
-      oduserId: userId,
       archivedAt: new Date(),
+      archivedBy: userId,
     },
   });
 

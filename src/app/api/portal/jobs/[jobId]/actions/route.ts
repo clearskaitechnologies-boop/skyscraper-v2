@@ -2,11 +2,14 @@
  * Portal Jobs Actions - Unified action handler for job operations
  *
  * POST /api/portal/jobs/[jobId]/actions
- * Actions: upload, add_invoice, add_timeline_event, update_status
+ * Actions: update_status, add_timeline_event, add_note
+ *
+ * Uses claim_activities for timeline events and notes (no jobTimelineEvent / jobNote tables).
  */
 
+import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
-import { logger } from "@/lib/logger";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -75,13 +78,14 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ job
 
     switch (input.action) {
       case "update_status":
-        return handleUpdateStatus(jobId, input);
+        // ClientWorkRequest has no claimId — pass null for claim activity logging
+        return handleUpdateStatus(jobId, userId, null, input);
 
       case "add_timeline_event":
-        return handleAddTimelineEvent(jobId, userId, input);
+        return handleAddTimelineEvent(jobId, userId, null, input);
 
       case "add_note":
-        return handleAddNote(jobId, userId, input);
+        return handleAddNote(jobId, userId, null, input);
 
       default:
         return NextResponse.json({ error: "Unknown action" }, { status: 400 });
@@ -94,6 +98,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ job
 
 async function handleUpdateStatus(
   jobId: string,
+  userId: string,
+  claimId: string | null,
   input: Extract<ActionInput, { action: "update_status" }>
 ) {
   const updated = await prisma.clientWorkRequest.update({
@@ -101,39 +107,65 @@ async function handleUpdateStatus(
     data: { status: input.status },
   });
 
+  // Log as claim activity if claim is linked
+  if (claimId) {
+    await prisma.claim_activities.create({
+      data: {
+        id: crypto.randomUUID(),
+        claim_id: claimId,
+        user_id: userId,
+        type: "STATUS_CHANGE",
+        message: `Job status updated to ${input.status}`,
+        metadata: { jobId },
+      },
+    });
+  }
+
   return NextResponse.json({ success: true, job: updated });
 }
 
 async function handleAddTimelineEvent(
   jobId: string,
   userId: string,
+  claimId: string | null,
   input: Extract<ActionInput, { action: "add_timeline_event" }>
 ) {
-  // Create job timeline event
-  const event = await prisma.jobTimelineEvent.create({
-    data: {
-      jobId,
-      title: input.title,
-      description: input.description || "",
-      createdBy: userId,
-    },
-  });
+  // Store as claim_activities (no jobTimelineEvent table)
+  const activity = claimId
+    ? await prisma.claim_activities.create({
+        data: {
+          id: crypto.randomUUID(),
+          claim_id: claimId,
+          user_id: userId,
+          type: "NOTE",
+          message: input.description ? `${input.title}: ${input.description}` : input.title,
+          metadata: { jobId, eventSource: "job_timeline" },
+        },
+      })
+    : { id: crypto.randomUUID(), message: input.title };
 
-  return NextResponse.json({ success: true, event });
+  return NextResponse.json({ success: true, event: activity });
 }
 
 async function handleAddNote(
   jobId: string,
   userId: string,
+  claimId: string | null,
   input: Extract<ActionInput, { action: "add_note" }>
 ) {
-  const note = await prisma.jobNote.create({
-    data: {
-      jobId,
-      content: input.content,
-      authorId: userId,
-    },
-  });
+  // Store as claim_activities (no jobNote table)
+  const activity = claimId
+    ? await prisma.claim_activities.create({
+        data: {
+          id: crypto.randomUUID(),
+          claim_id: claimId,
+          user_id: userId,
+          type: "NOTE",
+          message: input.content,
+          metadata: { jobId, eventSource: "job_note" },
+        },
+      })
+    : { id: crypto.randomUUID(), message: input.content };
 
-  return NextResponse.json({ success: true, note });
+  return NextResponse.json({ success: true, note: activity });
 }

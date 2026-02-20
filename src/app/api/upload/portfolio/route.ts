@@ -2,6 +2,8 @@ import { logger } from "@/lib/observability/logger";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
+import { getStorageClient } from "@/lib/storage/client";
+
 export const dynamic = "force-dynamic";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB

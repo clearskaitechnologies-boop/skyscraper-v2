@@ -1,13 +1,18 @@
 /**
  * Client Portal Authentication
  *
- * Magic link authentication for homeowners/clients
- * Passwordless secure access to their claims and jobs
+ * Clerk-based authentication for homeowners/clients.
+ * Magic link flow: generate token → client clicks link → Clerk handles session.
+ * Access control via client_access table.
+ *
+ * NOTE: magicLinkTokens / clientSessions tables do not exist.
+ * Clerk is the session source-of-truth. This module provides
+ * compatibility shims so callers don't crash.
  */
 
 import { logActivity } from "@/lib/activity/activityFeed";
-import { logger } from "@/lib/logger";
 import { APP_URL } from "@/lib/env";
+import { logger } from "@/lib/observability/logger";
 import prisma from "@/lib/prisma";
 
 export interface MagicLinkToken {
@@ -28,14 +33,19 @@ export interface ClientSession {
 
 /**
  * Generate magic link for client
+ *
+ * Looks up the client by email in the Client table.
+ * Creates a client_access row if a claimId is provided, then
+ * returns a Clerk sign-in URL with redirect back to the portal.
  */
 export async function generateMagicLink(
   email: string,
-  orgId: string
+  orgId: string,
+  claimId?: string
 ): Promise<{ token: string; link: string }> {
   try {
-    // Find or create client
-    const client = await prisma.homeowner_intake.findFirst({
+    // Find client by email + org
+    const client = await prisma.client.findFirst({
       where: { email, orgId },
     });
 
@@ -43,28 +53,22 @@ export async function generateMagicLink(
       throw new Error("Client not found");
     }
 
-    // Generate secure token
+    // Generate a token (used as a reference ID, not for session auth)
     const token = generateSecureToken();
-    const expiresAt = new Date();
-    expiresAt.setHours(expiresAt.getHours() + 24); // 24 hour expiry
 
-    // Store token
-    await prisma.magicLinkTokens
-      .create({
-        data: {
-          token,
-          clientId: client.id,
-          email,
-          orgId,
-          expiresAt,
-        },
-      })
-      .catch(() => {
-        throw new Error("Failed to create magic link");
-      });
+    // If a claimId was provided, ensure client_access exists
+    if (claimId) {
+      await prisma.client_access
+        .upsert({
+          where: { claimId_email: { claimId, email } },
+          create: { id: token, claimId, email },
+          update: {},
+        })
+        .catch(() => {});
+    }
 
-    // Generate link
-    const link = `${APP_URL}/client-portal/auth?token=${token}`;
+    // Link points to Clerk sign-in with a redirect to the portal
+    const link = `${APP_URL}/client/sign-in?redirect_url=/portal`;
 
     // Log activity
     await logActivity(orgId, {
@@ -84,65 +88,40 @@ export async function generateMagicLink(
 
 /**
  * Verify magic link token
+ *
+ * Since Clerk handles real sessions, this is now a compatibility shim.
+ * If callers pass a token we treat it as a client_access.id lookup.
+ * Returns a synthetic ClientSession so existing call-sites don't break.
  */
 export async function verifyMagicLink(token: string): Promise<ClientSession | null> {
   try {
-    const magicLink = await prisma.magicLinkTokens.findUnique({
-      where: { token },
-      include: {
-        client: true,
-      },
-    });
+    // Try to look up a client_access row by id (the token we generated)
+    const access = await prisma.client_access.findFirst({ where: { id: token } }).catch(() => null);
 
-    if (!magicLink) {
+    if (!access) {
       return null;
     }
 
-    // Check expiry
-    if (new Date() > magicLink.expiresAt) {
-      await prisma.magicLinkTokens.delete({
-        where: { token },
-      });
+    // Look up the client for this email
+    const client = await prisma.client.findFirst({
+      where: { email: access.email },
+      select: { id: true, orgId: true },
+    });
+
+    if (!client) {
       return null;
     }
 
-    // Create session
-    const sessionId = generateSecureToken();
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + 7); // 7 day session
-
-    await prisma.clientSessions
-      .create({
-        data: {
-          sessionId,
-          clientId: magicLink.clientId,
-          email: magicLink.email,
-          orgId: magicLink.orgId,
-          expiresAt,
-        },
-      })
-      .catch(() => {});
-
-    // Delete used token
-    await prisma.magicLinkTokens.delete({
-      where: { token },
-    });
-
-    // Log activity
-    await logActivity(magicLink.orgId, {
-      type: "CREATED",
-      resourceType: "CLIENT",
-      resourceId: magicLink.clientId,
-      action: "Client Logged In",
-      description: `Client accessed portal via magic link`,
-    });
+    const now = new Date();
+    const expiresAt = new Date(now);
+    expiresAt.setDate(expiresAt.getDate() + 7);
 
     return {
-      sessionId,
-      clientId: magicLink.clientId,
-      email: magicLink.email,
-      orgId: magicLink.orgId,
-      createdAt: new Date(),
+      sessionId: token,
+      clientId: client.id,
+      email: access.email,
+      orgId: client.orgId || "",
+      createdAt: now,
       expiresAt,
     };
   } catch (error) {
@@ -153,50 +132,23 @@ export async function verifyMagicLink(token: string): Promise<ClientSession | nu
 
 /**
  * Verify client session
+ *
+ * Clerk manages real sessions. This shim always returns null so callers
+ * fall through to Clerk auth. Prevents runtime crash from missing
+ * clientSessions table.
  */
-export async function verifyClientSession(sessionId: string): Promise<ClientSession | null> {
-  try {
-    const session = await prisma.clientSessions.findUnique({
-      where: { sessionId },
-    });
-
-    if (!session) {
-      return null;
-    }
-
-    // Check expiry
-    if (new Date() > session.expiresAt) {
-      await prisma.clientSessions.delete({
-        where: { sessionId },
-      });
-      return null;
-    }
-
-    // Update last accessed
-    await prisma.clientSessions.update({
-      where: { sessionId },
-      data: {
-        lastAccessed: new Date(),
-      },
-    });
-
-    return session as ClientSession;
-  } catch {
-    return null;
-  }
+export async function verifyClientSession(_sessionId: string): Promise<ClientSession | null> {
+  // Clerk is the source of truth — no custom session table exists
+  return null;
 }
 
 /**
  * Logout client session
+ *
+ * No-op — Clerk handles sign-out. Kept for API compatibility.
  */
-export async function logoutClientSession(sessionId: string): Promise<void> {
-  try {
-    await prisma.clientSessions.delete({
-      where: { sessionId },
-    });
-  } catch (error) {
-    logger.error("Logout failed:", error);
-  }
+export async function logoutClientSession(_sessionId: string): Promise<void> {
+  // Clerk manages sessions; nothing to delete
 }
 
 /**
@@ -208,12 +160,11 @@ export async function sendMagicLinkEmail(
   orgId: string
 ): Promise<boolean> {
   try {
-    // Get org info for branding
     const org = await prisma.org.findUnique({
       where: { id: orgId },
     });
 
-    // TODO: Implement email sending (Resend/SendGrid)
+    // TODO: Implement email sending via Resend / SendGrid
     console.log(`
 📧 Magic Link Email
 To: ${email}
@@ -234,37 +185,15 @@ This link will expire in 24 hours.
 
 /**
  * Cleanup expired tokens and sessions
+ *
+ * No custom tables to clean — Clerk manages session lifecycle.
+ * Returns zeros so callers don't crash.
  */
 export async function cleanupExpiredAuth(): Promise<{
   tokensDeleted: number;
   sessionsDeleted: number;
 }> {
-  try {
-    const now = new Date();
-
-    const [tokens, sessions] = await Promise.all([
-      prisma.magicLinkTokens.deleteMany({
-        where: {
-          expiresAt: { lt: now },
-        },
-      }),
-      prisma.clientSessions.deleteMany({
-        where: {
-          expiresAt: { lt: now },
-        },
-      }),
-    ]);
-
-    return {
-      tokensDeleted: tokens.count,
-      sessionsDeleted: sessions.count,
-    };
-  } catch {
-    return {
-      tokensDeleted: 0,
-      sessionsDeleted: 0,
-    };
-  }
+  return { tokensDeleted: 0, sessionsDeleted: 0 };
 }
 
 /**
@@ -275,7 +204,6 @@ function generateSecureToken(): string {
   if (typeof crypto !== "undefined" && crypto.getRandomValues) {
     crypto.getRandomValues(array);
   } else {
-    // Fallback for Node.js
     const nodeCrypto = require("crypto");
     return nodeCrypto.randomBytes(32).toString("hex");
   }
@@ -284,19 +212,9 @@ function generateSecureToken(): string {
 
 /**
  * Get client's active sessions
+ *
+ * Returns empty — Clerk manages sessions.
  */
-export async function getClientSessions(clientId: string): Promise<ClientSession[]> {
-  try {
-    return (await prisma.clientSessions.findMany({
-      where: {
-        clientId,
-        expiresAt: { gt: new Date() },
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    })) as ClientSession[];
-  } catch {
-    return [];
-  }
+export async function getClientSessions(_clientId: string): Promise<ClientSession[]> {
+  return [];
 }

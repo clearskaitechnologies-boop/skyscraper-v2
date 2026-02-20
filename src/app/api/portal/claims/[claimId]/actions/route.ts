@@ -2,10 +2,11 @@
  * Portal Claims Actions - Unified action handler for portal claim operations
  *
  * POST /api/portal/claims/[claimId]/actions
- * Actions: accept, access, upload_photo, upload_document, add_event, add_comment
+ * Actions: accept, add_event, add_comment, request_access
  */
 
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 
@@ -91,24 +92,33 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
 }
 
 async function handleAccept(claimId: string, userId: string) {
-  // Find the client
+  // Find the client by userId to get their email
   const client = await prisma.client.findFirst({
     where: { userId },
+    select: { id: true, email: true },
   });
 
-  if (!client) {
+  if (!client?.email) {
     return NextResponse.json({ error: "Client not found" }, { status: 404 });
   }
 
-  // Update the portal access to mark as accepted
-  await prisma.portalAccess.updateMany({
-    where: {
-      claimId,
-      userId,
-    },
+  // Verify client_access row exists for this claim + email
+  const access = await prisma.client_access.findFirst({
+    where: { claimId, email: client.email },
+  });
+
+  if (!access) {
+    return NextResponse.json({ error: "No access grant found for this claim" }, { status: 404 });
+  }
+
+  // Log the acceptance as a claim activity
+  await prisma.claim_activities.create({
     data: {
-      accepted: true,
-      acceptedAt: new Date(),
+      id: crypto.randomUUID(),
+      claim_id: claimId,
+      user_id: userId,
+      type: "NOTE",
+      message: "Client accepted portal access",
     },
   });
 
@@ -120,13 +130,26 @@ async function handleAddEvent(
   userId: string,
   input: Extract<ActionInput, { action: "add_event" }>
 ) {
-  const event = await prisma.claimEvent.create({
+  // Map the eventType to a valid ClaimActivityType, default to NOTE
+  const typeMap: Record<string, string> = {
+    note: "NOTE",
+    status_change: "STATUS_CHANGE",
+    file_upload: "FILE_UPLOAD",
+    message: "MESSAGE",
+    payment: "PAYMENT",
+    supplement: "SUPPLEMENT",
+  };
+
+  const activityType = typeMap[input.eventType || "note"] || "NOTE";
+
+  const event = await prisma.claim_activities.create({
     data: {
-      claimId,
-      title: input.title,
-      description: input.description || "",
-      eventType: input.eventType || "note",
-      createdBy: userId,
+      id: crypto.randomUUID(),
+      claim_id: claimId,
+      user_id: userId,
+      type: activityType as any,
+      message: input.description ? `${input.title}: ${input.description}` : input.title,
+      metadata: { title: input.title, eventType: input.eventType },
     },
   });
 
@@ -153,19 +176,13 @@ async function handleAddComment(
     );
   }
 
-  // Get client info for the comment
-  const client = await prisma.client.findFirst({
-    where: { userId },
-    select: { id: true, name: true },
-  });
-
-  const comment = await prisma.fileComment.create({
+  const comment = await prisma.claimFileComment.create({
     data: {
       fileId: input.fileId,
-      content: input.content,
+      claimId,
       authorId: userId,
-      authorName: client?.name || "Portal User",
       authorType: "client",
+      body: input.content,
     },
   });
 
@@ -177,22 +194,42 @@ async function handleRequestAccess(
   userId: string,
   input: Extract<ActionInput, { action: "request_access" }>
 ) {
-  // Check if access already exists
-  const existing = await prisma.portalAccess.findFirst({
-    where: { claimId, userId },
+  // Get client email
+  const client = await prisma.client.findFirst({
+    where: { userId },
+    select: { email: true },
+  });
+
+  if (!client?.email) {
+    return NextResponse.json({ error: "Client email not found" }, { status: 404 });
+  }
+
+  // Check if access already exists for this email + claim
+  const existing = await prisma.client_access.findFirst({
+    where: { claimId, email: client.email },
   });
 
   if (existing) {
     return NextResponse.json({ error: "Access already requested or granted" }, { status: 400 });
   }
 
-  // Create access request
-  await prisma.portalAccess.create({
+  // Create access grant row
+  await prisma.client_access.create({
     data: {
+      id: crypto.randomUUID(),
       claimId,
-      userId,
-      accepted: false,
-      requestMessage: input.message,
+      email: client.email,
+    },
+  });
+
+  // Log the request as an activity
+  await prisma.claim_activities.create({
+    data: {
+      id: crypto.randomUUID(),
+      claim_id: claimId,
+      user_id: userId,
+      type: "NOTE",
+      message: `Client requested portal access${input.message ? `: ${input.message}` : ""}`,
     },
   });
 

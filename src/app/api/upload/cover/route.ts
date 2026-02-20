@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { withAuth } from "@/lib/auth/withAuth";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { getStorageClient } from "@/lib/storage/client";
 
 export const dynamic = "force-dynamic";
 

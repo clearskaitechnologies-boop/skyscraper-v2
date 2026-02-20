@@ -627,7 +627,7 @@ export default function TradesSocialProfile({
       formData.append("file", file);
 
       try {
-        const res = await fetch("/api/upload/avatar", {
+        const res = await fetch("/api/upload/portfolio", {
           method: "POST",
           body: formData,
         });

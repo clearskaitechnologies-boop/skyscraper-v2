@@ -250,7 +250,7 @@ function AddFeaturedWorkForm({ onSuccess }: { onSuccess: () => void }) {
     data.append("file", file);
 
     try {
-      const res = await fetch("/api/upload/avatar", {
+      const res = await fetch("/api/upload/portfolio", {
         method: "POST",
         body: data,
       });

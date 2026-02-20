@@ -1,4 +1,5 @@
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -30,20 +31,57 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File too large. Maximum size is 10MB." }, { status: 400 });
     }
 
-    // In production this would upload to Supabase Storage / S3
-    // For now return a placeholder URL
-    const filename = `portal/${userId}/${Date.now()}-${file.name}`;
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
 
-    logger.info(`Portal photo upload: ${filename} (${file.size} bytes)`);
+    const timestamp = Date.now();
+    const randomStr = crypto.randomUUID().replace(/-/g, "").slice(0, 13);
+    const ext = file.name.split(".").pop() || "jpg";
+    const filename = `portal/${userId}/${timestamp}-${randomStr}.${ext}`;
+
+    // Upload to Supabase Storage
+    const supabase = getStorageClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
+    }
+
+    // Ensure bucket exists
+    const { data: buckets } = await supabase.storage.listBuckets();
+    const bucketExists = buckets?.some((b) => b.name === "portal-uploads");
+    if (!bucketExists) {
+      const { error: createError } = await supabase.storage.createBucket("portal-uploads", {
+        public: true,
+        fileSizeLimit: 10 * 1024 * 1024,
+      });
+      if (createError && !createError.message.includes("already exists")) {
+        logger.error("[Portal Upload] Failed to create bucket:", createError);
+      }
+    }
+
+    const { data, error } = await supabase.storage.from("portal-uploads").upload(filename, buffer, {
+      contentType: file.type,
+      upsert: true,
+    });
+
+    if (error) {
+      logger.error("[Portal Upload] Supabase error:", error);
+      return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("portal-uploads").getPublicUrl(data.path);
+
+    logger.info(`[Portal Upload] Success: ${filename} (${file.size} bytes)`);
 
     return NextResponse.json({
       success: true,
-      url: `/uploads/${filename}`,
+      url: publicUrl,
       filename: file.name,
       size: file.size,
       uploadedAt: new Date().toISOString(),
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error("Portal upload-photo error:", error);
     return NextResponse.json({ error: error.message || "Upload failed" }, { status: 500 });
   }

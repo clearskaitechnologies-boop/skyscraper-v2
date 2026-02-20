@@ -92,7 +92,7 @@ export default function PortfolioUploadPage() {
         const formDataUpload = new FormData();
         formDataUpload.append("file", photo);
 
-        const uploadRes = await fetch("/api/upload/cover", {
+        const uploadRes = await fetch("/api/upload/portfolio", {
           method: "POST",
           body: formDataUpload,
         });

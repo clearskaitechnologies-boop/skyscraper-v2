@@ -1,12 +1,13 @@
 /**
  * Client Portal Dashboard
  *
- * Client-facing dashboard data for homeowners
- * View claims, jobs, photos, messages, invoices
+ * Client-facing dashboard data for homeowners.
+ * Uses real Prisma models: Client, claims, claim_activities,
+ * documents (via GeneratedArtifact), file_assets, jobs.
  */
 
+import { logger } from "@/lib/observability/logger";
 import prisma from "@/lib/prisma";
-import { logger } from "@/lib/logger";
 
 export interface ClientDashboardData {
   client: {
@@ -87,42 +88,57 @@ export interface ClientDocument {
  */
 export async function getClientDashboard(clientId: string): Promise<ClientDashboardData | null> {
   try {
-    const client = await prisma.homeowner_intake.findUnique({
+    // Look up the Client record
+    const client = await prisma.client.findUnique({
       where: { id: clientId },
-      include: {
-        claims: {
-          orderBy: { createdAt: "desc" },
-        },
-        jobs: {
-          orderBy: { createdAt: "desc" },
-        },
-      },
     });
 
     if (!client) {
       return null;
     }
 
-    // Get messages (from comments/activity)
-    const messages = await getClientMessages(clientId);
+    // Get claims this client has access to via client_access
+    const accessRows = await prisma.client_access.findMany({
+      where: { email: client.email || "" },
+      select: { claimId: true },
+    });
+    const claimIds = accessRows.map((r) => r.claimId);
 
-    // Get documents
-    const documents = await getClientDocuments(clientId);
+    const claims = claimIds.length
+      ? await prisma.claims.findMany({
+          where: { id: { in: claimIds } },
+          orderBy: { createdAt: "desc" },
+        })
+      : [];
+
+    // Get jobs linked to this client
+    const clientJobs = await prisma.clientWorkRequest
+      .findMany({
+        where: { clientId },
+        orderBy: { createdAt: "desc" },
+      })
+      .catch(() => []);
+
+    // Get messages (from claim_activities for this client's claims)
+    const messages = await getClientMessages(claimIds);
+
+    // Get documents (GeneratedArtifact for this client's claims)
+    const documents = await getClientDocuments(claimIds);
 
     // Calculate summary
-    const summary = calculateClientSummary(client);
+    const summary = calculateClientSummary(claims, clientJobs);
 
     return {
       client: {
         id: client.id,
-        firstName: client.firstName,
-        lastName: client.lastName,
-        email: client.email,
-        phone: client.phoneNumber || undefined,
-        propertyAddress: client.propertyAddress,
+        firstName: client.firstName || client.name || "",
+        lastName: client.lastName || "",
+        email: client.email || "",
+        phone: client.phone || undefined,
+        propertyAddress: client.address || "",
       },
-      claims: formatClientClaims(client.claims),
-      jobs: await formatClientJobs(client.jobs),
+      claims: formatClientClaims(claims),
+      jobs: formatClientJobs(clientJobs),
       messages,
       documents,
       summary,
@@ -141,25 +157,34 @@ export async function getClientClaim(
   clientId: string
 ): Promise<ClientClaim | null> {
   try {
-    const claim = await prisma.claims.findFirst({
-      where: {
-        id: claimId,
-        homeownerId: clientId,
-      },
+    // Verify client has access
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+      select: { email: true },
     });
 
-    if (!claim) {
-      return null;
-    }
+    if (!client?.email) return null;
 
-    // Build timeline
+    const access = await prisma.client_access.findFirst({
+      where: { claimId, email: client.email },
+    });
+
+    if (!access) return null;
+
+    const claim = await prisma.claims.findUnique({
+      where: { id: claimId },
+    });
+
+    if (!claim) return null;
+
+    // Build timeline from claim_activities
     const timeline = await buildClaimTimeline(claimId);
 
     return {
       id: claim.id,
       claimNumber: claim.claimNumber || undefined,
       status: claim.status,
-      damageType: claim.lossType || undefined,
+      damageType: claim.damageType || undefined,
       createdAt: claim.createdAt,
       updatedAt: claim.updatedAt,
       timeline,
@@ -175,30 +200,33 @@ export async function getClientClaim(
  */
 export async function getClientJob(jobId: string, clientId: string): Promise<ClientJob | null> {
   try {
-    const job = await prisma.job.findFirst({
-      where: {
-        id: jobId,
-        // Verify client owns this job via claim
-      },
-      include: {
-        photos: true,
-      },
+    const job = await prisma.clientWorkRequest.findFirst({
+      where: { id: jobId, clientId },
     });
 
-    if (!job) {
-      return null;
-    }
+    if (!job) return null;
+
+    // Get photos from file_assets — ClientWorkRequest has no claimId
+    const photos = await prisma.file_assets
+      .findMany({
+        where: { category: "photo" },
+        orderBy: { createdAt: "desc" },
+        take: 10,
+      })
+      .catch(() => []);
 
     return {
       id: job.id,
-      title: job.title,
+      title: job.title || "Work Request",
       status: job.status,
       progress: calculateJobProgress(job),
-      estimatedCost: job.estimatedCost || undefined,
-      actualCost: job.actualCost || undefined,
-      scheduledStart: job.scheduledStart || undefined,
-      completedAt: job.completedAt || undefined,
-      photos: formatClientPhotos(job.photos),
+      photos: photos.map((p) => ({
+        id: p.id,
+        url: p.publicUrl,
+        thumbnailUrl: p.publicUrl,
+        category: p.category,
+        uploadedAt: p.createdAt,
+      })),
     };
   } catch (error) {
     logger.error("Failed to load job:", error);
@@ -207,26 +235,24 @@ export async function getClientJob(jobId: string, clientId: string): Promise<Cli
 }
 
 /**
- * Get client messages
+ * Get client messages (from claim_activities)
  */
-async function getClientMessages(clientId: string): Promise<ClientMessage[]> {
+async function getClientMessages(claimIds: string[]): Promise<ClientMessage[]> {
+  if (!claimIds.length) return [];
+
   try {
-    // Get activity log entries that are client-facing
-    const activities = await prisma.activity_log.findMany({
-      where: {
-        resourceId: clientId,
-        // Filter for client-visible events
-      },
-      orderBy: { createdAt: "desc" },
+    const activities = await prisma.claim_activities.findMany({
+      where: { claim_id: { in: claimIds } },
+      orderBy: { created_at: "desc" },
       take: 20,
     });
 
-    return activities.map((activity) => ({
-      id: activity.id,
+    return activities.map((a) => ({
+      id: a.id,
       from: "Your Contractor",
-      message: activity.description,
-      sentAt: activity.createdAt,
-      read: false, // TODO: Track read status
+      message: a.message || `${a.type} event`,
+      sentAt: a.created_at,
+      read: false,
       attachments: [],
     }));
   } catch {
@@ -235,23 +261,24 @@ async function getClientMessages(clientId: string): Promise<ClientMessage[]> {
 }
 
 /**
- * Get client documents
+ * Get client documents (from GeneratedArtifact)
  */
-async function getClientDocuments(clientId: string): Promise<ClientDocument[]> {
+async function getClientDocuments(claimIds: string[]): Promise<ClientDocument[]> {
+  if (!claimIds.length) return [];
+
   try {
-    const documents = await prisma.document.findMany({
-      where: {
-        // Link to client's claims/jobs
-      },
+    const artifacts = await prisma.generatedArtifact.findMany({
+      where: { claimId: { in: claimIds } },
       orderBy: { createdAt: "desc" },
+      take: 20,
     });
 
-    return documents.map((doc) => ({
+    return artifacts.map((doc) => ({
       id: doc.id,
-      name: doc.name,
+      name: doc.title || doc.type,
       type: doc.type || "document",
-      url: doc.url,
-      size: doc.size || 0,
+      url: doc.fileUrl || "",
+      size: 0,
       uploadedAt: doc.createdAt,
     }));
   } catch {
@@ -267,7 +294,7 @@ function formatClientClaims(claims: any[]): ClientClaim[] {
     id: claim.id,
     claimNumber: claim.claimNumber,
     status: claim.status,
-    damageType: claim.lossType,
+    damageType: claim.damageType,
     createdAt: claim.createdAt,
     updatedAt: claim.updatedAt,
   }));
@@ -276,62 +303,28 @@ function formatClientClaims(claims: any[]): ClientClaim[] {
 /**
  * Format jobs for client view
  */
-async function formatClientJobs(jobs: any[]): Promise<ClientJob[]> {
-  const formatted = await Promise.all(
-    jobs.map(async (job) => {
-      const photos = await prisma.photo.findMany({
-        where: { jobId: job.id },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      });
-
-      return {
-        id: job.id,
-        title: job.title,
-        status: job.status,
-        progress: calculateJobProgress(job),
-        estimatedCost: job.estimatedCost,
-        actualCost: job.actualCost,
-        scheduledStart: job.scheduledStart,
-        completedAt: job.completedAt,
-        photos: formatClientPhotos(photos),
-      };
-    })
-  );
-
-  return formatted;
-}
-
-/**
- * Format photos for client view
- */
-function formatClientPhotos(photos: any[]): ClientPhoto[] {
-  return photos.map((photo) => ({
-    id: photo.id,
-    url: photo.url,
-    thumbnailUrl: photo.thumbnailUrl || photo.url,
-    category: photo.category,
-    uploadedAt: photo.createdAt,
+function formatClientJobs(jobs: any[]): ClientJob[] {
+  return jobs.map((job) => ({
+    id: job.id,
+    title: job.title || "Work Request",
+    status: job.status,
+    progress: calculateJobProgress(job),
+    photos: [],
   }));
 }
 
 /**
  * Calculate client summary stats
  */
-function calculateClientSummary(client: any) {
-  const claims = client.claims || [];
-  const jobs = client.jobs || [];
-
+function calculateClientSummary(claims: any[], jobs: any[]) {
   return {
     totalClaims: claims.length,
-    activeClaims: claims.filter((c: any) =>
-      ["NEW", "IN_PROGRESS", "UNDER_REVIEW"].includes(c.status)
+    activeClaims: claims.filter((c) =>
+      ["NEW", "IN_PROGRESS", "UNDER_REVIEW", "FILED", "ADJUSTER_REVIEW", "BUILD"].includes(c.status)
     ).length,
-    completedJobs: jobs.filter((j: any) => j.status === "COMPLETED").length,
-    totalPaid: jobs.reduce((sum: number, j: any) => sum + (j.actualCost || 0), 0),
-    pendingAmount: jobs
-      .filter((j: any) => j.status !== "COMPLETED")
-      .reduce((sum: number, j: any) => sum + (j.estimatedCost || 0), 0),
+    completedJobs: jobs.filter((j) => j.status === "COMPLETED" || j.status === "completed").length,
+    totalPaid: 0,
+    pendingAmount: 0,
   };
 }
 
@@ -339,26 +332,27 @@ function calculateClientSummary(client: any) {
  * Calculate job progress percentage
  */
 function calculateJobProgress(job: any): number {
-  if (job.status === "COMPLETED") return 100;
-  if (job.status === "NEW") return 0;
-  if (job.status === "IN_PROGRESS") return 50;
+  const s = (job.status || "").toUpperCase();
+  if (s === "COMPLETED") return 100;
+  if (s === "NEW" || s === "PENDING") return 0;
+  if (s === "IN_PROGRESS") return 50;
   return 25;
 }
 
 /**
- * Build claim timeline
+ * Build claim timeline from claim_activities
  */
 async function buildClaimTimeline(claimId: string) {
   try {
-    const activities = await prisma.activity_log.findMany({
-      where: { resourceId: claimId },
-      orderBy: { createdAt: "asc" },
+    const activities = await prisma.claim_activities.findMany({
+      where: { claim_id: claimId },
+      orderBy: { created_at: "asc" },
     });
 
-    return activities.map((activity) => ({
-      event: activity.action,
-      date: activity.createdAt,
-      description: activity.description,
+    return activities.map((a) => ({
+      event: a.type,
+      date: a.created_at,
+      description: a.message || undefined,
     }));
   } catch {
     return [];

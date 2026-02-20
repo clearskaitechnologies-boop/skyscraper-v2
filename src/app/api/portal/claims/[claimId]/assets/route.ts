@@ -1,11 +1,17 @@
 /**
- * Portal Claims Assets - Unified handler for photos, documents, artifacts
+ * Portal Claims Assets - Unified handler for documents, artifacts, timeline
  *
- * GET /api/portal/claims/[claimId]/assets?type=photos|documents|artifacts|timeline|all
+ * GET /api/portal/claims/[claimId]/assets?type=documents|artifacts|timeline|all
  * POST /api/portal/claims/[claimId]/assets - Upload files
+ *
+ * NOTE: Uses real Prisma models:
+ *   - GeneratedArtifact (claimId) for AI-generated reports/packets
+ *   - claim_activities (claim_id) for timeline events
+ *   - Supabase Storage for file uploads
  */
 
-import { logger } from "@/lib/logger";
+import { logger } from "@/lib/observability/logger";
+import { getStorageClient } from "@/lib/storage/client";
 import { NextRequest, NextResponse } from "next/server";
 
 import { assertPortalAccess } from "@/lib/auth/portalAccess";
@@ -16,7 +22,7 @@ import { checkRateLimit } from "@/lib/rate-limit";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-type AssetType = "photos" | "documents" | "artifacts" | "timeline" | "all";
+type AssetType = "documents" | "artifacts" | "timeline" | "all";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ claimId: string }> }) {
   const authResult = await requirePortalAuth();
@@ -36,76 +42,91 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clai
 
     const result: Record<string, any> = {};
 
-    // Fetch photos
-    if (type === "photos" || type === "all") {
-      const photos = await prisma.photo.findMany({
-        where: { claimId },
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          url: true,
-          thumbnailUrl: true,
-          caption: true,
-          category: true,
-          createdAt: true,
-        },
-      });
-      result.photos = photos;
-    }
-
-    // Fetch documents
-    if (type === "documents" || type === "all") {
-      const documents = await prisma.document.findMany({
-        where: { claimId },
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          name: true,
-          url: true,
-          fileType: true,
-          fileSize: true,
-          category: true,
-          createdAt: true,
-        },
-      });
-      result.documents = documents;
-    }
-
-    // Fetch artifacts (generated reports, PDFs)
-    if (type === "artifacts" || type === "all") {
-      const artifacts = await prisma.claimArtifact.findMany({
-        where: { claimId },
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          name: true,
-          type: true,
-          url: true,
-          createdAt: true,
-        },
-      });
+    // Fetch generated artifacts (AI reports, packets, summaries)
+    if (type === "artifacts" || type === "documents" || type === "all") {
+      const artifacts = await prisma.generatedArtifact
+        .findMany({
+          where: { claimId },
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            title: true,
+            type: true,
+            fileUrl: true,
+            status: true,
+            createdAt: true,
+          },
+        })
+        .catch(() => []);
       result.artifacts = artifacts;
+
+      // Also provide as "documents" for compatibility
+      if (type === "documents" || type === "all") {
+        result.documents = artifacts.map((a) => ({
+          id: a.id,
+          name: a.title,
+          url: a.fileUrl,
+          fileType: a.type,
+          category: a.type,
+          createdAt: a.createdAt,
+        }));
+      }
     }
 
-    // Fetch timeline events
+    // Fetch timeline events from claim_activities
     if (type === "timeline" || type === "all") {
-      const events = await prisma.claimEvent.findMany({
-        where: { claimId },
-        orderBy: { createdAt: "desc" },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          eventType: true,
-          createdAt: true,
-          createdBy: true,
-        },
-      });
-      result.timeline = events;
+      const events = await prisma.claim_activities
+        .findMany({
+          where: { claim_id: claimId },
+          orderBy: { created_at: "desc" },
+          take: 50,
+          select: {
+            id: true,
+            type: true,
+            message: true,
+            created_at: true,
+            user_id: true,
+          },
+        })
+        .catch(() => []);
+
+      result.timeline = events.map((e) => ({
+        id: e.id,
+        title: e.type,
+        description: e.message,
+        eventType: e.type,
+        createdAt: e.created_at,
+        createdBy: e.user_id,
+      }));
+    }
+
+    // Photos: list from Supabase Storage if available
+    if (type === "all") {
+      const supabase = getStorageClient();
+      if (supabase) {
+        const { data: files } = await supabase.storage
+          .from("claim-photos")
+          .list(`${claimId}/`, { limit: 100 })
+          .catch(() => ({ data: null }));
+
+        result.photos = (files || []).map((f) => {
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("claim-photos").getPublicUrl(`${claimId}/${f.name}`);
+          return {
+            id: f.id || f.name,
+            url: publicUrl,
+            caption: f.name,
+            createdAt: f.created_at,
+          };
+        });
+      } else {
+        result.photos = [];
+      }
     }
 
     return NextResponse.json(result);
-  } catch (error) {
+  } catch (error: any) {
     logger.error("[Portal Claims Assets] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
@@ -126,39 +147,59 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const type = (formData.get("type") as string) || "document";
-    const caption = (formData.get("caption") as string) || "";
     const category = (formData.get("category") as string) || "general";
+    const caption = (formData.get("caption") as string) || "";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    // Get the claim to verify org
-    const claim = await prisma.claims.findUnique({
-      where: { id: claimId },
-      select: { orgId: true },
-    });
-
-    if (!claim) {
-      return NextResponse.json({ error: "Claim not found" }, { status: 404 });
+    if (file.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: "File too large (max 10MB)" }, { status: 400 });
     }
 
-    // For now, return a placeholder - actual upload logic would use storage service
-    // In production, this would upload to S3/GCS and create the DB record
+    const supabase = getStorageClient();
+    if (!supabase) {
+      return NextResponse.json({ error: "Storage not configured" }, { status: 503 });
+    }
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+    const ext = file.name.split(".").pop() || "bin";
+    const timestamp = Date.now();
+    const randomStr = crypto.randomUUID().replace(/-/g, "").slice(0, 13);
+    const storagePath = `${claimId}/${category}_${timestamp}-${randomStr}.${ext}`;
+
+    const { data, error } = await supabase.storage
+      .from("portal-uploads")
+      .upload(storagePath, buffer, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (error) {
+      logger.error("[Portal Claims Assets Upload] Storage error:", error);
+      return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    }
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("portal-uploads").getPublicUrl(data.path);
+
+    logger.info(`[Portal Claims Assets] Uploaded: ${storagePath}`);
+
     return NextResponse.json({
       success: true,
-      message: "File upload endpoint ready",
-      fileInfo: {
+      file: {
+        url: publicUrl,
         name: file.name,
         size: file.size,
         type: file.type,
         category,
         caption,
-        assetType: type,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error("[Portal Claims Assets Upload] Error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
