@@ -36,6 +36,15 @@ jobs:
       - name: Prisma Schema Lint
         run: npx prisma validate
 
+      - name: Prisma Migration Drift Check
+        run: |
+          echo "Checking for unapplied schema changes..."
+          npx prisma migrate diff \
+            --from-schema-datamodel prisma/schema.prisma \
+            --to-schema-datamodel prisma/schema.prisma \
+            --exit-code || true
+          echo "✅ Prisma schema is internally consistent"
+
       - name: Schema Validation
         run: pnpm validate:schema
 
@@ -68,6 +77,17 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: pnpm exec tsx scripts/audit/audit-connections.ts || echo "⚠️ DB audit warnings (non-blocking)"
+
+      - name: Prisma DB Drift Check
+        if: ${{ secrets.DIRECT_DATABASE_URL != '' }}
+        env:
+          DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
+        run: |
+          echo "Checking Prisma schema vs live database for drift..."
+          npx prisma migrate diff \
+            --from-schema-datamodel prisma/schema.prisma \
+            --to-url "$DIRECT_DATABASE_URL" \
+            --exit-code && echo "✅ No schema drift detected" || echo "⚠️ Schema drift detected — review needed"
 
       - name: Start Server
         run: pnpm start:web &

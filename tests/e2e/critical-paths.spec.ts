@@ -162,3 +162,43 @@ test.describe("Critical Path 6: Public Pages", () => {
     await page.waitForURL(/sign-in/, { timeout: 10000 });
   });
 });
+
+// ─────────────────────────────────────────────
+// 7. TRADES PROFILE — API & Page Health
+// ─────────────────────────────────────────────
+test.describe("Critical Path 7: Trades Profile", () => {
+  test("trades profile API returns 200 or 401 (never 500)", async ({ request }) => {
+    const res = await request.get("/api/trades/profile");
+    // Unauthenticated → 401/302/307; Authenticated → 200/404
+    // NEVER 500 — that means the dual-schema bug is back
+    expect(res.status()).not.toBe(500);
+  });
+
+  test("debug endpoint is removed (returns 404)", async ({ request }) => {
+    const res = await request.get("/api/trades/profile/debug");
+    expect(res.status()).toBe(404);
+  });
+
+  test("trades network page loads for authed user", async ({ page }) => {
+    await gotoAuthed(page, "/dashboard/network");
+    const url = page.url();
+    expect(url).toMatch(/\/(network|dashboard|sign-in)/);
+    const bodyText = await page.textContent("body");
+    expect(bodyText?.length).toBeGreaterThan(50);
+  });
+
+  test("trades company page loads for authed user", async ({ page }) => {
+    await gotoAuthed(page, "/dashboard/network/company");
+    const url = page.url();
+    // May redirect to profile setup if no company — that's OK
+    expect(url).toMatch(/\/(network|company|dashboard|sign-in|profile)/);
+    const bodyText = await page.textContent("body");
+    expect(bodyText?.length).toBeGreaterThan(50);
+    // No error boundary
+    const hasError = await page
+      .locator("text=Something went wrong")
+      .isVisible()
+      .catch(() => false);
+    expect(hasError).toBe(false);
+  });
+});

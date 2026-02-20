@@ -3,31 +3,19 @@
  * UNIFIED ORG CONTEXT HELPER
  * ============================================================================
  *
- * THE SINGLE SOURCE OF TRUTH for orgId resolution.
+ * THE SINGLE SOURCE OF TRUTH for orgId resolution in API routes.
  *
- * This function GUARANTEES that any authenticated user has:
- * 1. A valid organization record
- * 2. A user_organizations membership linking them
- * 3. A stable orgId that never changes
+ * Uses the same canonical logic as resolveOrg:
+ *   1. Find oldest valid membership (user_organizations + Org exists)
+ *   2. Throw if none found (API routes should NOT auto-create orgs)
  *
- * REPLACES ALL INCONSISTENT ORG LOGIC:
- * - ❌ `user.publicMetadata.orgId || userId` (unsafe fallback)
- * - ❌ `body.orgId` (trusting client input)
- * - ❌ Custom org creation in individual APIs
- *
- * USE THIS EVERYWHERE:
- * - All write APIs (claims, leads, branding, trades, etc.)
- * - App layout (ensure org exists on first load)
- * - safeOrgContext (internal helper)
- *
+ * For pages/layouts that need auto-creation, use ensureOrgForUser instead.
  * ============================================================================
  */
 
 import { auth } from "@clerk/nextjs/server";
 
 import prisma from "@/lib/prisma";
-
-import { ensureOrgForUser } from "./ensureOrgForUser";
 
 export interface UserOrgContext {
   userId: string;
@@ -38,14 +26,13 @@ export interface UserOrgContext {
 }
 
 /**
- * Ensure user has valid org context - THE CANONICAL HELPER
+ * Ensure user has valid org context — canonical API route helper.
  *
  * @param forceUserId - Optional userId override (for server components)
  * @returns UserOrgContext with guaranteed valid orgId
- * @throws Error if user is not authenticated
+ * @throws Error if user is not authenticated or has no org
  */
 export async function ensureUserOrgContext(forceUserId?: string): Promise<UserOrgContext> {
-  // Get userId from Clerk auth
   let userId: string | null = forceUserId || null;
 
   if (!userId) {
@@ -57,36 +44,38 @@ export async function ensureUserOrgContext(forceUserId?: string): Promise<UserOr
     throw new Error("[ensureUserOrgContext] User not authenticated");
   }
 
-  // Use ensureOrgForUser helper to guarantee valid org + membership
-  const org = await ensureOrgForUser({ userId });
-
-  // Check for user_organizations membership to get role
-  const membership = await prisma.user_organizations.findFirst({
-    where: {
-      userId,
-      organizationId: org.id,
-    },
+  // Canonical lookup: oldest valid membership (matches resolveOrg logic)
+  const memberships = await prisma.user_organizations.findMany({
+    where: { userId },
+    include: { Org: true },
+    orderBy: { createdAt: "asc" },
   });
+
+  const valid = memberships.find((m) => m.organizationId && m.Org);
+
+  if (!valid?.Org) {
+    throw new Error(
+      `[ensureUserOrgContext] User ${userId} has no valid org membership (${memberships.length} total, 0 valid)`
+    );
+  }
 
   return {
     userId,
-    orgId: org.id,
-    role: membership?.role || "owner",
-    organizationName: org.name || "My Organization",
-    isNewOrg: false, // ensureOrgForUser handles creation internally
+    orgId: valid.organizationId,
+    role: valid.role || "MEMBER",
+    organizationName: valid.Org.name || "My Organization",
+    isNewOrg: false,
   };
 }
 
 /**
  * Get org context without auto-creating (read-only check)
- * Use when you need to check if user has org but don't want to create one
  */
 export async function getUserOrgContextReadOnly(userId: string): Promise<UserOrgContext | null> {
   const membership = await prisma.user_organizations.findFirst({
     where: { userId },
-    include: {
-      Org: true,
-    },
+    include: { Org: true },
+    orderBy: { createdAt: "asc" },
   });
 
   if (!membership?.Org) {
@@ -96,7 +85,7 @@ export async function getUserOrgContextReadOnly(userId: string): Promise<UserOrg
   return {
     userId,
     orgId: membership.organizationId,
-    role: membership.role || "member",
+    role: membership.role || "MEMBER",
     organizationName: membership.Org.name || "My Organization",
     isNewOrg: false,
   };
@@ -104,7 +93,6 @@ export async function getUserOrgContextReadOnly(userId: string): Promise<UserOrg
 
 /**
  * Get orgId quickly (throws if none exists)
- * Use in APIs where you KNOW user should have org
  */
 export async function requireOrgId(userId?: string): Promise<string> {
   const ctx = await ensureUserOrgContext(userId);

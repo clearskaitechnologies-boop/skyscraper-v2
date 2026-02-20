@@ -8,7 +8,7 @@ import { logger } from "@/lib/logger";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-import { ensureOrgForUser } from "@/lib/auth/ensureOrgForUser";
+import { ensureOrgForUser } from "@/lib/org/ensureOrgForUser";
 import prisma from "@/lib/prisma";
 import { isTestMode } from "@/lib/testMode";
 
@@ -20,8 +20,8 @@ export async function POST(req: Request) {
     }
 
     // Use ensureOrgForUser to guarantee org + membership exists
-    const org = await ensureOrgForUser({ userId: user.id });
-    const orgId = org.id;
+    const ensured = await ensureOrgForUser();
+    const orgId = ensured.orgId;
 
     logger.debug(`[OrgInit] Org ${orgId} resolved for user ${user.id}`);
 
