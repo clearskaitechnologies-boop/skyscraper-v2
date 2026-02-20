@@ -2,7 +2,7 @@ name: Playwright Smoke
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
+          cache: "pnpm"
 
       - name: Enable Corepack
         run: corepack enable
@@ -53,7 +53,7 @@ jobs:
         run: npx playwright test tests/smoke/tenant-pages.spec.ts --reporter=line
 
       - name: Run Auth Tests (optional)
-        if: ${{ secrets.TEST_USER_EMAIL != '' && secrets.TEST_USER_PASSWORD != '' }}
+        if: secrets.TEST_USER_EMAIL != '' && secrets.TEST_USER_PASSWORD != ''
         env:
           TEST_USER_EMAIL: ${{ secrets.TEST_USER_EMAIL }}
           TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}

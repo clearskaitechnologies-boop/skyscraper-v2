@@ -72,14 +72,14 @@
 
 ### Tier 2: SHOULD DO before Feb 27 (Product Quality)
 
-5. **Sprint 24: PDF generation audit** — Every template generates, every export downloads
-6. **Sprint 25: AI tools audit** — Mockup generator makes REAL houses, all AI tools produce output
-7. **Sprint 26: E2E smoke suite** — 10 critical paths automated in Playwright
+1. **Sprint 24: PDF generation audit** — Every template generates, every export downloads
+2. **Sprint 25: AI tools audit** — Mockup generator makes REAL houses, all AI tools produce output
+3. **Sprint 26: E2E smoke suite** — 10 critical paths automated in Playwright
 
 ### Tier 3: NICE TO HAVE (Demo Polish)
 
-8. **Sprint 27: Webhook hardening** — Trades + Twilio signature verification
-9. **Sprint 28: RBAC enforcement** — Viewer can't mutate, Member can't bill
+1. **Sprint 27: Webhook hardening** — Trades + Twilio signature verification
+2. **Sprint 28: RBAC enforcement** — Viewer can't mutate, Member can't bill
 
 ---
 
