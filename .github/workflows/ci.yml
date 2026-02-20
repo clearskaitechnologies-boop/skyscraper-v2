@@ -55,13 +55,19 @@ jobs:
         run: pnpm typecheck
 
       - name: Lint (Core)
-        run: pnpm lint || echo "Lint completed with warnings"
+        run: pnpm lint
 
       - name: Unit Tests (Vitest)
         run: pnpm test:unit
 
       - name: Build
         run: pnpm build
+
+      - name: DB Integrity Audit
+        if: ${{ secrets.DATABASE_URL != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm exec tsx scripts/audit/audit-connections.ts || echo "⚠️ DB audit warnings (non-blocking)"
 
       - name: Start Server
         run: pnpm start:web &
