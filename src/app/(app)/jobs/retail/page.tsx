@@ -123,10 +123,20 @@ export default async function RetailWorkspacePage() {
             Pipeline
           </Link>
         </Button>
+        <Button
+          asChild
+          variant="outline"
+          className="border-white/20 bg-white/10 text-white hover:bg-white/20"
+        >
+          <Link href="/leads/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Lead
+          </Link>
+        </Button>
         <Button asChild className="bg-white text-teal-700 hover:bg-teal-50">
           <Link href="/jobs/retail/new">
             <Plus className="mr-2 h-4 w-4" />
-            New Job
+            Add Job
           </Link>
         </Button>
       </PageHero>

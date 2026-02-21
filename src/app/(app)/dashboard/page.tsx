@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 
 import { AIJobScanner } from "@/components/ai/AIJobScanner";
 import { AsyncBoundary } from "@/components/AsyncBoundary";
-import { UpgradeCTA } from "@/components/billing/UpgradeCTA";
+// UpgradeCTA removed — replaced with CompanyBrandingPreview
 import { CompanyLeaderboard } from "@/components/dashboard/CompanyLeaderboard";
 import { WeatherSummaryCard } from "@/components/dashboard/WeatherSummaryCard";
 import { PageContainer } from "@/components/layout/PageContainer";
@@ -18,6 +18,7 @@ import { safeOrgContext } from "@/lib/safeOrgContext";
 import { getDashboardWeather } from "@/lib/weather/weatherstack";
 
 // ChartsPanel moved to Analytics page
+import CompanyBrandingPreview from "./_components/CompanyBrandingPreview";
 import DashboardAIPanel from "./_components/DashboardAIPanel";
 import NetworkActivity from "./_components/NetworkActivity";
 import StatsCards from "./_components/StatsCards";
@@ -151,6 +152,9 @@ export default async function DashboardPage() {
               <Button variant="outline" asChild>
                 <Link href="/leads/new">New Lead</Link>
               </Button>
+              <Button variant="outline" asChild>
+                <Link href="/jobs/retail/new">New Job</Link>
+              </Button>
             </div>
             {/* BuildStamp hidden for production - shows "build: no-sha" which confuses users */}
           </div>
@@ -217,12 +221,8 @@ export default async function DashboardPage() {
 
           {/* Charts Panel Removed - consolidated to Analytics page for cleaner dashboard */}
 
-          {/* Upgrade CTA Banner — only shows for free/solo plans */}
-          <UpgradeCTA
-            variant="banner"
-            title="Unlock Unlimited AI Claims & Reports"
-            description="Upgrade to Business or Enterprise to access unlimited AI generation, 10x storage, and priority processing."
-          />
+          {/* Company Branding Quick Viewer */}
+          <CompanyBrandingPreview />
         </div>
       </PageContainer>
     );

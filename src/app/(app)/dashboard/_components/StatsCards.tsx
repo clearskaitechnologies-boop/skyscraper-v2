@@ -100,7 +100,7 @@ export default function StatsCards() {
       Icon: Hammer,
       trend: stats?.jobsTrend || "--",
       href: "/jobs/retail",
-      createHref: "/leads/new",
+      createHref: "/jobs/retail/new",
       createLabel: "New Job",
       gradient: "from-amber-500 to-orange-600",
       bgGradient: "from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40",
