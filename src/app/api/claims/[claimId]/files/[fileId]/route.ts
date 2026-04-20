@@ -64,7 +64,7 @@ export const PATCH = withAuth(async (req: NextRequest, { orgId }) => {
 
     // Update client visibility
     await prisma.file_assets.update({
-      where: { id: fileId },
+      where: { id: fileId, orgId },
       data: { visibleToClient },
     });
 

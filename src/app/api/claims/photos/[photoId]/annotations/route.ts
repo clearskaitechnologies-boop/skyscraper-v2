@@ -139,7 +139,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     };
 
     await prisma.file_assets.update({
-      where: { id: photoId },
+      where: { id: photoId, orgId },
       data: {
         metadata: updatedMetadata,
         ai_caption: caption,
@@ -269,7 +269,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     };
 
     await prisma.file_assets.update({
-      where: { id: photoId },
+      where: { id: photoId, orgId },
       data: {
         metadata: updatedMetadata,
         ai_caption: null,

@@ -201,13 +201,178 @@ function FieldModeContent() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // ── Measurement Tool State ──
+  // ── Measurement Tool State — Apple Measure-style ──
   const [measureMode, setMeasureMode] = useState(false);
-  const [measurePoints, setMeasurePoints] = useState<{ x: number; y: number }[]>([]);
-  const [measureLines, setMeasureLines] = useState<
-    { p1: { x: number; y: number }; p2: { x: number; y: number }; px: number }[]
+  const [calibrated, setCalibrated] = useState(false);
+  const [pixelsPerInch, setPixelsPerInch] = useState(50); // Default estimate
+  const [calibrationLine, setCalibrationLine] = useState<{
+    p1: { x: number; y: number };
+    p2: { x: number; y: number };
+  } | null>(null);
+  const [measurePoints, setMeasurePoints] = useState<{ id: string; x: number; y: number }[]>([]);
+  const [activeLine, setActiveLine] = useState<{
+    startId: string;
+    endX: number;
+    endY: number;
+  } | null>(null);
+  const [completedLines, setCompletedLines] = useState<
+    { id: string; p1: { x: number; y: number }; p2: { x: number; y: number } }[]
   >([]);
+  const [draggingPointId, setDraggingPointId] = useState<string | null>(null);
   const measureOverlayRef = useRef<HTMLDivElement>(null);
+
+  // Calculate distance in inches using calibration
+  const calcInches = useCallback(
+    (p1: { x: number; y: number }, p2: { x: number; y: number }) => {
+      const dx = p2.x - p1.x;
+      const dy = p2.y - p1.y;
+      const px = Math.sqrt(dx * dx + dy * dy);
+      return (px / pixelsPerInch).toFixed(1);
+    },
+    [pixelsPerInch]
+  );
+
+  // Handle pointer down — start dragging or create new point
+  const handleMeasurePointerDown = useCallback(
+    (e: React.PointerEvent) => {
+      if (!measureMode || !measureOverlayRef.current) return;
+      e.preventDefault();
+      const rect = measureOverlayRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Check if clicking near an existing point
+      const hitPoint = measurePoints.find((pt) => {
+        const dx = pt.x - x;
+        const dy = pt.y - y;
+        return Math.sqrt(dx * dx + dy * dy) < 25; // 25px hit radius
+      });
+
+      if (hitPoint) {
+        // Start dragging existing point
+        setDraggingPointId(hitPoint.id);
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      } else {
+        // Create new point
+        const newId = `pt_${Date.now()}`;
+        const newPoint = { id: newId, x, y };
+        setMeasurePoints((prev) => [...prev, newPoint]);
+
+        // If we have an odd number of points, start drawing a line
+        if (measurePoints.length % 2 === 0) {
+          // This is first point of a new pair - start active line
+          setActiveLine({ startId: newId, endX: x, endY: y });
+        } else {
+          // This is second point - complete the line
+          const startPoint = measurePoints[measurePoints.length - 1];
+          if (startPoint) {
+            setCompletedLines((prev) => [
+              ...prev,
+              {
+                id: `line_${Date.now()}`,
+                p1: { x: startPoint.x, y: startPoint.y },
+                p2: { x, y },
+              },
+            ]);
+            setActiveLine(null);
+          }
+        }
+      }
+    },
+    [measureMode, measurePoints]
+  );
+
+  // Handle pointer move — drag point or update active line
+  const handleMeasurePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (!measureOverlayRef.current) return;
+      const rect = measureOverlayRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      if (draggingPointId) {
+        // Move the dragged point
+        setMeasurePoints((prev) =>
+          prev.map((pt) => (pt.id === draggingPointId ? { ...pt, x, y } : pt))
+        );
+        // Update any connected lines
+        setCompletedLines((prev) =>
+          prev.map((line) => {
+            const pt = measurePoints.find((p) => p.id === draggingPointId);
+            if (!pt) return line;
+            // Check if this line connects to the dragged point
+            const distToP1 = Math.sqrt((line.p1.x - pt.x) ** 2 + (line.p1.y - pt.y) ** 2);
+            const distToP2 = Math.sqrt((line.p2.x - pt.x) ** 2 + (line.p2.y - pt.y) ** 2);
+            if (distToP1 < 5) return { ...line, p1: { x, y } };
+            if (distToP2 < 5) return { ...line, p2: { x, y } };
+            return line;
+          })
+        );
+      } else if (activeLine) {
+        // Update the active line's end position
+        setActiveLine((prev) => (prev ? { ...prev, endX: x, endY: y } : null));
+      }
+    },
+    [draggingPointId, activeLine, measurePoints]
+  );
+
+  // Handle pointer up — finish dragging or complete line
+  const handleMeasurePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      if (draggingPointId) {
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+        setDraggingPointId(null);
+      } else if (activeLine && measureOverlayRef.current) {
+        const rect = measureOverlayRef.current.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Find the start point
+        const startPt = measurePoints.find((p) => p.id === activeLine.startId);
+        if (startPt) {
+          // Create endpoint
+          const endId = `pt_${Date.now()}`;
+          setMeasurePoints((prev) => [...prev, { id: endId, x, y }]);
+          // Complete the line
+          setCompletedLines((prev) => [
+            ...prev,
+            {
+              id: `line_${Date.now()}`,
+              p1: { x: startPt.x, y: startPt.y },
+              p2: { x, y },
+            },
+          ]);
+        }
+        setActiveLine(null);
+      }
+    },
+    [draggingPointId, activeLine, measurePoints]
+  );
+
+  // Calibration: set reference object (credit card = 3.37 inches)
+  const handleCalibrate = useCallback(() => {
+    if (completedLines.length === 0) {
+      toast.error('Draw a line along a known object first (credit card = 3.37")');
+      return;
+    }
+    const lastLine = completedLines[completedLines.length - 1];
+    const dx = lastLine.p2.x - lastLine.p1.x;
+    const dy = lastLine.p2.y - lastLine.p1.y;
+    const px = Math.sqrt(dx * dx + dy * dy);
+    // Assume credit card width = 3.37 inches
+    const newPPI = px / 3.37;
+    setPixelsPerInch(newPPI);
+    setCalibrated(true);
+    setCalibrationLine(lastLine);
+    toast.success(`Calibrated! ${newPPI.toFixed(1)} pixels/inch`);
+  }, [completedLines]);
+
+  // Clear all measurements
+  const clearMeasurements = useCallback(() => {
+    setMeasurePoints([]);
+    setCompletedLines([]);
+    setActiveLine(null);
+  }, []);
 
   // ── Open native camera via getUserMedia ──
   const openCamera = useCallback(async () => {
@@ -284,28 +449,39 @@ function FieldModeContent() {
     if (!ctx) return;
     ctx.drawImage(video, 0, 0);
 
-    // Draw measurement lines onto the photo if any
-    if (measureLines.length > 0) {
+    // Draw measurement lines onto the photo (Apple Measure style)
+    if (completedLines.length > 0) {
       const scaleX = video.videoWidth / video.clientWidth;
       const scaleY = video.videoHeight / video.clientHeight;
       ctx.strokeStyle = "#22d3ee";
-      ctx.lineWidth = 3;
-      ctx.font = "bold 24px sans-serif";
+      ctx.lineWidth = 4;
+      ctx.lineCap = "round";
+      ctx.font = "bold 28px SF Pro Display, -apple-system, sans-serif";
       ctx.fillStyle = "#22d3ee";
-      for (const line of measureLines) {
+      ctx.shadowColor = "rgba(0,0,0,0.5)";
+      ctx.shadowBlur = 4;
+      for (const line of completedLines) {
         const x1 = line.p1.x * scaleX,
           y1 = line.p1.y * scaleY;
         const x2 = line.p2.x * scaleX,
           y2 = line.p2.y * scaleY;
+        // Draw line
         ctx.beginPath();
         ctx.moveTo(x1, y1);
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        // Label
+        // Draw endpoints
+        ctx.beginPath();
+        ctx.arc(x1, y1, 8, 0, Math.PI * 2);
+        ctx.arc(x2, y2, 8, 0, Math.PI * 2);
+        ctx.fillStyle = "#22d3ee";
+        ctx.fill();
+        // Label with real inches (calibrated)
         const midX = (x1 + x2) / 2,
           midY = (y1 + y2) / 2;
-        const inches = (line.px * 0.15).toFixed(1); // rough estimate
-        ctx.fillText(`~${inches}"`, midX + 8, midY - 8);
+        const inches = calcInches(line.p1, line.p2);
+        ctx.fillStyle = "white";
+        ctx.fillText(`${inches}"`, midX + 12, midY - 12);
       }
     }
 
@@ -314,7 +490,7 @@ function FieldModeContent() {
         if (!blob) return;
         const file = new File([blob], `field_${Date.now()}.jpg`, { type: "image/jpeg" });
         const gps = await getGPS();
-        const isMeasure = measureMode || measureLines.length > 0;
+        const isMeasure = measureMode || completedLines.length > 0;
         const newPhoto: FieldPhoto = {
           id: `${isMeasure ? "measure" : "field"}_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
           file,
@@ -324,7 +500,7 @@ function FieldModeContent() {
           timestamp: new Date().toISOString(),
           note: isMeasure ? "📏 Measurement photo" : "",
           aiLabel: isMeasure
-            ? `Measurement (${measureLines.length} line${measureLines.length !== 1 ? "s" : ""})`
+            ? `Measurement (${completedLines.length} line${completedLines.length !== 1 ? "s" : ""})`
             : undefined,
           analyzing: false,
         };
@@ -332,43 +508,12 @@ function FieldModeContent() {
         if (!isMeasure) void quickAnalyze(newPhoto);
         toast.success(isMeasure ? "📏 Measurement photo captured!" : "📸 Photo captured!");
         // Clear measurements after snap
-        setMeasureLines([]);
-        setMeasurePoints([]);
+        clearMeasurements();
       },
       "image/jpeg",
       0.92
     );
-  }, [measureMode, measureLines]);
-
-  // ── Handle measurement tap on viewfinder ──
-  const handleMeasureTap = useCallback(
-    (e: React.MouseEvent | React.TouchEvent) => {
-      if (!measureMode || !measureOverlayRef.current) return;
-      const rect = measureOverlayRef.current.getBoundingClientRect();
-      let clientX: number, clientY: number;
-      if ("touches" in e) {
-        clientX = e.touches[0].clientX;
-        clientY = e.touches[0].clientY;
-      } else {
-        clientX = e.clientX;
-        clientY = e.clientY;
-      }
-      const x = clientX - rect.left;
-      const y = clientY - rect.top;
-      setMeasurePoints((prev) => {
-        const next = [...prev, { x, y }];
-        if (next.length === 2) {
-          const dx = next[1].x - next[0].x;
-          const dy = next[1].y - next[0].y;
-          const px = Math.sqrt(dx * dx + dy * dy);
-          setMeasureLines((lines) => [...lines, { p1: next[0], p2: next[1], px }]);
-          return []; // reset for next measurement
-        }
-        return next;
-      });
-    },
-    [measureMode]
-  );
+  }, [measureMode, completedLines, calcInches, clearMeasurements]);
 
   // Cleanup camera on unmount
   useEffect(() => {
@@ -1204,70 +1349,141 @@ function FieldModeContent() {
               </div>
             )}
 
-            {/* Measurement overlay — tap to place points */}
+            {/* Measurement overlay — Apple Measure style drag & drop */}
             <div
               ref={measureOverlayRef}
-              className="absolute inset-0"
-              onClick={handleMeasureTap}
-              onTouchStart={measureMode ? handleMeasureTap : undefined}
+              className="absolute inset-0 touch-none"
+              onPointerDown={handleMeasurePointerDown}
+              onPointerMove={handleMeasurePointerMove}
+              onPointerUp={handleMeasurePointerUp}
+              onPointerCancel={handleMeasurePointerUp}
             >
               {/* Measurement mode banner */}
               {measureMode && (
-                <div className="absolute left-0 right-0 top-0 z-10 bg-cyan-500/90 px-4 py-2 text-center text-sm font-bold text-white">
-                  📏 TAP TWO POINTS TO MEASURE — place a reference object (coin/card) for scale
+                <div className="absolute left-0 right-0 top-0 z-10 flex flex-col gap-1 bg-gradient-to-b from-black/80 to-transparent px-4 py-3 text-center">
+                  <div className="text-sm font-bold text-cyan-400">
+                    📏 MEASURE MODE {calibrated && "✓ Calibrated"}
+                  </div>
+                  <div className="text-xs text-white/80">
+                    Tap to place points · Drag to adjust · Pinch-drag completed points
+                  </div>
+                  <div className="mt-2 flex justify-center gap-2">
+                    <button
+                      onClick={handleCalibrate}
+                      className="rounded-lg bg-cyan-600 px-3 py-1 text-xs font-medium text-white"
+                    >
+                      Set Reference (3.37&quot;)
+                    </button>
+                    <button
+                      onClick={clearMeasurements}
+                      className="rounded-lg bg-red-600/80 px-3 py-1 text-xs font-medium text-white"
+                    >
+                      Clear All
+                    </button>
+                  </div>
                 </div>
               )}
 
-              {/* Render measurement points */}
-              {measurePoints.map((pt, i) => (
-                <div
-                  key={i}
-                  className="absolute z-20 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cyan-400 shadow-lg"
-                  style={{ left: pt.x, top: pt.y }}
-                />
-              ))}
+              {/* SVG layer for lines (renders on top of video, below points) */}
+              <svg className="pointer-events-none absolute inset-0 z-10 h-full w-full">
+                {/* Active line being drawn */}
+                {activeLine &&
+                  (() => {
+                    const startPt = measurePoints.find((p) => p.id === activeLine.startId);
+                    if (!startPt) return null;
+                    return (
+                      <g>
+                        <line
+                          x1={startPt.x}
+                          y1={startPt.y}
+                          x2={activeLine.endX}
+                          y2={activeLine.endY}
+                          stroke="#22d3ee"
+                          strokeWidth="3"
+                          strokeDasharray="8 4"
+                          strokeLinecap="round"
+                        />
+                        {/* Live distance */}
+                        <text
+                          x={(startPt.x + activeLine.endX) / 2}
+                          y={(startPt.y + activeLine.endY) / 2 - 15}
+                          fill="white"
+                          fontSize="18"
+                          fontWeight="bold"
+                          textAnchor="middle"
+                          style={{ textShadow: "0 2px 4px rgba(0,0,0,0.8)" }}
+                        >
+                          {calcInches(startPt, { x: activeLine.endX, y: activeLine.endY })}&quot;
+                        </text>
+                      </g>
+                    );
+                  })()}
 
-              {/* Render completed measurement lines */}
-              {measureLines.map((line, i) => {
-                const dx = line.p2.x - line.p1.x;
-                const dy = line.p2.y - line.p1.y;
-                const length = Math.sqrt(dx * dx + dy * dy);
-                const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-                const midX = (line.p1.x + line.p2.x) / 2;
-                const midY = (line.p1.y + line.p2.y) / 2;
-                // Rough estimate: assume a credit card width (3.37") maps to ~200px at arm's length
-                const estInches = (line.px * 0.15).toFixed(1);
-                return (
-                  <div key={i}>
-                    {/* Line */}
-                    <div
-                      className="absolute z-10 origin-left border-t-2 border-cyan-400"
-                      style={{
-                        left: line.p1.x,
-                        top: line.p1.y,
-                        width: length,
-                        transform: `rotate(${angle}deg)`,
-                      }}
-                    />
-                    {/* Endpoints */}
-                    <div
-                      className="absolute z-20 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cyan-400"
-                      style={{ left: line.p1.x, top: line.p1.y }}
-                    />
-                    <div
-                      className="absolute z-20 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-cyan-400"
-                      style={{ left: line.p2.x, top: line.p2.y }}
-                    />
-                    {/* Label */}
-                    <div
-                      className="absolute z-30 -translate-x-1/2 -translate-y-full rounded-lg bg-black/80 px-2 py-1 text-xs font-bold text-cyan-300 shadow-lg"
-                      style={{ left: midX, top: midY - 8 }}
-                    >
-                      {Math.round(line.px)}px · ~{estInches}&quot;
-                    </div>
-                  </div>
-                );
-              })}
+                {/* Completed lines */}
+                {completedLines.map((line) => {
+                  const midX = (line.p1.x + line.p2.x) / 2;
+                  const midY = (line.p1.y + line.p2.y) / 2;
+                  return (
+                    <g key={line.id}>
+                      <line
+                        x1={line.p1.x}
+                        y1={line.p1.y}
+                        x2={line.p2.x}
+                        y2={line.p2.y}
+                        stroke="#22d3ee"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                        filter="drop-shadow(0 2px 4px rgba(0,0,0,0.5))"
+                      />
+                      {/* Measurement label background */}
+                      <rect
+                        x={midX - 30}
+                        y={midY - 32}
+                        width="60"
+                        height="24"
+                        rx="6"
+                        fill="rgba(0,0,0,0.75)"
+                      />
+                      {/* Measurement label text */}
+                      <text
+                        x={midX}
+                        y={midY - 15}
+                        fill="#22d3ee"
+                        fontSize="16"
+                        fontWeight="bold"
+                        textAnchor="middle"
+                      >
+                        {calcInches(line.p1, line.p2)}&quot;
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+
+              {/* Draggable measurement points */}
+              {measurePoints.map((pt) => (
+                <div
+                  key={pt.id}
+                  className={cn(
+                    "absolute z-20 -translate-x-1/2 -translate-y-1/2 rounded-full transition-transform",
+                    draggingPointId === pt.id
+                      ? "h-10 w-10 scale-110 border-4 border-white bg-cyan-400 shadow-2xl"
+                      : "border-3 h-7 w-7 border-white bg-cyan-500 shadow-lg hover:scale-110"
+                  )}
+                  style={{
+                    left: pt.x,
+                    top: pt.y,
+                    cursor: "grab",
+                    boxShadow:
+                      draggingPointId === pt.id
+                        ? "0 0 20px rgba(34,211,238,0.7)"
+                        : "0 4px 12px rgba(0,0,0,0.4)",
+                  }}
+                >
+                  {/* Inner ring for Apple Measure look */}
+                  <div className="absolute inset-1 rounded-full border-2 border-white/50" />
+                </div>
+              ))}
             </div>
 
             {/* Top controls */}
@@ -1352,23 +1568,19 @@ function FieldModeContent() {
             {/* Measure instructions */}
             {measureMode && (
               <p className="mt-3 text-center text-xs text-cyan-300">
-                Tap 2 points to draw a line · Place a credit card or coin for scale reference · Snap
-                to save
+                Tap to place points · Drag points to adjust · Calibrate for accurate measurements
               </p>
             )}
 
             {/* Clear measurements */}
-            {measureLines.length > 0 && (
+            {completedLines.length > 0 && (
               <button
                 type="button"
-                onClick={() => {
-                  setMeasureLines([]);
-                  setMeasurePoints([]);
-                }}
+                onClick={clearMeasurements}
                 className="mx-auto mt-2 flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs text-white"
               >
-                <RotateCcw className="h-3 w-3" /> Clear {measureLines.length} measurement
-                {measureLines.length !== 1 ? "s" : ""}
+                <RotateCcw className="h-3 w-3" /> Clear {completedLines.length} measurement
+                {completedLines.length !== 1 ? "s" : ""}
               </button>
             )}
           </div>
@@ -1429,8 +1641,7 @@ function FieldModeContent() {
             type="button"
             onClick={() => {
               setMeasureMode(true);
-              setMeasurePoints([]);
-              setMeasureLines([]);
+              clearMeasurements();
               void openCamera();
             }}
             className="flex flex-col items-center gap-1 rounded-xl px-3 py-2 text-slate-600 transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"

@@ -14,7 +14,7 @@ const planGenerateSchema = z.object({
   timeline: z.string().optional(),
   budget: z.string().optional(),
   summary: z.string().optional(),
-  documents: z.array(z.string()).optional(),
+  documents: z.union([z.string(), z.array(z.string())]).optional(),
   finalNotes: z.string().optional(),
 });
 

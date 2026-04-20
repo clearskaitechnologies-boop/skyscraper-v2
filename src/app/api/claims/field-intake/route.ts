@@ -162,13 +162,60 @@ export async function POST(req: Request) {
       // Store link in description for now (claim_activities could be used later)
       try {
         await prisma.claims.update({
-          where: { id: claim.id },
+          where: { id: claim.id, orgId },
           data: {
             description: `${claim.description || ""}\n\nLinked from claim: ${linkedRecordId}`,
           },
         });
       } catch {
         // Non-fatal
+      }
+    }
+
+    // ── Link claim to job if routed from job ──
+    if (linkedRecordId && linkedRecordType === "job") {
+      logger.info("[FIELD_INTAKE] Linking claim to job", {
+        jobId: linkedRecordId,
+        claimId: claim.id,
+      });
+      try {
+        // Verify job belongs to this org and link it
+        const job = await prisma.jobs.findFirst({
+          where: { id: linkedRecordId, orgId },
+          select: { id: true, claimId: true },
+        });
+        if (job) {
+          // Link the claim to the job
+          await prisma.jobs.update({
+            where: { id: job.id, orgId },
+            data: {
+              claimId: claim.id,
+              updatedAt: new Date(),
+            },
+          });
+          // Also update claim description
+          await prisma.claims.update({
+            where: { id: claim.id, orgId },
+            data: {
+              description: `${claim.description || ""}\n\nCreated from job: ${linkedRecordId}`,
+            },
+          });
+          logger.info("[FIELD_INTAKE] Job linked to claim", {
+            jobId: job.id,
+            claimId: claim.id,
+          });
+        } else {
+          logger.warn("[FIELD_INTAKE] Job not found or not owned by org", {
+            jobId: linkedRecordId,
+            orgId,
+          });
+        }
+      } catch (jobLinkErr) {
+        logger.warn("[FIELD_INTAKE] Failed to link job to claim (non-fatal)", {
+          jobId: linkedRecordId,
+          claimId: claim.id,
+          error: jobLinkErr instanceof Error ? jobLinkErr.message : String(jobLinkErr),
+        });
       }
     }
 

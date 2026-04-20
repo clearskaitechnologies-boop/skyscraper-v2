@@ -64,7 +64,7 @@ export const PATCH = withAuth(async (req: NextRequest, { orgId, userId }, routeP
     }
 
     const trade = await prisma.tradesCompany.update({
-      where: { id },
+      where: { id, orgId },
       data: {
         name,
         licenseNumber,

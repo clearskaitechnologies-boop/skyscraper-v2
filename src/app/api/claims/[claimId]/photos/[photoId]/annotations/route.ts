@@ -113,7 +113,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const updatedAnnotations = replaceAll ? annotations : [...existingAnnotations, ...annotations];
 
     await prisma.file_assets.update({
-      where: { id: photoId },
+      where: { id: photoId, orgId },
       data: {
         metadata: {
           ...currentMetadata,
@@ -188,7 +188,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     annotations[index] = { ...annotations[index], ...annotation, source: "adjusted" };
 
     await prisma.file_assets.update({
-      where: { id: photoId },
+      where: { id: photoId, orgId },
       data: {
         metadata: {
           ...currentMetadata,

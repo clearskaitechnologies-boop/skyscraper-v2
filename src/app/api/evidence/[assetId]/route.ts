@@ -35,7 +35,7 @@ export const PATCH = withAuth(async (req: NextRequest, { orgId, userId }, routeP
 
     // Update asset - FileAsset has limited metadata fields
     const updated = await prisma.file_assets.update({
-      where: { id: assetId },
+      where: { id: assetId, orgId },
       data: {
         ...(note !== undefined && { note }),
         updatedAt: new Date(),
